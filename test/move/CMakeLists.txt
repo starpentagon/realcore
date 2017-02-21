@@ -2,9 +2,16 @@ cmake_minimum_required(VERSION 3.7.2)
 
 # プロジェクト名
 set(project_name move_test)
-
 project(${project_name} CXX)
 
+# ccache
+find_program(CCACHE_FOUND ccache)
+if(CCACHE_FOUND)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+        set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+endif(CCACHE_FOUND)
+
+# コンパイルオプション
 add_definitions("-Wall -std=c++14")
 
 # インクルードパス
