@@ -7,7 +7,7 @@ using namespace std;
 namespace realcore
 {
 
-const array<MovePosition, kMoveNum> &GetAllMove()
+const array<MovePosition, kMoveNum>& GetAllMove()
 {
   static array<MovePosition, kMoveNum> all_move_list{
       {
@@ -17,7 +17,7 @@ const array<MovePosition, kMoveNum> &GetAllMove()
   return all_move_list;
 }
 
-const array<MovePosition, kValidMoveNum> &GetAllValidMove()
+const array<MovePosition, kValidMoveNum>& GetAllValidMove()
 {
   static array<MovePosition, kValidMoveNum> all_valid_move_list{
       {
@@ -28,7 +28,7 @@ const array<MovePosition, kValidMoveNum> &GetAllValidMove()
   return all_valid_move_list;
 }
 
-const array<MovePosition, kInBoardMoveNum> &GetAllInBoardMove()
+const array<MovePosition, kInBoardMoveNum>& GetAllInBoardMove()
 {
   static array<MovePosition, kInBoardMoveNum> all_in_board_move_list{
       {
@@ -64,7 +64,7 @@ const bool IsValidMove(const MovePosition move)
   return IsInBoardMove(move) || IsNullMove(move);
 }
 
-void GetMoveCordinate(const MovePosition move, Cordinate *x, Cordinate *y)
+void GetMoveCordinate(const MovePosition move, Cordinate * const x, Cordinate * const y)
 {
   assert(x != nullptr && y != nullptr);
 

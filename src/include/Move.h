@@ -31,13 +31,13 @@ constexpr size_t kValidMoveNum = (kInBoardMoveNum + 1);
 
 //! @brief すべての指し手リストを返す
 //! @retval MovePosition型として定義されているすべての指し手の配列を返す
-const std::array<MovePosition, kMoveNum> &GetAllMove();
+const std::array<MovePosition, kMoveNum>& GetAllMove();
 
 //! @brief 有効な指し手(盤内 or Pass)リストを返す
-const std::array<MovePosition, kValidMoveNum> &GetAllValidMove();
+const std::array<MovePosition, kValidMoveNum>& GetAllValidMove();
 
 //! @brief 盤内の指し手リストを返す
-const std::array<MovePosition, kInBoardMoveNum> &GetAllInBoardMove();
+const std::array<MovePosition, kInBoardMoveNum>& GetAllInBoardMove();
 
 //! @brief 指し手が無効かどうか判定する
 //! @param move 指し手位置
@@ -63,7 +63,7 @@ const bool IsValidMove(const MovePosition move);
 //! @param move 指し手位置
 //! @param x x座標の格納先
 //! @param y y座標の格納先
-void GetMoveCordinate(const MovePosition move, Cordinate *x, Cordinate *y);
+void GetMoveCordinate(const MovePosition move, Cordinate * const x, Cordinate * const y);
 
 }   // namespace　realcore
 
