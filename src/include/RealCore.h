@@ -11,12 +11,12 @@
 
 namespace realcore
 {
-    //! @brief 座標を表す型
-    typedef std::int8_t Cordinate;
-    
-    //! @brief 盤のサイズ
-    constexpr size_t kBoardLineNum = 15;
+//! @brief 座標を表す型
+typedef std::int8_t Cordinate;
 
-}
+//! @brief 盤のサイズ
+constexpr size_t kBoardLineNum = 15;
+
+}   // namespace realcore
 
 #endif
