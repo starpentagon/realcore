@@ -9,7 +9,7 @@ REAL Core is REnju AnaLysis Core libraries.
 
 ## Environment variables
 Some shell scripts and CMake require the following environment variables:
-* REALCORE_DIR:  the top directory path of the REAL Core
+* REALCORE_DIR:  the top directory of the REAL Core
 * GTEST_DIR: the top directory of the Google Test
 * MAKE_JOB_NUMBER: the number of jobs to compile C++ files simultaneously
 
