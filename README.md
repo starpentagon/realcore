@@ -3,8 +3,10 @@ REAL Core is REnju AnaLysis Core libraries.
 
 ## Requirements
 * git lfs 1.5.6 or newer
+* C++ compiler
+** clang 3.8 or newer
 * Google Test 1.8.0 or newer
-* CMake 3.7.2 or newer
+* CMake 3.5.1 or newer
 * ccache 3.3.4 or newer(optional)
 
 ## Environment variables

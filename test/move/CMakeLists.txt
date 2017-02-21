@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7.2)
+cmake_minimum_required(VERSION 3.5.1)
 
 # プロジェクト名
 set(project_name move_test)
@@ -31,4 +31,7 @@ add_executable(
 # ライブラリ
 target_link_libraries(${project_name} gtest)
 target_link_libraries(${project_name} gtest_main)
+
+# Ubuntuでgoogle testをビルドするためにはpthreadが必要
+target_link_libraries(${project_name} pthread)
 
