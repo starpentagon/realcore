@@ -27,3 +27,13 @@
 *.exe
 *.out
 *.app
+
+# build directory
+build
+
+# Mac system files
+.DS_Store
+
+# Visual Studio Code setting files
+.vscode
+
