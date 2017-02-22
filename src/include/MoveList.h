@@ -77,6 +77,12 @@ namespace realcore{
     //! @pre 指し手は有効な指し手であること
     std::string str() const;
 
+    //! @brief 初期化時の領域を確保する
+    //! @param initial_size 初期化時の指し手リスト長
+    //! @note 事前に領域を確保することで領域の再確保を抑制しパフォーマンスを改善できる
+    //! @note 領域サイズはCalcInitialReserveSize()で算出する(initial_list_sizeより少し大きい領域が確保される)
+    void ReserveInitial(const size_t initial_list_size);
+
   private:
     //! @brief 初期化時に確保する領域長さを算出する
     //! @param initial_size 初期化時の指し手リスト長

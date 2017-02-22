@@ -19,6 +19,14 @@ public:
     EXPECT_EQ(24, move_list.move_list_.capacity());
   }
 
+  void ReserveInitial()
+  {
+    MoveList move_list;
+
+    move_list.ReserveInitial(8);
+    EXPECT_EQ(32, move_list.move_list_.capacity());
+  }
+
   void CalcInitialReserveSizeTest()
   {
     MoveList move_list;
@@ -37,6 +45,11 @@ public:
 TEST_F(MoveListTest, DefaultConstructor)
 {
   DefaultConstructor();
+}
+
+TEST_F(MoveListTest, ReserveInitial)
+{
+  ReserveInitial();
 }
 
 TEST_F(MoveListTest, CopyConstructorMoveList)
