@@ -8,6 +8,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <array>
 
 namespace realcore
 {
@@ -16,6 +17,22 @@ typedef std::int8_t Cordinate;
 
 //! @brief 盤のサイズ
 constexpr size_t kBoardLineNum = 15;
+
+//! @brief 盤面方向の定義
+enum BoardDirection
+{
+  kLateralDirection,
+  kVerticalDirection,
+  kLeftDiagonalDirection,
+  kRightDiagonalDirection
+};
+
+//! @brief 盤面の方向数
+constexpr size_t kBoardDirectionNum = 4;
+
+//! @brief 盤面方向のリストを返す
+//! @retval 盤面方向のリスト
+const std::array<BoardDirection, kBoardDirectionNum>& GetBoardDirection();
 
 }   // namespace realcore
 
