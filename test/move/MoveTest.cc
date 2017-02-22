@@ -115,3 +115,17 @@ TEST(MoveTest, GetMoveCordinate)
     EXPECT_EQ(15, y);
   }
 }
+
+TEST(MoveTest, GetMove)
+{
+  {
+    constexpr Cordinate x = 1, y = 2;
+    const MovePosition move = GetMove(x, y);
+    EXPECT_EQ(kMoveAB, move);
+  }
+  {
+    constexpr Cordinate x = 15, y = 14;
+    const MovePosition move = GetMove(x, y);
+    EXPECT_EQ(kMoveON, move);
+  }
+}

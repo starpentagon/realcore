@@ -1,6 +1,7 @@
 #include <cassert>
 
 #include "Move.h"
+#include "Board.h"
 
 using namespace std;
 
@@ -53,10 +54,7 @@ const bool IsInBoardMove(const MovePosition move)
   Cordinate x = 0, y = 0;
   GetMoveCordinate(move, &x, &y);
 
-  bool is_in_board = 1 <= x && x <= kBoardLineNum;
-  is_in_board &= 1 <= y && y <= kBoardLineNum;
-
-  return is_in_board;
+  return IsInBoard(x, y);
 }
 
 const bool IsValidMove(const MovePosition move)
@@ -70,6 +68,14 @@ void GetMoveCordinate(const MovePosition move, Cordinate * const x, Cordinate * 
 
   *x = move % 16;
   *y = move / 16;
+}
+
+const MovePosition GetMove(const Cordinate x, const Cordinate y)
+{
+  assert(IsInBoard(x, y));
+  
+  const MovePosition move = static_cast<MovePosition>(16 * y + x);
+  return move;
 }
 
 }   // namespace realcore

@@ -65,6 +65,13 @@ const bool IsValidMove(const MovePosition move);
 //! @param y y座標の格納先
 void GetMoveCordinate(const MovePosition move, Cordinate * const x, Cordinate * const y);
 
+//! @brief (x, y)座標からMovePositionを求める
+//! @param x x座標の格納先
+//! @param y y座標の格納先
+//! @retval 対応するMovePosition
+//! @pre (x, y)は盤内にあること
+const MovePosition GetMove(const Cordinate x, const Cordinate y);
+
 }   // namespace　realcore
 
 #endif // MOVE_H
