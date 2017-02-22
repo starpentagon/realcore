@@ -8,11 +8,10 @@
 #include <vector>
 #include <string>
 
-#include "Move.h"
-
 namespace realcore{
   class MoveList;
   class MoveListTest;
+  enum MovePosition : std::uint8_t;
 
   //! @brief [a-o][a-o]形式の文字列に対応する指し手リストを生成する
   //! @param move_string [a-o][a-o]形式の文字列

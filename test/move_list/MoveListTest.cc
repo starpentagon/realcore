@@ -2,6 +2,7 @@
 
 #include "gtest/gtest.h"
 
+#include "Move.h"
 #include "MoveList.h"
 
 using namespace std;
