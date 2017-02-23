@@ -4,7 +4,7 @@
 
 using namespace realcore;
 
-TEST(MoveTest, GetAllMove)
+TEST(MoveTest, GetAllMoveTest)
 {
   const auto &all_move_list = GetAllMove();
 
@@ -14,7 +14,7 @@ TEST(MoveTest, GetAllMove)
   EXPECT_EQ(kMoveOO, all_move_list[kMoveNum - 1]);
 }
 
-TEST(MoveTest, GetAllValidMove)
+TEST(MoveTest, GetAllValidMoveTest)
 {
   const auto &all_valid_move_list = GetAllValidMove();
 
@@ -24,7 +24,7 @@ TEST(MoveTest, GetAllValidMove)
   EXPECT_EQ(kNullMove, all_valid_move_list[kValidMoveNum - 1]);
 }
 
-TEST(MoveTest, GetAllInBoardMove)
+TEST(MoveTest, GetAllInBoardMoveTest)
 {
   const auto &all_in_board_move_list = GetAllInBoardMove();
 
@@ -34,7 +34,7 @@ TEST(MoveTest, GetAllInBoardMove)
   EXPECT_EQ(kMoveOO, all_in_board_move_list[kInBoardMoveNum - 1]);
 }
 
-TEST(MoveTest, IsInvalidMove)
+TEST(MoveTest, IsInvalidMoveTest)
 {
   const auto &all_move_list = GetAllMove();
 
@@ -51,7 +51,7 @@ TEST(MoveTest, IsInvalidMove)
   }
 }
 
-TEST(MoveTest, IsNullMove)
+TEST(MoveTest, IsNullMoveTest)
 {
   const auto &all_move_list = GetAllMove();
 
@@ -68,7 +68,7 @@ TEST(MoveTest, IsNullMove)
   }
 }
 
-TEST(MoveTest, IsInBoardMove)
+TEST(MoveTest, IsInBoardMoveTest)
 {
   const auto &all_in_board_move_list = GetAllInBoardMove();
 
@@ -81,7 +81,7 @@ TEST(MoveTest, IsInBoardMove)
   EXPECT_FALSE(IsInBoardMove(kNullMove));
 }
 
-TEST(MoveTest, IsValidMove)
+TEST(MoveTest, IsValidMoveTest)
 {
   const auto &all_in_board_move_list = GetAllInBoardMove();
 
@@ -94,7 +94,7 @@ TEST(MoveTest, IsValidMove)
   EXPECT_TRUE(IsValidMove(kNullMove));
 }
 
-TEST(MoveTest, GetMoveCordinate)
+TEST(MoveTest, GetMoveCordinateTest)
 {
   {
     constexpr MovePosition move = kMoveAB;
@@ -116,7 +116,7 @@ TEST(MoveTest, GetMoveCordinate)
   }
 }
 
-TEST(MoveTest, GetMove)
+TEST(MoveTest, GetMoveTest)
 {
   {
     constexpr Cordinate x = 1, y = 2;

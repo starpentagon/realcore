@@ -14,7 +14,7 @@ class BoardTest
 : public ::testing::Test
 {
 public:
-  void DefaultConstructor(){
+  void DefaultConstructorTest(){
     const auto &move_list = GetAllInBoardMove();
     const Board board;
 
@@ -76,7 +76,7 @@ public:
     }
   }
 
-  void GetReadBoardPosition(){
+  void GetReadBoardPositionTest(){
     // 無効な手、Pass、未定義は読込専用BoardPositionになるかチェック
     const auto &move_list = GetAllMove();
     const Board board;
@@ -116,7 +116,7 @@ public:
     }
   }
 
-  void GetWriteBoardPosition(){
+  void GetWriteBoardPositionTest(){
     // 無効な手、Pass、未定義は読込専用BoardPositionになるかチェック
     const auto &move_list = GetAllMove();
     const Board board;
@@ -156,7 +156,7 @@ public:
     }
   }
 
-  void GetBitBoardIndex(){
+  void GetBitBoardIndexTest(){
      const Board board;
 
      // 横方向
@@ -200,7 +200,7 @@ public:
      EXPECT_EQ(31, board.GetBitBoardIndex(1023));
   }
 
-  void GetBitBoardShift(){
+  void GetBitBoardShiftTest(){
     const Board board;
 
     for(size_t i=0; i<1024; i++){
@@ -209,7 +209,7 @@ public:
     }
   }
 
-  void IsUndefinedBoardPosition(){
+  void IsUndefinedBoardPositionTest(){
     Board board;
 
     for(size_t i=0; i<1024; i++){
@@ -224,7 +224,7 @@ public:
     }
   }
 
-  void IsReadOnlyBoardPosition(){
+  void IsReadOnlyBoardPositionTest(){
     Board board;
 
     for(size_t i=0; i<1024; i++){
@@ -238,7 +238,7 @@ public:
     }
   }
 
-  void IsWriteOnlyBoardPosition(){
+  void IsWriteOnlyBoardPositionTest(){
     Board board;
 
     for(size_t i=0; i<1024; i++){
@@ -254,44 +254,44 @@ public:
 
 };
 
-TEST_F(BoardTest, DefaultConstructor){
-  DefaultConstructor();
+TEST_F(BoardTest, DefaultConstructorTest){
+  DefaultConstructorTest();
 }
 
-TEST_F(BoardTest, GetSetState)
+TEST_F(BoardTest, GetSetStateTest)
 {
   GetSetStateTest();
 }
 
-TEST_F(BoardTest, GetReadBoardPosition){
-  GetReadBoardPosition();
+TEST_F(BoardTest, GetReadBoardPositionTest){
+  GetReadBoardPositionTest();
 }
 
-TEST_F(BoardTest, GetWriteBoardPosition){
-  GetWriteBoardPosition();
+TEST_F(BoardTest, GetWriteBoardPositionTest){
+  GetWriteBoardPositionTest();
 }
 
-TEST_F(BoardTest, GetBitBoardIndex){
-  GetBitBoardIndex();
+TEST_F(BoardTest, GetBitBoardIndexTest){
+  GetBitBoardIndexTest();
 }
 
-TEST_F(BoardTest, GetBitBoardShift){
-  GetBitBoardShift();
+TEST_F(BoardTest, GetBitBoardShiftTest){
+  GetBitBoardShiftTest();
 }
 
-TEST_F(BoardTest, IsUndefinedBoardPosition){
-  IsUndefinedBoardPosition();
+TEST_F(BoardTest, IsUndefinedBoardPositionTest){
+  IsUndefinedBoardPositionTest();
 }
 
-TEST_F(BoardTest, IsReadOnlyBoardPosition){
-  IsReadOnlyBoardPosition();
+TEST_F(BoardTest, IsReadOnlyBoardPositionTest){
+  IsReadOnlyBoardPositionTest();
 }
 
-TEST_F(BoardTest, IsWriteOnlyBoardPosition){
-  IsWriteOnlyBoardPosition();
+TEST_F(BoardTest, IsWriteOnlyBoardPositionTest){
+  IsWriteOnlyBoardPositionTest();
 }
 
-TEST_F(BoardTest, IsInBoard)
+TEST_F(BoardTest, IsInBoardTest)
 {
   EXPECT_FALSE(IsInBoard(1, 0));
   EXPECT_FALSE(IsInBoard(0, 1));
