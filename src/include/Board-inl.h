@@ -21,19 +21,19 @@ inline const BoardPosition Board::GetReadBoardPosition(const MovePosition move, 
 
   // 指し手位置に対応する読込用BoardPosition Table
   static const BoardPositionTable read_board_position_lateral{{
-    #include "ReadBoardPositionLateral.h"
+    #include "def/ReadBoardPositionLateral.h"
   }};
 
   static const BoardPositionTable read_board_position_vertical{{
-    #include "ReadBoardPositionVertical.h"
+    #include "def/ReadBoardPositionVertical.h"
   }};
 
   static const BoardPositionTable read_board_position_left_diagonal{{
-    #include "ReadBoardPositionLeftDiagonal.h"
+    #include "def/ReadBoardPositionLeftDiagonal.h"
   }};
 
   static const BoardPositionTable read_board_position_right_diagonal{{
-    #include "ReadBoardPositionRightDiagonal.h"
+    #include "def/ReadBoardPositionRightDiagonal.h"
   }};
 
   static const std::array<const BoardPositionTable *, kBoardDirectionNum> read_board_position{{
@@ -57,19 +57,19 @@ inline const BoardPosition Board::GetWriteBoardPosition(const MovePosition move,
 
   // 指し手位置に対応する書込用BoardPosition Table
   static const BoardPositionTable write_board_position_lateral{{
-    #include "WriteBoardPositionLateral.h"
+    #include "def/WriteBoardPositionLateral.h"
   }};
 
   static const BoardPositionTable write_board_position_vertical{{
-    #include "WriteBoardPositionVertical.h"
+    #include "def/WriteBoardPositionVertical.h"
   }};
   
   static const BoardPositionTable write_board_position_left_diagonal{{
-    #include "WriteBoardPositionLeftDiagonal.h"
+    #include "def/WriteBoardPositionLeftDiagonal.h"
   }};
 
   static const BoardPositionTable write_board_position_right_diagonal{{
-    #include "WriteBoardPositionRightDiagonal.h"
+    #include "def/WriteBoardPositionRightDiagonal.h"
   }};
 
   static const std::array<const BoardPositionTable *, kBoardDirectionNum> write_board_position{{

@@ -18,7 +18,7 @@ namespace realcore
 //! @see doc/01_data_definition/data_definition.pptx and move_definition.xlsx
 enum MovePosition : std::uint8_t
 {
-  #include "MoveDefinition.h"
+  #include "def/MoveDefinition.h"
 };
 
 //! @brief Move位置の数
