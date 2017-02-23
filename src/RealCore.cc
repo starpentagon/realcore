@@ -6,7 +6,7 @@ namespace realcore
 {
 
 const array<BoardDirection, kBoardDirectionNum>& GetBoardDirection(){
-  static array<BoardDirection, kBoardDirectionNum> board_direction_list{{
+  static const array<BoardDirection, kBoardDirectionNum> board_direction_list{{
     kLateralDirection, kVerticalDirection, kLeftDiagonalDirection, kRightDiagonalDirection
   }};
 
