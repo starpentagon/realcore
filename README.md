@@ -7,11 +7,13 @@ REAL Core is REnju AnaLysis Core libraries.
    * clang 3.8 or newer
 * Google Test 1.8.0 or newer
 * CMake 3.5.1 or newer
+* boost 1.63 or newer
 * ccache 3.3.4 or newer(optional)
 
 ## Environment variables
 Some shell scripts and CMake require the following environment variables:
 * REALCORE_DIR:  the top directory of the REAL Core
+* BOOST_DIR: the top directory of the Boost Libraries
 * GTEST_DIR: the top directory of the Google Test
 * MAKE_JOB_NUMBER: the number of jobs to compile C++ files simultaneously
 
