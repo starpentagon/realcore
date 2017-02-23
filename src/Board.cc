@@ -5,13 +5,10 @@ namespace realcore
 {
 
 Board::Board()
-: bit_board_{{0}}
+: bit_board_{{
+  #include "def/BitBoardDefinition.h"
+  }}
 {
-  const auto &move_list = GetAllInBoardMove();
-
-  for(auto move : move_list){
-    SetState(move, kOpenPosition);
-  }
 }
 
 template<>
