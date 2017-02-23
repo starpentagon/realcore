@@ -23,6 +23,7 @@ constexpr bool IsInBoard(const Cordinate x, const Cordinate y);
 typedef std::uint64_t BitBoard;
 
 //! @brief 盤面位置
+//! @see doc/01_data_definition/data_definition.pptx and board_definition.xlsx
 typedef std::uint64_t BoardPosition;
 
 //! @brief 盤面上の点の状態定義
@@ -65,11 +66,17 @@ public:
   void SetState(const MovePosition move, const PositionState state);
 
 protected:
-  //! @brief 指し手位置に対応する盤面位置を取得する
+  //! @brief 指し手位置に対応する読込用の盤面位置を取得する
   //! @param move 指し手位置
   //! @param direction 盤面方向
   //! @retval 盤面位置
-  const BoardPosition GetBoardPosition(const MovePosition move, const BoardDirection direction) const;
+  const BoardPosition GetReadBoardPosition(const MovePosition move, const BoardDirection direction) const;
+
+  //! @brief 指し手位置に対応する書込用の盤面位置を取得する
+  //! @param move 指し手位置
+  //! @param direction 盤面方向
+  //! @retval 盤面位置
+  const BoardPosition GetWriteBoardPosition(const MovePosition move, const BoardDirection direction) const;
 
   //! @brief BoardPositionに対応するBitBoard配列のindexを取得する
   //! @param board_position BoardPosition
@@ -78,6 +85,11 @@ protected:
 
   //! @brief BoardPositionに対応するシフト量を取得する
   const size_t GetBitBoardShift(const BoardPosition board_position) const;
+
+  //! @brief 未定義であるBoardPositionかどうかを判定する
+  //! @param board_position BoardPosition
+  //! @retval true board_positionが未定義の値  
+  const bool IsUndefinedBoardPosition(const BoardPosition board_position) const;
 
   //! @brief BitBoard配列の要素数
   static constexpr size_t kBitBoardNum = 32;
