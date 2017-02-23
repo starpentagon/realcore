@@ -30,6 +30,52 @@ public:
     EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove29));
   }
 
+  void GetSetStateTest(){
+    Board board;
+    const auto &all_move_list = GetAllMove();
+    const auto &direction_list = GetBoardDirection();
+
+    // 黒石設定
+    for(auto set_move : all_move_list){
+      board.SetState<kBlackStone>(set_move);
+
+      for(auto get_move : all_move_list){
+        PositionState check_state = kOverBoard;
+
+        if(IsInBoardMove(get_move)){
+          check_state = set_move == get_move ? kBlackStone : kOpenPosition;
+        }
+
+        for(auto direction : direction_list){
+          const BoardPosition board_position = board.GetReadBoardPosition(get_move, direction);
+          EXPECT_EQ(check_state, board.GetState(board_position));
+        }
+      }
+
+      board.SetState<kOpenPosition>(set_move);
+    }
+
+    // 白石設定
+    for(auto set_move : all_move_list){
+      board.SetState<kWhiteStone>(set_move);
+
+      for(auto get_move : all_move_list){
+        PositionState check_state = kOverBoard;
+
+        if(IsInBoardMove(get_move)){
+          check_state = set_move == get_move ? kWhiteStone : kOpenPosition;
+        }
+
+        for(auto direction : direction_list){
+          const BoardPosition board_position = board.GetReadBoardPosition(get_move, direction);
+          EXPECT_EQ(check_state, board.GetState(board_position));
+        }
+      }
+
+      board.SetState<kOpenPosition>(set_move);
+    }
+  }
+
   void GetReadBoardPosition(){
     // 無効な手、Pass、未定義は読込専用BoardPositionになるかチェック
     const auto &move_list = GetAllMove();
@@ -162,6 +208,50 @@ public:
       EXPECT_EQ(shift_val, board.GetBitBoardShift(i));
     }
   }
+
+  void IsUndefinedBoardPosition(){
+    Board board;
+
+    for(size_t i=0; i<1024; i++){
+      bool is_undefined = (226 <= i && i <= 239);
+      is_undefined |= (482 <= i && i <= 495);
+
+      if(is_undefined){
+        EXPECT_TRUE(board.IsUndefinedBoardPosition(i));
+      }else{
+        EXPECT_FALSE(board.IsUndefinedBoardPosition(i));
+      }
+    }
+  }
+
+  void IsReadOnlyBoardPosition(){
+    Board board;
+
+    for(size_t i=0; i<1024; i++){
+      const bool is_read_only = i == 224 || i == 480 || i == 704 || i == 960;
+
+      if(is_read_only){
+        EXPECT_TRUE(board.IsReadOnlyBoardPosition(i));
+      }else{
+        EXPECT_FALSE(board.IsReadOnlyBoardPosition(i));
+      }
+    }
+  }
+
+  void IsWriteOnlyBoardPosition(){
+    Board board;
+
+    for(size_t i=0; i<1024; i++){
+      const bool is_write_only = i == 225 || i == 481 || i == 736 || i == 992;
+
+      if(is_write_only){
+        EXPECT_TRUE(board.IsWriteOnlyBoardPosition(i));
+      }else{
+        EXPECT_FALSE(board.IsWriteOnlyBoardPosition(i));
+      }
+    }
+  }
+
 };
 
 TEST_F(BoardTest, DefaultConstructor){
@@ -170,42 +260,7 @@ TEST_F(BoardTest, DefaultConstructor){
 
 TEST_F(BoardTest, GetSetState)
 {
-  // todo 盤内の全点についてテスト & bit_board_の中身もテストする
-  Board board;
-  
-  // 盤内
-  EXPECT_EQ(kOpenPosition, board.GetState(kMoveAB));
-  EXPECT_EQ(kOpenPosition, board.GetState(kMoveAC));
-  
-  board.SetState(kMoveAB, kBlackStone);
-  board.SetState(kMoveAC, kWhiteStone);
-
-  EXPECT_EQ(kBlackStone, board.GetState(kMoveAB));
-  EXPECT_EQ(kWhiteStone, board.GetState(kMoveAC));
-
-  board.SetState(kMoveAB, kOpenPosition);
-  board.SetState(kMoveAC, kOpenPosition);
-
-  EXPECT_EQ(kOpenPosition, board.GetState(kMoveAB));
-  EXPECT_EQ(kOpenPosition, board.GetState(kMoveAC));
-
-  // 無効手, Pass, 未定義: SetStateは反映されず常にkOverBoardが返ってくる
-  const array<MovePosition, 4> move_list{{
-    kInvalidMove, kNullMove, kUndefinedMove01, kUndefinedMove29
-  }};
-
-  for(const auto move : move_list){
-    EXPECT_EQ(kOverBoard, board.GetState(move));
-
-    board.SetState(move, kBlackStone);
-    EXPECT_EQ(kOverBoard, board.GetState(move));
-
-    board.SetState(move, kWhiteStone);
-    EXPECT_EQ(kOverBoard, board.GetState(move));
-
-    board.SetState(move, kOpenPosition);
-    EXPECT_EQ(kOverBoard, board.GetState(move));
-  }
+  GetSetStateTest();
 }
 
 TEST_F(BoardTest, GetReadBoardPosition){
@@ -222,6 +277,18 @@ TEST_F(BoardTest, GetBitBoardIndex){
 
 TEST_F(BoardTest, GetBitBoardShift){
   GetBitBoardShift();
+}
+
+TEST_F(BoardTest, IsUndefinedBoardPosition){
+  IsUndefinedBoardPosition();
+}
+
+TEST_F(BoardTest, IsReadOnlyBoardPosition){
+  IsReadOnlyBoardPosition();
+}
+
+TEST_F(BoardTest, IsWriteOnlyBoardPosition){
+  IsWriteOnlyBoardPosition();
 }
 
 TEST_F(BoardTest, IsInBoard)

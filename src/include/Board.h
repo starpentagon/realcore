@@ -29,10 +29,10 @@ typedef std::uint64_t BoardPosition;
 //! @brief 盤面上の点の状態定義
 enum PositionState : BitBoard
 {
-  kOverBoard,     //!< 盤外
-  kBlackStone,    //!< 黒石
-  kWhiteStone,    //!< 白石
-  kOpenPosition   //!< 空点
+  kOverBoard,     //!< 盤外(0b00)
+  kBlackStone,    //!< 黒石(0b01)
+  kWhiteStone,    //!< 白石(0b10)
+  kOpenPosition   //!< 空点(0b11)
 };
 
 // 前方宣言
@@ -50,11 +50,11 @@ public:
   Board(const Board &board);
   Board(const MoveList &move_list);
 
-  //! @brief 盤面状態を取得する
+  //! @brief 盤面状態を取得する(MovePosition版)
   //! @param move 指し手位置
-  //! @pre moveは有効な指し手位置であること
-  //! @note moveがkNullMoveの場合、kOverBoardを返す
-  PositionState GetState(const MovePosition move) const;
+  //! @retval 指定位置の盤面状態
+  //! @note moveが盤内以外の場合、kOverBoardを返す
+  const PositionState GetState(const MovePosition move) const;
 
   //! @brief 盤面状態を設定する(template版)
   //! @param State 設定する盤面状態
@@ -66,6 +66,11 @@ public:
   void SetState(const MovePosition move, const PositionState state);
 
 protected:
+  //! @brief 盤面状態を取得する(BoardPosition版)
+  //! @param board_position 盤面位置
+  //! @retval 指定位置の盤面状態
+  const PositionState GetState(const BoardPosition board_position) const;
+
   //! @brief 指し手位置に対応する読込用の盤面位置を取得する
   //! @param move 指し手位置
   //! @param direction 盤面方向
@@ -90,6 +95,16 @@ protected:
   //! @param board_position BoardPosition
   //! @retval true board_positionが未定義の値  
   const bool IsUndefinedBoardPosition(const BoardPosition board_position) const;
+
+  //! @brief 読込専用のBoardPositionかどうかを判定する
+  //! @param board_position BoardPosition
+  //! @retval true board_positionが読込専用
+  const bool IsReadOnlyBoardPosition(const BoardPosition board_position) const;
+  
+  //! @brief 書込専用のBoardPositionかどうかを判定する
+  //! @param board_position BoardPosition
+  //! @retval true board_positionが書込専用
+  const bool IsWriteOnlyBoardPosition(const BoardPosition board_position) const;
 
   //! @brief BitBoard配列の要素数
   static constexpr size_t kBitBoardNum = 32;

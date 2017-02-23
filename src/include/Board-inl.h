@@ -10,9 +10,23 @@
 namespace realcore
 {
 
-inline PositionState Board::GetState(const MovePosition move) const
+inline const PositionState Board::GetState(const MovePosition move) const
 {
-  return kOpenPosition;
+  const BoardPosition board_position = GetReadBoardPosition(move, kLateralDirection);
+  return GetState(board_position);
+}
+
+inline const PositionState Board::GetState(const BoardPosition board_position) const
+{
+  assert(!IsUndefinedBoardPosition(board_position) && !IsWriteOnlyBoardPosition(board_position));
+
+  const size_t index = GetBitBoardIndex(board_position);
+  const size_t shift = GetBitBoardShift(board_position);
+
+  constexpr BitBoard state_mask = 0b11ULL;    // 下位2bit mask
+  const BitBoard state_bit = (bit_board_[index] >> shift) & state_mask;
+
+  return static_cast<PositionState>(state_bit);
 }
 
 inline const BoardPosition Board::GetReadBoardPosition(const MovePosition move, const BoardDirection direction) const
@@ -90,6 +104,8 @@ inline const BoardPosition Board::GetWriteBoardPosition(const MovePosition move,
 inline const size_t Board::GetBitBoardIndex(const BoardPosition board_position) const
 {
   const size_t index = board_position / 32;
+  assert(index < kBitBoardNum);
+
   return index;
 }
 
@@ -97,6 +113,30 @@ inline const size_t Board::GetBitBoardShift(const BoardPosition board_position) 
 {
   const size_t shift_val = 2 * (board_position % 32);
   return shift_val;
+}
+
+inline const bool Board::IsUndefinedBoardPosition(const BoardPosition board_position) const
+{
+  bool is_undefined = (226 <= board_position && board_position <= 239);
+  is_undefined |= (482 <= board_position && board_position <= 495);
+
+  return is_undefined;
+}
+
+inline const bool Board::IsReadOnlyBoardPosition(const BoardPosition board_position) const
+{
+  bool is_read_only = board_position == 224 || board_position == 480;
+  is_read_only |= board_position == 704 || board_position == 960;
+
+  return is_read_only;
+}
+
+inline const bool Board::IsWriteOnlyBoardPosition(const BoardPosition board_position) const
+{
+  bool is_write_only = board_position == 225 || board_position == 481;
+  is_write_only |= board_position == 736 || board_position == 992;
+
+  return is_write_only;
 }
 
 constexpr bool IsInBoard(const Cordinate x, const Cordinate y)
