@@ -7,7 +7,7 @@ using namespace std;
 
 namespace realcore{
 
-TEST(RealCoreTest, GetBoardDirection)
+TEST(RealCoreTest, GetBoardDirectionTest)
 {
   const auto &direction_list = GetBoardDirection();
 

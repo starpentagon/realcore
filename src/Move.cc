@@ -10,9 +10,9 @@ namespace realcore
 
 const array<MovePosition, kMoveNum>& GetAllMove()
 {
-  static array<MovePosition, kMoveNum> all_move_list{
+  static const array<MovePosition, kMoveNum> all_move_list{
       {
-        #include "MoveDefinition.h"
+        #include "def/MoveDefinition.h"
       }};
 
   return all_move_list;
@@ -20,9 +20,9 @@ const array<MovePosition, kMoveNum>& GetAllMove()
 
 const array<MovePosition, kValidMoveNum>& GetAllValidMove()
 {
-  static array<MovePosition, kValidMoveNum> all_valid_move_list{
+  static const array<MovePosition, kValidMoveNum> all_valid_move_list{
       {
-        #include "InBoardMoveList.h"
+        #include "def/InBoardMoveList.h"
         kNullMove
       }};
 
@@ -31,9 +31,9 @@ const array<MovePosition, kValidMoveNum>& GetAllValidMove()
 
 const array<MovePosition, kInBoardMoveNum>& GetAllInBoardMove()
 {
-  static array<MovePosition, kInBoardMoveNum> all_in_board_move_list{
+  static const array<MovePosition, kInBoardMoveNum> all_in_board_move_list{
       {
-        #include "InBoardMoveList.h"
+        #include "def/InBoardMoveList.h"
       }};
 
   return all_in_board_move_list;

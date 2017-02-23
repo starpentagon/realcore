@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # プロジェクト名
-set(project_name board_test)
+set(project_name board_get_set)
 project(${project_name} CXX)
 
 # ccache
@@ -19,7 +19,7 @@ include_directories($ENV{REALCORE_DIR}/src/include)
 include_directories($ENV{GTEST_DIR}/googletest/include)
 
 # ライブラリパス
-link_directories($ENV{GTEST_DIR}/googlemock/gtest)
+link_directories($ENV{BOOST_DIR}/lib)
 
 # ソースファイル
 add_executable(
@@ -27,13 +27,9 @@ add_executable(
     $ENV{REALCORE_DIR}/src/RealCore.cc
     $ENV{REALCORE_DIR}/src/Move.cc
     $ENV{REALCORE_DIR}/src/Board.cc
-    ../BoardTest.cc
+    ../BoardGetSet.cc
 )
 
 # ライブラリ
-target_link_libraries(${project_name} gtest)
-target_link_libraries(${project_name} gtest_main)
-
-# Ubuntuでgoogle testをビルドするためにはpthreadが必要
-target_link_libraries(${project_name} pthread)
+target_link_libraries(${project_name} boost_program_options)
 
