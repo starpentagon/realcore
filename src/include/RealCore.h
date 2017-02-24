@@ -36,4 +36,6 @@ const std::array<BoardDirection, kBoardDirectionNum>& GetBoardDirection();
 
 }   // namespace realcore
 
+#include "RealCore-inl.h"
+
 #endif

@@ -17,6 +17,7 @@ namespace realcore
 //! @param x x座標
 //! @param y y座標
 //! @retval true 点(x, y)が盤内
+//! @pre x, yは[0, 15]の範囲であること
 constexpr bool IsInBoard(const Cordinate x, const Cordinate y);
 
 //! @brief 盤面の状態
@@ -71,18 +72,6 @@ protected:
   //! @retval 指定位置の盤面状態
   const PositionState GetState(const BoardPosition board_position) const;
 
-  //! @brief 指し手位置に対応する読込用の盤面位置を取得する
-  //! @param move 指し手位置
-  //! @param direction 盤面方向
-  //! @retval 盤面位置
-  const BoardPosition GetReadBoardPosition(const MovePosition move, const BoardDirection direction) const;
-
-  //! @brief 指し手位置に対応する書込用の盤面位置を取得する
-  //! @param move 指し手位置
-  //! @param direction 盤面方向
-  //! @retval 盤面位置
-  const BoardPosition GetWriteBoardPosition(const MovePosition move, const BoardDirection direction) const;
-
   //! @brief BoardPositionに対応するBitBoard配列のindexを取得する
   //! @param board_position BoardPosition
   //! @retval BitBoard配列のindex
@@ -91,20 +80,19 @@ protected:
   //! @brief BoardPositionに対応するシフト量を取得する
   const size_t GetBitBoardShift(const BoardPosition board_position) const;
 
-  //! @brief 未定義であるBoardPositionかどうかを判定する
-  //! @param board_position BoardPosition
-  //! @retval true board_positionが未定義の値  
-  const bool IsUndefinedBoardPosition(const BoardPosition board_position) const;
+  //! @brief (x, y)座標から各方向のBitBoard配列のindexを取得する
+  //! @param x x座標
+  //! @param y y座標
+  //! @param index_list BitBoard配列のindexの格納先
+  //! @pre (x, y)は盤内であること
+  void GetBitBoardIndexList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> *index_list) const;
 
-  //! @brief 読込専用のBoardPositionかどうかを判定する
-  //! @param board_position BoardPosition
-  //! @retval true board_positionが読込専用
-  const bool IsReadOnlyBoardPosition(const BoardPosition board_position) const;
-  
-  //! @brief 書込専用のBoardPositionかどうかを判定する
-  //! @param board_position BoardPosition
-  //! @retval true board_positionが書込専用
-  const bool IsWriteOnlyBoardPosition(const BoardPosition board_position) const;
+  //! @brief (x, y)座標から各方向のBitBoard配列のshift量を取得する
+  //! @param x x座標
+  //! @param y y座標
+  //! @param index_list BitBoard配列のshift量の格納先
+  //! @pre (x, y)は盤内であること
+  void GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> *shift_list) const;
 
   //! @brief BitBoard配列の要素数
   static constexpr size_t kBitBoardNum = 32;

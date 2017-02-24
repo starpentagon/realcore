@@ -1,6 +1,7 @@
 #ifndef BOARD_INL_H
 #define BOARD_INL_H
 
+#include <iostream>
 #include <array>
 #include <cassert>
 
@@ -12,14 +13,14 @@ namespace realcore
 
 inline const PositionState Board::GetState(const MovePosition move) const
 {
-  const BoardPosition board_position = GetReadBoardPosition(move, kLateralDirection);
+  // BoardPositionの横方向とMovePositionは同じ値になる
+  // see /home/subaru/dev/realcore/doc/01_data_definition/board_definition.xlsx
+  const BoardPosition board_position = static_cast<BoardPosition>(move);
   return GetState(board_position);
 }
 
 inline const PositionState Board::GetState(const BoardPosition board_position) const
 {
-  assert(!IsUndefinedBoardPosition(board_position) && !IsWriteOnlyBoardPosition(board_position));
-
   const size_t index = GetBitBoardIndex(board_position);
   const size_t shift = GetBitBoardShift(board_position);
 
@@ -38,129 +39,100 @@ inline void Board::SetState<kOverBoard>(const MovePosition move)
 template<>
 inline void Board::SetState<kBlackStone>(const MovePosition move)
 {
-  const auto &direction_list = GetBoardDirection();
+  Cordinate x, y;
+  GetMoveCordinate(move, &x, &y);
+
+  if(!IsInBoard(x, y)){
+    return;
+  }
+
+  std::array<BoardPosition, kBoardDirectionNum> index_list;   // BitBoard配列のindex
+  GetBitBoardIndexList(x, y, &index_list);
+
+  std::array<BoardPosition, kBoardDirectionNum> shift_list;   // BitBoard配列のshift量
+  GetBitBoardShiftList(x, y, &shift_list);
+
   constexpr BitBoard black_stone_xor_mask = 0b10ULL;    // kOpenPosition(0b11) XOR 0b10(mask) = 0b01(kBlackStone)
 
-  for(const auto direction : direction_list){
-    const BoardPosition board_position = GetWriteBoardPosition(move, direction);
+  for(size_t i=0; i<kBoardDirectionNum; i++){
+    const size_t index = index_list[i];
+    const size_t shift = shift_list[i];
 
-    assert(!IsReadOnlyBoardPosition(board_position));
-    assert(IsWriteOnlyBoardPosition(board_position) || GetState(board_position) == kOpenPosition);
-
-    const size_t index = GetBitBoardIndex(board_position);
-    const size_t shift = GetBitBoardShift(board_position);
-
-    bit_board_[index] ^= (black_stone_xor_mask << shift);
+    bit_board_[index] ^= (black_stone_xor_mask << shift);    
   }
 }
 
 template<>
 inline void Board::SetState<kWhiteStone>(const MovePosition move)
 {
-  const auto &direction_list = GetBoardDirection();
+  Cordinate x, y;
+  GetMoveCordinate(move, &x, &y);
+
+  if(!IsInBoard(x, y)){
+    return;
+  }
+
+  std::array<BoardPosition, kBoardDirectionNum> index_list;   // BitBoard配列のindex
+  GetBitBoardIndexList(x, y, &index_list);
+
+  std::array<BoardPosition, kBoardDirectionNum> shift_list;   // BitBoard配列のshift量
+  GetBitBoardShiftList(x, y, &shift_list);
+  
   constexpr BitBoard white_stone_xor_mask = 0b01ULL;    // kOpenPosition(0b11) XOR 0b01(mask) = 0b10(kWhiteStone)
 
-  for(const auto direction : direction_list){
-    const BoardPosition board_position = GetWriteBoardPosition(move, direction);
+  for(size_t i=0; i<kBoardDirectionNum; i++){
+    const size_t index = index_list[i];
+    const size_t shift = shift_list[i];
 
-    assert(!IsReadOnlyBoardPosition(board_position));
-    assert(IsWriteOnlyBoardPosition(board_position) || GetState(board_position) == kOpenPosition);
-
-    const size_t index = GetBitBoardIndex(board_position);
-    const size_t shift = GetBitBoardShift(board_position);
-
-    bit_board_[index] ^= (white_stone_xor_mask << shift);
+    bit_board_[index] ^= (white_stone_xor_mask << shift);    
   }
 }
 
 template<>
 inline void Board::SetState<kOpenPosition>(const MovePosition move)
 {
-  const auto &direction_list = GetBoardDirection();
+  Cordinate x, y;
+  GetMoveCordinate(move, &x, &y);
+
+  if(!IsInBoard(x, y)){
+    return;
+  }
+
+  std::array<BoardPosition, kBoardDirectionNum> index_list;   // BitBoard配列のindex
+  GetBitBoardIndexList(x, y, &index_list);
+
+  std::array<BoardPosition, kBoardDirectionNum> shift_list;   // BitBoard配列のshift量
+  GetBitBoardShiftList(x, y, &shift_list);
+  
   constexpr BitBoard open_position_or_mask = 0b11ULL;    // Any(0b**) OR 0b11(mask) = 0b11(kOpenPosition)
 
-  for(const auto direction : direction_list){
-    const BoardPosition board_position = GetWriteBoardPosition(move, direction);
-
-    assert(!IsUndefinedBoardPosition(board_position) && !IsReadOnlyBoardPosition(board_position));
-
-    const size_t index = GetBitBoardIndex(board_position);
-    const size_t shift = GetBitBoardShift(board_position);
+  for(size_t i=0; i<kBoardDirectionNum; i++){
+    const size_t index = index_list[i];
+    const size_t shift = shift_list[i];
 
     bit_board_[index] |= (open_position_or_mask << shift);
   }
 }
 
-inline const BoardPosition Board::GetReadBoardPosition(const MovePosition move, const BoardDirection direction) const
+inline void Board::SetState(const MovePosition move, const PositionState state)
 {
-  typedef std::array<std::uint8_t, kMoveNum> BoardPositionTable;
-
-  // 指し手位置に対応する読込用BoardPosition Table
-  static const BoardPositionTable read_board_position_lateral{{
-    #include "def/ReadBoardPositionLateral.h"
-  }};
-
-  static const BoardPositionTable read_board_position_vertical{{
-    #include "def/ReadBoardPositionVertical.h"
-  }};
-
-  static const BoardPositionTable read_board_position_left_diagonal{{
-    #include "def/ReadBoardPositionLeftDiagonal.h"
-  }};
-
-  static const BoardPositionTable read_board_position_right_diagonal{{
-    #include "def/ReadBoardPositionRightDiagonal.h"
-  }};
-
-  static const std::array<const BoardPositionTable *, kBoardDirectionNum> read_board_position{{
-    &read_board_position_lateral, &read_board_position_vertical, &read_board_position_left_diagonal, &read_board_position_right_diagonal
-  }};
-
-  // 各方向のoffset
-  static const std::array<BoardPosition, kBoardDirectionNum> direction_offset{{
-    1, 257, 513, 769
-  }};
-
-  const BoardPositionTable &board_position_table = *(read_board_position[direction]);
-  const BoardPosition board_position = board_position_table[move] + direction_offset[direction];
-
-  return board_position;
-}
-
-inline const BoardPosition Board::GetWriteBoardPosition(const MovePosition move, const BoardDirection direction) const
-{
-  typedef std::array<std::uint8_t, kMoveNum> BoardPositionTable;
-
-  // 指し手位置に対応する書込用BoardPosition Table
-  static const BoardPositionTable write_board_position_lateral{{
-    #include "def/WriteBoardPositionLateral.h"
-  }};
-
-  static const BoardPositionTable write_board_position_vertical{{
-    #include "def/WriteBoardPositionVertical.h"
-  }};
+  switch(state){
+  case kOverBoard:
+    SetState<kOverBoard>(move);
+    break;
   
-  static const BoardPositionTable write_board_position_left_diagonal{{
-    #include "def/WriteBoardPositionLeftDiagonal.h"
-  }};
+  case kBlackStone:
+    SetState<kBlackStone>(move);
+    break;
 
-  static const BoardPositionTable write_board_position_right_diagonal{{
-    #include "def/WriteBoardPositionRightDiagonal.h"
-  }};
+  case kWhiteStone:
+    SetState<kWhiteStone>(move);
+    break;
 
-  static const std::array<const BoardPositionTable *, kBoardDirectionNum> write_board_position{{
-    &write_board_position_lateral, &write_board_position_vertical, &write_board_position_left_diagonal, &write_board_position_right_diagonal
-  }};
-
-  // 各方向のoffset
-  static const std::array<BoardPosition, kBoardDirectionNum> direction_offset{{
-    1, 257, 513, 769
-  }};
-
-  const BoardPositionTable &board_position_table = *(write_board_position[direction]);
-  const BoardPosition board_position = board_position_table[move] + direction_offset[direction];
-
-  return board_position;
+  case kOpenPosition:
+    SetState<kOpenPosition>(move);
+    break;
+  }
 }
 
 inline const size_t Board::GetBitBoardIndex(const BoardPosition board_position) const
@@ -177,34 +149,33 @@ inline const size_t Board::GetBitBoardShift(const BoardPosition board_position) 
   return shift_val;
 }
 
-inline const bool Board::IsUndefinedBoardPosition(const BoardPosition board_position) const
+inline void Board::GetBitBoardIndexList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> *index_list) const
 {
-  bool is_undefined = (226 <= board_position && board_position <= 239);
-  is_undefined |= (482 <= board_position && board_position <= 495);
+  assert(IsInBoard(x, y));
 
-  return is_undefined;
+  (*index_list)[kLateralDirection] = y / 2;
+  (*index_list)[kVerticalDirection] = x / 2 + 8;
+  (*index_list)[kLeftDiagonalDirection] = ((x + y - 2) % 16) / 2 + 16;
+  (*index_list)[kRightDiagonalDirection] = ((y - x + 14) % 16) / 2 + 24;
 }
 
-inline const bool Board::IsReadOnlyBoardPosition(const BoardPosition board_position) const
+inline void Board::GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> *shift_list) const
 {
-  bool is_read_only = board_position == 224 || board_position == 480;
-  is_read_only |= board_position == 704 || board_position == 960;
+  assert(IsInBoard(x, y));
 
-  return is_read_only;
-}
-
-inline const bool Board::IsWriteOnlyBoardPosition(const BoardPosition board_position) const
-{
-  bool is_write_only = board_position == 225 || board_position == 481;
-  is_write_only |= board_position == 736 || board_position == 992;
-
-  return is_write_only;
+  (*shift_list)[kLateralDirection] = 2 * x + 32 * (y % 2);
+  (*shift_list)[kVerticalDirection] = 2 * y + 32 * (x % 2);
+  (*shift_list)[kLeftDiagonalDirection] = 2 * (y - 1) + 32 * ((x + y) % 2);
+  (*shift_list)[kRightDiagonalDirection] = 2 * (y - 1) + 32 * ((x + y) % 2);
 }
 
 constexpr bool IsInBoard(const Cordinate x, const Cordinate y)
 {
-  const bool x_in_board = 1 <= x && x <= kBoardLineNum;
-  const bool y_in_board = 1 <= y && y <= kBoardLineNum;
+  assert(0 <= x && x <= static_cast<Cordinate>(kBoardLineNum));
+  assert(0 <= y && y <= static_cast<Cordinate>(kBoardLineNum));
+
+  const bool x_in_board = x != 0;
+  const bool y_in_board = y != 0;
 
   return x_in_board && y_in_board;
 }
