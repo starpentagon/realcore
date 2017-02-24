@@ -1,3 +1,4 @@
+#include "Move.h"
 #include "Board.h"
 #include "MoveList.h"
 
@@ -8,8 +9,7 @@ namespace realcore
 
 MoveList::MoveList()
 {
-  const size_t reserve_size = CalcInitialReserveSize(0);
-  move_list_.reserve(reserve_size);
+  ReserveInitial(0);
 }
 
 MoveList::MoveList(const MoveList &move_list)
@@ -22,13 +22,10 @@ MoveList::MoveList(const MovePosition move)
   *this = move;
 }
 
-const size_t MoveList::CalcInitialReserveSize(const size_t initial_list_size) const
+void MoveList::ReserveInitial(const size_t initial_list_size)
 {
-  // 領域の再確保を抑制するため初期化時のリストより長めの領域を確保しておく
-  size_t reserve_list_size = initial_list_size + 16;
-  reserve_list_size += 8 - (reserve_list_size % 8);   // 「8 - (8で割った余り)」を加算して8の倍数にする
-
-  return reserve_list_size;
+  const size_t reserve_size = CalcInitialReserveSize(initial_list_size);
+  move_list_.reserve(reserve_size);
 }
 
 string MoveList::str() const
@@ -69,6 +66,9 @@ bool GetMoveList(const string &move_string, MoveList *move_list)
     return false;
   }
 
+  const size_t initial_move_length = str_length / 2;
+  move_list->ReserveInitial(initial_move_length);
+
   bool valid_str_format = true;   // 与えられた文字列が[a-o][a-o]形式かのフラグ
 
   for(size_t i=0; i<str_length; i+=2){
@@ -80,10 +80,13 @@ bool GetMoveList(const string &move_string, MoveList *move_list)
       continue;
     }
 
-    const Cordinate x = first_char - 'a' + 1;
-    const Cordinate y = second_char - 'a' + 1;
+    Cordinate x = first_char - 'a' + 1;
+    Cordinate y = second_char - 'a' + 1;
+    
+    const bool x_in_board = 1 <= x && x <= kBoardLineNum;
+    const bool y_in_board = 1 <= y && y <= kBoardLineNum;
 
-    if(!IsInBoard(x, y))
+    if(!(x_in_board && y_in_board))
     {
       valid_str_format = false;
       break;

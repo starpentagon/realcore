@@ -8,11 +8,10 @@
 #include <vector>
 #include <string>
 
-#include "Move.h"
-
 namespace realcore{
   class MoveList;
   class MoveListTest;
+  enum MovePosition : std::uint8_t;
 
   //! @brief [a-o][a-o]形式の文字列に対応する指し手リストを生成する
   //! @param move_string [a-o][a-o]形式の文字列
@@ -76,6 +75,12 @@ namespace realcore{
     //! @retval 指し手リストを[a-o][a-o]形式に変換した文字列
     //! @pre 指し手は有効な指し手であること
     std::string str() const;
+
+    //! @brief 初期化時の領域を確保する
+    //! @param initial_size 初期化時の指し手リスト長
+    //! @note 事前に領域を確保することで領域の再確保を抑制しパフォーマンスを改善できる
+    //! @note 領域サイズはCalcInitialReserveSize()で算出する(initial_list_sizeより少し大きい領域が確保される)
+    void ReserveInitial(const size_t initial_list_size);
 
   private:
     //! @brief 初期化時に確保する領域長さを算出する

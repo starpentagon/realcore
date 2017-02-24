@@ -2,6 +2,7 @@
 
 #include "gtest/gtest.h"
 
+#include "Move.h"
 #include "MoveList.h"
 
 using namespace std;
@@ -12,11 +13,19 @@ class MoveListTest
 : public ::testing::Test
 {
 public:
-  void DefaultConstructor(){
+  void DefaultConstructorTest(){
     MoveList move_list;
     
     EXPECT_TRUE(move_list.move_list_.empty());
     EXPECT_EQ(24, move_list.move_list_.capacity());
+  }
+
+  void ReserveInitialTest()
+  {
+    MoveList move_list;
+
+    move_list.ReserveInitial(8);
+    EXPECT_EQ(32, move_list.move_list_.capacity());
   }
 
   void CalcInitialReserveSizeTest()
@@ -34,12 +43,17 @@ public:
   }
 };
 
-TEST_F(MoveListTest, DefaultConstructor)
+TEST_F(MoveListTest, DefaultConstructorTest)
 {
-  DefaultConstructor();
+  DefaultConstructorTest();
 }
 
-TEST_F(MoveListTest, CopyConstructorMoveList)
+TEST_F(MoveListTest, ReserveInitialTest)
+{
+  ReserveInitialTest();
+}
+
+TEST_F(MoveListTest, CopyConstructorMoveListTest)
 {
   MoveList move_list;
   move_list += kMoveAA;
@@ -50,7 +64,7 @@ TEST_F(MoveListTest, CopyConstructorMoveList)
   EXPECT_TRUE(move_list == copied_list);
 }
 
-TEST_F(MoveListTest, CopyConstructorMovePosition)
+TEST_F(MoveListTest, CopyConstructorMovePositionTest)
 {
   MoveList move_list;
   move_list += kMoveAA;
@@ -60,7 +74,7 @@ TEST_F(MoveListTest, CopyConstructorMovePosition)
   EXPECT_TRUE(move_list == copied_list);  
 }
 
-TEST_F(MoveListTest, ConcatOper)
+TEST_F(MoveListTest, ConcatOperTest)
 {
   MoveList move_list;
 
@@ -78,7 +92,7 @@ TEST_F(MoveListTest, ConcatOper)
   EXPECT_EQ(kNullMove, move_list[1]);
 }
 
-TEST_F(MoveListTest, AssignOper)
+TEST_F(MoveListTest, AssignOperTest)
 {
   MoveList list_1, list_2;
 
@@ -97,7 +111,7 @@ TEST_F(MoveListTest, AssignOper)
   EXPECT_TRUE(list_1 == list_3);
 }
 
-TEST_F(MoveListTest, CompareOper)
+TEST_F(MoveListTest, CompareOperTest)
 {
   MoveList list_1, list_2;
 
@@ -113,7 +127,7 @@ TEST_F(MoveListTest, CompareOper)
   EXPECT_FALSE(list_1 != list_2);
 }
 
-TEST_F(MoveListTest, SubscriptOper)
+TEST_F(MoveListTest, SubscriptOperTest)
 {
   MoveList move_list;
 
@@ -131,7 +145,7 @@ TEST_F(MoveListTest, CalcInitialReserveSizeTest)
   CalcInitialReserveSizeTest();
 }
 
-TEST_F(MoveListTest, size)
+TEST_F(MoveListTest, sizeTest)
 {
   MoveList move_list;
   EXPECT_EQ(0, move_list.size());
@@ -140,7 +154,7 @@ TEST_F(MoveListTest, size)
   EXPECT_EQ(1, move_list.size());
 }
 
-TEST_F(MoveListTest, clear)
+TEST_F(MoveListTest, clearTest)
 {
   MoveList move_list;
 
@@ -151,7 +165,7 @@ TEST_F(MoveListTest, clear)
   EXPECT_TRUE(move_list == empty);  
 }
 
-TEST_F(MoveListTest, empty)
+TEST_F(MoveListTest, emptyTest)
 {
   MoveList move_list;
   EXPECT_TRUE(move_list.empty());
@@ -163,7 +177,7 @@ TEST_F(MoveListTest, empty)
   EXPECT_TRUE(move_list.empty());
 }
 
-TEST_F(MoveListTest, str)
+TEST_F(MoveListTest, strTest)
 {
   MoveList move_list;
 
@@ -179,7 +193,7 @@ TEST_F(MoveListTest, str)
   EXPECT_EQ("abhhpp", move_list.str());
 }
 
-TEST_F(MoveListTest, GetMoveList)
+TEST_F(MoveListTest, GetMoveListTest)
 {
   {
     MoveList move_list;

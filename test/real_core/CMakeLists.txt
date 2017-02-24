@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # プロジェクト名
-set(project_name board_test)
+set(project_name real_core_test)
 project(${project_name} CXX)
 
 # ccache
@@ -25,9 +25,7 @@ link_directories($ENV{GTEST_DIR}/googlemock/gtest)
 add_executable(
     ${project_name}
     $ENV{REALCORE_DIR}/src/RealCore.cc
-    $ENV{REALCORE_DIR}/src/Move.cc
-    $ENV{REALCORE_DIR}/src/Board.cc
-    ../BoardTest.cc
+    ../RealCoreTest.cc
 )
 
 # ライブラリ
