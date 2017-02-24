@@ -11,25 +11,4 @@ Board::Board()
 {
 }
 
-void Board::SetState(const MovePosition move, const PositionState state)
-{
-  switch(state){
-  case kOverBoard:
-    SetState<kOverBoard>(move);
-    break;
-  
-  case kBlackStone:
-    SetState<kBlackStone>(move);
-    break;
-
-  case kWhiteStone:
-    SetState<kWhiteStone>(move);
-    break;
-
-  case kOpenPosition:
-    SetState<kOpenPosition>(move);
-    break;
-  }
-}
-
 }   // namespace realcore

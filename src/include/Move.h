@@ -64,6 +64,7 @@ const bool IsValidMove(const MovePosition move);
 //! @param move 指し手位置
 //! @param x x座標の格納先
 //! @param y y座標の格納先
+//! @note x, yともに[0, 15]であることを保証する
 void GetMoveCordinate(const MovePosition move, Cordinate * const x, Cordinate * const y);
 
 //! @brief (x, y)座標からMovePositionを求める
@@ -74,5 +75,7 @@ void GetMoveCordinate(const MovePosition move, Cordinate * const x, Cordinate * 
 const MovePosition GetMove(const Cordinate x, const Cordinate y);
 
 }   // namespace　realcore
+
+#include "Move-inl.h"
 
 #endif // MOVE_H

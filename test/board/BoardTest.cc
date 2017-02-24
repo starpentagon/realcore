@@ -33,7 +33,6 @@ public:
   void GetSetStateTest(){
     Board board;
     const auto &all_move_list = GetAllMove();
-    const auto &direction_list = GetBoardDirection();
 
     // 黒石設定
     for(auto set_move : all_move_list){
@@ -46,10 +45,7 @@ public:
           check_state = set_move == get_move ? kBlackStone : kOpenPosition;
         }
 
-        for(auto direction : direction_list){
-          const BoardPosition board_position = board.GetReadBoardPosition(get_move, direction);
-          EXPECT_EQ(check_state, board.GetState(board_position));
-        }
+        EXPECT_EQ(check_state, board.GetState(get_move));
       }
 
       board.SetState<kOpenPosition>(set_move);
@@ -66,94 +62,80 @@ public:
           check_state = set_move == get_move ? kWhiteStone : kOpenPosition;
         }
 
-        for(auto direction : direction_list){
-          const BoardPosition board_position = board.GetReadBoardPosition(get_move, direction);
-          EXPECT_EQ(check_state, board.GetState(board_position));
-        }
+        EXPECT_EQ(check_state, board.GetState(get_move));
       }
 
       board.SetState<kOpenPosition>(set_move);
     }
   }
 
-  void GetReadBoardPositionTest(){
-    // 無効な手、Pass、未定義は読込専用BoardPositionになるかチェック
-    const auto &move_list = GetAllMove();
-    const Board board;
-
-    for(auto move : move_list){
-      if(IsInBoardMove(move)){
-        continue;
-      }
-
-      EXPECT_EQ(224, board.GetReadBoardPosition(move, kLateralDirection));
-      EXPECT_EQ(480, board.GetReadBoardPosition(move, kVerticalDirection));
-      EXPECT_EQ(704, board.GetReadBoardPosition(move, kLeftDiagonalDirection));
-      EXPECT_EQ(960, board.GetReadBoardPosition(move, kRightDiagonalDirection));
-    }
-
-    // 盤内の手
+  void GetBitBoardIndexListTest()
+  {
+    Board board;
     {
-      constexpr MovePosition move = kMoveAA;
-      EXPECT_EQ(31, board.GetReadBoardPosition(move, kLateralDirection));
-      EXPECT_EQ(287, board.GetReadBoardPosition(move, kVerticalDirection));
-      EXPECT_EQ(543, board.GetReadBoardPosition(move, kLeftDiagonalDirection));
-      EXPECT_EQ(1023, board.GetReadBoardPosition(move, kRightDiagonalDirection));
+      constexpr Cordinate x = 1, y = 1;
+      array<size_t, kBoardDirectionNum> index_list;
+      board.GetBitBoardIndexList(x, y, &index_list);
+
+      EXPECT_EQ(0, index_list[kLateralDirection]);
+      EXPECT_EQ(8, index_list[kVerticalDirection]);
+      EXPECT_EQ(16, index_list[kLeftDiagonalDirection]);
+      EXPECT_EQ(31, index_list[kRightDiagonalDirection]);
     }
     {
-      constexpr MovePosition move = kMoveHI;
-      EXPECT_EQ(152, board.GetReadBoardPosition(move, kLateralDirection));
-      EXPECT_EQ(359, board.GetReadBoardPosition(move, kVerticalDirection));
-      EXPECT_EQ(744, board.GetReadBoardPosition(move, kLeftDiagonalDirection));
-      EXPECT_EQ(1000, board.GetReadBoardPosition(move, kRightDiagonalDirection));
-    }
+      constexpr Cordinate x = 8, y = 9;
+      array<size_t, kBoardDirectionNum> index_list;
+      board.GetBitBoardIndexList(x, y, &index_list);
+
+      EXPECT_EQ(4, index_list[kLateralDirection]);
+      EXPECT_EQ(12, index_list[kVerticalDirection]);
+      EXPECT_EQ(23, index_list[kLeftDiagonalDirection]);
+      EXPECT_EQ(31, index_list[kRightDiagonalDirection]);
+    }      
     {
-      constexpr MovePosition move = kMoveOO;
-      EXPECT_EQ(241, board.GetReadBoardPosition(move, kLateralDirection));
-      EXPECT_EQ(497, board.GetReadBoardPosition(move, kVerticalDirection));
-      EXPECT_EQ(721, board.GetReadBoardPosition(move, kLeftDiagonalDirection));
-      EXPECT_EQ(1009, board.GetReadBoardPosition(move, kRightDiagonalDirection));
-    }
+      constexpr Cordinate x = 15, y = 10;
+      array<size_t, kBoardDirectionNum> index_list;
+      board.GetBitBoardIndexList(x, y, &index_list);
+
+      EXPECT_EQ(5, index_list[kLateralDirection]);
+      EXPECT_EQ(15, index_list[kVerticalDirection]);
+      EXPECT_EQ(19, index_list[kLeftDiagonalDirection]);
+      EXPECT_EQ(28, index_list[kRightDiagonalDirection]);
+    }      
   }
 
-  void GetWriteBoardPositionTest(){
-    // 無効な手、Pass、未定義は読込専用BoardPositionになるかチェック
-    const auto &move_list = GetAllMove();
-    const Board board;
-
-    for(auto move : move_list){
-      if(IsInBoardMove(move)){
-        continue;
-      }
-
-      EXPECT_EQ(225, board.GetWriteBoardPosition(move, kLateralDirection));
-      EXPECT_EQ(481, board.GetWriteBoardPosition(move, kVerticalDirection));
-      EXPECT_EQ(736, board.GetWriteBoardPosition(move, kLeftDiagonalDirection));
-      EXPECT_EQ(992, board.GetWriteBoardPosition(move, kRightDiagonalDirection));
-    }
-
-    // 盤内の手
+  void GetBitBoardShiftListTest(){
+    Board board;
     {
-      constexpr MovePosition move = kMoveAA;
-      EXPECT_EQ(31, board.GetWriteBoardPosition(move, kLateralDirection));
-      EXPECT_EQ(287, board.GetWriteBoardPosition(move, kVerticalDirection));
-      EXPECT_EQ(543, board.GetWriteBoardPosition(move, kLeftDiagonalDirection));
-      EXPECT_EQ(1023, board.GetWriteBoardPosition(move, kRightDiagonalDirection));
+      constexpr Cordinate x = 1, y = 1;
+      array<size_t, kBoardDirectionNum> shift_list;
+      board.GetBitBoardShiftList(x, y, &shift_list);
+
+      EXPECT_EQ(34, shift_list[kLateralDirection]);
+      EXPECT_EQ(34, shift_list[kVerticalDirection]);
+      EXPECT_EQ(0, shift_list[kLeftDiagonalDirection]);
+      EXPECT_EQ(0, shift_list[kRightDiagonalDirection]);
     }
     {
-      constexpr MovePosition move = kMoveHI;
-      EXPECT_EQ(152, board.GetWriteBoardPosition(move, kLateralDirection));
-      EXPECT_EQ(359, board.GetWriteBoardPosition(move, kVerticalDirection));
-      EXPECT_EQ(744, board.GetWriteBoardPosition(move, kLeftDiagonalDirection));
-      EXPECT_EQ(1000, board.GetWriteBoardPosition(move, kRightDiagonalDirection));
+      constexpr Cordinate x = 8, y = 9;
+      array<size_t, kBoardDirectionNum> shift_list;
+      board.GetBitBoardShiftList(x, y, &shift_list);
+
+      EXPECT_EQ(48, shift_list[kLateralDirection]);
+      EXPECT_EQ(18, shift_list[kVerticalDirection]);
+      EXPECT_EQ(48, shift_list[kLeftDiagonalDirection]);
+      EXPECT_EQ(48, shift_list[kRightDiagonalDirection]);
     }
     {
-      constexpr MovePosition move = kMoveOO;
-      EXPECT_EQ(241, board.GetWriteBoardPosition(move, kLateralDirection));
-      EXPECT_EQ(497, board.GetWriteBoardPosition(move, kVerticalDirection));
-      EXPECT_EQ(721, board.GetWriteBoardPosition(move, kLeftDiagonalDirection));
-      EXPECT_EQ(1009, board.GetWriteBoardPosition(move, kRightDiagonalDirection));
-    }
+      constexpr Cordinate x = 15, y = 10;
+      array<size_t, kBoardDirectionNum> shift_list;
+      board.GetBitBoardShiftList(x, y, &shift_list);
+
+      EXPECT_EQ(30, shift_list[kLateralDirection]);
+      EXPECT_EQ(52, shift_list[kVerticalDirection]);
+      EXPECT_EQ(50, shift_list[kLeftDiagonalDirection]);
+      EXPECT_EQ(50, shift_list[kRightDiagonalDirection]);
+    }    
   }
 
   void GetBitBoardIndexTest(){
@@ -208,50 +190,6 @@ public:
       EXPECT_EQ(shift_val, board.GetBitBoardShift(i));
     }
   }
-
-  void IsUndefinedBoardPositionTest(){
-    Board board;
-
-    for(size_t i=0; i<1024; i++){
-      bool is_undefined = (226 <= i && i <= 239);
-      is_undefined |= (482 <= i && i <= 495);
-
-      if(is_undefined){
-        EXPECT_TRUE(board.IsUndefinedBoardPosition(i));
-      }else{
-        EXPECT_FALSE(board.IsUndefinedBoardPosition(i));
-      }
-    }
-  }
-
-  void IsReadOnlyBoardPositionTest(){
-    Board board;
-
-    for(size_t i=0; i<1024; i++){
-      const bool is_read_only = i == 224 || i == 480 || i == 704 || i == 960;
-
-      if(is_read_only){
-        EXPECT_TRUE(board.IsReadOnlyBoardPosition(i));
-      }else{
-        EXPECT_FALSE(board.IsReadOnlyBoardPosition(i));
-      }
-    }
-  }
-
-  void IsWriteOnlyBoardPositionTest(){
-    Board board;
-
-    for(size_t i=0; i<1024; i++){
-      const bool is_write_only = i == 225 || i == 481 || i == 736 || i == 992;
-
-      if(is_write_only){
-        EXPECT_TRUE(board.IsWriteOnlyBoardPosition(i));
-      }else{
-        EXPECT_FALSE(board.IsWriteOnlyBoardPosition(i));
-      }
-    }
-  }
-
 };
 
 TEST_F(BoardTest, DefaultConstructorTest){
@@ -263,14 +201,6 @@ TEST_F(BoardTest, GetSetStateTest)
   GetSetStateTest();
 }
 
-TEST_F(BoardTest, GetReadBoardPositionTest){
-  GetReadBoardPositionTest();
-}
-
-TEST_F(BoardTest, GetWriteBoardPositionTest){
-  GetWriteBoardPositionTest();
-}
-
 TEST_F(BoardTest, GetBitBoardIndexTest){
   GetBitBoardIndexTest();
 }
@@ -279,16 +209,12 @@ TEST_F(BoardTest, GetBitBoardShiftTest){
   GetBitBoardShiftTest();
 }
 
-TEST_F(BoardTest, IsUndefinedBoardPositionTest){
-  IsUndefinedBoardPositionTest();
+TEST_F(BoardTest, GetBitBoardIndexListTest){
+  GetBitBoardIndexListTest();
 }
 
-TEST_F(BoardTest, IsReadOnlyBoardPositionTest){
-  IsReadOnlyBoardPositionTest();
-}
-
-TEST_F(BoardTest, IsWriteOnlyBoardPositionTest){
-  IsWriteOnlyBoardPositionTest();
+TEST_F(BoardTest, GetBitBoardShiftListTest){
+  GetBitBoardShiftListTest();
 }
 
 TEST_F(BoardTest, IsInBoardTest)
@@ -297,8 +223,6 @@ TEST_F(BoardTest, IsInBoardTest)
   EXPECT_FALSE(IsInBoard(0, 1));
   EXPECT_TRUE(IsInBoard(1, 1));
   EXPECT_TRUE(IsInBoard(15, 15));
-  EXPECT_FALSE(IsInBoard(15, 16));
-  EXPECT_FALSE(IsInBoard(16, 15));
 }
 
 }   // namespace realcore

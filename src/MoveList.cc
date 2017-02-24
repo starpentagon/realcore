@@ -80,10 +80,13 @@ bool GetMoveList(const string &move_string, MoveList *move_list)
       continue;
     }
 
-    const Cordinate x = first_char - 'a' + 1;
-    const Cordinate y = second_char - 'a' + 1;
+    Cordinate x = first_char - 'a' + 1;
+    Cordinate y = second_char - 'a' + 1;
+    
+    const bool x_in_board = 1 <= x && x <= kBoardLineNum;
+    const bool y_in_board = 1 <= y && y <= kBoardLineNum;
 
-    if(!IsInBoard(x, y))
+    if(!(x_in_board && y_in_board))
     {
       valid_str_format = false;
       break;
