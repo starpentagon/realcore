@@ -46,10 +46,10 @@ inline void Board::SetState<kBlackStone>(const MovePosition move)
     return;
   }
 
-  std::array<BoardPosition, kBoardDirectionNum> index_list;   // BitBoard配列のindex
+  std::array<size_t, kBoardDirectionNum> index_list;   // BitBoard配列のindex
   GetBitBoardIndexList(x, y, &index_list);
 
-  std::array<BoardPosition, kBoardDirectionNum> shift_list;   // BitBoard配列のshift量
+  std::array<size_t, kBoardDirectionNum> shift_list;   // BitBoard配列のshift量
   GetBitBoardShiftList(x, y, &shift_list);
 
   constexpr BitBoard black_stone_xor_mask = 0b10ULL;    // kOpenPosition(0b11) XOR 0b10(mask) = 0b01(kBlackStone)
@@ -72,10 +72,10 @@ inline void Board::SetState<kWhiteStone>(const MovePosition move)
     return;
   }
 
-  std::array<BoardPosition, kBoardDirectionNum> index_list;   // BitBoard配列のindex
+  std::array<size_t, kBoardDirectionNum> index_list;   // BitBoard配列のindex
   GetBitBoardIndexList(x, y, &index_list);
 
-  std::array<BoardPosition, kBoardDirectionNum> shift_list;   // BitBoard配列のshift量
+  std::array<size_t, kBoardDirectionNum> shift_list;   // BitBoard配列のshift量
   GetBitBoardShiftList(x, y, &shift_list);
   
   constexpr BitBoard white_stone_xor_mask = 0b01ULL;    // kOpenPosition(0b11) XOR 0b01(mask) = 0b10(kWhiteStone)
@@ -98,10 +98,10 @@ inline void Board::SetState<kOpenPosition>(const MovePosition move)
     return;
   }
 
-  std::array<BoardPosition, kBoardDirectionNum> index_list;   // BitBoard配列のindex
+  std::array<size_t, kBoardDirectionNum> index_list;   // BitBoard配列のindex
   GetBitBoardIndexList(x, y, &index_list);
 
-  std::array<BoardPosition, kBoardDirectionNum> shift_list;   // BitBoard配列のshift量
+  std::array<size_t, kBoardDirectionNum> shift_list;   // BitBoard配列のshift量
   GetBitBoardShiftList(x, y, &shift_list);
   
   constexpr BitBoard open_position_or_mask = 0b11ULL;    // Any(0b**) OR 0b11(mask) = 0b11(kOpenPosition)
