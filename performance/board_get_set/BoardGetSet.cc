@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <random>
 #include <chrono>
+#include <array>
 
 #include <boost/program_options.hpp>
 
@@ -42,32 +43,107 @@ int main(int argc, char* argv[])
 
   const uint64_t iteration_count = arg_map["count"].as<uint64_t>();
   auto in_board_move = GetAllInBoardMove();
+
+  // SetState: kBlackStone
   shuffle(in_board_move.begin(), in_board_move.end(), mt19937_64());
 
-  auto start_time = chrono::system_clock::now();
-
-  for(size_t i=0; i<iteration_count; i++)
   {
-    Board board;
+    auto start_time = chrono::system_clock::now();
+
+    for(size_t i=0; i<iteration_count; i++)
+    {
+      Board board;
+
+      for(const auto move : in_board_move){
+        board.SetState<kBlackStone>(move);
+      }
+    }
+
+    auto elapsed_time = chrono::system_clock::now() - start_time;
+    
+    cout << "SetState<kBlackStone>:\t";
+    cout << chrono::duration_cast<chrono::milliseconds>(elapsed_time).count();
+    cout << " ms" << endl;
+  }
+  {
+    auto start_time = chrono::system_clock::now();
+
+    for(size_t i=0; i<iteration_count; i++)
+    {
+      Board board;
+
+      for(const auto move : in_board_move){
+        board.SetState<kWhiteStone>(move);
+      }
+    }
+
+    auto elapsed_time = chrono::system_clock::now() - start_time;
+    
+    cout << "SetState<kWhiteStone>:\t";
+    cout << chrono::duration_cast<chrono::milliseconds>(elapsed_time).count();
+    cout << " ms" << endl;
+  }
+  {
+    auto start_time = chrono::system_clock::now();
     PositionState state = kBlackStone;
 
-    for(const auto move : in_board_move){
-      board.SetState(move, state);
-      
-      state = board.GetState(move);
-      state = static_cast<PositionState>(3 - state);
+    for(size_t i=0; i<iteration_count; i++)
+    {
+      Board board;
+
+      for(const auto move : in_board_move){
+        board.SetState(move, state);
+        state = static_cast<PositionState>(3 - state);
+      }
     }
 
-    for(const auto move : in_board_move){
-      board.SetState<kOpenPosition>(move);
-    }
+    auto elapsed_time = chrono::system_clock::now() - start_time;
+    
+    cout << "SetState(Alternately):\t";
+    cout << chrono::duration_cast<chrono::milliseconds>(elapsed_time).count();
+    cout << " ms" << endl;
   }
+  {
+    auto start_time = chrono::system_clock::now();
 
-  auto elapsed_time = chrono::system_clock::now() - start_time;
-  
-  cout << "elapsed time: ";
-  cout << chrono::duration_cast<chrono::milliseconds>(elapsed_time).count();
-  cout << " ms" << endl;
+    for(size_t i=0; i<iteration_count; i++)
+    {
+      Board board;
+
+      for(const auto move : in_board_move){
+        board.SetState<kOpenPosition>(move);
+      }
+    }
+
+    auto elapsed_time = chrono::system_clock::now() - start_time;
+    
+    cout << "SetState<kOpenPosition>:\t";
+    cout << chrono::duration_cast<chrono::milliseconds>(elapsed_time).count();
+    cout << " ms" << endl;
+  }
+  {
+    // 状態取得のみだと最適化された際に不要な参照として削除されることがあるため簡単な集計＆結果表示を行う
+    auto start_time = chrono::system_clock::now();
+    std::array<uint64_t, 4> state_count{0};
+
+    for(size_t i=0; i<iteration_count; i++)
+    {
+      Board board;
+
+      for(const auto move : in_board_move){
+        const auto state = board.GetState(move);
+        ++state_count[state];
+      }
+    }
+
+    auto elapsed_time = chrono::system_clock::now() - start_time;
+    
+    cout << "GetState:\t";
+    cout << chrono::duration_cast<chrono::milliseconds>(elapsed_time).count();
+    cout << " ms" << endl;
+
+    cout << "Summary result: " << state_count[0] << "," << state_count[1] << "," << state_count[2] << "," << state_count[3] << endl;
+  }
 
   return 0;
 }

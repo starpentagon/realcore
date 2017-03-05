@@ -9,8 +9,9 @@ TEST(MoveTest, GetAllMoveTest)
   const auto &all_move_list = GetAllMove();
 
   EXPECT_EQ(kMoveNum, all_move_list.size());
-  EXPECT_EQ(kInvalidMove, all_move_list[0]);
-  EXPECT_EQ(kNullMove, all_move_list[1]);
+  EXPECT_EQ(kNullMove, all_move_list[0]);
+  EXPECT_EQ(kDeclareEndGame, all_move_list[1]);
+  EXPECT_EQ(kInvalidMove, all_move_list[2]);
   EXPECT_EQ(kMoveOO, all_move_list[kMoveNum - 1]);
 }
 
