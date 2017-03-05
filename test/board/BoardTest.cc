@@ -26,8 +26,9 @@ public:
 
     EXPECT_EQ(kOverBoard, board.GetState(kInvalidMove));
     EXPECT_EQ(kOverBoard, board.GetState(kNullMove));
+    EXPECT_EQ(kOverBoard, board.GetState(kDeclareEndGame));
     EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove01));
-    EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove29));
+    EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove28));
   }
 
   void GetSetStateTest(){
