@@ -9,6 +9,7 @@ namespace realcore{
 
 TEST(RealCoreTest, GetBoardDirectionTest)
 {
+  // 全数テスト
   const auto &direction_list = GetBoardDirection();
 
   EXPECT_EQ(kBoardDirectionNum, direction_list.size());
