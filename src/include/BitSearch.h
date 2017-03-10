@@ -60,6 +60,10 @@ inline const BitBoard GetConsectiveStoneBit(const BitBoard stone_bit);
 template<std::size_t N>
 inline void GetStoneWithOneOpenBit(const BitBoard stone_bit, const BitBoard open_bit, std::array<BitBoard, N> * const pattern_bit_list);
 
+//! todo write comment
+inline BitBoard GetRightmostBit(const BitBoard bit_board);
+inline size_t GetNumberOfTrailingZeros(const BitBoard bit_board, const uint64_t rightmost_bit);
+
 //! @brief 右端のビット位置を求める
 //! @param bit_board bit board値
 //! @retval 右端のビット位置(0〜63)
