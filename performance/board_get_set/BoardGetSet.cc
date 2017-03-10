@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
   options_description option;
 
   option.add_options()
-    ("count,c", value<uint64_t>()->default_value(1000 * 10000), "反復回数(default: 1000万回)")
+    ("count,c", value<uint64_t>()->default_value(100 * 10000), "反復回数(default: 100万回)")
     ("help,h", "ヘルプを表示");
   
   variables_map arg_map;
@@ -32,11 +32,12 @@ int main(int argc, char* argv[])
     cout << endl;
     cout << "Repeat the following procedure on specified times:" << endl;
     cout << " 1. Construct Board object" << endl;
-    cout << " 2. SetState BlackStone/WhiteStone alternatively along with the shuffled list" << endl;
-    cout << " 3. GetState along with the shuffled list" << endl;
-    cout << " 4. SetState OpenPosition along with the shuffled list" << endl;
+    cout << " 2. SetState BlackStone along with the shuffled list" << endl;
+    cout << " 3. SetState WhiteStone along with the shuffled list" << endl;
+    cout << " 4. SetState BlackStone/WhiteStone alternatively along with the shuffled list" << endl;
+    cout << " 5. SetState OpenPosition along with the shuffled list" << endl;
+    cout << " 6. GetState along with the shuffled list" << endl;
     cout << endl;
-    cout << "Run SetState: 450 * n times, GetState: 225 * n times in total." << endl;
 
     return 0;
   }
@@ -124,7 +125,7 @@ int main(int argc, char* argv[])
   {
     // 状態取得のみだと最適化された際に不要な参照として削除されることがあるため簡単な集計＆結果表示を行う
     auto start_time = chrono::system_clock::now();
-    std::array<uint64_t, 4> state_count{0};
+    std::array<uint64_t, 4> state_count{{0}};
 
     for(size_t i=0; i<iteration_count; i++)
     {
