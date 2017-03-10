@@ -149,7 +149,7 @@ inline const size_t Board::GetBitBoardShift(const BoardPosition board_position) 
   return shift_val;
 }
 
-inline void Board::GetBitBoardIndexList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> *index_list) const
+inline void Board::GetBitBoardIndexList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const index_list) const
 {
   assert(IsInBoard(x, y));
 
@@ -159,7 +159,7 @@ inline void Board::GetBitBoardIndexList(const Cordinate x, const Cordinate y, st
   (*index_list)[kRightDiagonalDirection] = ((y - x + 14) % 16) / 2 + 24;
 }
 
-inline void Board::GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> *shift_list) const
+inline void Board::GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const shift_list) const
 {
   assert(IsInBoard(x, y));
 
