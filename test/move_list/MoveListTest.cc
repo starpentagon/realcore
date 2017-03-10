@@ -17,19 +17,25 @@ public:
     MoveList move_list;
     
     EXPECT_TRUE(move_list.move_list_.empty());
-    EXPECT_EQ(24, move_list.move_list_.capacity());
+
+    static const int initial_reserve_size = move_list.CalcInitialReserveSize(0);
+    EXPECT_EQ(initial_reserve_size, move_list.move_list_.capacity());
   }
 
   void ReserveInitialTest()
   {
     MoveList move_list;
 
-    move_list.ReserveInitial(8);
-    EXPECT_EQ(32, move_list.move_list_.capacity());
+    constexpr size_t initial_size = 8;
+    move_list.ReserveInitial(initial_size);
+    static const int initial_reserve_size = move_list.CalcInitialReserveSize(initial_size);
+
+    EXPECT_EQ(initial_reserve_size, move_list.move_list_.capacity());
   }
 
   void CalcInitialReserveSizeTest()
   {
+    // 境界値テスト
     MoveList move_list;
     const array<size_t, 8> val_list{{0, 1, 2, 3, 4, 5, 6, 7}};
     
@@ -59,6 +65,7 @@ TEST_F(MoveListTest, CopyConstructorMoveListTest)
   move_list += kMoveAA;
   move_list += kMoveAB;
 
+  // MoveListのコピーをテストする
   MoveList copied_list(move_list);
 
   EXPECT_TRUE(move_list == copied_list);
@@ -69,6 +76,7 @@ TEST_F(MoveListTest, CopyConstructorMovePositionTest)
   MoveList move_list;
   move_list += kMoveAA;
 
+  // MovePositionのコピーをテストする
   MoveList copied_list(kMoveAA);
 
   EXPECT_TRUE(move_list == copied_list);  
@@ -196,6 +204,7 @@ TEST_F(MoveListTest, strTest)
 TEST_F(MoveListTest, GetMoveListTest)
 {
   {
+    // 空文字のケースをテスト
     MoveList move_list;
     bool is_generate = GetMoveList("", &move_list);
     EXPECT_TRUE(is_generate);
@@ -204,6 +213,7 @@ TEST_F(MoveListTest, GetMoveListTest)
     EXPECT_TRUE(move_list == check);
   }
   {
+    // 1手のみのテスト
     MoveList move_list;
     bool is_generate = GetMoveList("aa", &move_list);
     EXPECT_TRUE(is_generate);
@@ -213,6 +223,7 @@ TEST_F(MoveListTest, GetMoveListTest)
     EXPECT_TRUE(move_list == check);
   }
   {
+    // Passを含む場合をテスト
     MoveList move_list;
     bool is_generate = GetMoveList("abhhpp", &move_list);
     EXPECT_TRUE(is_generate);
