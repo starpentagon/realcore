@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     cout << " 1. Construct Board object" << endl;
     cout << " 2. SetState BlackStone along with the shuffled list" << endl;
     cout << " 3. SetState WhiteStone along with the shuffled list" << endl;
-    cout << " 4. SetState BlackStone/WhiteStone alternatively along with the shuffled list" << endl;
+    cout << " 4. SetState BlackStone/WhiteStone alternately along with the shuffled list" << endl;
     cout << " 5. SetState OpenPosition along with the shuffled list" << endl;
     cout << " 6. GetState along with the shuffled list" << endl;
     cout << endl;

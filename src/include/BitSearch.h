@@ -25,8 +25,8 @@ enum PositionState : BitBoard
 //! @brief 状態文字列([B|W|O|X]*)に対応するbit board値を返す
 //! @param str 状態文字列([B|W|O|X]*)
 //! @retval 対応するbit board値
-//! @pre strは３２文字以内であること
-inline BitBoard GetStateBit(const std::string &str);
+//! @pre strは32文字以内であること
+const BitBoard GetStateBit(const std::string &str);
 
 //! @brief 黒石フラグを返す
 //! @param bit_board bit board値
@@ -48,7 +48,7 @@ inline constexpr BitBoard GetOpenPositionBit(const BitBoard bit_board);
 //! @param stone_bit 黒石 or 白石フラグ
 //! @retval N個が連続するパターンのうち最小シフト量の位置に1を立てた値
 template<std::size_t N>
-inline BitBoard GetConsectiveStoneBit(const BitBoard stone_bit);
+inline const BitBoard GetConsectiveStoneBit(const BitBoard stone_bit);
 
 //! @brief [BnO1][WnO1]パターンを検索する
 //! @param N パターン長(=n+1)
@@ -59,6 +59,13 @@ inline BitBoard GetConsectiveStoneBit(const BitBoard stone_bit);
 //! @note 検索結果には合致したパターンの最小シフト量の位置に１を立てた値が入る
 template<std::size_t N>
 inline void GetStoneWithOneOpenBit(const BitBoard stone_bit, const BitBoard open_bit, std::array<BitBoard, N> * const pattern_bit_list);
+
+//! @brief 右端のビット位置を求める
+//! @param bit_board bit board値
+//! @retval 右端のビット位置(0〜63)
+//! @pre bit_boardは0でないこと
+//! @see 一番右端の立っているビット位置を求める「ものすごい」コード(http://d.hatena.ne.jp/siokoshou/20090704)
+inline size_t GetNumberOfTrailingZeros(const BitBoard bit_board);
 
 }   // namespace realcore
 
