@@ -10,6 +10,7 @@
 #include <array>
 
 #include "RealCore.h"
+#include "BitSearch.h"
 
 namespace realcore
 {
@@ -20,21 +21,9 @@ namespace realcore
 //! @pre x, yは[0, 15]の範囲であること
 constexpr bool IsInBoard(const Cordinate x, const Cordinate y);
 
-//! @brief 盤面の状態
-typedef std::uint64_t BitBoard;
-
 //! @brief 盤面位置
 //! @see doc/01_data_definition/data_definition.pptx and board_definition.xlsx
 typedef std::uint64_t BoardPosition;
-
-//! @brief 盤面上の点の状態定義
-enum PositionState : BitBoard
-{
-  kOverBoard,     //!< 盤外(0b00)
-  kBlackStone,    //!< 黒石(0b01)
-  kWhiteStone,    //!< 白石(0b10)
-  kOpenPosition   //!< 空点(0b11)
-};
 
 // 前方宣言
 enum MovePosition : std::uint8_t;
@@ -85,14 +74,14 @@ protected:
   //! @param y y座標
   //! @param index_list BitBoard配列のindexの格納先
   //! @pre (x, y)は盤内であること
-  void GetBitBoardIndexList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> *index_list) const;
+  void GetBitBoardIndexList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const index_list) const;
 
   //! @brief (x, y)座標から各方向のBitBoard配列のshift量を取得する
   //! @param x x座標
   //! @param y y座標
   //! @param index_list BitBoard配列のshift量の格納先
   //! @pre (x, y)は盤内であること
-  void GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> *shift_list) const;
+  void GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const shift_list) const;
 
   //! @brief BitBoard配列の要素数
   static constexpr size_t kBitBoardNum = 32;
