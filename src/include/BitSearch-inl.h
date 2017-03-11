@@ -10,7 +10,7 @@
 namespace realcore
 {
 
-//! @brief 状態(2bit)の上位bitをマスクする定数
+//! @brief 状態(2bit)の上位bitをクリアする定数
 constexpr BitBoard kUpperBitMask = 0b0101010101010101010101010101010101010101010101010101010101010101;
 
 inline constexpr BitBoard GetBlackStoneBit(const BitBoard bit_board)
