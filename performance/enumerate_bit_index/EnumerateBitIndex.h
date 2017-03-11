@@ -10,10 +10,10 @@
 inline void ScanBitSequence(uint64_t bit_sequence, std::vector<size_t> * const index_list)
 {
   size_t index = 0;
-  constexpr uint64_t lowest_bit_mast = 1ULL;
+  constexpr uint64_t lowest_bit_mask = 1ULL;
   
   while(bit_sequence != 0){
-    if((bit_sequence & lowest_bit_mast) != 0){
+    if((bit_sequence & lowest_bit_mask) != 0){
       index_list->push_back(index);
     }
 
