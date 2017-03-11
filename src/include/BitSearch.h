@@ -7,6 +7,7 @@
 
 #include <cstdint>
 #include <array>
+#include <vector>
 
 namespace realcore{
 
@@ -60,16 +61,30 @@ inline const BitBoard GetConsectiveStoneBit(const BitBoard stone_bit);
 template<std::size_t N>
 inline void GetStoneWithOneOpenBit(const BitBoard stone_bit, const BitBoard open_bit, std::array<BitBoard, N> * const pattern_bit_list);
 
-//! todo write comment
-inline BitBoard GetRightmostBit(const BitBoard bit_board);
-inline size_t GetNumberOfTrailingZeros(const BitBoard bit_board, const uint64_t rightmost_bit);
-
-//! @brief 右端のビット位置を求める
+//! @brief 右端ビットを求める
 //! @param bit_board bit board値
+//! @retval 右端ビット(例: 0b01011010 -> 0b00000010)
+//! @pre bit_boardは0でないこと
+inline BitBoard GetRightmostBit(const BitBoard bit_board);
+
+//! @brief 右端のビット位置を求める(右端ビット指定版)
+//! @param bit_board bit board値
+//! @param rightmost_bit 右端ビット
 //! @retval 右端のビット位置(0〜63)
 //! @pre bit_boardは0でないこと
 //! @see 一番右端の立っているビット位置を求める「ものすごい」コード(http://d.hatena.ne.jp/siokoshou/20090704)
+inline size_t GetNumberOfTrailingZeros(const BitBoard bit_board, const BitBoard rightmost_bit);
+
+//! @brief 右端のビット位置を求める(右端ビット指定無版)
+//! @param bit_board bit board値
+//! @retval 右端のビット位置(0〜63)
+//! @pre bit_boardは0でないこと
 inline size_t GetNumberOfTrailingZeros(const BitBoard bit_board);
+
+//! @brief ビット位置のリストを取得する
+//! @param bit_board bit board値
+//! @param index_list ビット位置の格納先
+inline void GetBitIndexList(BitBoard bit_board, std::vector<size_t> * const index_list);
 
 }   // namespace realcore
 

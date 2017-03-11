@@ -59,10 +59,10 @@ inline void GetStoneWithOneOpenBit(const BitBoard stone_bit, const BitBoard open
   }
 }
 
-inline uint64_t GetRightmostBit(const BitBoard bit_board)
+inline BitBoard GetRightmostBit(const BitBoard bit_board)
 {
   const int64_t signed_bit = static_cast<int64_t>(bit_board);
-  const uint64_t rightmost_bit = static_cast<uint64_t>(signed_bit & (-signed_bit));
+  const BitBoard rightmost_bit = static_cast<BitBoard>(signed_bit & (-signed_bit));
 
   return rightmost_bit;
 }
@@ -71,20 +71,11 @@ inline size_t GetNumberOfTrailingZeros(const BitBoard bit_board)
 {
   assert(bit_board != 0);
 
-  const int64_t signed_bit = static_cast<int64_t>(bit_board);
-  const uint64_t rightmost_bit = static_cast<uint64_t>(signed_bit & (-signed_bit));
-  constexpr uint64_t kDeBruijnSequence = 0x03F566ED27179461ULL;
-  const uint64_t shifted_DeBruijn = kDeBruijnSequence * rightmost_bit;
-  const size_t truncated_DeBruijn = shifted_DeBruijn >> 58;
-
-  static const std::array<size_t, 64> kDeBruijnMapping{{
-    #include "def/DeBruijnMapping.h"
-  }};
-
-  return kDeBruijnMapping[truncated_DeBruijn];
+  const BitBoard rightmost_bit = GetRightmostBit(bit_board);
+  return GetNumberOfTrailingZeros(bit_board, rightmost_bit);
 }
 
-inline size_t GetNumberOfTrailingZeros(const BitBoard bit_board, const uint64_t rightmost_bit)
+inline size_t GetNumberOfTrailingZeros(const BitBoard bit_board, const BitBoard rightmost_bit)
 {
   assert(bit_board != 0);
 
@@ -97,6 +88,20 @@ inline size_t GetNumberOfTrailingZeros(const BitBoard bit_board, const uint64_t 
   }};
 
   return kDeBruijnMapping[truncated_DeBruijn];
+}
+
+inline void GetBitIndexList(BitBoard bit_board, std::vector<size_t> * const index_list)
+{
+  assert(index_list != nullptr);
+  index_list->reserve(64);
+
+  while(bit_board != 0){
+    const std::uint64_t rightmost_bit = GetRightmostBit(bit_board);
+    const size_t rightmost_bit_index = GetNumberOfTrailingZeros(bit_board, rightmost_bit);
+    index_list->push_back(rightmost_bit_index);
+
+    bit_board ^= rightmost_bit;
+  }
 }
 
 }   // namespace realcore
