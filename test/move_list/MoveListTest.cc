@@ -54,6 +54,17 @@ TEST_F(MoveListTest, DefaultConstructorTest)
   DefaultConstructorTest();
 }
 
+TEST_F(MoveListTest, StringConstructorTest)
+{
+  MoveList move_list("aabb");
+  MoveList expect_list;
+
+  expect_list += kMoveAA;
+  expect_list += kMoveBB;
+
+  EXPECT_TRUE(move_list == expect_list);
+}
+
 TEST_F(MoveListTest, ReserveInitialTest)
 {
   ReserveInitialTest();
