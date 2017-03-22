@@ -3,6 +3,7 @@
 #include "gtest/gtest.h"
 
 #include "Move.h"
+#include "MoveList.h"
 #include "Board.h"
 
 using namespace std;
@@ -14,25 +15,6 @@ class BoardTest
 : public ::testing::Test
 {
 public:
-  void DefaultConstructorTest(){
-    const auto &move_list = GetAllInBoardMove();
-    const Board board;
-
-    // 盤内は空点で初期化されていることを確認する
-    for(const auto move : move_list)
-    {
-      const PositionState state = board.GetState(move);
-      EXPECT_EQ(kOpenPosition, state);
-    }
-
-    // 盤内以外の手では盤外が返ってくることを確認する
-    EXPECT_EQ(kOverBoard, board.GetState(kInvalidMove));
-    EXPECT_EQ(kOverBoard, board.GetState(kNullMove));
-    EXPECT_EQ(kOverBoard, board.GetState(kDeclareEndGame));
-    EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove01));
-    EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove28));
-  }
-
   void GetSetStateTest(){
     Board board;
     const auto &all_move_list = GetAllMove();
@@ -237,7 +219,49 @@ public:
 };
 
 TEST_F(BoardTest, DefaultConstructorTest){
-  DefaultConstructorTest();
+  const auto &move_list = GetAllInBoardMove();
+  const Board board;
+
+  // 盤内は空点で初期化されていることを確認する
+  for(const auto move : move_list)
+  {
+    const PositionState state = board.GetState(move);
+    EXPECT_EQ(kOpenPosition, state);
+  }
+
+  // 盤内以外の手では盤外が返ってくることを確認する
+  EXPECT_EQ(kOverBoard, board.GetState(kInvalidMove));
+  EXPECT_EQ(kOverBoard, board.GetState(kNullMove));
+  EXPECT_EQ(kOverBoard, board.GetState(kDeclareEndGame));
+  EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove01));
+  EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove28));
+}
+
+TEST_F(BoardTest, MoveListConstructorTest){
+  const MoveList board_move_list("hhhg");
+  Board board(board_move_list);
+
+  const auto &move_list = GetAllInBoardMove();
+
+  // 盤内が初期化されているか確認する
+  for(const auto move : move_list){
+    const PositionState state = board.GetState(move);
+
+    if(move == kMoveHH){
+      EXPECT_EQ(kBlackStone, state);
+    }else if(move == kMoveHG){
+      EXPECT_EQ(kWhiteStone, state);
+    }else{
+      EXPECT_EQ(kOpenPosition, state);
+    }
+  }
+  
+  // 盤内以外の手では盤外が返ってくることを確認する
+  EXPECT_EQ(kOverBoard, board.GetState(kInvalidMove));
+  EXPECT_EQ(kOverBoard, board.GetState(kNullMove));
+  EXPECT_EQ(kOverBoard, board.GetState(kDeclareEndGame));
+  EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove01));
+  EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove28));
 }
 
 TEST_F(BoardTest, GetSetStateTest)
@@ -268,6 +292,278 @@ TEST_F(BoardTest, IsInBoardTest)
   EXPECT_FALSE(IsInBoard(0, 1));
   EXPECT_TRUE(IsInBoard(1, 1));
   EXPECT_TRUE(IsInBoard(15, 15));
+}
+
+TEST_F(BoardTest, strTest)
+{
+  // @todo テスト実装
+  Board board;
+
+  {
+    // 初期状態のテスト
+    string board_str = board.str();
+    stringstream expect_ss;
+
+    expect_ss << "  A B C D E F G H I J K L M N O " << endl;
+    expect_ss << "A + --------------------------+ A " << endl;
+    expect_ss << "B | . . . . . . . . . . . . . | B " << endl;
+    expect_ss << "C | . . . . . . . . . . . . . | C " << endl;
+    expect_ss << "D | . . * . . . . . . . * . . | D " << endl;
+    expect_ss << "E | . . . . . . . . . . . . . | E " << endl;
+    expect_ss << "F | . . . . . . . . . . . . . | F " << endl;
+    expect_ss << "G | . . . . . . . . . . . . . | G " << endl;
+    expect_ss << "H | . . . . . . * . . . . . . | H " << endl;
+    expect_ss << "I | . . . . . . . . . . . . . | I " << endl;
+    expect_ss << "J | . . . . . . . . . . . . . | J " << endl;
+    expect_ss << "K | . . . . . . . . . . . . . | K " << endl;
+    expect_ss << "L | . . * . . . . . . . * . . | L " << endl;
+    expect_ss << "M | . . . . . . . . . . . . . | M " << endl;
+    expect_ss << "N | . . . . . . . . . . . . . | N " << endl;
+    expect_ss << "O + --------------------------+ O " << endl;
+    expect_ss << "  A B C D E F G H I J K L M N O " << endl;
+    
+    EXPECT_TRUE(board_str == expect_ss.str());
+  }
+  {
+    // 黒石、白石を設定
+    board.SetState<kBlackStone>(kMoveHH);
+    board.SetState<kWhiteStone>(kMoveHG);
+    string board_str = board.str();
+
+    stringstream expect_ss;
+    
+    expect_ss << "  A B C D E F G H I J K L M N O " << endl;
+    expect_ss << "A + --------------------------+ A " << endl;
+    expect_ss << "B | . . . . . . . . . . . . . | B " << endl;
+    expect_ss << "C | . . . . . . . . . . . . . | C " << endl;
+    expect_ss << "D | . . * . . . . . . . * . . | D " << endl;
+    expect_ss << "E | . . . . . . . . . . . . . | E " << endl;
+    expect_ss << "F | . . . . . . . . . . . . . | F " << endl;
+    expect_ss << "G | . . . . . . o . . . . . . | G " << endl;
+    expect_ss << "H | . . . . . . x . . . . . . | H " << endl;
+    expect_ss << "I | . . . . . . . . . . . . . | I " << endl;
+    expect_ss << "J | . . . . . . . . . . . . . | J " << endl;
+    expect_ss << "K | . . . . . . . . . . . . . | K " << endl;
+    expect_ss << "L | . . * . . . . . . . * . . | L " << endl;
+    expect_ss << "M | . . . . . . . . . . . . . | M " << endl;
+    expect_ss << "N | . . . . . . . . . . . . . | N " << endl;
+    expect_ss << "O + --------------------------+ O " << endl;
+    expect_ss << "  A B C D E F G H I J K L M N O " << endl;
+
+    EXPECT_TRUE(board_str == expect_ss.str());
+  }
+}
+
+TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
+{
+  {
+    // 盤の中央に黒石、白石があるケース(N=1)
+    MoveList move_list("hhhg");
+    Board board(move_list);
+    
+    array<StateBit, kBoardDirectionNum> line_neighborhood;
+    board.GetLineNeighborhoodStateBit<1>(kMoveHH, &line_neighborhood);
+
+    const StateBit lateral_state_bit = GetStateBit("OBOXXXXXX");
+    EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
+
+    const StateBit vertical_state_bit = GetStateBit("OBWXXXXXX");
+    EXPECT_EQ(vertical_state_bit, line_neighborhood[kVerticalDirection]);
+
+    const StateBit left_diagonal_state_bit = GetStateBit("OBOXXXXXX");
+    EXPECT_EQ(left_diagonal_state_bit, line_neighborhood[kLeftDiagonalDirection]);
+
+    const StateBit right_diagonal_state_bit = GetStateBit("OBOXXXXXX");
+    EXPECT_EQ(right_diagonal_state_bit, line_neighborhood[kRightDiagonalDirection]);
+  }
+  {
+    // 盤の中央に黒石、白石があるケース(N=7)
+    MoveList move_list("hhhg");
+    Board board(move_list);
+    
+    array<StateBit, kBoardDirectionNum> line_neighborhood;
+    board.GetLineNeighborhoodStateBit<7>(kMoveHH, &line_neighborhood);
+
+    const StateBit lateral_state_bit = GetStateBit("OOOOOOOBOOOOOOO");
+    EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
+
+    const StateBit vertical_state_bit = GetStateBit("OOOOOOOBWOOOOOO");
+    EXPECT_EQ(vertical_state_bit, line_neighborhood[kVerticalDirection]);
+
+    const StateBit left_diagonal_state_bit = GetStateBit("OOOOOOOBOOOOOOO");
+    EXPECT_EQ(left_diagonal_state_bit, line_neighborhood[kLeftDiagonalDirection]);
+
+    const StateBit right_diagonal_state_bit = GetStateBit("OOOOOOOBOOOOOOO");
+    EXPECT_EQ(right_diagonal_state_bit, line_neighborhood[kRightDiagonalDirection]);
+  }
+  {
+    // 四隅に黒石、白石があるケース
+    MoveList move_list("aaoaaooo");
+    Board board(move_list);
+
+    // 　ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯ
+    // Ａ●ーーーーーーーーーーーーー○
+    // Ｂ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
+    // Ｃ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
+    // Ｄ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
+    // Ｅ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
+    // Ｆ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
+    // Ｇ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
+    // Ｈ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
+    // Ｉ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
+    // Ｊ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
+    // Ｋ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
+    // Ｌ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
+    // Ｍ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
+    // Ｎ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
+    // Ｏ●ーーーーーーーーーーーーー○
+
+    {
+      // 左上隅(N=1)
+      array<StateBit, kBoardDirectionNum> line_neighborhood;
+      board.GetLineNeighborhoodStateBit<1>(kMoveAA, &line_neighborhood);
+
+      const StateBit lateral_state_bit = GetStateBit("OBXXXXXXX");
+      EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
+
+      const StateBit vertical_state_bit = GetStateBit("OBXXXXXXX");
+      EXPECT_EQ(vertical_state_bit, line_neighborhood[kVerticalDirection]);
+
+      const StateBit left_diagonal_state_bit = GetStateBit("BXXXXXXX");
+      EXPECT_EQ(left_diagonal_state_bit, line_neighborhood[kLeftDiagonalDirection]);
+
+      const StateBit right_diagonal_state_bit = GetStateBit("OBXXXXXXX");
+      EXPECT_EQ(right_diagonal_state_bit, line_neighborhood[kRightDiagonalDirection]);
+    }
+    {
+      // 左上隅(N=7)
+      array<StateBit, kBoardDirectionNum> line_neighborhood;
+      board.GetLineNeighborhoodStateBit<7>(kMoveAA, &line_neighborhood);
+
+      const StateBit lateral_state_bit = GetStateBit("OOOOOOOBXXXXXXX");
+      EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
+
+      const StateBit vertical_state_bit = GetStateBit("OOOOOOOBXXXXXXX");
+      EXPECT_EQ(vertical_state_bit, line_neighborhood[kVerticalDirection]);
+
+      const StateBit left_diagonal_state_bit = GetStateBit("OOOOOOXBXXXXXXX");
+      EXPECT_EQ(left_diagonal_state_bit, line_neighborhood[kLeftDiagonalDirection]);
+
+      const StateBit right_diagonal_state_bit = GetStateBit("OOOOOOOBXXXXXXX");
+      EXPECT_EQ(right_diagonal_state_bit, line_neighborhood[kRightDiagonalDirection]);
+    }
+    {
+      // 右上隅(N=1)
+      array<StateBit, kBoardDirectionNum> line_neighborhood;
+      board.GetLineNeighborhoodStateBit<1>(kMoveOA, &line_neighborhood);
+
+      const StateBit lateral_state_bit = GetStateBit("WOXXXXXX");
+      EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
+
+      const StateBit vertical_state_bit = GetStateBit("OWXXXXXXX");
+      EXPECT_EQ(vertical_state_bit, line_neighborhood[kVerticalDirection]);
+
+      const StateBit left_diagonal_state_bit = GetStateBit("OWXXXXXXX");
+      EXPECT_EQ(left_diagonal_state_bit, line_neighborhood[kLeftDiagonalDirection]);
+
+      const StateBit right_diagonal_state_bit = GetStateBit("WXXXXXXX");
+      EXPECT_EQ(right_diagonal_state_bit, line_neighborhood[kRightDiagonalDirection]);
+    }
+    {
+      // 右上隅(N=7)
+      array<StateBit, kBoardDirectionNum> line_neighborhood;
+      board.GetLineNeighborhoodStateBit<7>(kMoveOA, &line_neighborhood);
+
+      const StateBit lateral_state_bit = GetStateBit("WOOOOOOO");
+      EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
+
+      const StateBit vertical_state_bit = GetStateBit("OOOOOOOWXOOOOOO");
+      EXPECT_EQ(vertical_state_bit, line_neighborhood[kVerticalDirection]);
+
+      const StateBit left_diagonal_state_bit = GetStateBit("OOOOOOOWXXXXXXX");
+      EXPECT_EQ(left_diagonal_state_bit, line_neighborhood[kLeftDiagonalDirection]);
+
+      const StateBit right_diagonal_state_bit = GetStateBit("OOOOOOXWXXXXXXX");
+      EXPECT_EQ(right_diagonal_state_bit, line_neighborhood[kRightDiagonalDirection]);
+    }
+    {
+      // 左下隅(N=1)
+      array<StateBit, kBoardDirectionNum> line_neighborhood;
+      board.GetLineNeighborhoodStateBit<1>(kMoveAO, &line_neighborhood);
+
+      const StateBit lateral_state_bit = GetStateBit("OBXXXXXXX");
+      EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
+
+      const StateBit vertical_state_bit = GetStateBit("BOXXXXXX");
+      EXPECT_EQ(vertical_state_bit, line_neighborhood[kVerticalDirection]);
+
+      const StateBit left_diagonal_state_bit = GetStateBit("BOXXXXXX");
+      EXPECT_EQ(left_diagonal_state_bit, line_neighborhood[kLeftDiagonalDirection]);
+
+      const StateBit right_diagonal_state_bit = GetStateBit("BXXXXXXX");
+      EXPECT_EQ(right_diagonal_state_bit, line_neighborhood[kRightDiagonalDirection]);
+    }
+    {
+      // 左下隅(N=7)
+      array<StateBit, kBoardDirectionNum> line_neighborhood;
+      board.GetLineNeighborhoodStateBit<7>(kMoveAO, &line_neighborhood);
+
+      const StateBit lateral_state_bit = GetStateBit("OOOOOOOBXOOOOOO");
+      EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
+
+      const StateBit vertical_state_bit = GetStateBit("BOOOOOOO");
+      EXPECT_EQ(vertical_state_bit, line_neighborhood[kVerticalDirection]);
+
+      const StateBit left_diagonal_state_bit = GetStateBit("OOOOOXXBOOOOOOO");
+      EXPECT_EQ(left_diagonal_state_bit, line_neighborhood[kLeftDiagonalDirection]);
+
+      const StateBit right_diagonal_state_bit = GetStateBit("OOOOOOXBXOOOOOO");
+      EXPECT_EQ(right_diagonal_state_bit, line_neighborhood[kRightDiagonalDirection]);
+    }
+    {
+      // 右下隅(N=1)
+      array<StateBit, kBoardDirectionNum> line_neighborhood;
+      board.GetLineNeighborhoodStateBit<1>(kMoveOO, &line_neighborhood);
+
+      const StateBit lateral_state_bit = GetStateBit("WOXXXXXX");
+      EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
+
+      const StateBit vertical_state_bit = GetStateBit("WOXXXXXX");
+      EXPECT_EQ(vertical_state_bit, line_neighborhood[kVerticalDirection]);
+
+      const StateBit left_diagonal_state_bit = GetStateBit("WXXXXXXX");
+      EXPECT_EQ(left_diagonal_state_bit, line_neighborhood[kLeftDiagonalDirection]);
+
+      const StateBit right_diagonal_state_bit = GetStateBit("WOXXXXXX");
+      EXPECT_EQ(right_diagonal_state_bit, line_neighborhood[kRightDiagonalDirection]);
+    }
+    {
+      // 右下隅(N=7)
+      array<StateBit, kBoardDirectionNum> line_neighborhood;
+      board.GetLineNeighborhoodStateBit<7>(kMoveOO, &line_neighborhood);
+
+      const StateBit lateral_state_bit = GetStateBit("WOOOOOOO");
+      EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
+
+      const StateBit vertical_state_bit = GetStateBit("WOOOOOOO");
+      EXPECT_EQ(vertical_state_bit, line_neighborhood[kVerticalDirection]);
+
+      const StateBit left_diagonal_state_bit = GetStateBit("OOOOOOXWXOOOOOO");
+      EXPECT_EQ(left_diagonal_state_bit, line_neighborhood[kLeftDiagonalDirection]);
+
+      const StateBit right_diagonal_state_bit = GetStateBit("OOOOOXXWOOOOOOO");
+      EXPECT_EQ(right_diagonal_state_bit, line_neighborhood[kRightDiagonalDirection]);
+    }
+    {
+      // 盤外のケース
+      array<StateBit, kBoardDirectionNum> line_neighborhood;
+      board.GetLineNeighborhoodStateBit<7>(kNullMove, &line_neighborhood);
+
+      for(auto value : line_neighborhood){
+        EXPECT_EQ(0, value);
+      }
+    }
+  }
 }
 
 }   // namespace realcore

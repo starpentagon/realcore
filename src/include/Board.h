@@ -19,11 +19,17 @@ namespace realcore
 //! @param y y座標
 //! @retval true 点(x, y)が盤内
 //! @pre x, yは[0, 15]の範囲であること
-constexpr bool IsInBoard(const Cordinate x, const Cordinate y);
+constexpr inline bool IsInBoard(const Cordinate x, const Cordinate y);
 
 //! @brief 盤面位置
 //! @see doc/01_data_definition/data_definition.pptx and board_definition.xlsx
 typedef std::uint64_t BoardPosition;
+
+//! @brief Bitboard(=StateBit配列)の要素数
+constexpr size_t kBitBoardElementNum = 32;
+
+//! @brief Bitboard型
+typedef std::array<StateBit, kBitBoardElementNum> Bitboard;
 
 // 前方宣言
 enum MovePosition : std::uint8_t;
@@ -55,6 +61,20 @@ public:
   //! @brief 盤面状態を設定する(non-template版)
   void SetState(const MovePosition move, const PositionState state);
 
+  //! @brief 指定位置を中心としたN路の直線近傍の盤面状態(各方向2N+1個の状態)を取得する
+  //! @param N 直線近傍の長さ
+  //! @param move 指し手位置
+  //! @param line_neighborhood_list 直線近傍の盤面状態の格納先
+  //! @pre N in [1, 7]
+  //! @note 指定位置を14-15bit目に揃えたビット（(14 - 2 * N)bit目〜(15 + 2 * N)bit目）を設定して返す
+  //! @note moveが盤内でなければすべて盤外の状態を設定する
+  template<size_t N>
+  void GetLineNeighborhoodStateBit(const MovePosition move, std::array<StateBit, kBoardDirectionNum> * const line_neighborhood_list) const;
+
+  //! @brief 盤面状態を文字列出力する
+  //! @retval 盤面をテキスト表現した文字列
+  const std::string str() const;
+
 protected:
   //! @brief 盤面状態を取得する(BoardPosition版)
   //! @param board_position 盤面位置
@@ -83,11 +103,8 @@ protected:
   //! @pre (x, y)は盤内であること
   void GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const shift_list) const;
 
-  //! @brief BitBoard配列の要素数
-  static constexpr size_t kBitBoardNum = 32;
-
   //! @brief 盤面状態を保持する配列
-  std::array<BitBoard, kBitBoardNum> bit_board_;
+  Bitboard bit_board_;
 };
 
 }   // namespace realcore

@@ -22,6 +22,11 @@ MoveList::MoveList(const MovePosition move)
   *this = move;
 }
 
+MoveList::MoveList(const string &move_str)
+{
+  GetMoveList(move_str, this);
+}
+
 void MoveList::ReserveInitial(const size_t initial_list_size)
 {
   const size_t reserve_size = CalcInitialReserveSize(initial_list_size);
