@@ -303,24 +303,25 @@ TEST_F(BoardTest, strTest)
     // 初期状態のテスト
     string board_str = board.str();
     stringstream expect_ss;
-    
-    expect_ss << "　ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯ" << endl;
-    expect_ss << "Ａ┏ーーーーーーーーーーーーー┓" << endl;
-    expect_ss << "Ｂ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｃ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｄ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｅ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｆ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｇ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｈ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｉ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｊ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｋ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｌ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｍ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｎ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｏ┗ーーーーーーーーーーーーー┛" << endl;
 
+    expect_ss << "  A B C D E F G H I J K L M N O " << endl;
+    expect_ss << "A + --------------------------+ A " << endl;
+    expect_ss << "B | . . . . . . . . . . . . . | B " << endl;
+    expect_ss << "C | . . . . . . . . . . . . . | C " << endl;
+    expect_ss << "D | . . * . . . . . . . * . . | D " << endl;
+    expect_ss << "E | . . . . . . . . . . . . . | E " << endl;
+    expect_ss << "F | . . . . . . . . . . . . . | F " << endl;
+    expect_ss << "G | . . . . . . . . . . . . . | G " << endl;
+    expect_ss << "H | . . . . . . * . . . . . . | H " << endl;
+    expect_ss << "I | . . . . . . . . . . . . . | I " << endl;
+    expect_ss << "J | . . . . . . . . . . . . . | J " << endl;
+    expect_ss << "K | . . . . . . . . . . . . . | K " << endl;
+    expect_ss << "L | . . * . . . . . . . * . . | L " << endl;
+    expect_ss << "M | . . . . . . . . . . . . . | M " << endl;
+    expect_ss << "N | . . . . . . . . . . . . . | N " << endl;
+    expect_ss << "O + --------------------------+ O " << endl;
+    expect_ss << "  A B C D E F G H I J K L M N O " << endl;
+    
     EXPECT_TRUE(board_str == expect_ss.str());
   }
   {
@@ -331,22 +332,23 @@ TEST_F(BoardTest, strTest)
 
     stringstream expect_ss;
     
-    expect_ss << "　ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯ" << endl;
-    expect_ss << "Ａ┏ーーーーーーーーーーーーー┓" << endl;
-    expect_ss << "Ｂ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｃ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｄ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｅ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｆ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｇ┃＋＋＋＋＋＋○＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｈ┃＋＋＋＋＋＋●＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｉ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｊ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｋ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｌ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｍ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｎ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｏ┗ーーーーーーーーーーーーー┛" << endl;
+    expect_ss << "  A B C D E F G H I J K L M N O " << endl;
+    expect_ss << "A + --------------------------+ A " << endl;
+    expect_ss << "B | . . . . . . . . . . . . . | B " << endl;
+    expect_ss << "C | . . . . . . . . . . . . . | C " << endl;
+    expect_ss << "D | . . * . . . . . . . * . . | D " << endl;
+    expect_ss << "E | . . . . . . . . . . . . . | E " << endl;
+    expect_ss << "F | . . . . . . . . . . . . . | F " << endl;
+    expect_ss << "G | . . . . . . o . . . . . . | G " << endl;
+    expect_ss << "H | . . . . . . x . . . . . . | H " << endl;
+    expect_ss << "I | . . . . . . . . . . . . . | I " << endl;
+    expect_ss << "J | . . . . . . . . . . . . . | J " << endl;
+    expect_ss << "K | . . . . . . . . . . . . . | K " << endl;
+    expect_ss << "L | . . * . . . . . . . * . . | L " << endl;
+    expect_ss << "M | . . . . . . . . . . . . . | M " << endl;
+    expect_ss << "N | . . . . . . . . . . . . . | N " << endl;
+    expect_ss << "O + --------------------------+ O " << endl;
+    expect_ss << "  A B C D E F G H I J K L M N O " << endl;
 
     EXPECT_TRUE(board_str == expect_ss.str());
   }
