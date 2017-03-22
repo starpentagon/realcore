@@ -552,6 +552,15 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
       const StateBit right_diagonal_state_bit = GetStateBit("OOOOOXXWOOOOOOO");
       EXPECT_EQ(right_diagonal_state_bit, line_neighborhood[kRightDiagonalDirection]);
     }
+    {
+      // 盤外のケース
+      array<StateBit, kBoardDirectionNum> line_neighborhood;
+      board.GetLineNeighborhoodStateBit<7>(kNullMove, &line_neighborhood);
+
+      for(auto value : line_neighborhood){
+        EXPECT_EQ(0, value);
+      }
+    }
   }
 }
 
