@@ -23,8 +23,9 @@ class Board;
 //! @brief move_positionを中心としたN路の直線近傍を管理するクラス
 template<size_t N>
 class LineNeighborhood{
+    friend class LineNeighborhoodTest;
 public:
-  LineNeighborhood(const MovePosition move_position, const Board *board);
+  LineNeighborhood(const MovePosition move, const Board &board);
 
 private:
   static constexpr size_t kLocalBitBoardNum = 2;
@@ -38,5 +39,7 @@ private:
 };  // class LineNeighborhood
 
 }   // namespace realcore
+
+#include "LineNeighborhood-inl.h"
 
 #endif    // LINE_NEIGHBORHOOD_H
