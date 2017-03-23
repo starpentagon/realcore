@@ -38,6 +38,10 @@ Board::Board(const MoveList &move_list)
 template<>
 const bool Board::IsForbiddenMove<kBlackTurn>(const MovePosition move) const
 {
+  if(!IsInBoardMove(move)){
+    return false;
+  }
+  
   assert(GetState(move) == kOpenPosition);
 
   // 禁手チェックはmoveの長さ5の直線近傍をチェックすれば十分
@@ -47,7 +51,7 @@ const bool Board::IsForbiddenMove<kBlackTurn>(const MovePosition move) const
 
   line_neighbor.SetCenterState<kBlackStone>();
 
-  // 長連
+  // 直線近傍の禁手チェック
   vector<BoardPosition> next_open_four_list;
   const ForbiddenCheckState forbidden_state = line_neighbor.ForbiddenCheck(&next_open_four_list);
 
