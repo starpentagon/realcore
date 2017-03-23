@@ -34,6 +34,13 @@ constexpr size_t kBoardDirectionNum = 4;
 //! @retval 盤面方向のリスト
 const std::array<BoardDirection, kBoardDirectionNum>& GetBoardDirection();
 
+//! @brief 手番
+enum PlayerTurn
+{
+  kBlackTurn,
+  kWhiteTurn
+};
+
 }   // namespace realcore
 
 #include "RealCore-inl.h"
