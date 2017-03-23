@@ -111,6 +111,33 @@ inline constexpr std::uint64_t GetConsectiveBit()
   return (1ULL << N) - 1;
 }
 
+inline const bool IsSingleBit(const std::uint64_t bit)
+{
+  assert(bit != 0);
+
+  // 2の累乗かどうかを判定
+  // @see "Ten Ways to Check if an Integer Is a Power Of Two in C: 9. Decrement and Compare"
+  // @see (http://www.exploringbinary.com/ten-ways-to-check-if-an-integer-is-a-power-of-two-in-c/)
+  return !(bit & (bit - 1));
+}
+
+inline const bool IsMultipleBit(const std::uint64_t bit_1, const std::uint64_t bit_2)
+{
+  // bit_1, bit_2のビット数が2未満になるのは以下の3通り
+  if(bit_1 == 0 && bit_2 == 0){
+    // bit_1, bit_2ともに0
+    return false;
+  }else if(bit_1 == 0 && IsSingleBit(bit_2)){
+    // bit_1が0, bit_2のビット数が1
+    return false;
+  }else if(bit_2 == 0 && IsSingleBit(bit_1)){
+    // bit_2が0, bit_1のビット数が1
+    return false;
+  }
+
+  return true;
+}
+
 }   // namespace realcore
 
 #endif    // BIT_SEARCH_INL_H

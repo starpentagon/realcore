@@ -76,6 +76,17 @@ inline const std::uint64_t GetConsectiveStoneBit(const std::uint64_t stone_bit);
 template<size_t N>
 inline void GetStoneWithOneOpenBit(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, N> * const pattern_bit_list);
 
+//! @brief ビットの数が1つだけ立っているかをチェックする
+//! @param bit ビット数を求めるbit(i=1,2)
+//! @retval true ビットの数が1
+//! @pre bitは0以外
+inline const bool IsSingleBit(const std::uint64_t bit);
+
+//! @brief ビットの数が2以上かどうかをチェックする(64bit変数 * 2版)
+//! @param bit_i チェック対象のbit(i=1,2)
+//! @retval true ビットの数が2以上
+inline const bool IsMultipleBit(const std::uint64_t bit_1, const std::uint64_t bit_2);
+
 //! @brief 右端ビットを求める
 //! @param bit 右端ビットを求めるbit
 //! @retval 右端ビット(例: 0b01011010 -> 0b00000010)
