@@ -2,6 +2,7 @@
 
 #include "Move.h"
 #include "MoveList.h"
+#include "LineNeighborhood.h"
 #include "Board.h"
 
 using namespace std;
@@ -32,6 +33,40 @@ Board::Board(const MoveList &move_list)
 
     is_black_turn = !is_black_turn;
   }
+}
+
+template<>
+const bool Board::IsForbiddenMove<kBlackTurn>(const MovePosition move) const
+{
+  assert(GetState(move) == kOpenPosition);
+
+  // 禁手チェックはmoveの長さ5の直線近傍をチェックすれば十分
+  // @see doc/05_forbidden_check/forbidden_check.pptx
+  constexpr size_t kForbiddenCheck = 5;
+  LineNeighborhood<kForbiddenCheck> line_neighbor(move, *this);
+
+  line_neighbor.SetCenterState<kBlackStone>();
+
+  // 長連
+  vector<BoardPosition> next_open_four_list;
+  const ForbiddenCheckState forbidden_state = line_neighbor.ForbiddenCheck(&next_open_four_list);
+
+  if(forbidden_state == kForbiddenMove){
+    return true;
+  }else if(forbidden_state == kNonForbiddenMove){
+    return false;
+  }
+
+  // 見かけの三々が存在する(kPossibleForbiddenMove)
+
+  
+  return false;
+}
+
+template<>
+const bool Board::IsForbiddenMove<kWhiteTurn>(const MovePosition move) const
+{
+  return false;
 }
 
 const string Board::str() const

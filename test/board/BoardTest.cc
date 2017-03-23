@@ -216,6 +216,67 @@ public:
       EXPECT_EQ(shift_val, board.GetBitBoardShift(i));
     }
   }
+
+  void IsForbiddenMoveTest()
+  {
+    // 黒番
+    const auto in_board_move_list = GetAllInBoardMove();
+
+    {
+      // 長連
+      //   A B C D E F G H I J K L M N O 
+      // A + --------------------------+ A 
+      // B | . . . . . . . . . . . . . | B 
+      // C | . . . . . . . . . . . . . | C 
+      // D | . . * . . . . . . . * . . | D 
+      // E | . . . . . . . . . . . . . | E 
+      // F | . . . . . . . . . . . . . | F 
+      // G | . . . . . . o o . . . . . | G 
+      // H | . . . . . o x x x . x x . | H 
+      // I | . . . . . . o o . . . . . | I 
+      // J | . . . . . . . . . . . . . | J 
+      // K | . . . . . . . . . . . . . | K 
+      // L | . . * . . . . . . . * . . | L 
+      // M | . . . . . . . . . . . . . | M 
+      // N | . . . . . . . . . . . . . | N 
+      // O + --------------------------+ O 
+      //   A B C D E F G H I J K L M N O 
+      Board board(MoveList("hhigihghjhhgmhhilhii"));
+
+      for(const auto move : in_board_move_list){
+        if(board.GetState(move) != kOpenPosition){
+          continue;
+        }
+        
+        if(move == kMoveKH){
+          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+        }else{
+          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+        }
+
+        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+      }
+    }
+    {
+      // 四々(1直線)
+      ASSERT_TRUE(false);
+    }
+    {
+      // 四々(2直線, 四のみ)
+      ASSERT_TRUE(false);
+    }
+    {
+      // 四々(2直線, 達四のみ)
+      ASSERT_TRUE(false);
+    }
+    {
+      // 四々(2直線, 達四、四混在)
+      ASSERT_TRUE(false);
+    }
+
+    // 盤外
+    ASSERT_TRUE(false);
+  }
 };
 
 TEST_F(BoardTest, DefaultConstructorTest){
@@ -563,6 +624,11 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
       }
     }
   }
+}
+
+TEST_F(BoardTest, IsForbiddenMoveTest)
+{
+  IsForbiddenMoveTest();
 }
 
 }   // namespace realcore

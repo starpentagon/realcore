@@ -23,6 +23,14 @@ enum PositionState : StateBit
   kOpenPosition   //!< 空点(0b11)
 };
 
+//! @brief 禁手チェックの状態定義
+enum ForbiddenCheckState
+{
+  kForbiddenMove,         //! 禁手
+  kPossibleForbiddenMove, //! 見かけの三々があり禁手の可能性あり
+  kNonForbiddenMove       //! 否禁
+};
+
 //! @brief 状態文字列([B|W|O|X]*)に対応するStateBitを返す
 //! @param str 状態文字列([B|W|O|X| ]*)
 //! @retval 対応するstate_bit
