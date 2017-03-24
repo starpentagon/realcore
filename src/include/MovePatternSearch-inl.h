@@ -23,14 +23,14 @@ inline const std::uint64_t SearchOpenFour(const std::uint64_t stone_bit, const s
   std::uint64_t four_stone_bit = GetConsectiveStoneBit<kFourStone>(stone_bit);  // 4個以上連続する石のフラグ
 
   std::uint64_t open_four_bit = open_bit;      // O
-  open_four_bit &= four_stone_bit >> (1 * 2);  // BBBBO, WWWWO
-  open_four_bit &= open_bit >> (5 * 2);        // OBBBBO, OWWWWO
+  open_four_bit &= RightShift<1>(four_stone_bit);  // BBBBO, WWWWO
+  open_four_bit &= RightShift<5>(open_bit);        // OBBBBO, OWWWWO
 
   // 長連筋をマスクする(XOBBBBOX, X\ne B)
   std::uint64_t overline_mask = ~(0ULL);
   
   if(P == kBlackTurn){
-    overline_mask = ~(stone_bit << (1 * 2)) & ~(stone_bit >> (6 * 2));
+    overline_mask = ~LeftShift<1>(stone_bit) & ~RightShift<6>(stone_bit);
   }
 
   open_four_bit &= overline_mask;
@@ -58,7 +58,7 @@ inline const std::uint64_t SearchFour(const std::uint64_t stone_bit, const std::
   std::uint64_t overline_mask = ~(0ULL);
   
   if(P == kBlackTurn){
-    overline_mask = ~(stone_bit << (1 * 2)) & ~(stone_bit >> (5 * 2));
+    overline_mask = ~LeftShift<1>(stone_bit) & ~RightShift<5>(stone_bit);
   }
 
   four_bit &= overline_mask;
@@ -79,19 +79,19 @@ inline const std::uint64_t SearchSemiThree(const std::uint64_t stone_bit, const 
   GetStoneWithOneOpenBit<kPatternSize>(stone_bit, open_bit, &pattern_bit_list);
 
   // O[(B|W|O|X)4]Oのマスク
-  const std::uint64_t open_mask = (open_bit >> (5 * 2)) & open_bit;
+  const std::uint64_t open_mask = RightShift<5>(open_bit) & open_bit;
 
   // 長連筋をマスクする(XO[B3O1]OX, X\ne B)
   std::uint64_t overline_mask = ~(0ULL);
   
   if(P == kBlackTurn){
-    overline_mask = ~(stone_bit << (1 * 2)) & ~(stone_bit >> (6 * 2));
+    overline_mask = ~LeftShift<1>(stone_bit) & ~RightShift<6>(stone_bit);
   }
 
   std::uint64_t three_bit = 0;
 
   for(size_t i=0; i<kPatternSize; i++){
-    auto three_pattern_bit = (pattern_bit_list[i] >> (1 * 2));  // [B301][W3O1]
+    auto three_pattern_bit = RightShift<1>(pattern_bit_list[i]);  // [B301][W3O1]
     three_pattern_bit &= open_mask;     // O[B3O1]O, O[W3O1]O
     three_pattern_bit &= overline_mask; // XO[B3O1]OX
 
