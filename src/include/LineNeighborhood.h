@@ -42,6 +42,9 @@ public:
   const ForbiddenCheckState ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list) const;
 
 private:
+  //! @brief local_bit_board配列のindexとbit indexから対応する方向を求める
+  const BoardDirection GetBoardDirection(const size_t index, const size_t bit_index) const;
+
   static constexpr size_t kLocalBitBoardNum = 2;
 
   //! @brief 直線近傍の状態を保持する
@@ -50,6 +53,9 @@ private:
   //! @note local_bit_board_[1]の下位32bit: 左下斜め方向(14-15bit目が中心)
   //! @note local_bit_board_[1]の上位32bit: 右下斜め方向(46-47bit目が中心)
   std::array<LocalBitBoard, kLocalBitBoardNum> local_bit_board_;
+  
+  //! @brief 中心位置
+  MovePosition move_;
 };  // class LineNeighborhood
 
 }   // namespace realcore

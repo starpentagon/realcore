@@ -10,7 +10,7 @@ namespace realcore
 
 template<size_t N>
 LineNeighborhood<N>::LineNeighborhood(const MovePosition move, const Board &board)
-: local_bit_board_{{0}}
+: local_bit_board_{{0}}, move_(move)
 {
   std::array<StateBit, kBoardDirectionNum> line_neighborhood;
   board.GetLineNeighborhoodStateBit<N>(move, &line_neighborhood);
@@ -40,6 +40,17 @@ inline void LineNeighborhood<N>::SetCenterState()
   
   local_bit_board_[0] ^= stone_xor_mask;
   local_bit_board_[1] ^= stone_xor_mask;
+}
+
+template<size_t N>
+inline const BoardDirection LineNeighborhood<N>::GetBoardDirection(const size_t index, const size_t bit_index) const
+{
+  const auto &board_direction_list = realcore::GetBoardDirection();
+
+  constexpr size_t kMinUpperBitIndex = 32;
+  const size_t direction_index = 2 * index + (bit_index < kMinUpperBitIndex ? 0 : 1);
+
+  return board_direction_list[direction_index];
 }
 
 template<size_t N>
@@ -83,7 +94,56 @@ const ForbiddenCheckState LineNeighborhood<N>::ForbiddenCheck(std::vector<BoardP
     return kForbiddenMove;
   }
 
-  return kNonForbiddenMove;
+  // 見かけの三々
+  std::array<std::uint64_t, kLocalBitBoardNum> semi_three_bit{{0}};
+  std::array<std::uint64_t, kLocalBitBoardNum> next_open_four_bit{{0}};
+
+  for(size_t i=0; i<kLocalBitBoardNum; i++){
+    const auto black_bit = local_black_bit[i];
+    const auto open_bit = local_open_bit[i];
+
+    semi_three_bit[i] = SearchSemiThree<kBlackTurn>(black_bit, open_bit, &(next_open_four_bit[i]));
+  }
+
+  if(!IsMultipleBit(semi_three_bit[0], semi_three_bit[1])){
+    return kNonForbiddenMove;
+  }
+
+  // 見かけの三々が2つ以上存在する
+  Cordinate x = 0, y = 0;
+  GetMoveCordinate(move_, &x, &y);
+
+  std::array<size_t, kBoardDirectionNum> index_list;
+  GetBitBoardIndexList(x, y, &index_list);
+
+  std::array<size_t, kBoardDirectionNum> shift_list;
+  GetBitBoardShiftList(x, y, &shift_list);
+
+  constexpr size_t kMinUpperBitIndex = 32;
+  constexpr size_t kLowerCenter = 14;   // 下位32bitの中心位置
+  constexpr size_t kUpperCenter = 46;   // 上位32bitの中心位置
+
+  for(size_t index=0; index<kLocalBitBoardNum; index++){
+    std::vector<size_t> bit_index_list;
+    bit_index_list.reserve(4);   // 一方向で高々2つ * 2方向
+
+    GetBitIndexList(next_open_four_bit[index], &bit_index_list);
+
+    for(const auto bit_index : bit_index_list){
+      const auto direction = GetBoardDirection(index, bit_index);
+      const auto index = index_list[direction];
+      const auto shift = shift_list[direction];
+      
+      // BitBoard配列での達四位置に対応するシフト量を求める
+      const auto center_shift = bit_index < kMinUpperBitIndex ? kLowerCenter : kUpperCenter;
+      const auto open_four_shift = shift + GetIndexDifference(center_shift, bit_index);
+
+      const auto board_position = GetBoardPosition(index, open_four_shift);
+      next_open_four_list->push_back(board_position);
+    }
+  }
+
+  return kPossibleForbiddenMove;
 }
 
 }   // namespace realcore

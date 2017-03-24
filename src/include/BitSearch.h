@@ -24,7 +24,7 @@ enum PositionState : StateBit
 };
 
 //! @brief 禁手チェックの状態定義
-enum ForbiddenCheckState
+enum ForbiddenCheckState : std::uint8_t
 {
   kForbiddenMove,         //! 禁手
   kPossibleForbiddenMove, //! 見かけの三々があり禁手の可能性あり
@@ -43,6 +43,12 @@ const StateBit GetStateBit(const std::string &str);
 //! @retval 状態文字列([B|W|O|X]*)
 //! @note 8文字ごとにスペースを入れた32+3=35文字の文字列を返す
 const std::string GetStateBitString(StateBit state_bit);
+
+//! @brief index間の差分値を算出する
+//! @param index_from 起点となるindex値
+//! @param index_to 差分を求めるindex値
+//! @retval index間の差分値
+inline const int GetIndexDifference(const size_t index_from, const size_t index_to);
 
 //! @brief 黒石フラグを返す
 //! @param state_bit State Bit

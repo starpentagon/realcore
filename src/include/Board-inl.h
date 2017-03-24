@@ -149,7 +149,70 @@ inline const size_t Board::GetBitBoardShift(const BoardPosition board_position) 
   return shift_val;
 }
 
-inline void Board::GetBitBoardIndexList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const index_list) const
+inline const BoardPosition GetBoardPosition(const size_t index, const size_t shift)
+{
+  return (32 * index + shift / 2);
+}
+
+inline const BoardDirection GetBoardDirection(const BoardPosition board_position)
+{
+  constexpr size_t kMaxLateralBoardPosition = 255;
+  constexpr size_t kMaxVerticalBoardPosition = 511;
+  constexpr size_t kMaxLeftDiagonalBoardPosition = 767;
+  constexpr size_t kMaxRightDiagonalBoardPosition = 1023;
+
+  if(board_position <= kMaxLateralBoardPosition){
+    return kLateralDirection;
+  }else if(board_position <= kMaxVerticalBoardPosition){
+    return kVerticalDirection;
+  }else if(board_position <= kMaxLeftDiagonalBoardPosition){
+    return kLeftDiagonalDirection;
+  }else if(board_position <= kMaxRightDiagonalBoardPosition){
+    return kRightDiagonalDirection;
+  }else{
+    assert(false);
+    return kLateralDirection;
+  }
+}
+
+inline const void GetBoardCordinate(const BoardPosition board_position, Cordinate * const x, Cordinate * const y)
+{
+  assert(x != nullptr);
+  assert(y != nullptr);
+  
+  const BoardDirection board_direction = GetBoardDirection(board_position);
+
+  if(board_direction == kLateralDirection){
+    *x = board_position % 16;
+    *y = board_position / 16;
+  }else if(board_direction == kVerticalDirection){
+    *x = (board_position - 256) / 16;
+    *y = (board_position - 256) % 16;
+  }else if(board_direction == kLeftDiagonalDirection){
+    *y = (board_position - 512 + 1) % 16;
+    *x = ((board_position - 512) / 16 - *y + 18) % 16;
+  }else if(board_direction == kRightDiagonalDirection){
+    *y = (board_position - 768 + 1) % 16;
+    *x = (*y - (board_position - 768) / 16 + 30) % 16;
+  }else{
+    assert(false);
+  }
+}
+
+inline const MovePosition GetBoardMove(const BoardPosition board_position)
+{
+  Cordinate x = 0, y = 0;
+  GetBoardCordinate(board_position, &x, &y);
+
+  if(!IsInBoard(x, y))
+  {
+    return kInvalidMove;
+  }
+
+  return GetMove(x, y);
+}
+
+inline void GetBitBoardIndexList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const index_list)
 {
   assert(IsInBoard(x, y));
 
@@ -159,7 +222,7 @@ inline void Board::GetBitBoardIndexList(const Cordinate x, const Cordinate y, st
   (*index_list)[kRightDiagonalDirection] = ((y - x + 14) % 16) / 2 + 24;
 }
 
-inline void Board::GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const shift_list) const
+inline void GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const shift_list)
 {
   assert(IsInBoard(x, y));
 

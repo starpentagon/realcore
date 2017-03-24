@@ -39,6 +39,34 @@ TEST(BitSearchTest, GetStateBitStringTest)
   EXPECT_EQ("XXXXXXXX XXXXXXXX XXXXXXXX XXXXXOWB", bit_str);
 }
 
+TEST(BitSearchTest, GetIndexDifferenceTest)
+{
+  {
+    // 差分値が正
+    constexpr size_t index_from = 1, index_to = 10;
+    constexpr int expect_diff = 9;
+    
+    const int diff = GetIndexDifference(index_from, index_to);
+    EXPECT_EQ(expect_diff, diff);
+  }
+  {
+    // 差分値が0
+    constexpr size_t index_from = 1, index_to = 1;
+    constexpr int expect_diff = 0;
+
+    const int diff = GetIndexDifference(index_from, index_to);
+    EXPECT_EQ(expect_diff, diff);
+  }
+  {
+    // 差分値が負
+    constexpr size_t index_from = 1, index_to = 0;
+    constexpr int expect_diff = -1;
+
+    const int diff = GetIndexDifference(index_from, index_to);
+    EXPECT_EQ(expect_diff, diff);
+  }
+}
+
 TEST(BitSearchTest, GetBlackStoneBitTest)
 {
   // (盤外,空点,白石,黒石)×8をテストパターンとする

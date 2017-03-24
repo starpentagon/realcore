@@ -14,13 +14,6 @@
 
 namespace realcore
 {
-//! @brief 点(x, y)が盤内かを判定する関数
-//! @param x x座標
-//! @param y y座標
-//! @retval true 点(x, y)が盤内
-//! @pre x, yは[0, 15]の範囲であること
-constexpr inline bool IsInBoard(const Cordinate x, const Cordinate y);
-
 //! @brief 盤面位置
 //! @see doc/01_data_definition/data_definition.pptx and board_definition.xlsx
 typedef std::uint64_t BoardPosition;
@@ -35,16 +28,80 @@ typedef std::array<StateBit, kBitBoardElementNum> Bitboard;
 enum MovePosition : std::uint8_t;
 class BoardTest;
 class MoveList;
+class Board;
+
+//! @brief 点(x, y)が盤内かを判定する関数
+//! @param x x座標
+//! @param y y座標
+//! @retval true 点(x, y)が盤内
+//! @pre x, yは[0, 15]の範囲であること
+constexpr inline bool IsInBoard(const Cordinate x, const Cordinate y);
+
+//! @brief BitBoard配列のindexとshift量からBoardPositionを算出する関数
+//! @param index BitBoard配列のindex
+//! @param shift BitBoard配列のshift量
+//! @retval 対応するBoardPosition
+inline const BoardPosition GetBoardPosition(const size_t index, const size_t shift);
+
+//! @brief BoardPositionから対応する方向を返す関数
+//! @param board_position BoardPosition
+//! @retval BoardPositionに対応する方向
+inline const BoardDirection GetBoardDirection(const BoardPosition board_position);
+
+//! @brief BoardPositionから(x, y)座標を求める
+//! @param board_position BoardPosition
+//! @param x x座標
+//! @param y y座標
+//! @note x, yともに[0, 15]であることを保証する
+inline const void GetBoardCordinate(const BoardPosition board_position, Cordinate * const x, Cordinate * const y);
+
+//! @brief BoardPositionからMovePositionを求める
+//! @param board_position BoardPosition
+//! @retval BoardPositionに対応するMovePosition
+inline const MovePosition GetBoardMove(const BoardPosition board_position);
+
+//! @brief (x, y)座標から各方向のBitBoard配列のindexを取得する
+//! @param x x座標
+//! @param y y座標
+//! @param index_list BitBoard配列のindexの格納先
+//! @pre (x, y)は盤内であること
+inline void GetBitBoardIndexList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const index_list);
+
+//! @brief (x, y)座標から各方向のBitBoard配列のshift量を取得する
+//! @param x x座標
+//! @param y y座標
+//! @param index_list BitBoard配列のshift量の格納先
+//! @pre (x, y)は盤内であること
+inline void GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const shift_list);
+
+//! @brief 2つのBoardを比較する
+//! @param board_1, 2: 比較対象
+//! @retval true 2つのBoardが同一の内容を保持
+bool IsEqual(const Board &board_1, const Board &board_2);
+
+//! @brief コピーを作成する
+//! @param board_from コピー元
+//! @param board_to コピー先
+void Copy(const Board &board_from, Board * const board_to);
 
 //! @brief 盤面管理クラス
 class Board
 {
   friend class BoardTest;
+  friend bool IsEqual(const Board &board_1, const Board &board_2);
+  friend void Copy(const Board &board_from, Board * const board_to);
 
 public:
   Board();
   Board(const Board &board);
   Board(const MoveList &move_list);
+
+  //! @brief 代入演算子
+  const Board& operator=(const Board &board);
+
+  //! @brief 比較演算子
+  const bool operator==(const Board &board) const;
+  const bool operator!=(const Board &board) const;
 
   //! @brief 盤面状態を取得する(MovePosition版)
   //! @param move 指し手位置
@@ -95,20 +152,6 @@ protected:
 
   //! @brief BoardPositionに対応するシフト量を取得する
   const size_t GetBitBoardShift(const BoardPosition board_position) const;
-
-  //! @brief (x, y)座標から各方向のBitBoard配列のindexを取得する
-  //! @param x x座標
-  //! @param y y座標
-  //! @param index_list BitBoard配列のindexの格納先
-  //! @pre (x, y)は盤内であること
-  void GetBitBoardIndexList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const index_list) const;
-
-  //! @brief (x, y)座標から各方向のBitBoard配列のshift量を取得する
-  //! @param x x座標
-  //! @param y y座標
-  //! @param index_list BitBoard配列のshift量の格納先
-  //! @pre (x, y)は盤内であること
-  void GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const shift_list) const;
 
   //! @brief 盤面状態を保持する配列
   Bitboard bit_board_;
