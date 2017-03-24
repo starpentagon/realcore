@@ -216,6 +216,406 @@ public:
       EXPECT_EQ(shift_val, board.GetBitBoardShift(i));
     }
   }
+
+  void IsForbiddenMoveTest()
+  {
+    // 黒番
+    const auto in_board_move_list = GetAllInBoardMove();
+
+    {
+      // 長連
+      //   A B C D E F G H I J K L M N O 
+      // A + --------------------------+ A 
+      // B | . . . . . . . . . . . . . | B 
+      // C | . . . . . . . . . . . . . | C 
+      // D | . . * . . . . . . . * . . | D 
+      // E | . . . . . . . . . . . . . | E 
+      // F | . . . . . . . . . . . . . | F 
+      // G | . . . . . . o o . . . . . | G 
+      // H | . . . . . o x x x . x x . | H 
+      // I | . . . . . . o o . . . . . | I 
+      // J | . . . . . . . . . . . . . | J 
+      // K | . . . . . . . . . . . . . | K 
+      // L | . . * . . . . . . . * . . | L 
+      // M | . . . . . . . . . . . . . | M 
+      // N | . . . . . . . . . . . . . | N 
+      // O + --------------------------+ O 
+      //   A B C D E F G H I J K L M N O 
+      Board board(MoveList("hhigihghjhhgmhhilhii"));
+
+      for(const auto move : in_board_move_list){
+        if(board.GetState(move) != kOpenPosition){
+          continue;
+        }
+        
+        if(move == kMoveKH){
+          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+        }else{
+          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+        }
+
+        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+      }
+    }
+    {
+      // 両頭の四々_1
+      //   A B C D E F G H I J K L M N O 
+      // A + --------------------------+ A 
+      // B | . . . . . . . . . . . . . | B 
+      // C | . . . . . . . . . . . . . | C 
+      // D | . . * . . . . . . . * . . | D 
+      // E | . . . . . . . . . . . . . | E 
+      // F | . . . . . . . . . . . . . | F 
+      // G | . . . . . . . o . . . . . | G 
+      // H | . . . . . o x . . x x . x o H 
+      // I | . . . . . . . . . o . . . | I 
+      // J | . . . . . . . . . . . . . | J 
+      // K | . . . . . . . . . . . . . | K 
+      // L | . . * . . . . . . . * . . | L 
+      // M | . . . . . . . . . . . . . | M 
+      // N | . . . . . . . . . . . . . | N 
+      // O + --------------------------+ O 
+      //   A B C D E F G H I J K L M N O 
+      Board board(MoveList("hhignhghkhkilhoh"));
+
+      for(const auto move : in_board_move_list){
+        if(board.GetState(move) != kOpenPosition){
+          continue;
+        }
+        
+        if(move == kMoveJH){
+          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+        }else{
+          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+        }
+
+        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+      }
+    }
+    {
+      // 両頭の四々_2
+      //   A B C D E F G H I J K L M N O 
+      // A + ------------o ------------+ A 
+      // B | . . . . . . x . . . . . . | B 
+      // C | . . . . . . . . . . . . . | C 
+      // D | . . * . . . x . . . * . . | D 
+      // E | . . . . . o . o . . . . . | E 
+      // F | . . . . . . x . . . . . . | F 
+      // G | . . . . . . . . . . . . . | G 
+      // H | . . . . . . x . . . . . . | H 
+      // I | . . . . . . o . . . . . . | I 
+      // J | . . . . . . . . . . . . . | J 
+      // K | . . . . . . . . . . . . . | K 
+      // L | . . * . . . . . . . * . . | L 
+      // M | . . . . . . . . . . . . . | M 
+      // N | . . . . . . . . . . . . . | N 
+      // O + --------------------------+ O 
+      //   A B C D E F G H I J K L M N O 
+      Board board(MoveList("hhhihbhahdgehfie"));
+
+      for(const auto move : in_board_move_list){
+        if(board.GetState(move) != kOpenPosition){
+          continue;
+        }
+        
+        if(move == kMoveHE){
+          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+        }else{
+          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+        }
+
+        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+      }
+    }
+    {
+      // 両頭の四々_3
+      //   A B C D E F G H I J K L M N O 
+      // A + --------------------------+ A 
+      // B | . . . . . . . . . . . . . | B 
+      // C | . . . . . . . . . . . . . | C 
+      // D | . . * . . . . . . . * . . | D 
+      // E | . . . . . . . . . . . . . | E 
+      // F | . . . . . . . . . . . . . | F 
+      // G | . . . . . . . . o . . . . | G 
+      // H | . . . . . o x . x x . . x o H 
+      // I | . . . . . . . . . . o . . | I 
+      // J | . . . . . . . . . . . . . | J 
+      // K | . . . . . . . . . . . . . | K 
+      // L | . . * . . . . . . . * . . | L 
+      // M | . . . . . . . . . . . . . | M 
+      // N | . . . . . . . . . . . . . | N 
+      // O + --------------------------+ O 
+      //   A B C D E F G H I J K L M N O 
+      Board board(MoveList("hhghnhohkhjgjhli"));
+
+      for(const auto move : in_board_move_list){
+        if(board.GetState(move) != kOpenPosition){
+          continue;
+        }
+        
+        if(move == kMoveLH){
+          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+        }else{
+          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+        }
+
+        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+      }
+    }
+    {
+      // 長蛇の四々_1
+      //   A B C D E F G H I J K L M N O 
+      // A + --------------------------x A 
+      // B | . . . . . . . . . . . . x | B 
+      // C | . . . . . . . . . . . . . | C 
+      // D | . . * . . . . . . . x . . | D 
+      // E | . . . . . . . . . . . . . | E 
+      // F | . . . . . . o . . . . . . | F 
+      // G | . . . . . o . x . . . . . | G 
+      // H | . . . . . . x . o . . . . | H 
+      // I | . . . . . o . o . . . . . | I 
+      // J | . . . . . . . . . . . . . | J 
+      // K | . . . . . . . . . . . . . | K 
+      // L | . . * . . . . . . . * . . | L 
+      // M | . . . . . . . . . . . . . | M 
+      // N | . . . . . . . . . . . . . | N 
+      // O + --------------------------+ O 
+      //   A B C D E F G H I J K L M N O 
+      Board board(MoveList("hhgiigiioaggnbjhldhf"));
+
+      for(const auto move : in_board_move_list){
+        if(board.GetState(move) != kOpenPosition){
+          continue;
+        }
+        
+        if(move == kMoveKE){
+          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+        }else{
+          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+        }
+
+        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+      }
+    }
+    {
+      // 長蛇の四々_2
+      //   A B C D E F G H I J K L M N O 
+      // A + --------------------------x A 
+      // B | . . . . . . . . . . . . x | B 
+      // C | . . . . . . . . . . . . . | C 
+      // D | . . * . . . . . . . * . . | D 
+      // E | . . . . . . . . . x . . . | E 
+      // F | . . . . . . o . . . . . . | F 
+      // G | . . . . . o . x . . . . . | G 
+      // H | . . . . . . x . o . . . . | H 
+      // I | . . . . . o . o . . . . . | I 
+      // J | . . . . . . . . . . . . . | J 
+      // K | . . . . . . . . . . . . . | K 
+      // L | . . * . . . . . . . * . . | L 
+      // M | . . . . . . . . . . . . . | M 
+      // N | . . . . . . . . . . . . . | N 
+      // O + --------------------------+ O 
+      //   A B C D E F G H I J K L M N O 
+      Board board(MoveList("hhgiigiioaggnbjhkehf"));
+
+      for(const auto move : in_board_move_list){
+        if(board.GetState(move) != kOpenPosition){
+          continue;
+        }
+        
+        if(move == kMoveLD){
+          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+        }else{
+          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+        }
+
+        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+      }
+    }
+    {
+      // 双竜の四々
+      //   A B C D E F G H I J K L M N O 
+      // A o o ------------------------+ A 
+      // B o x . . . . . . . . . . . . | B 
+      // C | . x . . . . . . . . . . . | C 
+      // D | . . x . . . . . . . * . . | D 
+      // E | . . . . . . . . . . . . . | E 
+      // F | . . . . . . . . . . . . . | F 
+      // G | . . . . . . . . . . . . . | G 
+      // H | . . . . . . x . . . . . . | H 
+      // I | . . . . . . . x . o . . . | I 
+      // J | . . . . . . . . x . . . . | J 
+      // K | . . . . . . . o . o . . . | K 
+      // L | . . * . . . . . . . * . . | L 
+      // M | . . . . . . . . . . . . . | M 
+      // N | . . . . . . . . . . . . . | N 
+      // O + --------------------------+ O 
+      //   A B C D E F G H I J K L M N O 
+      Board board(MoveList("hhkkjjkiiiikddaabbbaccab"));
+
+      for(const auto move : in_board_move_list){
+        if(board.GetState(move) != kOpenPosition){
+          continue;
+        }
+        
+        if(move == kMoveFF){
+          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+        }else{
+          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+        }
+
+        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+      }
+    }
+    {
+      // 四々(2直線, 四のみ)
+      //   A B C D E F G H I J K L M N O 
+      // A + --------------------------+ A 
+      // B | . . . . . . . . . . . . . | B 
+      // C | . . . . . . . . o o . . . | C 
+      // D | . . * . . . . o x . * . . | D 
+      // E | . . . . . . . x . . . . . | E 
+      // F | . . . . . . x . . . . . . | F 
+      // G | . . . . . . . . . . . . . | G 
+      // H | . . . . . . x . . . . . . | H 
+      // I | . . . . . . . x . o . . . | I 
+      // J | . . . . . . . . x . o . . | J 
+      // K | . . . . . . . . . o . . . | K 
+      // L | . . * . . . . . . . * . . | L 
+      // M | . . . . . . . . . . . . . | M 
+      // N | . . . . . . . . . . . . . | N 
+      // O + --------------------------+ O 
+      //   A B C D E F G H I J K L M N O 
+      Board board(MoveList("hhkkjjkiiikchfjcjdidielj"));
+
+      for(const auto move : in_board_move_list){
+        if(board.GetState(move) != kOpenPosition){
+          continue;
+        }
+        
+        if(move == kMoveGG){
+          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+        }else{
+          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+        }
+
+        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+      }
+    }
+    {
+      // 四々(2直線, 達四のみ)
+      //   A B C D E F G H I J K L M N O 
+      // A + --------------------------+ A 
+      // B | . . . . . . . . . . . . . | B 
+      // C | . . . . . . . . . . . . . | C 
+      // D | . . o . . . . . . . o . . | D 
+      // E | . . . . . . . . . . . . . | E 
+      // F | . . . . x . . . . . . . . | F 
+      // G | o . x x x . . . . . . . . | G 
+      // H | . . . . . . x . . . . . . | H 
+      // I | . . . . . . . x . . . . . | I 
+      // J | . . . . . . . . . . . . . | J 
+      // K | . . . . . . . . . o . . . | K 
+      // L | . . o . . . . . . . o . . | L 
+      // M | . . . . . . . . . . . . . | M 
+      // N | . . . . . . . . . . . . . | N 
+      // O + --------------------------+ O 
+      //   A B C D E F G H I J K L M N O 
+      Board board(MoveList("hhkkiiddeglddgdlffllfgbg"));
+    
+      for(const auto move : in_board_move_list){
+        if(board.GetState(move) != kOpenPosition){
+          continue;
+        }
+        
+        if(move == kMoveGG){
+          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+        }else{
+          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+        }
+
+        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+      }
+    }
+    {
+      // 四々(2直線, 達四、四混在)
+      //   A B C D E F G H I J K L M N O 
+      // A + --------------------------+ A 
+      // B | . . . . . . . . . . . . . | B 
+      // C | . . . . . . . . . . . . . | C 
+      // D | . . o . . . . . . . o . . | D 
+      // E | . . . . . . . . . . . . . | E 
+      // F | . . . . x . . . . . . . . | F 
+      // G | o . x x x . . . . . . . . | G 
+      // H | . . . . . . x . . . . . . | H 
+      // I | . . . . . . . x . . . . . | I 
+      // J | . . . . . . . . o . . . . | J 
+      // K | . . . . . . . . . o . . . | K 
+      // L | . . o . . . . . . . * . . | L 
+      // M | . . . . . . . . . . . . . | M 
+      // N | . . . . . . . . . . . . . | N 
+      // O + --------------------------+ O 
+      //   A B C D E F G H I J K L M N O 
+      Board board(MoveList("hhkkiiddeglddgdlffjjfgbg"));
+    
+      for(const auto move : in_board_move_list){
+        if(board.GetState(move) != kOpenPosition){
+          continue;
+        }
+        
+        if(move == kMoveGG){
+          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+        }else{
+          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+        }
+
+        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+      }
+    }
+    {
+      // 否禁(達四)
+      //   A B C D E F G H I J K L M N O 
+      // A + --------------------------+ A 
+      // B | . . . . . . . . . . . . . | B 
+      // C | . . . . . . . . . . . . . | C 
+      // D | . . o . . . . . . . o . . | D 
+      // E | . . . . . . . . . . . . . | E 
+      // F | . . . . . . . . . . . . . | F 
+      // G | . . . . . . . . . . . . . | G 
+      // H | . . . . . x x x . . . . . | H 
+      // I | . . . . . . . . . . . . . | I 
+      // J | . . . . . . . . . . . . . | J 
+      // K | . . . . . . . . . . . . . | K 
+      // L | . . o . . . . . . . * . . | L 
+      // M | . . . . . . . . . . . . . | M 
+      // N | . . . . . . . . . . . . . | N 
+      // O + --------------------------+ O 
+      //   A B C D E F G H I J K L M N O 
+      Board board(MoveList("hhldihddghdl"));
+    
+      for(const auto move : in_board_move_list){
+        if(board.GetState(move) != kOpenPosition){
+          continue;
+        }
+        
+        EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+      }
+    }
+    {
+      // 盤内以外
+      Board board;
+
+      for(auto move : GetAllMove()){
+        if(IsInBoardMove(move)){
+          continue;
+        }
+
+        EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+      }
+    }
+  }
 };
 
 TEST_F(BoardTest, DefaultConstructorTest){
@@ -296,31 +696,31 @@ TEST_F(BoardTest, IsInBoardTest)
 
 TEST_F(BoardTest, strTest)
 {
-  // @todo テスト実装
   Board board;
 
   {
     // 初期状態のテスト
     string board_str = board.str();
     stringstream expect_ss;
-    
-    expect_ss << "　ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯ" << endl;
-    expect_ss << "Ａ┏ーーーーーーーーーーーーー┓" << endl;
-    expect_ss << "Ｂ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｃ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｄ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｅ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｆ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｇ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｈ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｉ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｊ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｋ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｌ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｍ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｎ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｏ┗ーーーーーーーーーーーーー┛" << endl;
 
+    expect_ss << "  A B C D E F G H I J K L M N O " << endl;
+    expect_ss << "A + --------------------------+ A " << endl;
+    expect_ss << "B | . . . . . . . . . . . . . | B " << endl;
+    expect_ss << "C | . . . . . . . . . . . . . | C " << endl;
+    expect_ss << "D | . . * . . . . . . . * . . | D " << endl;
+    expect_ss << "E | . . . . . . . . . . . . . | E " << endl;
+    expect_ss << "F | . . . . . . . . . . . . . | F " << endl;
+    expect_ss << "G | . . . . . . . . . . . . . | G " << endl;
+    expect_ss << "H | . . . . . . * . . . . . . | H " << endl;
+    expect_ss << "I | . . . . . . . . . . . . . | I " << endl;
+    expect_ss << "J | . . . . . . . . . . . . . | J " << endl;
+    expect_ss << "K | . . . . . . . . . . . . . | K " << endl;
+    expect_ss << "L | . . * . . . . . . . * . . | L " << endl;
+    expect_ss << "M | . . . . . . . . . . . . . | M " << endl;
+    expect_ss << "N | . . . . . . . . . . . . . | N " << endl;
+    expect_ss << "O + --------------------------+ O " << endl;
+    expect_ss << "  A B C D E F G H I J K L M N O " << endl;
+    
     EXPECT_TRUE(board_str == expect_ss.str());
   }
   {
@@ -331,22 +731,23 @@ TEST_F(BoardTest, strTest)
 
     stringstream expect_ss;
     
-    expect_ss << "　ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯ" << endl;
-    expect_ss << "Ａ┏ーーーーーーーーーーーーー┓" << endl;
-    expect_ss << "Ｂ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｃ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｄ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｅ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｆ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｇ┃＋＋＋＋＋＋○＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｈ┃＋＋＋＋＋＋●＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｉ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｊ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｋ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｌ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｍ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｎ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃" << endl;
-    expect_ss << "Ｏ┗ーーーーーーーーーーーーー┛" << endl;
+    expect_ss << "  A B C D E F G H I J K L M N O " << endl;
+    expect_ss << "A + --------------------------+ A " << endl;
+    expect_ss << "B | . . . . . . . . . . . . . | B " << endl;
+    expect_ss << "C | . . . . . . . . . . . . . | C " << endl;
+    expect_ss << "D | . . * . . . . . . . * . . | D " << endl;
+    expect_ss << "E | . . . . . . . . . . . . . | E " << endl;
+    expect_ss << "F | . . . . . . . . . . . . . | F " << endl;
+    expect_ss << "G | . . . . . . o . . . . . . | G " << endl;
+    expect_ss << "H | . . . . . . x . . . . . . | H " << endl;
+    expect_ss << "I | . . . . . . . . . . . . . | I " << endl;
+    expect_ss << "J | . . . . . . . . . . . . . | J " << endl;
+    expect_ss << "K | . . . . . . . . . . . . . | K " << endl;
+    expect_ss << "L | . . * . . . . . . . * . . | L " << endl;
+    expect_ss << "M | . . . . . . . . . . . . . | M " << endl;
+    expect_ss << "N | . . . . . . . . . . . . . | N " << endl;
+    expect_ss << "O + --------------------------+ O " << endl;
+    expect_ss << "  A B C D E F G H I J K L M N O " << endl;
 
     EXPECT_TRUE(board_str == expect_ss.str());
   }
@@ -398,24 +799,23 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
     // 四隅に黒石、白石があるケース
     MoveList move_list("aaoaaooo");
     Board board(move_list);
-
-    // 　ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯ
-    // Ａ●ーーーーーーーーーーーーー○
-    // Ｂ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
-    // Ｃ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
-    // Ｄ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
-    // Ｅ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
-    // Ｆ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
-    // Ｇ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
-    // Ｈ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
-    // Ｉ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
-    // Ｊ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
-    // Ｋ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
-    // Ｌ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
-    // Ｍ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
-    // Ｎ┃＋＋＋＋＋＋＋＋＋＋＋＋＋┃
-    // Ｏ●ーーーーーーーーーーーーー○
-
+    //   A B C D E F G H I J K L M N O 
+    // A x --------------------------o A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . . . . . . . . . | G 
+    // H | . . . . . . * . . . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O x --------------------------o O 
+    //   A B C D E F G H I J K L M N O 
     {
       // 左上隅(N=1)
       array<StateBit, kBoardDirectionNum> line_neighborhood;
@@ -552,7 +952,21 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
       const StateBit right_diagonal_state_bit = GetStateBit("OOOOOXXWOOOOOOO");
       EXPECT_EQ(right_diagonal_state_bit, line_neighborhood[kRightDiagonalDirection]);
     }
+    {
+      // 盤外のケース
+      array<StateBit, kBoardDirectionNum> line_neighborhood;
+      board.GetLineNeighborhoodStateBit<7>(kNullMove, &line_neighborhood);
+
+      for(auto value : line_neighborhood){
+        EXPECT_EQ(0, value);
+      }
+    }
   }
+}
+
+TEST_F(BoardTest, IsForbiddenMoveTest)
+{
+  IsForbiddenMoveTest();
 }
 
 }   // namespace realcore

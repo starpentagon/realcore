@@ -76,6 +76,13 @@ public:
   const std::string str() const;
 
 protected:
+  //! @brief 指し手が禁手かチェックする
+  //! @param move 指し手位置
+  //! @retval true 指し手が禁手
+  //! @pre moveは着手前であること
+  template<PlayerTurn P>
+  const bool IsForbiddenMove(const MovePosition move) const;
+
   //! @brief 盤面状態を取得する(BoardPosition版)
   //! @param board_position 盤面位置
   //! @retval 指定位置の盤面状態
