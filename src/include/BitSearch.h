@@ -23,6 +23,14 @@ enum PositionState : StateBit
   kOpenPosition   //!< 空点(0b11)
 };
 
+//! @brief 禁手チェックの状態定義
+enum ForbiddenCheckState : std::uint8_t
+{
+  kForbiddenMove,         //! 禁手
+  kPossibleForbiddenMove, //! 見かけの三々があり禁手の可能性あり
+  kNonForbiddenMove       //! 否禁
+};
+
 //! @brief 状態文字列([B|W|O|X]*)に対応するStateBitを返す
 //! @param str 状態文字列([B|W|O|X| ]*)
 //! @retval 対応するstate_bit
@@ -35,6 +43,12 @@ const StateBit GetStateBit(const std::string &str);
 //! @retval 状態文字列([B|W|O|X]*)
 //! @note 8文字ごとにスペースを入れた32+3=35文字の文字列を返す
 const std::string GetStateBitString(StateBit state_bit);
+
+//! @brief index間の差分値を算出する
+//! @param index_from 起点となるindex値
+//! @param index_to 差分を求めるindex値
+//! @retval index間の差分値
+inline const int GetIndexDifference(const size_t index_from, const size_t index_to);
 
 //! @brief 黒石フラグを返す
 //! @param state_bit State Bit
@@ -67,6 +81,17 @@ inline const std::uint64_t GetConsectiveStoneBit(const std::uint64_t stone_bit);
 //! @note 検索結果には合致したパターンの最小シフト量の位置に１を立てた値が入る
 template<size_t N>
 inline void GetStoneWithOneOpenBit(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, N> * const pattern_bit_list);
+
+//! @brief ビットの数が1つだけ立っているかをチェックする
+//! @param bit ビット数を求めるbit(i=1,2)
+//! @retval true ビットの数が1
+//! @pre bitは0以外
+inline const bool IsSingleBit(const std::uint64_t bit);
+
+//! @brief ビットの数が2以上かどうかをチェックする(64bit変数 * 2版)
+//! @param bit_i チェック対象のbit(i=1,2)
+//! @retval true ビットの数が2以上
+inline const bool IsMultipleBit(const std::uint64_t bit_1, const std::uint64_t bit_2);
 
 //! @brief 右端ビットを求める
 //! @param bit 右端ビットを求めるbit

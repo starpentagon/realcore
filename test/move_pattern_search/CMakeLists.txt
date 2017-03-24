@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # プロジェクト名
-set(project_name board_test)
+set(project_name move_pattern_search_test)
 project(${project_name} CXX)
 
 # ccache
@@ -24,14 +24,8 @@ link_directories($ENV{GTEST_DIR}/googlemock/gtest)
 # ソースファイル
 add_executable(
     ${project_name}
-    $ENV{REALCORE_DIR}/src/RealCore.cc
     $ENV{REALCORE_DIR}/src/BitSearch.cc
-    $ENV{REALCORE_DIR}/src/Move.cc
-    $ENV{REALCORE_DIR}/src/MoveList.cc
-    $ENV{REALCORE_DIR}/src/Board.cc
-    ../BoardTest.cc
-    ../BoardMemberTest.cc
-    ../BoardForbiddenTest.cc
+    ../MovePatternSearchTest.cc
 )
 
 # ライブラリ

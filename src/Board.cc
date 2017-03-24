@@ -1,7 +1,9 @@
 #include <sstream>
+#include <bitset>
 
 #include "Move.h"
 #include "MoveList.h"
+#include "LineNeighborhood.h"
 #include "Board.h"
 
 using namespace std;
@@ -14,6 +16,11 @@ Board::Board()
   #include "def/BitBoardDefinition.h"
   }}
 {
+}
+
+Board::Board(const Board &board)
+{
+  *this = board;
 }
 
 Board::Board(const MoveList &move_list)
@@ -32,6 +39,105 @@ Board::Board(const MoveList &move_list)
 
     is_black_turn = !is_black_turn;
   }
+}
+
+bool IsEqual(const Board &board_1, const Board &board_2)
+{
+  if(board_1.bit_board_ != board_2.bit_board_){
+    return false;
+  }
+
+  return true;
+}
+
+const bool Board::operator==(const Board &board) const{
+  return IsEqual(*this, board);
+}
+
+const bool Board::operator!=(const Board &board) const{
+  return !(*this == board);
+}
+
+void Copy(const Board &board_from, Board * const board_to)
+{
+  assert(board_to != nullptr);
+
+  board_to->bit_board_ = board_from.bit_board_;
+}
+
+const Board& Board::operator=(const Board &board)
+{
+  if(this != &board){
+    Copy(board, this);
+  }
+
+  return *this;
+}
+
+template<>
+const bool Board::IsForbiddenMove<kBlackTurn>(const MovePosition move) const
+{
+  if(!IsInBoardMove(move)){
+    return false;
+  }
+  
+  assert(GetState(move) == kOpenPosition);
+
+  // 禁手チェックはmoveの長さ5の直線近傍をチェックすれば十分
+  // @see doc/05_forbidden_check/forbidden_check.pptx
+  constexpr size_t kForbiddenCheck = 5;
+  LineNeighborhood<kForbiddenCheck> line_neighbor(move, *this);
+
+  line_neighbor.SetCenterState<kBlackStone>();
+
+  // 直線近傍の禁手チェック
+  vector<BoardPosition> next_open_four_list;
+  const ForbiddenCheckState forbidden_state = line_neighbor.ForbiddenCheck(&next_open_four_list);
+
+  if(forbidden_state == kForbiddenMove){
+    return true;
+  }else if(forbidden_state == kNonForbiddenMove){
+    return false;
+  }
+
+  // 見かけの三々が存在する(kPossibleForbiddenMove)
+  // 達四を作る位置が禁手かどうかを再帰的にチェックする
+  Board board(*this);
+  board.SetState<kBlackStone>(move);
+
+  size_t three_count = 0;
+  bitset<kBoardDirectionNum> checked_direction;
+  
+  for(const auto board_position : next_open_four_list){
+    const auto direction = GetBoardDirection(board_position);
+
+    if(checked_direction[direction]){
+      continue;
+    }
+
+    const MovePosition next_open_four_move = GetBoardMove(board_position);
+    const bool is_forbidden = board.IsForbiddenMove<kBlackTurn>(next_open_four_move);
+
+    if(!is_forbidden){
+      // 達四を作る位置が禁点でなければ三
+      three_count++;
+
+      if(three_count == 2){
+        return true;
+      }
+
+      checked_direction.set(direction);
+    }
+  }
+
+  return false;
+}
+
+template<>
+const bool Board::IsForbiddenMove<kWhiteTurn>(const MovePosition move) const
+{
+  // 白番に禁手はない
+  return false;
 }
 
 const string Board::str() const
