@@ -89,6 +89,10 @@ public:
   //! @note 領域サイズはCalcInitialReserveSize()で算出する(initial_list_sizeより少し大きい領域が確保される)
   void ReserveInitial(const size_t initial_list_size);
 
+  //! @brief 黒番かどうかを返す
+  //! @param true 黒番
+  const bool IsBlackTurn() const;
+
 private:
   //! @brief 初期化時に確保する領域長さを算出する
   //! @param initial_size 初期化時の指し手リスト長

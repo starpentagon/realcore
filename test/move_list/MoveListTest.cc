@@ -261,7 +261,7 @@ TEST_F(MoveListTest, GetMoveListTest)
   }
 }
 
-TEST_F(MoveListTest, GetSymmetricMoveList)
+TEST_F(MoveListTest, GetSymmetricMoveListTest)
 {
   MoveList move_list("bchhpp");
 
@@ -313,6 +313,15 @@ TEST_F(MoveListTest, GetSymmetricMoveList)
     GetSymmetricMoveList(move_list, kDiagonalSymmetry4, &symmetric_move_list);
     EXPECT_TRUE(symmetric_move_list == expect_list);
   }
+}
+
+TEST_F(MoveListTest, IsBlackTurn)
+{
+  MoveList move_list;
+  EXPECT_TRUE(move_list.IsBlackTurn());
+
+  move_list += kMoveHH;
+  EXPECT_FALSE(move_list.IsBlackTurn());
 }
 
 }   // namespace realcore

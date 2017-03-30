@@ -105,7 +105,11 @@ inline const size_t MoveList::CalcInitialReserveSize(const size_t initial_list_s
 
   return reserve_list_size;
 }
-  
+
+inline const bool MoveList::IsBlackTurn() const{
+  return move_list_.size() % 2 == 0;
+}
+
 }
 
 #endif  // MOVE_LIST_INL_H

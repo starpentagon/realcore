@@ -8,6 +8,7 @@ fi
 
 for csv_file in `ls *.csv`; do
   head -n 1 ${csv_file} > header.tmp
+  break
 done
 
 if [ -e tmp ]; then

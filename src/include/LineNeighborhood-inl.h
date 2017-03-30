@@ -30,7 +30,9 @@ inline void LineNeighborhood<N>::SetCenterState()
   constexpr size_t kLowerCenter = 14;   // 下位32bitの中心位置
   constexpr size_t kUpperCenter = 46;   // 上位32bitの中心位置
   
+#ifndef NDEBUG
   constexpr std::uint64_t center_open_mask = (0b11ULL << kLowerCenter) | (0b11ULL << kUpperCenter);
+#endif
   assert((local_bit_board_[0] & center_open_mask) == center_open_mask);
   assert((local_bit_board_[1] & center_open_mask) == center_open_mask);
 

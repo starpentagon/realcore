@@ -32,7 +32,7 @@
 build
 
 # Database
-database/diagram_db.csv
+database/*.csv
 
 # Mac system files
 .DS_Store

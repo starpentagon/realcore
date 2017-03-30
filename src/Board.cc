@@ -150,16 +150,16 @@ const string Board::str() const
 
   // x座標
   ss << "  ";
-  for(Cordinate x=1; x<=kBoardLineNum; ++x){
+  for(Cordinate x=1; x<=static_cast<Cordinate>(kBoardLineNum); ++x){
     ss << cordinate_str[x];
   }
 
   ss << endl;
 
-  for(Cordinate y=1; y<=kBoardLineNum; ++y){
+  for(Cordinate y=1; y<=static_cast<Cordinate>(kBoardLineNum); ++y){
     ss << cordinate_str[y];
 
-    for(Cordinate x=1; x<=kBoardLineNum; ++x){      
+    for(Cordinate x=1; x<=static_cast<Cordinate>(kBoardLineNum); ++x){      
       const MovePosition move = GetMove(x, y);
       const PositionState state = GetState(move);
 
@@ -197,7 +197,7 @@ const string Board::str() const
 
   // x座標
   ss << "  ";
-  for(Cordinate x=1; x<=kBoardLineNum; ++x){
+  for(Cordinate x=1; x<=static_cast<Cordinate>(kBoardLineNum); ++x){
     ss << cordinate_str[x];
   }
 

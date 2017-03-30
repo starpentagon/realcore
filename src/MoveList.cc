@@ -88,8 +88,8 @@ bool GetMoveList(const string &move_string, MoveList * const move_list)
     Cordinate x = first_char - 'a' + 1;
     Cordinate y = second_char - 'a' + 1;
     
-    const bool x_in_board = 1 <= x && x <= kBoardLineNum;
-    const bool y_in_board = 1 <= y && y <= kBoardLineNum;
+    const bool x_in_board = 1 <= x && x <= static_cast<Cordinate>(kBoardLineNum);
+    const bool y_in_board = 1 <= y && y <= static_cast<Cordinate>(kBoardLineNum);
 
     if(!(x_in_board && y_in_board))
     {
