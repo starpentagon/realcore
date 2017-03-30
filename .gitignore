@@ -31,6 +31,9 @@
 # build directory
 build
 
+# Database
+database/diagram_db.csv
+
 # Mac system files
 .DS_Store
 
