@@ -60,7 +60,7 @@ string MoveList::str() const
   return move_str;
 }
 
-bool GetMoveList(const string &move_string, MoveList *move_list)
+bool GetMoveList(const string &move_string, MoveList * const move_list)
 {
   assert(move_list != nullptr && move_list->empty());
   
@@ -106,6 +106,17 @@ bool GetMoveList(const string &move_string, MoveList *move_list)
   }
 
   return valid_str_format;
+}
+
+void GetSymmetricMoveList(const MoveList &move_list, const BoardSymmetry symmetry, MoveList * const symmetric_move_list)
+{
+  assert(symmetric_move_list != nullptr);
+  assert(symmetric_move_list->empty());
+
+  for(const auto move : move_list){
+    const auto symmetric_move = GetSymmetricMove(move, symmetry);
+    (*symmetric_move_list) += symmetric_move;
+  }
 }
 
 }   // namespace realcore

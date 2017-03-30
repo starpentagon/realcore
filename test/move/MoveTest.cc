@@ -179,3 +179,62 @@ TEST(MoveTest, GetMoveTest)
     EXPECT_EQ(kMoveBO, move);
   }
 }
+
+TEST(MoveTest, GetSymmetricMoveTest)
+{
+  constexpr MovePosition move = kMoveBC;
+
+  {
+    // kIdenticalSymmetry
+    const MovePosition symmetric_move = GetSymmetricMove(move, kIdenticalSymmetry);
+    EXPECT_EQ(kMoveBC, symmetric_move);
+  }
+  {
+    // kHorizontalSymmetry
+    const MovePosition symmetric_move = GetSymmetricMove(move, kHorizontalSymmetry);
+    EXPECT_EQ(kMoveNC, symmetric_move);
+  }
+  {
+    // kVerticalSymmetry
+    const MovePosition symmetric_move = GetSymmetricMove(move, kVerticalSymmetry);
+    EXPECT_EQ(kMoveBM, symmetric_move);
+  }
+  {
+    // kCentricSymmetry
+    const MovePosition symmetric_move = GetSymmetricMove(move, kCentricSymmetry);
+    EXPECT_EQ(kMoveNM, symmetric_move);
+  }
+  {
+    // kDiagonalSymmetry1
+    const MovePosition symmetric_move = GetSymmetricMove(move, kDiagonalSymmetry1);
+    EXPECT_EQ(kMoveCB, symmetric_move);
+  }
+  {
+    // kDiagonalSymmetry2
+    const MovePosition symmetric_move = GetSymmetricMove(move, kDiagonalSymmetry2);
+    EXPECT_EQ(kMoveMB, symmetric_move);
+  }
+  {
+    // kDiagonalSymmetry3
+    const MovePosition symmetric_move = GetSymmetricMove(move, kDiagonalSymmetry3);
+    EXPECT_EQ(kMoveCN, symmetric_move);
+  }
+  {
+    // kDiagonalSymmetry4
+    const MovePosition symmetric_move = GetSymmetricMove(move, kDiagonalSymmetry4);
+    EXPECT_EQ(kMoveMN, symmetric_move);
+  }
+
+  // 盤外
+  for(const auto move : GetAllMove()){
+    if(IsInBoardMove(move)){
+      continue;
+    }
+
+    for(const auto symmetric : GetBoardSymmetry()){
+      const MovePosition symmetric_move = GetSymmetricMove(move, symmetric);
+      EXPECT_EQ(move, symmetric_move);
+    }
+  }
+}
+

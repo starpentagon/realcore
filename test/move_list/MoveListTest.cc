@@ -261,6 +261,60 @@ TEST_F(MoveListTest, GetMoveListTest)
   }
 }
 
+TEST_F(MoveListTest, GetSymmetricMoveList)
+{
+  MoveList move_list("bchhpp");
+
+  {
+    // kIdenticalSymmetry
+    MoveList symmetric_move_list, expect_list("bchhpp");
+    GetSymmetricMoveList(move_list, kIdenticalSymmetry, &symmetric_move_list);
+    EXPECT_TRUE(symmetric_move_list == expect_list);
+  }
+  {
+    // kHorizontalSymmetry
+    MoveList symmetric_move_list, expect_list("nchhpp");
+    GetSymmetricMoveList(move_list, kHorizontalSymmetry, &symmetric_move_list);
+    EXPECT_TRUE(symmetric_move_list == expect_list);
+  }
+  {
+    // kVerticalSymmetry
+    MoveList symmetric_move_list, expect_list("bmhhpp");
+    GetSymmetricMoveList(move_list, kVerticalSymmetry, &symmetric_move_list);
+    EXPECT_TRUE(symmetric_move_list == expect_list);
+  }
+  {
+    // kCentricSymmetry
+    MoveList symmetric_move_list, expect_list("nmhhpp");
+    GetSymmetricMoveList(move_list, kCentricSymmetry, &symmetric_move_list);
+    EXPECT_TRUE(symmetric_move_list == expect_list);
+  }
+  {
+    // kDiagonalSymmetry1
+    MoveList symmetric_move_list, expect_list("cbhhpp");
+    GetSymmetricMoveList(move_list, kDiagonalSymmetry1, &symmetric_move_list);
+    EXPECT_TRUE(symmetric_move_list == expect_list);
+  }
+  {
+    // kDiagonalSymmetry2
+    MoveList symmetric_move_list, expect_list("mbhhpp");
+    GetSymmetricMoveList(move_list, kDiagonalSymmetry2, &symmetric_move_list);
+    EXPECT_TRUE(symmetric_move_list == expect_list);
+  }
+  {
+    // kDiagonalSymmetry3
+    MoveList symmetric_move_list, expect_list("cnhhpp");
+    GetSymmetricMoveList(move_list, kDiagonalSymmetry3, &symmetric_move_list);
+    EXPECT_TRUE(symmetric_move_list == expect_list);
+  }
+  {
+    // kDiagonalSymmetry4
+    MoveList symmetric_move_list, expect_list("mnhhpp");
+    GetSymmetricMoveList(move_list, kDiagonalSymmetry4, &symmetric_move_list);
+    EXPECT_TRUE(symmetric_move_list == expect_list);
+  }
+}
+
 }   // namespace realcore
 
 

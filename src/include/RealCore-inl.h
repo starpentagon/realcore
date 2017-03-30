@@ -16,6 +16,15 @@ inline const std::array<BoardDirection, kBoardDirectionNum>& GetBoardDirection()
   return board_direction_list;
 }
 
+inline const std::array<BoardSymmetry, kBoardSymmetryNum>& GetBoardSymmetry(){
+  static const std::array<BoardSymmetry, kBoardSymmetryNum> board_symmetry_list{{
+    kIdenticalSymmetry, kHorizontalSymmetry, kVerticalSymmetry, kCentricSymmetry, 
+    kDiagonalSymmetry1, kDiagonalSymmetry2, kDiagonalSymmetry3, kDiagonalSymmetry4
+  }};
+
+  return board_symmetry_list;
+}
+
 }   // realcore
 
 #endif    // REAL_CORE_INL_H

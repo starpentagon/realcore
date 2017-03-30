@@ -19,7 +19,7 @@ typedef std::int8_t Cordinate;
 constexpr size_t kBoardLineNum = 15;
 
 //! @brief 盤面方向の定義
-enum BoardDirection
+enum BoardDirection : std::uint8_t
 {
   kLateralDirection,
   kVerticalDirection,
@@ -33,6 +33,25 @@ constexpr size_t kBoardDirectionNum = 4;
 //! @brief 盤面方向のリストを返す
 //! @retval 盤面方向のリスト
 const std::array<BoardDirection, kBoardDirectionNum>& GetBoardDirection();
+
+//! @brief 盤面上の対称性
+enum BoardSymmetry : std::uint8_t
+{
+  kIdenticalSymmetry,     //!< 恒等変換: (x, y) => (x, y)
+  kHorizontalSymmetry,    //!< 左右対称: (x, y) => (-x, y)
+  kVerticalSymmetry,      //!< 上下対称: (x, y) => (x, -y)
+  kCentricSymmetry,       //!< 天元対称: (x, y) => (-x, -y)
+  kDiagonalSymmetry1,     //!< 対角対称: (x, y) => (y, x)
+  kDiagonalSymmetry2,     //!< 対角対称: (x, y) => (-y, x)
+  kDiagonalSymmetry3,     //!< 対角対称: (x, y) => (y, -x)
+  kDiagonalSymmetry4,     //!< 対角対称: (x, y) => (-y, -x)
+};
+
+//! 対称性の数
+constexpr size_t kBoardSymmetryNum = 8;
+
+//! @brief 対称性のリストを返す
+const std::array<BoardSymmetry,kBoardSymmetryNum>& GetBoardSymmetry();
 
 //! @brief 手番
 enum PlayerTurn
