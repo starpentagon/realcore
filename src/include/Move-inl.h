@@ -80,6 +80,66 @@ inline const MovePosition GetMove(const Cordinate x, const Cordinate y)
   return move;
 }
 
+inline const MovePosition GetSymmetricMove(const MovePosition move, const BoardSymmetry symmetry)
+{
+  if(!IsInBoardMove(move)){
+    return move;
+  }
+
+  Cordinate move_x = 0, move_y = 0;
+  GetMoveCordinate(move, &move_x, &move_y);
+
+  constexpr int kCordinateCenter = 8;
+  const int x = static_cast<int>(move_x) - kCordinateCenter;
+  const int y = static_cast<int>(move_y) - kCordinateCenter;
+
+  int symmetric_x = 0, symmetric_y = 0;
+  
+  switch(symmetry){
+  case kIdenticalSymmetry:
+    symmetric_x = x;
+    symmetric_y = y;
+    break;
+
+  case kHorizontalSymmetry:
+    symmetric_x = -x;
+    symmetric_y = y;
+    break;
+
+  case kVerticalSymmetry:
+    symmetric_x = x;
+    symmetric_y = -y;
+    break;
+
+  case kCentricSymmetry:
+    symmetric_x = -x;
+    symmetric_y = -y;
+    break;
+
+  case kDiagonalSymmetry1:
+    symmetric_x = y;
+    symmetric_y = x;
+    break;
+
+  case kDiagonalSymmetry2:
+    symmetric_x = -y;
+    symmetric_y = x;
+    break;
+
+  case kDiagonalSymmetry3:
+    symmetric_x = y;
+    symmetric_y = -x;
+    break;
+
+  case kDiagonalSymmetry4:
+    symmetric_x = -y;
+    symmetric_y = -x;
+    break;
+  }
+
+  return GetMove(symmetric_x + kCordinateCenter, symmetric_y + kCordinateCenter);
+}
+
 }   // realcore
 
 #endif    // MOVE_INL_H

@@ -74,6 +74,11 @@ void GetMoveCordinate(const MovePosition move, Cordinate * const x, Cordinate * 
 //! @pre (x, y)は盤内にあること
 const MovePosition GetMove(const Cordinate x, const Cordinate y);
 
+//! @brief 対称変換した指し手位置を求める
+//! @param move 指し手位置
+//! @retval 対称変換した位置
+const MovePosition GetSymmetricMove(const MovePosition move, const BoardSymmetry symmetry);
+
 }   // namespace　realcore
 
 #include "Move-inl.h"

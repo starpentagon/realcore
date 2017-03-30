@@ -12,6 +12,7 @@ namespace realcore{
 class MoveList;
 class MoveListTest;
 enum MovePosition : std::uint8_t;
+enum BoardSymmetry : std::uint8_t;
 
 //! @brief [a-o][a-o]形式の文字列に対応する指し手リストを生成する
 //! @param move_string [a-o][a-o]形式の文字列
@@ -19,7 +20,13 @@ enum MovePosition : std::uint8_t;
 //! @retval 文字列から指し手リストを生成成功
 //! @pre move_listは空であること
 //! @note 生成に失敗した場合はmove_listを初期化し空に戻す
-bool GetMoveList(const std::string &move_string, MoveList *move_list);
+bool GetMoveList(const std::string &move_string, MoveList * const move_list);
+
+//! @brief 対称変換した指し手リストを生成する
+//! @param move_list 変換対称の指し手リスト
+//! @param symmetry 対称性
+//! @param symmetric_move_list 対称変換した指し手リストの格納先
+void GetSymmetricMoveList(const MoveList &move_list, const BoardSymmetry symmetry, MoveList * const symmetric_move_list);
 
 //! @brief 指し手リストの管理クラス
 //! @detail 以下の機能を提供する
