@@ -11,142 +11,24 @@
 namespace realcore
 {
 
-inline const PositionState Board::GetState(const MovePosition move) const
+inline void Board::MakeMove(const MovePosition move)
 {
-  // BoardPositionの横方向とMovePositionは同じ値になる
-  // see /home/subaru/dev/realcore/doc/01_data_definition/board_definition.xlsx
-  const BoardPosition board_position = static_cast<BoardPosition>(move);
-  return GetState(board_position);
-}
-
-inline const PositionState Board::GetState(const BoardPosition board_position) const
-{
-  const size_t index = GetBitBoardIndex(board_position);
-  const size_t shift = GetBitBoardShift(board_position);
-
-  constexpr StateBit state_mask = 0b11ULL;    // 下位2bit mask
-  const StateBit state_bit = (bit_board_[index] >> shift) & state_mask;
-
-  return static_cast<PositionState>(state_bit);
-}
-
-template<>
-inline void Board::SetState<kOverBoard>(const MovePosition move)
-{
-  assert(false);
-}
-
-template<>
-inline void Board::SetState<kBlackStone>(const MovePosition move)
-{
-  Cordinate x, y;
-  GetMoveCordinate(move, &x, &y);
-
-  if(!IsInBoard(x, y)){
-    return;
-  }
-
-  std::array<size_t, kBoardDirectionNum> index_list;   // StateBit配列のindex
-  GetBitBoardIndexList(x, y, &index_list);
-
-  std::array<size_t, kBoardDirectionNum> shift_list;   // StateBit配列のshift量
-  GetBitBoardShiftList(x, y, &shift_list);
-
-  constexpr StateBit black_stone_xor_mask = 0b10ULL;    // kOpenPosition(0b11) XOR 0b10(mask) = 0b01(kBlackStone)
-
-  for(size_t i=0; i<kBoardDirectionNum; i++){
-    const size_t index = index_list[i];
-    const size_t shift = shift_list[i];
-
-    bit_board_[index] ^= (black_stone_xor_mask << shift);    
-  }
-}
-
-template<>
-inline void Board::SetState<kWhiteStone>(const MovePosition move)
-{
-  Cordinate x, y;
-  GetMoveCordinate(move, &x, &y);
-
-  if(!IsInBoard(x, y)){
-    return;
-  }
-
-  std::array<size_t, kBoardDirectionNum> index_list;   // StateBit配列のindex
-  GetBitBoardIndexList(x, y, &index_list);
-
-  std::array<size_t, kBoardDirectionNum> shift_list;   // StateBit配列のshift量
-  GetBitBoardShiftList(x, y, &shift_list);
-  
-  constexpr StateBit white_stone_xor_mask = 0b01ULL;    // kOpenPosition(0b11) XOR 0b01(mask) = 0b10(kWhiteStone)
-
-  for(size_t i=0; i<kBoardDirectionNum; i++){
-    const size_t index = index_list[i];
-    const size_t shift = shift_list[i];
-
-    bit_board_[index] ^= (white_stone_xor_mask << shift);    
-  }
-}
-
-template<>
-inline void Board::SetState<kOpenPosition>(const MovePosition move)
-{
-  Cordinate x, y;
-  GetMoveCordinate(move, &x, &y);
-
-  if(!IsInBoard(x, y)){
-    return;
-  }
-
-  std::array<size_t, kBoardDirectionNum> index_list;   // StateBit配列のindex
-  GetBitBoardIndexList(x, y, &index_list);
-
-  std::array<size_t, kBoardDirectionNum> shift_list;   // StateBit配列のshift量
-  GetBitBoardShiftList(x, y, &shift_list);
-  
-  constexpr StateBit open_position_or_mask = 0b11ULL;    // Any(0b**) OR 0b11(mask) = 0b11(kOpenPosition)
-
-  for(size_t i=0; i<kBoardDirectionNum; i++){
-    const size_t index = index_list[i];
-    const size_t shift = shift_list[i];
-
-    bit_board_[index] |= (open_position_or_mask << shift);
-  }
-}
-
-inline void Board::SetState(const MovePosition move, const PositionState state)
-{
-  switch(state){
-  case kOverBoard:
-    SetState<kOverBoard>(move);
-    break;
-  
-  case kBlackStone:
+  if(move_list_.IsBlackTurn()){
     SetState<kBlackStone>(move);
-    break;
-
-  case kWhiteStone:
+  }else{
     SetState<kWhiteStone>(move);
-    break;
-
-  case kOpenPosition:
-    SetState<kOpenPosition>(move);
-    break;
   }
+
+  move_list_ += move;
 }
 
-inline const size_t Board::GetBitBoardIndex(const BoardPosition board_position) const
+inline void Board::UndoMove()
 {
-  const size_t index = board_position / 32;
-  assert(index < kBitBoardElementNum);
+  assert(move_list_.empty());
 
-  return index;
-}
-
-inline const size_t Board::GetBitBoardShift(const BoardPosition board_position) const
-{
-  const size_t shift_val = 2 * (board_position % 32);
-  return shift_val;
+  const auto move = move_list_.GetLastMove();
+  SetState<kOpenPosition>(move);
+  --move_list_;
 }
 
 inline const BoardPosition GetBoardPosition(const size_t index, const size_t shift)
@@ -230,17 +112,6 @@ inline void GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::arra
   (*shift_list)[kVerticalDirection] = 2 * y + 32 * (x % 2);
   (*shift_list)[kLeftDiagonalDirection] = 2 * (y - 1) + 32 * ((x + y) % 2);
   (*shift_list)[kRightDiagonalDirection] = 2 * (y - 1) + 32 * ((x + y) % 2);
-}
-
-constexpr inline bool IsInBoard(const Cordinate x, const Cordinate y)
-{
-  assert(0 <= x && x <= static_cast<Cordinate>(kBoardLineNum));
-  assert(0 <= y && y <= static_cast<Cordinate>(kBoardLineNum));
-
-  const bool x_in_board = x != 0;
-  const bool y_in_board = y != 0;
-
-  return x_in_board && y_in_board;
 }
 
 template<size_t N>

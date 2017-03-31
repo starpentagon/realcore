@@ -28,22 +28,18 @@ Board::Board(const MoveList &move_list)
   #include "def/BitBoardDefinition.h"
   }}
 {
-  bool is_black_turn = true;
-
   for(const auto move : move_list){
-    if(is_black_turn){
-      SetState<kBlackStone>(move);
-    }else{
-      SetState<kWhiteStone>(move);
-    }
-
-    is_black_turn = !is_black_turn;
+    MakeMove(move);
   }
 }
 
 bool IsEqual(const Board &board_1, const Board &board_2)
 {
   if(board_1.bit_board_ != board_2.bit_board_){
+    return false;
+  }
+
+  if(board_1.move_list_ != board_2.move_list_){
     return false;
   }
 
@@ -63,6 +59,7 @@ void Copy(const Board &board_from, Board * const board_to)
   assert(board_to != nullptr);
 
   board_to->bit_board_ = board_from.bit_board_;
+  board_to->move_list_ = board_from.move_list_;
 }
 
 const Board& Board::operator=(const Board &board)

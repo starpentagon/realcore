@@ -257,11 +257,11 @@ TEST_F(BoardTest, IsEqualTest)
   EXPECT_TRUE(IsEqual(board_1, board_1));
   EXPECT_TRUE(IsEqual(board_1, board_2));
 
-  board_1.SetState<kBlackStone>(kMoveHH);
+  board_1.MakeMove(kMoveHH);
   EXPECT_TRUE(IsEqual(board_1, board_1));
   EXPECT_FALSE(IsEqual(board_1, board_2));
   
-  board_2.SetState<kBlackStone>(kMoveHH);
+  board_2.MakeMove(kMoveHH);
   EXPECT_TRUE(IsEqual(board_1, board_2));
 }
 
@@ -269,7 +269,7 @@ TEST_F(BoardTest, CopyTest)
 {
   Board board_1, board_2;
 
-  board_1.SetState<kBlackStone>(kMoveHH);
+  board_1.MakeMove(kMoveHH);
   EXPECT_FALSE(IsEqual(board_1, board_2));
 
   Copy(board_1, &board_2);

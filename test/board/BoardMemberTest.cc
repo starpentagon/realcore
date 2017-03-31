@@ -164,7 +164,7 @@ TEST_F(BoardTest, DefaultConstructorTest){
 TEST_F(BoardTest, CopyConstructorTest){
   Board board_1;
 
-  board_1.SetState<kBlackStone>(kMoveHH);
+  board_1.MakeMove(kMoveHH);
 
   Board board_2(board_1);
   EXPECT_TRUE(board_1 == board_2);
@@ -195,6 +195,12 @@ TEST_F(BoardTest, MoveListConstructorTest){
   EXPECT_EQ(kOverBoard, board.GetState(kDeclareEndGame));
   EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove01));
   EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove28));
+
+  Board board_expect;
+  board_expect.MakeMove(kMoveHH);
+  board_expect.MakeMove(kMoveHG);
+
+  EXPECT_TRUE(board_expect == board);
 }
 
 TEST_F(BoardTest, strTest)
@@ -228,8 +234,8 @@ TEST_F(BoardTest, strTest)
   }
   {
     // 黒石、白石を設定
-    board.SetState<kBlackStone>(kMoveHH);
-    board.SetState<kWhiteStone>(kMoveHG);
+    board.MakeMove(kMoveHH);
+    board.MakeMove(kMoveHG);
     string board_str = board.str();
 
     stringstream expect_ss;
@@ -486,18 +492,18 @@ TEST_F(BoardTest, CompareOperTest){
   EXPECT_TRUE(board_1 == board_1);
   EXPECT_TRUE(board_1 == board_2);
 
-  board_1.SetState<kBlackStone>(kMoveHH);
+  board_1.MakeMove(kMoveHH);
   EXPECT_TRUE(board_1 == board_1);
   EXPECT_TRUE(board_1 != board_2);
   
-  board_2.SetState<kBlackStone>(kMoveHH);
+  board_2.MakeMove(kMoveHH);
   EXPECT_TRUE(board_1 == board_2);
 }
 
 TEST_F(BoardTest, AssignOperTest){
   Board board_1, board_2;
 
-  board_1.SetState<kBlackStone>(kMoveHH);
+  board_1.MakeMove(kMoveHH);
   EXPECT_TRUE(board_1 != board_2);
 
   board_2 = board_1;
