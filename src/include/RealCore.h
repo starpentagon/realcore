@@ -60,6 +60,10 @@ enum PlayerTurn
   kWhiteTurn
 };
 
+//! @brief 盤面位置
+//! @see doc/01_data_definition/data_definition.pptx and board_definition.xlsx
+typedef std::uint64_t BoardPosition;
+
 }   // namespace realcore
 
 #include "RealCore-inl.h"

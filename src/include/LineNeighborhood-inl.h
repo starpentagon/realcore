@@ -2,18 +2,18 @@
 #define LINE_NEIGHBORHOOD_INL_H
 
 #include "MovePatternSearch.h"
-#include "Board.h"
+#include "BitBoard.h"
 #include "LineNeighborhood.h"
 
 namespace realcore
 {
 
 template<size_t N>
-LineNeighborhood<N>::LineNeighborhood(const MovePosition move, const Board &board)
+LineNeighborhood<N>::LineNeighborhood(const MovePosition move, const BitBoard &bit_board)
 : local_bit_board_{{0}}, move_(move)
 {
   std::array<StateBit, kBoardDirectionNum> line_neighborhood;
-  board.GetLineNeighborhoodStateBit<N>(move, &line_neighborhood);
+  bit_board.GetLineNeighborhoodStateBit<N>(move, &line_neighborhood);
 
   local_bit_board_[0] |= line_neighborhood[kLateralDirection];
   local_bit_board_[0] |= line_neighborhood[kVerticalDirection] << 32ULL;

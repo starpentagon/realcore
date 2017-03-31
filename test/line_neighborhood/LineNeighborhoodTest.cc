@@ -12,8 +12,8 @@ class LineNeighborhoodTest
 {
 public:
   void DefaultConstructorTest(){
-    Board board;
-    LineNeighborhood<1> line_neighborhood(kMoveHH, board);
+    BitBoard bit_board;
+    LineNeighborhood<1> line_neighborhood(kMoveHH, bit_board);
 
     const StateBit expect_bit = (GetStateBit("OOOXXXXXX") << 32ULL) | GetStateBit("OOOXXXXXX");
 
@@ -26,11 +26,11 @@ public:
 
   void SetCenterStateTest()
   {
-    Board board;
+    BitBoard bit_board;
 
     {
       // 黒石設定
-      LineNeighborhood<1> line_neighborhood(kMoveHH, board);
+      LineNeighborhood<1> line_neighborhood(kMoveHH, bit_board);
       line_neighborhood.SetCenterState<kBlackStone>();
       
       const StateBit expect_bit = (GetStateBit("OBOXXXXXX") << 32ULL) | GetStateBit("OBOXXXXXX");
@@ -41,7 +41,7 @@ public:
     }
     {
       // 白石設定
-      LineNeighborhood<1> line_neighborhood(kMoveHH, board);
+      LineNeighborhood<1> line_neighborhood(kMoveHH, bit_board);
       line_neighborhood.SetCenterState<kWhiteStone>();
       
       const StateBit expect_bit = (GetStateBit("OWOXXXXXX") << 32ULL) | GetStateBit("OWOXXXXXX");
@@ -54,8 +54,8 @@ public:
 
   void GetBoardDirectionTest()
   {
-    Board board;
-    LineNeighborhood<1> line_neighborhood(kMoveHH, board);
+    BitBoard bit_board;
+    LineNeighborhood<1> line_neighborhood(kMoveHH, bit_board);
     
     {
       // 横方向

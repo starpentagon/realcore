@@ -7,9 +7,9 @@
 
 #include <cstdint>
 #include <array>
+#include <vector>
 
 #include "BitSearch.h"
-#include "Board.h"
 
 namespace realcore
 {
@@ -19,13 +19,14 @@ typedef StateBit LocalBitBoard;
 
 // 前方宣言
 enum MovePosition : std::uint8_t;
+class BitBoard;
 
 //! @brief moveを中心としたN路の直線近傍を管理するクラス
 template<size_t N>
 class LineNeighborhood{
     friend class LineNeighborhoodTest;
 public:
-  LineNeighborhood(const MovePosition move, const Board &board);
+  LineNeighborhood(const MovePosition move, const BitBoard &board);
 
   //! @brief 中心に状態を設定する
   //! @param S 黒石 or 白石

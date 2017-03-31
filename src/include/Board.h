@@ -73,8 +73,8 @@ public:
   const bool IsTerminateMove(const MovePosition move) const;
 
 protected:
-  //! @brief 盤面状態を保持する配列
-  Bitboard bit_board_;
+  //! @brief 盤面状態を保持するBitBoard
+  BitBoard bit_board_;
 
   //! @brief 盤面の指し手リスト
   MoveList move_list_;

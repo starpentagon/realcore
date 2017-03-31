@@ -3,13 +3,13 @@
 
 #include "Move.h"
 #include "MoveList.h"
-#include "Board.h"
+#include "BitBoard.h"
 
 using namespace std;
 
 namespace realcore
 {
-class BoardTest
+class BitBoardTest
 : public ::testing::Test
 {
 public:
@@ -36,20 +36,20 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + --------------------------+ O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhigihghjhhgmhhilhii"));
+      BitBoard bit_board(MoveList("hhigihghjhhgmhhilhii"));
 
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
         if(move == kMoveKH){
-          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }else{
-          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
   }
@@ -77,20 +77,20 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + --------------------------+ O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhignhghkhkilhoh"));
+      BitBoard bit_board(MoveList("hhignhghkhkilhoh"));
 
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
         if(move == kMoveJH){
-          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }else{
-          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
     {
@@ -112,20 +112,20 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + --------------------------+ O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhhihbhahdgehfie"));
+      BitBoard bit_board(MoveList("hhhihbhahdgehfie"));
 
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
         if(move == kMoveHE){
-          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }else{
-          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
     {
@@ -147,20 +147,20 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + --------------------------+ O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhghnhohkhjgjhli"));
+      BitBoard bit_board(MoveList("hhghnhohkhjgjhli"));
 
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
         if(move == kMoveLH){
-          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }else{
-          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
     {
@@ -182,20 +182,20 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + --------------------------+ O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhgiigiioaggnbjhldhf"));
+      BitBoard bit_board(MoveList("hhgiigiioaggnbjhldhf"));
 
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
         if(move == kMoveKE){
-          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }else{
-          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
     {
@@ -217,20 +217,20 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + --------------------------+ O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhgiigiioaggnbjhkehf"));
+      BitBoard bit_board(MoveList("hhgiigiioaggnbjhkehf"));
 
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
         if(move == kMoveLD){
-          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }else{
-          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
     {
@@ -252,20 +252,20 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + --------------------------+ O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhkkjjkiiiikddaabbbaccab"));
+      BitBoard bit_board(MoveList("hhkkjjkiiiikddaabbbaccab"));
 
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
         if(move == kMoveFF){
-          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }else{
-          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
   }
@@ -293,20 +293,20 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + --------------------------+ O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhkkjjkiiikchfjcjdidielj"));
+      BitBoard bit_board(MoveList("hhkkjjkiiikchfjcjdidielj"));
 
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
         if(move == kMoveGG){
-          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }else{
-          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
     {
@@ -328,20 +328,20 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + --------------------------+ O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhkkiiddeglddgdlffllfgbg"));
+      BitBoard bit_board(MoveList("hhkkiiddeglddgdlffllfgbg"));
     
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
         if(move == kMoveGG){
-          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }else{
-          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
     {
@@ -363,20 +363,20 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + --------------------------+ O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhkkiiddeglddgdlffjjfgbg"));
+      BitBoard bit_board(MoveList("hhkkiiddeglddgdlffjjfgbg"));
     
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
         if(move == kMoveGG){
-          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }else{
-          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
     {
@@ -398,15 +398,15 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + --------------------------+ O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhldihddghdl"));
+      BitBoard bit_board(MoveList("hhldihddghdl"));
     
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
-        EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
   }
@@ -434,20 +434,20 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + --------------------------+ O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhhggiggjhghkifg"));
+      BitBoard bit_board(MoveList("hhhggiggjhghkifg"));
     
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
         if(move == kMoveIG){
-          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }else{
-          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
     {
@@ -470,20 +470,20 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + --------------------------+ O 
       //   A B C D E F G H I J K L M N O   
-      Board board(MoveList("hhhdlfldjjddkgllghdljihl"));
+      BitBoard bit_board(MoveList("hhhdlfldjjddkgllghdljihl"));
     
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
         if(move == kMoveJH){
-          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }else{
-          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
     {
@@ -505,10 +505,10 @@ public:
       // N | . . . . . . . . . . . . . | N 
       // O + ------o --o --------o ----o O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhoobjahciagemeodigochlofmccellcgkhcdjoa"));
+      BitBoard bit_board(MoveList("hhoobjahciagemeodigochlofmccellcgkhcdjoa"));
     
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
         
@@ -522,12 +522,12 @@ public:
         is_forbidden |= move == kMoveFL;
 
         if(is_forbidden){
-          EXPECT_TRUE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }else{
-          EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
+          EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
     {
@@ -549,49 +549,49 @@ public:
       // N | o . . . . . . . . . . . . | N 
       // O o --o --o --o --o --o --o --+ O 
       //   A B C D E F G H I J K L M N O 
-      Board board(MoveList("hhbdddamecbnfdhdeecojdoakdndleaolfeoghgoeiioejkochmo"));
+      BitBoard bit_board(MoveList("hhbdddamecbnfdhdeecojdoakdndleaolfeoghgoeiioejkochmo"));
     
       for(const auto move : in_board_move_list){
-        if(board.GetState(move) != kOpenPosition){
+        if(bit_board.GetState(move) != kOpenPosition){
           continue;
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
     {
       // 盤内以外
-      Board board;
+      BitBoard bit_board;
 
       for(auto move : GetAllMove()){
         if(IsInBoardMove(move)){
           continue;
         }
 
-        EXPECT_FALSE(board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_FALSE(board.IsForbiddenMove<kWhiteTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
+        EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
       }
     }
   }
 };
 
-TEST_F(BoardTest, IsOverlineTest)
+TEST_F(BitBoardTest, IsOverlineTest)
 {
   IsOverlineTest();
 }
 
-TEST_F(BoardTest, IsOneLineDoubleFourTest)
+TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
 {
   IsOneLineDoubleFourTest();
 }
 
-TEST_F(BoardTest, IsTwoLineDoubleFourTest)
+TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
 {
   IsTwoLineDoubleFourTest();
 }
 
-TEST_F(BoardTest, IsDoubleThreeTest)
+TEST_F(BitBoardTest, IsDoubleThreeTest)
 {
   IsDoubleThreeTest();
 }

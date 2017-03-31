@@ -6,19 +6,19 @@
 
 #include "Move.h"
 #include "MoveList.h"
-#include "Board.h"
+#include "BitBoard.h"
 
 using namespace std;
 
 namespace realcore
 {
 
-class BoardTest
+class BitBoardTest
 : public ::testing::Test
 {
 };
 
-TEST_F(BoardTest, IsInBoardTest)
+TEST_F(BitBoardTest, IsInBitBoardTest)
 {
   // 境界値テスト
   EXPECT_FALSE(IsInBoard(1, 0));
@@ -27,7 +27,7 @@ TEST_F(BoardTest, IsInBoardTest)
   EXPECT_TRUE(IsInBoard(15, 15));
 }
 
-TEST_F(BoardTest, GetBoardDirectionTest)
+TEST_F(BitBoardTest, GetBoardDirectionTest)
 {
   // 境界値テスト
   EXPECT_EQ(kLateralDirection, GetBoardDirection(0));
@@ -40,7 +40,7 @@ TEST_F(BoardTest, GetBoardDirectionTest)
   EXPECT_EQ(kRightDiagonalDirection, GetBoardDirection(1023));
 }
 
-TEST_F(BoardTest, GetBoardCordinateTest)
+TEST_F(BitBoardTest, GetBoardCordinateTest)
 {
   Cordinate x = 0, y = 0;
   
@@ -126,7 +126,7 @@ TEST_F(BoardTest, GetBoardCordinateTest)
   }
 }
 
-TEST_F(BoardTest, GetBoardPositionTest)
+TEST_F(BitBoardTest, GetBoardPositionTest)
 {
   for(size_t index=0; index<32; index++)
   {
@@ -140,7 +140,7 @@ TEST_F(BoardTest, GetBoardPositionTest)
   }
 }
 
-TEST_F(BoardTest, GetBoardMoveTest)
+TEST_F(BitBoardTest, GetBoardMoveTest)
 {
   // move -> board_positionの対応表を作る
   array< vector<BoardPosition>, kMoveNum> move_board_position_list;
@@ -177,7 +177,7 @@ TEST_F(BoardTest, GetBoardMoveTest)
   }
 }
 
-TEST_F(BoardTest, GetBitBoardIndexListTest)
+TEST_F(BitBoardTest, GetBitBoardIndexListTest)
 {
   {
     // 左上の境界
@@ -214,7 +214,7 @@ TEST_F(BoardTest, GetBitBoardIndexListTest)
   }      
 }
 
-TEST_F(BoardTest, GetBitBoardShiftListTest){
+TEST_F(BitBoardTest, GetBitBoardShiftListTest){
   {
     // 左上の境界
     constexpr Cordinate x = 1, y = 1;
@@ -250,30 +250,117 @@ TEST_F(BoardTest, GetBitBoardShiftListTest){
   }    
 }
 
-TEST_F(BoardTest, IsEqualTest)
+TEST_F(BitBoardTest, GetBitBoardIndexTest)
 {
-  Board board_1, board_2;
+  // 各配列Indexの境界値テスト
+  // 横方向
+  EXPECT_EQ(0, GetBitBoardIndex(0));
+  EXPECT_EQ(0, GetBitBoardIndex(31));
+  EXPECT_EQ(1, GetBitBoardIndex(32));
+  EXPECT_EQ(1, GetBitBoardIndex(63));
+  EXPECT_EQ(2, GetBitBoardIndex(64));
+  EXPECT_EQ(2, GetBitBoardIndex(95));
+  EXPECT_EQ(3, GetBitBoardIndex(96));
+  EXPECT_EQ(3, GetBitBoardIndex(127));
+  EXPECT_EQ(4, GetBitBoardIndex(128));
+  EXPECT_EQ(4, GetBitBoardIndex(159));
+  EXPECT_EQ(5, GetBitBoardIndex(160));
+  EXPECT_EQ(5, GetBitBoardIndex(191));
+  EXPECT_EQ(6, GetBitBoardIndex(192));
+  EXPECT_EQ(6, GetBitBoardIndex(223));
+  EXPECT_EQ(7, GetBitBoardIndex(224));
+  EXPECT_EQ(7, GetBitBoardIndex(255));
 
-  EXPECT_TRUE(IsEqual(board_1, board_1));
-  EXPECT_TRUE(IsEqual(board_1, board_2));
+  // 縦方向
+  EXPECT_EQ(8, GetBitBoardIndex(256));
+  EXPECT_EQ(8, GetBitBoardIndex(287));
+  EXPECT_EQ(9, GetBitBoardIndex(288));
+  EXPECT_EQ(9, GetBitBoardIndex(319));
+  EXPECT_EQ(10, GetBitBoardIndex(320));
+  EXPECT_EQ(10, GetBitBoardIndex(351));
+  EXPECT_EQ(11, GetBitBoardIndex(352));
+  EXPECT_EQ(11, GetBitBoardIndex(383));
+  EXPECT_EQ(12, GetBitBoardIndex(384));
+  EXPECT_EQ(12, GetBitBoardIndex(415));
+  EXPECT_EQ(13, GetBitBoardIndex(416));
+  EXPECT_EQ(13, GetBitBoardIndex(447));
+  EXPECT_EQ(14, GetBitBoardIndex(448));
+  EXPECT_EQ(14, GetBitBoardIndex(479));
+  EXPECT_EQ(15, GetBitBoardIndex(480));
+  EXPECT_EQ(15, GetBitBoardIndex(511));
 
-  board_1.MakeMove(kMoveHH);
-  EXPECT_TRUE(IsEqual(board_1, board_1));
-  EXPECT_FALSE(IsEqual(board_1, board_2));
-  
-  board_2.MakeMove(kMoveHH);
-  EXPECT_TRUE(IsEqual(board_1, board_2));
+  // 左斜め方向
+  EXPECT_EQ(16, GetBitBoardIndex(512));
+  EXPECT_EQ(16, GetBitBoardIndex(543));
+  EXPECT_EQ(17, GetBitBoardIndex(544));
+  EXPECT_EQ(17, GetBitBoardIndex(575));
+  EXPECT_EQ(18, GetBitBoardIndex(576));
+  EXPECT_EQ(18, GetBitBoardIndex(607));
+  EXPECT_EQ(19, GetBitBoardIndex(608));
+  EXPECT_EQ(19, GetBitBoardIndex(639));
+  EXPECT_EQ(20, GetBitBoardIndex(640));
+  EXPECT_EQ(20, GetBitBoardIndex(671));
+  EXPECT_EQ(21, GetBitBoardIndex(672));
+  EXPECT_EQ(21, GetBitBoardIndex(703));
+  EXPECT_EQ(22, GetBitBoardIndex(704));
+  EXPECT_EQ(22, GetBitBoardIndex(735));
+  EXPECT_EQ(23, GetBitBoardIndex(736));
+  EXPECT_EQ(23, GetBitBoardIndex(767));
+
+  // 右斜め方向
+  EXPECT_EQ(24, GetBitBoardIndex(768));
+  EXPECT_EQ(24, GetBitBoardIndex(799));
+  EXPECT_EQ(25, GetBitBoardIndex(800));
+  EXPECT_EQ(25, GetBitBoardIndex(831));
+  EXPECT_EQ(26, GetBitBoardIndex(832));
+  EXPECT_EQ(26, GetBitBoardIndex(863));
+  EXPECT_EQ(27, GetBitBoardIndex(864));
+  EXPECT_EQ(27, GetBitBoardIndex(895));
+  EXPECT_EQ(28, GetBitBoardIndex(896));
+  EXPECT_EQ(28, GetBitBoardIndex(927));
+  EXPECT_EQ(29, GetBitBoardIndex(928));
+  EXPECT_EQ(29, GetBitBoardIndex(959));
+  EXPECT_EQ(30, GetBitBoardIndex(960));
+  EXPECT_EQ(30, GetBitBoardIndex(991));
+  EXPECT_EQ(31, GetBitBoardIndex(992));
+  EXPECT_EQ(31, GetBitBoardIndex(1023));
 }
 
-TEST_F(BoardTest, CopyTest)
+TEST_F(BitBoardTest, GetBitBoardShiftTest)
 {
-  Board board_1, board_2;
+  // シフト量の全数テスト
+  const BitBoard bit_board;
 
-  board_1.MakeMove(kMoveHH);
-  EXPECT_FALSE(IsEqual(board_1, board_2));
+  for(size_t i=0; i<1024; i++){
+    const size_t shift_val = 2 * (i % 32);
+    EXPECT_EQ(shift_val, GetBitBoardShift(i));
+  }
+}
 
-  Copy(board_1, &board_2);
-  EXPECT_TRUE(IsEqual(board_1, board_2));
+TEST_F(BitBoardTest, IsEqualTest)
+{
+  BitBoard bit_board_1, bit_board_2;
+
+  EXPECT_TRUE(IsEqual(bit_board_1, bit_board_1));
+  EXPECT_TRUE(IsEqual(bit_board_1, bit_board_2));
+
+  bit_board_1.SetState<kBlackStone>(kMoveHH);
+  EXPECT_TRUE(IsEqual(bit_board_1, bit_board_1));
+  EXPECT_FALSE(IsEqual(bit_board_1, bit_board_2));
+  
+  bit_board_2.SetState<kBlackStone>(kMoveHH);
+  EXPECT_TRUE(IsEqual(bit_board_1, bit_board_2));
+}
+
+TEST_F(BitBoardTest, CopyTest)
+{
+  BitBoard bit_board_1, bit_board_2;
+
+  bit_board_1.SetState<kBlackStone>(kMoveHH);
+  EXPECT_FALSE(IsEqual(bit_board_1, bit_board_2));
+
+  Copy(bit_board_1, &bit_board_2);
+  EXPECT_TRUE(IsEqual(bit_board_1, bit_board_2));
 }
 
 }   // namespace realcore

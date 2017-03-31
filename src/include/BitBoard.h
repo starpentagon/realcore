@@ -13,10 +13,6 @@
 
 namespace realcore
 {
-//! @brief 盤面位置
-//! @see doc/01_data_definition/data_definition.pptx and board_definition.xlsx
-typedef std::uint64_t BoardPosition;
-
 //! @brief Bitboard(=StateBit配列)の要素数
 constexpr size_t kBitBoardElementNum = 32;
 
@@ -28,7 +24,6 @@ enum MovePosition : std::uint8_t;
 class BitBoard;
 class BitBoardTest;
 class MoveList;
-class Board;
 
 //! @brief 2つのBitBoardを比較する
 //! @param bit_board_1, 2: 比較対象
@@ -43,20 +38,20 @@ void Copy(const BitBoard &bit_board_from, BitBoard * const bit_board_to);
 class BitBoard
 {
   friend class BoardTest;
-  friend bool IsEqual(const Board &board_1, const Board &board_2);
-  friend void Copy(const Board &board_from, Board * const board_to);
+  friend bool IsEqual(const BitBoard &bit_board_1, const BitBoard &bit_board_2);
+  friend void Copy(const BitBoard &bit_board_from, BitBoard * const bit_board_to);
 
 public:
   BitBoard();
-  BitBoard(const Board &board);
+  BitBoard(const BitBoard &bit_board);
   BitBoard(const MoveList &move_list);
 
   //! @brief 代入演算子
-  const BitBoard& operator=(const Board &board);
+  const BitBoard& operator=(const BitBoard &bit_board);
 
   //! @brief 比較演算子
-  const bool operator==(const Board &board) const;
-  const bool operator!=(const Board &board) const;
+  const bool operator==(const BitBoard &bit_board) const;
+  const bool operator!=(const BitBoard &bit_board) const;
 
   //! @brief 盤面状態を取得する(MovePosition版)
   //! @param bit_board BitBoard
@@ -103,8 +98,8 @@ public:
   const bool IsForbiddenMove(const MovePosition move) const;
 
 private:
-  Bitboard bit_board_;
-};
+  Bitboard bit_board_;    //!< 盤面状態を保持するBit board
+};    // class BitBoard
 
 // --- (x, y)座標 => index/shift ---
 //! @brief BoardPositionに対応するBitBoard配列のindexを取得する
@@ -142,7 +137,12 @@ inline const BoardPosition GetBoardPosition(const size_t index, const size_t shi
 //! @retval BoardPositionに対応する方向
 inline const BoardDirection GetBoardDirection(const BoardPosition board_position);
 
-// --- BoardPosition => (x, y)/MovePosition ---
+// --- BoardPosition => MovePosition/(x, y) ---
+//! @brief BoardPositionからMovePositionを求める
+//! @param board_position BoardPosition
+//! @retval BoardPositionに対応するMovePosition
+inline const MovePosition GetBoardMove(const BoardPosition board_position);
+
 //! @brief BoardPositionから(x, y)座標を求める
 //! @param board_position BoardPosition
 //! @param x x座標
@@ -150,12 +150,9 @@ inline const BoardDirection GetBoardDirection(const BoardPosition board_position
 //! @note x, yともに[0, 15]であることを保証する
 inline const void GetBoardCordinate(const BoardPosition board_position, Cordinate * const x, Cordinate * const y);
 
-//! @brief BoardPositionからMovePositionを求める
-//! @param board_position BoardPosition
-//! @retval BoardPositionに対応するMovePosition
-inline const MovePosition GetBoardMove(const BoardPosition board_position);
-
 }   // namespace realcore
+
+#include "BitBoard-inl.h"
 
 #endif    // BIT_BOARD_H
 

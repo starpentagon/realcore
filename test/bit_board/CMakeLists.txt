@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # プロジェクト名
-set(project_name board_test)
+set(project_name bit_board_test)
 project(${project_name} CXX)
 
 # ccache
@@ -28,7 +28,10 @@ add_executable(
     $ENV{REALCORE_DIR}/src/BitSearch.cc
     $ENV{REALCORE_DIR}/src/Move.cc
     $ENV{REALCORE_DIR}/src/MoveList.cc
-    $ENV{REALCORE_DIR}/src/Board.cc
+    $ENV{REALCORE_DIR}/src/BitBoard.cc
+    ../BitBoardTest.cc
+    ../BitBoardMemberTest.cc
+    ../BitBoardForbiddenTest.cc
 )
 
 # ライブラリ

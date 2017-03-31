@@ -3,24 +3,24 @@
 
 #include "Move.h"
 #include "MoveList.h"
-#include "Board.h"
+#include "BitBoard.h"
 
 using namespace std;
 
 namespace realcore
 {
 
-class BoardTest
+class BitBoardTest
 : public ::testing::Test
 {
 public:
   void GetSetStateTest(){
-    Board board;
+    BitBoard bit_board;
     const auto &all_move_list = GetAllMove();
 
     // 黒石
     for(auto set_move : all_move_list){
-      board.SetState<kBlackStone>(set_move);
+      bit_board.SetState<kBlackStone>(set_move);
 
       for(auto get_move : all_move_list){
         // 設定した位置では黒石が、それ以外は空点が設定されていることを確認する
@@ -30,15 +30,15 @@ public:
           check_state = set_move == get_move ? kBlackStone : kOpenPosition;
         }
 
-        EXPECT_EQ(check_state, board.GetState(get_move));
+        EXPECT_EQ(check_state, bit_board.GetState(get_move));
       }
 
-      board.SetState<kOpenPosition>(set_move);
+      bit_board.SetState<kOpenPosition>(set_move);
     }
 
     // 白石
     for(auto set_move : all_move_list){
-      board.SetState<kWhiteStone>(set_move);
+      bit_board.SetState<kWhiteStone>(set_move);
 
       for(auto get_move : all_move_list){
         // 設定した位置では白石が、それ以外は空点が設定されていることを確認する
@@ -48,137 +48,51 @@ public:
           check_state = set_move == get_move ? kWhiteStone : kOpenPosition;
         }
 
-        EXPECT_EQ(check_state, board.GetState(get_move));
+        EXPECT_EQ(check_state, bit_board.GetState(get_move));
       }
 
-      board.SetState<kOpenPosition>(set_move);
-    }
-  }
-
-  void GetBitBoardIndexTest(){
-     const Board board;
-     // 各配列Indexの境界値テスト
-     // 横方向
-     EXPECT_EQ(0, board.GetBitBoardIndex(0));
-     EXPECT_EQ(0, board.GetBitBoardIndex(31));
-     EXPECT_EQ(1, board.GetBitBoardIndex(32));
-     EXPECT_EQ(1, board.GetBitBoardIndex(63));
-     EXPECT_EQ(2, board.GetBitBoardIndex(64));
-     EXPECT_EQ(2, board.GetBitBoardIndex(95));
-     EXPECT_EQ(3, board.GetBitBoardIndex(96));
-     EXPECT_EQ(3, board.GetBitBoardIndex(127));
-     EXPECT_EQ(4, board.GetBitBoardIndex(128));
-     EXPECT_EQ(4, board.GetBitBoardIndex(159));
-     EXPECT_EQ(5, board.GetBitBoardIndex(160));
-     EXPECT_EQ(5, board.GetBitBoardIndex(191));
-     EXPECT_EQ(6, board.GetBitBoardIndex(192));
-     EXPECT_EQ(6, board.GetBitBoardIndex(223));
-     EXPECT_EQ(7, board.GetBitBoardIndex(224));
-     EXPECT_EQ(7, board.GetBitBoardIndex(255));
-
-     // 縦方向
-     EXPECT_EQ(8, board.GetBitBoardIndex(256));
-     EXPECT_EQ(8, board.GetBitBoardIndex(287));
-     EXPECT_EQ(9, board.GetBitBoardIndex(288));
-     EXPECT_EQ(9, board.GetBitBoardIndex(319));
-     EXPECT_EQ(10, board.GetBitBoardIndex(320));
-     EXPECT_EQ(10, board.GetBitBoardIndex(351));
-     EXPECT_EQ(11, board.GetBitBoardIndex(352));
-     EXPECT_EQ(11, board.GetBitBoardIndex(383));
-     EXPECT_EQ(12, board.GetBitBoardIndex(384));
-     EXPECT_EQ(12, board.GetBitBoardIndex(415));
-     EXPECT_EQ(13, board.GetBitBoardIndex(416));
-     EXPECT_EQ(13, board.GetBitBoardIndex(447));
-     EXPECT_EQ(14, board.GetBitBoardIndex(448));
-     EXPECT_EQ(14, board.GetBitBoardIndex(479));
-     EXPECT_EQ(15, board.GetBitBoardIndex(480));
-     EXPECT_EQ(15, board.GetBitBoardIndex(511));
-
-     // 左斜め方向
-     EXPECT_EQ(16, board.GetBitBoardIndex(512));
-     EXPECT_EQ(16, board.GetBitBoardIndex(543));
-     EXPECT_EQ(17, board.GetBitBoardIndex(544));
-     EXPECT_EQ(17, board.GetBitBoardIndex(575));
-     EXPECT_EQ(18, board.GetBitBoardIndex(576));
-     EXPECT_EQ(18, board.GetBitBoardIndex(607));
-     EXPECT_EQ(19, board.GetBitBoardIndex(608));
-     EXPECT_EQ(19, board.GetBitBoardIndex(639));
-     EXPECT_EQ(20, board.GetBitBoardIndex(640));
-     EXPECT_EQ(20, board.GetBitBoardIndex(671));
-     EXPECT_EQ(21, board.GetBitBoardIndex(672));
-     EXPECT_EQ(21, board.GetBitBoardIndex(703));
-     EXPECT_EQ(22, board.GetBitBoardIndex(704));
-     EXPECT_EQ(22, board.GetBitBoardIndex(735));
-     EXPECT_EQ(23, board.GetBitBoardIndex(736));
-     EXPECT_EQ(23, board.GetBitBoardIndex(767));
-
-     // 右斜め方向
-     EXPECT_EQ(24, board.GetBitBoardIndex(768));
-     EXPECT_EQ(24, board.GetBitBoardIndex(799));
-     EXPECT_EQ(25, board.GetBitBoardIndex(800));
-     EXPECT_EQ(25, board.GetBitBoardIndex(831));
-     EXPECT_EQ(26, board.GetBitBoardIndex(832));
-     EXPECT_EQ(26, board.GetBitBoardIndex(863));
-     EXPECT_EQ(27, board.GetBitBoardIndex(864));
-     EXPECT_EQ(27, board.GetBitBoardIndex(895));
-     EXPECT_EQ(28, board.GetBitBoardIndex(896));
-     EXPECT_EQ(28, board.GetBitBoardIndex(927));
-     EXPECT_EQ(29, board.GetBitBoardIndex(928));
-     EXPECT_EQ(29, board.GetBitBoardIndex(959));
-     EXPECT_EQ(30, board.GetBitBoardIndex(960));
-     EXPECT_EQ(30, board.GetBitBoardIndex(991));
-     EXPECT_EQ(31, board.GetBitBoardIndex(992));
-     EXPECT_EQ(31, board.GetBitBoardIndex(1023));
-  }
-
-  void GetBitBoardShiftTest(){
-    // シフト量の全数テスト
-    const Board board;
-
-    for(size_t i=0; i<1024; i++){
-      const size_t shift_val = 2 * (i % 32);
-      EXPECT_EQ(shift_val, board.GetBitBoardShift(i));
+      bit_board.SetState<kOpenPosition>(set_move);
     }
   }
 };
 
-TEST_F(BoardTest, DefaultConstructorTest){
+TEST_F(BitBoardTest, DefaultConstructorTest){
   const auto &move_list = GetAllInBoardMove();
-  const Board board;
+  const BitBoard bit_board;
 
   // 盤内は空点で初期化されていることを確認する
   for(const auto move : move_list)
   {
-    const PositionState state = board.GetState(move);
+    const PositionState state = bit_board.GetState(move);
     EXPECT_EQ(kOpenPosition, state);
   }
 
   // 盤内以外の手では盤外が返ってくることを確認する
-  EXPECT_EQ(kOverBoard, board.GetState(kInvalidMove));
-  EXPECT_EQ(kOverBoard, board.GetState(kNullMove));
-  EXPECT_EQ(kOverBoard, board.GetState(kDeclareEndGame));
-  EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove01));
-  EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove28));
+  EXPECT_EQ(kOverBoard, bit_board.GetState(kInvalidMove));
+  EXPECT_EQ(kOverBoard, bit_board.GetState(kNullMove));
+  EXPECT_EQ(kOverBoard, bit_board.GetState(kDeclareEndGame));
+  EXPECT_EQ(kOverBoard, bit_board.GetState(kUndefinedMove01));
+  EXPECT_EQ(kOverBoard, bit_board.GetState(kUndefinedMove28));
 }
 
-TEST_F(BoardTest, CopyConstructorTest){
-  Board board_1;
+TEST_F(BitBoardTest, CopyConstructorTest){
+  BitBoard bit_board_1;
 
-  board_1.MakeMove(kMoveHH);
+  bit_board_1.SetState<kBlackStone>(kMoveHH);
 
-  Board board_2(board_1);
-  EXPECT_TRUE(board_1 == board_2);
+  BitBoard bit_board_2(bit_board_1);
+  EXPECT_TRUE(bit_board_1 == bit_board_2);
 }
 
-TEST_F(BoardTest, MoveListConstructorTest){
+TEST_F(BitBoardTest, MoveListConstructorTest){
   const MoveList board_move_list("hhhg");
-  Board board(board_move_list);
+  BitBoard bit_board(board_move_list);
 
   const auto &move_list = GetAllInBoardMove();
 
   // 盤内が初期化されているか確認する
   for(const auto move : move_list){
-    const PositionState state = board.GetState(move);
+    const PositionState state = bit_board.GetState(move);
 
     if(move == kMoveHH){
       EXPECT_EQ(kBlackStone, state);
@@ -190,26 +104,26 @@ TEST_F(BoardTest, MoveListConstructorTest){
   }
   
   // 盤内以外の手では盤外が返ってくることを確認する
-  EXPECT_EQ(kOverBoard, board.GetState(kInvalidMove));
-  EXPECT_EQ(kOverBoard, board.GetState(kNullMove));
-  EXPECT_EQ(kOverBoard, board.GetState(kDeclareEndGame));
-  EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove01));
-  EXPECT_EQ(kOverBoard, board.GetState(kUndefinedMove28));
+  EXPECT_EQ(kOverBoard, bit_board.GetState(kInvalidMove));
+  EXPECT_EQ(kOverBoard, bit_board.GetState(kNullMove));
+  EXPECT_EQ(kOverBoard, bit_board.GetState(kDeclareEndGame));
+  EXPECT_EQ(kOverBoard, bit_board.GetState(kUndefinedMove01));
+  EXPECT_EQ(kOverBoard, bit_board.GetState(kUndefinedMove28));
 
-  Board board_expect;
-  board_expect.MakeMove(kMoveHH);
-  board_expect.MakeMove(kMoveHG);
+  BitBoard bitboard_expect;
+  bitboard_expect.SetState<kBlackStone>(kMoveHH);
+  bitboard_expect.SetState<kWhiteStone>(kMoveHG);
 
-  EXPECT_TRUE(board_expect == board);
+  EXPECT_TRUE(bitboard_expect == bit_board);
 }
 
-TEST_F(BoardTest, strTest)
+TEST_F(BitBoardTest, strTest)
 {
-  Board board;
+  BitBoard bit_board;
 
   {
     // 初期状態のテスト
-    string board_str = board.str();
+    string board_str = bit_board.str();
     stringstream expect_ss;
 
     expect_ss << "  A B C D E F G H I J K L M N O " << endl;
@@ -234,9 +148,9 @@ TEST_F(BoardTest, strTest)
   }
   {
     // 黒石、白石を設定
-    board.MakeMove(kMoveHH);
-    board.MakeMove(kMoveHG);
-    string board_str = board.str();
+    bit_board.SetState<kBlackStone>(kMoveHH);
+    bit_board.SetState<kWhiteStone>(kMoveHG);
+    string board_str = bit_board.str();
 
     stringstream expect_ss;
     
@@ -262,15 +176,15 @@ TEST_F(BoardTest, strTest)
   }
 }
 
-TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
+TEST_F(BitBoardTest, GetLineNeighborhoodStateBitTest)
 {
   {
     // 盤の中央に黒石、白石があるケース(N=1)
     MoveList move_list("hhhg");
-    Board board(move_list);
+    BitBoard bit_board(move_list);
     
     array<StateBit, kBoardDirectionNum> line_neighborhood;
-    board.GetLineNeighborhoodStateBit<1>(kMoveHH, &line_neighborhood);
+    bit_board.GetLineNeighborhoodStateBit<1>(kMoveHH, &line_neighborhood);
 
     const StateBit lateral_state_bit = GetStateBit("OBOXXXXXX");
     EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
@@ -287,10 +201,10 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
   {
     // 盤の中央に黒石、白石があるケース(N=7)
     MoveList move_list("hhhg");
-    Board board(move_list);
+    BitBoard bit_board(move_list);
     
     array<StateBit, kBoardDirectionNum> line_neighborhood;
-    board.GetLineNeighborhoodStateBit<7>(kMoveHH, &line_neighborhood);
+    bit_board.GetLineNeighborhoodStateBit<7>(kMoveHH, &line_neighborhood);
 
     const StateBit lateral_state_bit = GetStateBit("OOOOOOOBOOOOOOO");
     EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
@@ -307,7 +221,7 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
   {
     // 四隅に黒石、白石があるケース
     MoveList move_list("aaoaaooo");
-    Board board(move_list);
+    BitBoard bit_board(move_list);
     //   A B C D E F G H I J K L M N O 
     // A x --------------------------o A 
     // B | . . . . . . . . . . . . . | B 
@@ -328,7 +242,7 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
     {
       // 左上隅(N=1)
       array<StateBit, kBoardDirectionNum> line_neighborhood;
-      board.GetLineNeighborhoodStateBit<1>(kMoveAA, &line_neighborhood);
+      bit_board.GetLineNeighborhoodStateBit<1>(kMoveAA, &line_neighborhood);
 
       const StateBit lateral_state_bit = GetStateBit("OBXXXXXXX");
       EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
@@ -345,7 +259,7 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
     {
       // 左上隅(N=7)
       array<StateBit, kBoardDirectionNum> line_neighborhood;
-      board.GetLineNeighborhoodStateBit<7>(kMoveAA, &line_neighborhood);
+      bit_board.GetLineNeighborhoodStateBit<7>(kMoveAA, &line_neighborhood);
 
       const StateBit lateral_state_bit = GetStateBit("OOOOOOOBXXXXXXX");
       EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
@@ -362,7 +276,7 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
     {
       // 右上隅(N=1)
       array<StateBit, kBoardDirectionNum> line_neighborhood;
-      board.GetLineNeighborhoodStateBit<1>(kMoveOA, &line_neighborhood);
+      bit_board.GetLineNeighborhoodStateBit<1>(kMoveOA, &line_neighborhood);
 
       const StateBit lateral_state_bit = GetStateBit("WOXXXXXX");
       EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
@@ -379,7 +293,7 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
     {
       // 右上隅(N=7)
       array<StateBit, kBoardDirectionNum> line_neighborhood;
-      board.GetLineNeighborhoodStateBit<7>(kMoveOA, &line_neighborhood);
+      bit_board.GetLineNeighborhoodStateBit<7>(kMoveOA, &line_neighborhood);
 
       const StateBit lateral_state_bit = GetStateBit("WOOOOOOO");
       EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
@@ -396,7 +310,7 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
     {
       // 左下隅(N=1)
       array<StateBit, kBoardDirectionNum> line_neighborhood;
-      board.GetLineNeighborhoodStateBit<1>(kMoveAO, &line_neighborhood);
+      bit_board.GetLineNeighborhoodStateBit<1>(kMoveAO, &line_neighborhood);
 
       const StateBit lateral_state_bit = GetStateBit("OBXXXXXXX");
       EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
@@ -413,7 +327,7 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
     {
       // 左下隅(N=7)
       array<StateBit, kBoardDirectionNum> line_neighborhood;
-      board.GetLineNeighborhoodStateBit<7>(kMoveAO, &line_neighborhood);
+      bit_board.GetLineNeighborhoodStateBit<7>(kMoveAO, &line_neighborhood);
 
       const StateBit lateral_state_bit = GetStateBit("OOOOOOOBXOOOOOO");
       EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
@@ -430,7 +344,7 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
     {
       // 右下隅(N=1)
       array<StateBit, kBoardDirectionNum> line_neighborhood;
-      board.GetLineNeighborhoodStateBit<1>(kMoveOO, &line_neighborhood);
+      bit_board.GetLineNeighborhoodStateBit<1>(kMoveOO, &line_neighborhood);
 
       const StateBit lateral_state_bit = GetStateBit("WOXXXXXX");
       EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
@@ -447,7 +361,7 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
     {
       // 右下隅(N=7)
       array<StateBit, kBoardDirectionNum> line_neighborhood;
-      board.GetLineNeighborhoodStateBit<7>(kMoveOO, &line_neighborhood);
+      bit_board.GetLineNeighborhoodStateBit<7>(kMoveOO, &line_neighborhood);
 
       const StateBit lateral_state_bit = GetStateBit("WOOOOOOO");
       EXPECT_EQ(lateral_state_bit, line_neighborhood[kLateralDirection]);
@@ -464,7 +378,7 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
     {
       // 盤外のケース
       array<StateBit, kBoardDirectionNum> line_neighborhood;
-      board.GetLineNeighborhoodStateBit<7>(kNullMove, &line_neighborhood);
+      bit_board.GetLineNeighborhoodStateBit<7>(kNullMove, &line_neighborhood);
 
       for(auto value : line_neighborhood){
         EXPECT_EQ(0, value);
@@ -473,40 +387,32 @@ TEST_F(BoardTest, GetLineNeighborhoodStateBitTest)
   }
 }
 
-TEST_F(BoardTest, GetSetStateTest)
+TEST_F(BitBoardTest, GetSetStateTest)
 {
   GetSetStateTest();
 }
 
-TEST_F(BoardTest, GetBitBoardIndexTest){
-  GetBitBoardIndexTest();
-}
+TEST_F(BitBoardTest, CompareOperTest){
+  BitBoard bit_board_1, bit_board_2;
 
-TEST_F(BoardTest, GetBitBoardShiftTest){
-  GetBitBoardShiftTest();
-}
+  EXPECT_TRUE(bit_board_1 == bit_board_1);
+  EXPECT_TRUE(bit_board_1 == bit_board_2);
 
-TEST_F(BoardTest, CompareOperTest){
-  Board board_1, board_2;
-
-  EXPECT_TRUE(board_1 == board_1);
-  EXPECT_TRUE(board_1 == board_2);
-
-  board_1.MakeMove(kMoveHH);
-  EXPECT_TRUE(board_1 == board_1);
-  EXPECT_TRUE(board_1 != board_2);
+  bit_board_1.SetState<kBlackStone>(kMoveHH);
+  EXPECT_TRUE(bit_board_1 == bit_board_1);
+  EXPECT_TRUE(bit_board_1 != bit_board_2);
   
-  board_2.MakeMove(kMoveHH);
-  EXPECT_TRUE(board_1 == board_2);
+  bit_board_2.SetState<kBlackStone>(kMoveHH);
+  EXPECT_TRUE(bit_board_1 == bit_board_2);
 }
 
-TEST_F(BoardTest, AssignOperTest){
-  Board board_1, board_2;
+TEST_F(BitBoardTest, AssignOperTest){
+  BitBoard bit_board_1, bit_board_2;
 
-  board_1.MakeMove(kMoveHH);
-  EXPECT_TRUE(board_1 != board_2);
+  bit_board_1.SetState<kBlackStone>(kMoveHH);
+  EXPECT_TRUE(bit_board_1 != bit_board_2);
 
-  board_2 = board_1;
-  EXPECT_TRUE(board_1 == board_2);
+  bit_board_2 = bit_board_1;
+  EXPECT_TRUE(bit_board_1 == bit_board_2);
 }
 }

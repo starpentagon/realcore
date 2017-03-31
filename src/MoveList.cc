@@ -1,5 +1,4 @@
 #include "Move.h"
-#include "Board.h"
 #include "MoveList.h"
 
 using namespace std;
