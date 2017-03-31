@@ -134,6 +134,9 @@ TEST(BitSearchTest, GetBlackStoneBitTest)
   constexpr StateBit expect_bit = expect_bit_pattern | (expect_bit_pattern << 32);
 
   EXPECT_EQ(expect_bit, black_bit);
+
+  const auto player_bit = GetPlayerStoneBit<kBlackTurn>(bit_board);
+  EXPECT_EQ(expect_bit, player_bit);
 }
 
 TEST(BitSearchTest, GetWhiteStoneBitTest)
@@ -149,6 +152,9 @@ TEST(BitSearchTest, GetWhiteStoneBitTest)
   constexpr StateBit expect_bit = expect_bit_pattern | (expect_bit_pattern << 32);
 
   EXPECT_EQ(expect_bit, white_bit);
+
+  const auto player_bit = GetPlayerStoneBit<kWhiteTurn>(bit_board);
+  EXPECT_EQ(expect_bit, player_bit);
 }
 
 TEST(BitSearchTest, GetOpenPositionBitTest)

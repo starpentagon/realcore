@@ -59,6 +59,8 @@ public:
   //! @brief 指し手が正規手かどうかをチェックする
   //! @param move 指し手位置
   //! @retval true 指し手が正規手
+  //! @note 正規手 = (空点 or Pass) AND (相手の直前手が四であればその防手) AND (相手の直前手が終端手なら投了)
+  //! @note 相手の直前手が終端手かどうかは相手の手番時にチェックするため正規手チェックではチェックしない
   //! @pre moveは着手前であること
   //! @see doc/02_terminate_definition/normality.pptx
   template<PlayerTurn P>

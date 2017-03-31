@@ -27,7 +27,11 @@ inline const std::uint64_t SearchOpenFour(const std::uint64_t stone_bit, const s
 //! @param P 手番
 //! @param stone_bit 黒石 or 白石フラグ
 //! @param open_bit 空点フラグ
+//! @param guard_move_bit 四の防手位置のフラグ
 //! @retval X[B4O1]X(黒番), [W4O1](白番)パターンのうち[(B|W)4O1]の右端の位置に1を立てた値
+template<PlayerTurn P>
+inline const std::uint64_t SearchFour(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::uint64_t * const guard_move_bit);
+
 template<PlayerTurn P>
 inline const std::uint64_t SearchFour(const std::uint64_t stone_bit, const std::uint64_t open_bit);
 

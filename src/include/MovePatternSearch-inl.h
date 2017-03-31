@@ -40,30 +40,40 @@ inline const std::uint64_t SearchOpenFour(const std::uint64_t stone_bit, const s
 
 // 四
 template<PlayerTurn P>
-inline const std::uint64_t SearchFour(const std::uint64_t stone_bit, const std::uint64_t open_bit)
+inline const std::uint64_t SearchFour(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::uint64_t * const guard_move_bit)
 {
+  assert(guard_move_bit != nullptr);
+  *guard_move_bit = 0;
+
   // [B4O1][W4O1]パターンを検索する
   constexpr size_t kPatternSize = 5;
   std::array<uint64_t, kPatternSize> pattern_bit_list;
   GetStoneWithOneOpenBit<kPatternSize>(stone_bit, open_bit, &pattern_bit_list);
   
-  std::uint64_t four_bit = 0;
-  
-  for(const auto four_pattern_bit : pattern_bit_list)
-  {
-    four_bit |= four_pattern_bit;
-  }
-
   // 長連筋をマスクする(X[B4O1]X, X\ne B)
   std::uint64_t overline_mask = ~(0ULL);
-  
+
   if(P == kBlackTurn){
     overline_mask = ~LeftShift<1>(stone_bit) & ~RightShift<5>(stone_bit);
   }
 
-  four_bit &= overline_mask;
+  std::uint64_t four_bit = 0;
+  
+  for(size_t i=0; i<kPatternSize; i++){
+    const std::uint64_t pattern_bit = pattern_bit_list[i] & overline_mask;
+    
+    four_bit |= pattern_bit;
+    *guard_move_bit |= pattern_bit << (2 * i);
+  } 
 
   return four_bit;
+}
+
+template<PlayerTurn P>
+inline const std::uint64_t SearchFour(const std::uint64_t stone_bit, const std::uint64_t open_bit)
+{
+  std::uint64_t guard_move_bit = 0;
+  return SearchFour<P>(stone_bit, open_bit, &guard_move_bit);
 }
 
 // 三

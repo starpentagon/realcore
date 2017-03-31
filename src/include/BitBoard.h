@@ -90,6 +90,22 @@ public:
   //! @retval 盤面をテキスト表現した文字列
   const std::string str() const;
 
+  //! @brief 指し手が四かチェックする(着手前版)
+  //! @param move 指し手位置
+  //! @param guard_move 防手位置
+  //! @retval true 指し手が禁手
+  //! @pre moveは着手前であること
+  template<PlayerTurn P>
+  const bool IsFourMove(const MovePosition move, MovePosition * const guard_move) const;
+
+  //! @brief 指し手が四かチェックする(着手後版)
+  //! @param move 指し手位置
+  //! @param guard_move 防手位置
+  //! @retval true 指し手が禁手
+  //! @pre moveは着手後であること
+  template<PlayerTurn P>
+  const bool IsFourMoveOnBoard(const MovePosition move, MovePosition * const guard_move) const;
+
   //! @brief 指し手が禁手かチェックする
   //! @param move 指し手位置
   //! @retval true 指し手が禁手

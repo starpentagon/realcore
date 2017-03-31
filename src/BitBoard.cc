@@ -83,7 +83,7 @@ const bool BitBoard::IsForbiddenMove<kBlackTurn>(const MovePosition move) const
   assert(GetState(move) == kOpenPosition);
 
   // 禁手チェックはmoveの長さ5の直線近傍をチェックすれば十分
-  // @see doc/05_forbidden_check/forbidden_check.pptx
+  // @see doc/06_forbidden_check/forbidden_check.pptx
   constexpr size_t kForbiddenCheck = 5;
   LineNeighborhood<kForbiddenCheck> line_neighbor(move, *this);
 

@@ -58,5 +58,11 @@ TEST(RealCoreTest, GetBoardSymmetryTest)
   find_it = find(symmetry_list.begin(), symmetry_list.end(), kDiagonalSymmetry4);
   EXPECT_TRUE(find_it != symmetry_list.end());
 }
+
+TEST(RealCoreTest, GetPlayerStoneTest)
+{
+  EXPECT_EQ(kBlackStone, GetPlayerStone(kBlackTurn));
+  EXPECT_EQ(kWhiteStone, GetPlayerStone(kWhiteTurn));
+}
 }
 

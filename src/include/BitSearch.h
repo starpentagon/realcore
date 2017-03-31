@@ -9,19 +9,12 @@
 #include <array>
 #include <vector>
 
+#include "RealCore.h"
+
 namespace realcore{
 
 //! @brief 盤面の状態
 typedef std::uint64_t StateBit;
-
-//! @brief 盤面上の点の状態定義
-enum PositionState : StateBit
-{
-  kOverBoard,     //!< 盤外(0b00)
-  kBlackStone,    //!< 黒石(0b01)
-  kWhiteStone,    //!< 白石(0b10)
-  kOpenPosition   //!< 空点(0b11)
-};
 
 //! @brief 禁手チェックの状態定義
 enum ForbiddenCheckState : std::uint8_t
@@ -73,6 +66,12 @@ inline constexpr std::uint64_t GetBlackStoneBit(const StateBit state_bit);
 //! @param state_bit State Bit
 //! @retval 白石の位置に1を立てた値
 inline constexpr std::uint64_t GetWhiteStoneBit(const StateBit state_bit);
+
+//! @brief プレイヤーの石フラグを返す
+//! @param state_bit State Bit
+//! @retval プレイヤーの石の位置に1を立てた値
+template<PlayerTurn P>
+constexpr std::uint64_t GetPlayerStoneBit(const StateBit state_bit);
 
 //! @brief 空点フラグを返す
 //! @param state_bit State Bit

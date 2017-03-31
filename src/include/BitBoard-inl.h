@@ -3,6 +3,7 @@
 
 #include "Move.h"
 #include "BitBoard.h"
+#include "LineNeighborhood.h"
 
 namespace realcore{
 
@@ -275,6 +276,41 @@ void BitBoard::GetLineNeighborhoodStateBit(const MovePosition move, std::array<S
       (*line_neighborhood_list)[direction] = neighborhood_state_bit << (kCenterAlignment - shift);
     }
   }
+}
+
+template<PlayerTurn P>
+const bool BitBoard::IsFourMove(const MovePosition move, MovePosition * const guard_move) const
+{
+  if(!IsInBoardMove(move)){
+    return false;
+  }
+  
+  assert(GetState(move) == kOpenPosition);
+
+  // 黒の四(X[B4O1]X)には長さ5, 白の四([W4O1])には長さ4の直線近傍を見れば良い
+  constexpr size_t kFourCheck = (P == kBlackTurn) ? 5 : 4;
+  LineNeighborhood<kFourCheck> line_neighbor(move, *this);
+
+  constexpr PositionState S = GetPlayerStone(P);
+  line_neighbor.template SetCenterState<S>();
+
+  return line_neighbor.template IsFour<P>(guard_move);
+}
+
+template<PlayerTurn P>
+const bool BitBoard::IsFourMoveOnBoard(const MovePosition move, MovePosition * const guard_move) const
+{
+  if(!IsInBoardMove(move)){
+    return false;
+  }
+  
+  assert(GetState(move) == GetPlayerStone(P));
+
+  // 黒の四(X[B4O1]X)には長さ5, 白の四([W4O1])には長さ4の直線近傍を見れば良い
+  constexpr size_t kFourCheck = (P == kBlackTurn) ? 5 : 4;
+  LineNeighborhood<kFourCheck> line_neighbor(move, *this);
+
+  return line_neighbor.template IsFour<P>(guard_move);
 }
 }
 

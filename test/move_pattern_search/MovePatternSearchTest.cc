@@ -156,10 +156,14 @@ namespace realcore
       
       const uint64_t black_bit = GetBlackStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = (0b1 << 0) | (0b1 << 2);
       EXPECT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_guard_bit = (0b1 << 0) | (0b1 << 10);
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
       // 四パターン(黒番)
@@ -167,10 +171,14 @@ namespace realcore
       
       const uint64_t black_bit = GetBlackStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = (0b1 << 4);
       EXPECT_EQ(expect_bit, search_bit);      
+
+      constexpr uint64_t expect_guard_bit = (0b1 << 6);
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
       // 四パターン(黒番)
@@ -178,10 +186,14 @@ namespace realcore
       
       const uint64_t black_bit = GetBlackStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = (0b1 << 4);
       EXPECT_EQ(expect_bit, search_bit);      
+
+      constexpr uint64_t expect_guard_bit = (0b1 << 8);
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
       // 四パターン(黒番)
@@ -189,10 +201,14 @@ namespace realcore
       
       const uint64_t black_bit = GetBlackStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = (0b1 << 4);
       EXPECT_EQ(expect_bit, search_bit);      
+
+      constexpr uint64_t expect_guard_bit = (0b1 << 10);
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
       // 四パターン(黒番, 達四)
@@ -200,10 +216,14 @@ namespace realcore
       
       const uint64_t black_bit = GetBlackStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = (0b1 << 2) | (0b1 << 4);
       EXPECT_EQ(expect_bit, search_bit);      
+
+      constexpr uint64_t expect_guard_bit = (0b1 << 2) | (0b1 << 12);
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
       // 非四パターン（黒番, 長連筋）
@@ -211,10 +231,14 @@ namespace realcore
 
       const uint64_t black_bit = GetBlackStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = 0;
       EXPECT_EQ(expect_bit, search_bit);      
+
+      constexpr uint64_t expect_guard_bit = 0;
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
       // 非四パターン（黒番, 長連筋）
@@ -222,21 +246,29 @@ namespace realcore
 
       const uint64_t black_bit = GetBlackStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = 0;
       EXPECT_EQ(expect_bit, search_bit);      
+
+      constexpr uint64_t expect_guard_bit = 0;
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
-      // 非達四パターン(黒番)
+      // 非四パターン(黒番)
       const StateBit test_bit = GetStateBit("BWOBBBOXB");
       
       const uint64_t black_bit = GetBlackStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kBlackTurn>(black_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = 0;
       EXPECT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_guard_bit = 0;
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
       // 四パターン(白番, 達四)
@@ -244,10 +276,14 @@ namespace realcore
       
       const uint64_t white_bit = GetWhiteStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = (0b1 << 4) | (0b1 << 6);
       EXPECT_EQ(expect_bit, search_bit);      
+
+      constexpr uint64_t expect_guard_bit = (0b1 << 4) | (0b1 << 14);
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
       // 四パターン(白番)
@@ -255,10 +291,14 @@ namespace realcore
       
       const uint64_t white_bit = GetWhiteStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = (0b1 << 4);
       EXPECT_EQ(expect_bit, search_bit);      
+
+      constexpr uint64_t expect_guard_bit = (0b1 << 6);
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
       // 四パターン(白番)
@@ -266,10 +306,14 @@ namespace realcore
       
       const uint64_t white_bit = GetWhiteStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = (0b1 << 4);
       EXPECT_EQ(expect_bit, search_bit);      
+
+      constexpr uint64_t expect_guard_bit = (0b1 << 8);
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
       // 四パターン(白番)
@@ -277,10 +321,14 @@ namespace realcore
       
       const uint64_t white_bit = GetWhiteStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = (0b1 << 4);
       EXPECT_EQ(expect_bit, search_bit);      
+
+      constexpr uint64_t expect_guard_bit = (0b1 << 10);
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
       // 四パターン(白番)
@@ -288,10 +336,14 @@ namespace realcore
       
       const uint64_t white_bit = GetWhiteStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = (0b1 << 4);
       EXPECT_EQ(expect_bit, search_bit);      
+
+      constexpr uint64_t expect_guard_bit = (0b1 << 12);
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
       // 四パターン(白番, 長連筋)
@@ -299,10 +351,14 @@ namespace realcore
       
       const uint64_t white_bit = GetWhiteStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = (0b1 << 4) | (0b1 << 6);
       EXPECT_EQ(expect_bit, search_bit);      
+
+      constexpr uint64_t expect_guard_bit = (0b1 << 12);
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
     {
       // 非四パターン(白番)
@@ -310,10 +366,14 @@ namespace realcore
       
       const uint64_t white_bit = GetWhiteStoneBit(test_bit);
       const uint64_t open_bit = GetOpenPositionBit(test_bit);
-      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit);
+      uint64_t guard_bit = 0;
+      const uint64_t search_bit = SearchFour<kWhiteTurn>(white_bit, open_bit, &guard_bit);
 
       constexpr uint64_t expect_bit = 0;
       EXPECT_EQ(expect_bit, search_bit);      
+
+      constexpr uint64_t expect_guard_bit = 0;
+      EXPECT_EQ(expect_guard_bit, guard_bit);
     }
   }
 

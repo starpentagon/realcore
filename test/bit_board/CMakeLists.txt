@@ -32,6 +32,7 @@ add_executable(
     ../BitBoardTest.cc
     ../BitBoardMemberTest.cc
     ../BitBoardForbiddenTest.cc
+    ../BitBoardMoveCheckTest.cc
 )
 
 # ライブラリ

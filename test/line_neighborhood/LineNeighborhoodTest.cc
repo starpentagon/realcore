@@ -98,6 +98,26 @@ public:
       }
     }
   }
+
+  void GetBoardPositionListTest()
+  {
+    BitBoard bit_board;
+    LineNeighborhood<7> line_neighborhood(kMoveHH, bit_board);
+    LocalBitBoard bit_list{{0}};
+
+    bit_list[0] = (0b1ULL << 0) | (0b01ULL << 34);
+    bit_list[1] = (0b1ULL << 2) | (0b01ULL << 36);
+
+    vector<BoardPosition> board_position_list;
+    line_neighborhood.GetBoardPositionList(bit_list, &board_position_list);
+
+    ASSERT_EQ(4, board_position_list.size());
+
+    ASSERT_EQ(129, board_position_list[0]);
+    ASSERT_EQ(386, board_position_list[1]);
+    ASSERT_EQ(737, board_position_list[2]);
+    ASSERT_EQ(994, board_position_list[3]);
+  }
 };
 
 TEST_F(LineNeighborhoodTest, DefaultConstructorTest)
@@ -113,6 +133,11 @@ TEST_F(LineNeighborhoodTest, SetCenterStateTest)
 TEST_F(LineNeighborhoodTest, GetBoardDirectionTest)
 {
   GetBoardDirectionTest();
+}
+
+TEST_F(LineNeighborhoodTest, GetBoardPositionListTest)
+{
+  GetBoardPositionListTest();
 }
 
 }   // namespace realcore
