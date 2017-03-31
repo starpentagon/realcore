@@ -30,7 +30,7 @@ add_executable(
     ${project_name}
     $ENV{REALCORE_DIR}/src/RealCore.cc
     $ENV{REALCORE_DIR}/src/Move.cc
-    $ENV{REALCORE_DIR}/src/Board.cc
+    $ENV{REALCORE_DIR}/src/BitBoard.cc
     ../BoardGetSet.cc
 )
 

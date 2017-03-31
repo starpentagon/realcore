@@ -30,7 +30,7 @@ add_executable(
     ${project_name}
     $ENV{REALCORE_DIR}/src/CSVReader.cc
     $ENV{REALCORE_DIR}/src/MoveList.cc
-    $ENV{REALCORE_DIR}/src/Board.cc
+    $ENV{REALCORE_DIR}/src/BitBoard.cc
     ../EnumerateForbiddenMove.cc
 )
 

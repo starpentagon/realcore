@@ -101,17 +101,17 @@ void CheckEachPoint(const realcore::MoveList &board_move, realcore::MoveList * c
     return;
   }
 
-  Board board(board_move);
+  BitBoard bit_board(board_move);
 
   for(const auto move : GetAllInBoardMove())
   {
-    auto state = board.GetState(move);
+    auto state = bit_board.GetState(move);
 
     if(state != kOpenPosition){
       continue;
     }
 
-    if(board.IsForbiddenMove<kBlackTurn>(move)){
+    if(bit_board.IsForbiddenMove<kBlackTurn>(move)){
       (*forbidden_move) += move;
     }
   }
