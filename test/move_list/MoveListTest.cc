@@ -159,6 +159,35 @@ TEST_F(MoveListTest, SubscriptOperTest)
   EXPECT_EQ(kMoveAB, move_list[0]);
 }
 
+TEST_F(MoveListTest, DecrementOperTest)
+{
+  MoveList move_list;
+
+  move_list += kMoveAA;
+  EXPECT_FALSE(move_list.empty());
+
+  --move_list;
+  EXPECT_TRUE(move_list.empty());
+}
+
+TEST_F(MoveListTest, GetLastMoveTest)
+{
+  MoveList move_list;
+  EXPECT_EQ(kInvalidMove, move_list.GetLastMove());
+
+  move_list += kMoveAA;
+  EXPECT_EQ(kMoveAA, move_list.GetLastMove());
+
+  move_list += kMoveAB;
+  EXPECT_EQ(kMoveAB, move_list.GetLastMove());
+
+  --move_list;
+  EXPECT_EQ(kMoveAA, move_list.GetLastMove());
+
+  --move_list;
+  EXPECT_EQ(kInvalidMove, move_list.GetLastMove());
+}
+
 TEST_F(MoveListTest, CalcInitialReserveSizeTest)
 {
   CalcInitialReserveSizeTest();

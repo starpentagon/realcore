@@ -44,31 +44,15 @@ public:
   //! @brief [a-o][a-o]形式の文字列に対応する指し手リストを生成する
   MoveList(const std::string &move_str);
 
-  //! @brief 代入演算子
-  const MoveList& operator=(const MoveList &move_list);
-  const MoveList& operator=(const MovePosition move);
+  //! @brief 黒番かどうかを返す
+  //! @param true 黒番
+  const bool IsBlackTurn() const;
 
-  //! @brief 連結演算子
-  const MoveList& operator+=(const MoveList &move_list);
-  const MoveList& operator+=(const MovePosition move);
+  //! @brief リストの最終手を返す
+  //! @note リストが空の時はkInvalidMoveを返す
+  const MovePosition GetLastMove() const;
 
-  //! @brief 比較演算子
-  const bool operator==(const MoveList &move_list) const;
-  const bool operator!=(const MoveList &move_list) const;
-  
-  //! @brief 添字演算子(右辺値)
-  const MovePosition operator[](const size_t index) const;
-
-  //! @brief 添字演算子(左辺値)
-  MovePosition& operator[](const size_t index);
-
-  //! @breif 範囲の開始イテレータを返す
-  std::vector<MovePosition>::const_iterator begin() const;
-
-  //! @breif 範囲の終端イテレータを返す
-  std::vector<MovePosition>::const_iterator end() const;
-
-  //! @brief 指し手リストの長さを返す
+    //! @brief 指し手リストの長さを返す
   //! @retval 指し手リストの長さ
   const size_t size() const;
 
@@ -89,9 +73,32 @@ public:
   //! @note 領域サイズはCalcInitialReserveSize()で算出する(initial_list_sizeより少し大きい領域が確保される)
   void ReserveInitial(const size_t initial_list_size);
 
-  //! @brief 黒番かどうかを返す
-  //! @param true 黒番
-  const bool IsBlackTurn() const;
+  //! @brief 代入演算子
+  const MoveList& operator=(const MoveList &move_list);
+  const MoveList& operator=(const MovePosition move);
+
+  //! @brief 連結演算子
+  const MoveList& operator+=(const MoveList &move_list);
+  const MoveList& operator+=(const MovePosition move);
+
+  //! @brief 比較演算子
+  const bool operator==(const MoveList &move_list) const;
+  const bool operator!=(const MoveList &move_list) const;
+  
+  //! @brief 添字演算子(右辺値)
+  const MovePosition operator[](const size_t index) const;
+
+  //! @brief 添字演算子(左辺値)
+  MovePosition& operator[](const size_t index);
+
+  //! @brief デクリメント演算子
+  const MoveList& operator--();
+
+  //! @breif 範囲の開始イテレータを返す
+  std::vector<MovePosition>::const_iterator begin() const;
+
+  //! @breif 範囲の終端イテレータを返す
+  std::vector<MovePosition>::const_iterator end() const;
 
 private:
   //! @brief 初期化時に確保する領域長さを算出する

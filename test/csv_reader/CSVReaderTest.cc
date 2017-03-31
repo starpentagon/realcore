@@ -29,6 +29,7 @@ TEST(CSVReaderTest, ReadCSVTest)
   // 1,2,3
   map<string, StringVector> csv_data;
   const bool is_read = ReadCSV("test_data.csv", &csv_data);
+  ASSERT_TRUE(is_read);
 
   {
     // col1

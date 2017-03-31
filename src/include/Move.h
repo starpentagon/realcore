@@ -50,6 +50,13 @@ const bool IsInvalidMove(const MovePosition move);
 //! @retval true 指し手がPass
 const bool IsNullMove(const MovePosition move);
 
+//! @brief 点(x, y)が盤内かを判定する関数
+//! @param x x座標
+//! @param y y座標
+//! @retval true 点(x, y)が盤内
+//! @pre x, yは[0, 15]の範囲であること
+constexpr inline bool IsInBoard(const Cordinate x, const Cordinate y);
+
 //! @brief 指し手が盤内かどうかを判定する
 //! @param move 指し手位置
 //! @retval true 指し手が盤内

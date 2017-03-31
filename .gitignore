@@ -40,3 +40,6 @@ database/*.csv
 # Visual Studio Code setting files
 .vscode
 
+# log files
+*.log
+
