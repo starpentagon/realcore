@@ -195,7 +195,20 @@ const ForbiddenCheckState LineNeighborhood<N>::ForbiddenCheck(std::vector<BoardP
   }
 
   // 四々
-  if(IsDoubleFour<kBlackTurn>()){
+  LocalBitBoard four_bit{{0}};
+
+  for(size_t i=0; i<kLocalBitBoardNum; i++){
+    const auto black_bit = local_black_bit[i];
+    const auto open_bit = local_open_bit[i];
+
+    const auto open_four_bit = SearchOpenFour<kBlackTurn>(black_bit, open_bit);
+    four_bit[i] = SearchFour<kBlackTurn>(black_bit, open_bit);
+
+    // 達四があると四のパターンが2カ所マッチするので片方をオフにする
+    four_bit[i] ^= open_four_bit;
+  }
+
+  if(IsMultipleBit(four_bit[0], four_bit[1])){
     return kForbiddenMove;
   }
 
