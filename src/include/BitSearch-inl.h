@@ -5,7 +5,6 @@
 #include <cassert>
 #include <string>
 
-#include "RealCore.h"
 #include "BitSearch.h"
 
 namespace realcore
@@ -43,6 +42,12 @@ inline constexpr std::uint64_t GetBlackStoneBit(const StateBit state_bit)
 inline constexpr std::uint64_t GetWhiteStoneBit(const StateBit state_bit)
 {
   return (state_bit >> 1) & (~state_bit) & kUpperBitMask;
+}
+
+template<PlayerTurn P>
+inline constexpr std::uint64_t GetPlayerStoneBit(const StateBit state_bit)
+{
+  return P == kBlackTurn ? GetBlackStoneBit(state_bit) : GetWhiteStoneBit(state_bit);
 }
 
 inline constexpr std::uint64_t GetOpenPositionBit(const StateBit state_bit)

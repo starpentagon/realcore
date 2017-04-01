@@ -2,6 +2,7 @@
 #define MOVE_LIST_INL_H
 
 #include <cassert>
+#include "Move.h"
 #include "MoveList.h"
 
 namespace realcore
@@ -77,6 +78,22 @@ inline MovePosition& MoveList::operator[](const size_t index)
   return move_list_[index];
 }
 
+inline const MoveList& MoveList::operator--()
+{
+  assert(!move_list_.empty());
+  
+  move_list_.pop_back();
+  return *this;
+}
+
+inline const MovePosition MoveList::GetLastMove() const
+{
+  if(move_list_.empty())
+    return kInvalidMove;
+  
+  return move_list_.back();
+}
+
 inline std::vector<MovePosition>::const_iterator MoveList::begin() const{
   return move_list_.begin();
 }
@@ -105,7 +122,11 @@ inline const size_t MoveList::CalcInitialReserveSize(const size_t initial_list_s
 
   return reserve_list_size;
 }
-  
+
+inline const bool MoveList::IsBlackTurn() const{
+  return move_list_.size() % 2 == 0;
+}
+
 }
 
 #endif  // MOVE_LIST_INL_H

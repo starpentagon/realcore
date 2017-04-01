@@ -159,6 +159,35 @@ TEST_F(MoveListTest, SubscriptOperTest)
   EXPECT_EQ(kMoveAB, move_list[0]);
 }
 
+TEST_F(MoveListTest, DecrementOperTest)
+{
+  MoveList move_list;
+
+  move_list += kMoveAA;
+  EXPECT_FALSE(move_list.empty());
+
+  --move_list;
+  EXPECT_TRUE(move_list.empty());
+}
+
+TEST_F(MoveListTest, GetLastMoveTest)
+{
+  MoveList move_list;
+  EXPECT_EQ(kInvalidMove, move_list.GetLastMove());
+
+  move_list += kMoveAA;
+  EXPECT_EQ(kMoveAA, move_list.GetLastMove());
+
+  move_list += kMoveAB;
+  EXPECT_EQ(kMoveAB, move_list.GetLastMove());
+
+  --move_list;
+  EXPECT_EQ(kMoveAA, move_list.GetLastMove());
+
+  --move_list;
+  EXPECT_EQ(kInvalidMove, move_list.GetLastMove());
+}
+
 TEST_F(MoveListTest, CalcInitialReserveSizeTest)
 {
   CalcInitialReserveSizeTest();
@@ -261,7 +290,7 @@ TEST_F(MoveListTest, GetMoveListTest)
   }
 }
 
-TEST_F(MoveListTest, GetSymmetricMoveList)
+TEST_F(MoveListTest, GetSymmetricMoveListTest)
 {
   MoveList move_list("bchhpp");
 
@@ -313,6 +342,15 @@ TEST_F(MoveListTest, GetSymmetricMoveList)
     GetSymmetricMoveList(move_list, kDiagonalSymmetry4, &symmetric_move_list);
     EXPECT_TRUE(symmetric_move_list == expect_list);
   }
+}
+
+TEST_F(MoveListTest, IsBlackTurn)
+{
+  MoveList move_list;
+  EXPECT_TRUE(move_list.IsBlackTurn());
+
+  move_list += kMoveHH;
+  EXPECT_FALSE(move_list.IsBlackTurn());
 }
 
 }   // namespace realcore

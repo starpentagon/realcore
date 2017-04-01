@@ -54,11 +54,30 @@ constexpr size_t kBoardSymmetryNum = 8;
 const std::array<BoardSymmetry,kBoardSymmetryNum>& GetBoardSymmetry();
 
 //! @brief 手番
-enum PlayerTurn
+enum PlayerTurn : std::uint8_t
 {
   kBlackTurn,
   kWhiteTurn
 };
+
+//! @brief 盤面上の点の状態定義
+enum PositionState : std::uint64_t
+{
+  kOverBoard,     //!< 盤外(0b00)
+  kBlackStone,    //!< 黒石(0b01)
+  kWhiteStone,    //!< 白石(0b10)
+  kOpenPosition   //!< 空点(0b11)
+};
+
+//! 手番に対応する石を返す
+constexpr PositionState GetPlayerStone(const PlayerTurn player);
+
+//! 相手の手番を返す
+constexpr PlayerTurn GetOpponentTurn(const PlayerTurn player);
+
+//! @brief 盤面位置
+//! @see doc/01_data_definition/data_definition.pptx and board_definition.xlsx
+typedef std::uint64_t BoardPosition;
 
 }   // namespace realcore
 

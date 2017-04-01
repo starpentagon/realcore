@@ -7,7 +7,7 @@
 #include <boost/program_options.hpp>
 
 #include "Move.h"
-#include "Board.h"
+#include "BitBoard.h"
 
 using namespace std;
 using namespace boost;
@@ -53,10 +53,10 @@ int main(int argc, char* argv[])
 
     for(size_t i=0; i<iteration_count; i++)
     {
-      Board board;
+      BitBoard bit_board;
 
       for(const auto move : in_board_move){
-        board.SetState<kBlackStone>(move);
+        bit_board.SetState<kBlackStone>(move);
       }
     }
 
@@ -71,10 +71,10 @@ int main(int argc, char* argv[])
 
     for(size_t i=0; i<iteration_count; i++)
     {
-      Board board;
+      BitBoard bit_board;
 
       for(const auto move : in_board_move){
-        board.SetState<kWhiteStone>(move);
+        bit_board.SetState<kWhiteStone>(move);
       }
     }
 
@@ -90,10 +90,10 @@ int main(int argc, char* argv[])
 
     for(size_t i=0; i<iteration_count; i++)
     {
-      Board board;
+      BitBoard bit_board;
 
       for(const auto move : in_board_move){
-        board.SetState(move, state);
+        bit_board.SetState(move, state);
         state = static_cast<PositionState>(3 - state);
       }
     }
@@ -109,10 +109,10 @@ int main(int argc, char* argv[])
 
     for(size_t i=0; i<iteration_count; i++)
     {
-      Board board;
+      BitBoard bit_board;
 
       for(const auto move : in_board_move){
-        board.SetState<kOpenPosition>(move);
+        bit_board.SetState<kOpenPosition>(move);
       }
     }
 
@@ -129,10 +129,10 @@ int main(int argc, char* argv[])
 
     for(size_t i=0; i<iteration_count; i++)
     {
-      Board board;
+      BitBoard bit_board;
 
       for(const auto move : in_board_move){
-        const auto state = board.GetState(move);
+        const auto state = bit_board.GetState(move);
         ++state_count[state];
       }
     }

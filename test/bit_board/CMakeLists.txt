@@ -1,12 +1,8 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # プロジェクト名
-set(project_name board_get_set)
+set(project_name bit_board_test)
 project(${project_name} CXX)
-
-# Build Type(Release or Debug)
-set(CMAKE_BUILD_TYPE Release)
-# message(STATUS "${CMAKE_CXX_FLAGS_RELEASE}")
 
 # ccache
 find_program(CCACHE_FOUND ccache)
@@ -23,17 +19,26 @@ include_directories($ENV{REALCORE_DIR}/src/include)
 include_directories($ENV{GTEST_DIR}/googletest/include)
 
 # ライブラリパス
-link_directories($ENV{BOOST_DIR}/lib)
+link_directories($ENV{GTEST_DIR}/googlemock/gtest)
 
 # ソースファイル
 add_executable(
     ${project_name}
     $ENV{REALCORE_DIR}/src/RealCore.cc
+    $ENV{REALCORE_DIR}/src/BitSearch.cc
     $ENV{REALCORE_DIR}/src/Move.cc
+    $ENV{REALCORE_DIR}/src/MoveList.cc
     $ENV{REALCORE_DIR}/src/BitBoard.cc
-    ../BoardGetSet.cc
+    ../BitBoardTest.cc
+    ../BitBoardMemberTest.cc
+    ../BitBoardForbiddenTest.cc
+    ../BitBoardMoveCheckTest.cc
 )
 
 # ライブラリ
-target_link_libraries(${project_name} boost_program_options)
+target_link_libraries(${project_name} gtest)
+target_link_libraries(${project_name} gtest_main)
+
+# Ubuntuでgoogle testをビルドするためにはpthreadが必要
+target_link_libraries(${project_name} pthread)
 

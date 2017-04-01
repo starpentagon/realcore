@@ -28,10 +28,10 @@ add_executable(
     $ENV{REALCORE_DIR}/src/BitSearch.cc
     $ENV{REALCORE_DIR}/src/Move.cc
     $ENV{REALCORE_DIR}/src/MoveList.cc
+    $ENV{REALCORE_DIR}/src/BitBoard.cc
     $ENV{REALCORE_DIR}/src/Board.cc
     ../BoardTest.cc
     ../BoardMemberTest.cc
-    ../BoardForbiddenTest.cc
 )
 
 # ライブラリ

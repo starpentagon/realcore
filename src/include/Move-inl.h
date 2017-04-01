@@ -5,7 +5,6 @@
 #include <array>
 
 #include "Move.h"
-#include "Board.h"
 
 namespace realcore
 {
@@ -57,6 +56,17 @@ inline const bool IsInvalidMove(const MovePosition move)
 inline const bool IsNullMove(const MovePosition move)
 {
   return move == kNullMove;
+}
+
+constexpr inline bool IsInBoard(const Cordinate x, const Cordinate y)
+{
+  assert(0 <= x && x <= static_cast<Cordinate>(kBoardLineNum));
+  assert(0 <= y && y <= static_cast<Cordinate>(kBoardLineNum));
+
+  const bool x_in_board = x != 0;
+  const bool y_in_board = y != 0;
+
+  return x_in_board && y_in_board;
 }
 
 inline const bool IsInBoardMove(const MovePosition move)
