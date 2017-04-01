@@ -69,7 +69,9 @@ public:
   //! @brief 指し手が終端手かどうかをチェックする
   //! @param move 指し手位置
   //! @retval true 指し手が終端手
+  //! @note 終端手 = 達四ができる or (白番のみ: 四々 or 四ノビで極めること)
   //! @pre moveは着手前であること
+  //! @pre moveは正規手であること
   //! @see doc/02_terminate_definition/normality.pptx
   template<PlayerTurn P>
   const bool IsTerminateMove(const MovePosition move) const;

@@ -30,6 +30,11 @@ inline constexpr PositionState GetPlayerStone(const PlayerTurn player)
   return player == kBlackTurn ? kBlackStone : kWhiteStone;
 }
 
+inline constexpr PlayerTurn GetOpponentTurn(const PlayerTurn player)
+{
+  return player == kBlackTurn ? kWhiteTurn : kBlackTurn;
+}
+
 }   // realcore
 
 #endif    // REAL_CORE_INL_H

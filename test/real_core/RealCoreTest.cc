@@ -64,5 +64,11 @@ TEST(RealCoreTest, GetPlayerStoneTest)
   EXPECT_EQ(kBlackStone, GetPlayerStone(kBlackTurn));
   EXPECT_EQ(kWhiteStone, GetPlayerStone(kWhiteTurn));
 }
+
+TEST(RealCoreTest, GetOpponentTurnTest)
+{
+  EXPECT_EQ(kWhiteTurn, GetOpponentTurn(kBlackTurn));
+  EXPECT_EQ(kBlackTurn, GetOpponentTurn(kWhiteTurn));
+}
 }
 

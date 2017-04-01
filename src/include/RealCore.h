@@ -72,6 +72,9 @@ enum PositionState : std::uint64_t
 //! 手番に対応する石を返す
 constexpr PositionState GetPlayerStone(const PlayerTurn player);
 
+//! 相手の手番を返す
+constexpr PlayerTurn GetOpponentTurn(const PlayerTurn player);
+
 //! @brief 盤面位置
 //! @see doc/01_data_definition/data_definition.pptx and board_definition.xlsx
 typedef std::uint64_t BoardPosition;

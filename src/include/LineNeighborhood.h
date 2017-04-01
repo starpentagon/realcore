@@ -36,12 +36,22 @@ public:
   template<PositionState S>
   void SetCenterState();
 
+  //! @brief moveが達四を作る手かチェックする
+  //! @retval true 達四ができている
+  template<PlayerTurn P>
+  const bool IsOpenFour() const;
+
   //! @brief moveが四を作る手かチェックする
   //! @param guard_move 防手の格納先
   //! @retval true 四ができている
   //! @note 四々、達四ができている場合はいずれかの防手を設定する
   template<PlayerTurn P>
   const bool IsFour(MovePosition * const guard_move) const;
+
+  //! @brief moveが四々を作る手かチェックする
+  //! @retval true 四々ができている
+  template<PlayerTurn P>
+  const bool IsDoubleFour() const;
 
   //! @brief moveが禁手かチェックする
   //! @param next_open_four_list 見かけの三に対する達四を作るBoardPositionのリスト

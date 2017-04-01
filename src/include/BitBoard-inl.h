@@ -279,6 +279,25 @@ void BitBoard::GetLineNeighborhoodStateBit(const MovePosition move, std::array<S
 }
 
 template<PlayerTurn P>
+const bool BitBoard::IsOpenFourMove(const MovePosition move) const
+{
+  if(!IsInBoardMove(move)){
+    return false;
+  }
+  
+  assert(GetState(move) == kOpenPosition);
+
+  // 黒の達四(XOBBBBOX)には長さ5, 白の達四(OWWWWO)には長さ4の直線近傍を見れば良い
+  constexpr size_t kFourCheck = (P == kBlackTurn) ? 5 : 4;
+  LineNeighborhood<kFourCheck> line_neighbor(move, *this);
+
+  constexpr PositionState S = GetPlayerStone(P);
+  line_neighbor.template SetCenterState<S>();
+
+  return line_neighbor.template IsOpenFour<P>();
+}
+
+template<PlayerTurn P>
 const bool BitBoard::IsFourMove(const MovePosition move, MovePosition * const guard_move) const
 {
   if(!IsInBoardMove(move)){
@@ -312,6 +331,26 @@ const bool BitBoard::IsFourMoveOnBoard(const MovePosition move, MovePosition * c
 
   return line_neighbor.template IsFour<P>(guard_move);
 }
+
+template<PlayerTurn P>
+const bool BitBoard::IsDoubleFourMove(const MovePosition move) const
+{
+  if(!IsInBoardMove(move)){
+    return false;
+  }
+
+  assert(GetState(move) == kOpenPosition);
+
+  // 四々のチェックは長さ5の直線近傍を見れば良い
+  constexpr size_t kDoubleFourCheck = 5;
+  LineNeighborhood<kDoubleFourCheck> line_neighbor(move, *this);
+
+  constexpr PositionState S = GetPlayerStone(P);
+  line_neighbor.template SetCenterState<S>();
+
+  return line_neighbor.template IsDoubleFour<P>();
+}
+
 }
 
 #endif    // BIT_BOARD_INL_H

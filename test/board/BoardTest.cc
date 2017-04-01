@@ -16,8 +16,9 @@ namespace realcore
 class BoardTest
 : public ::testing::Test
 {
-};
+public:
 
+};
 
 TEST_F(BoardTest, IsEqualTest)
 {

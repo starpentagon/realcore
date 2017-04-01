@@ -56,36 +56,6 @@ inline const BoardDirection LineNeighborhood<N>::GetBoardDirection(const size_t 
 }
 
 template<size_t N>
-template<PlayerTurn P>
-const bool LineNeighborhood<N>::IsFour(MovePosition * const guard_move) const
-{
-  assert(guard_move != nullptr);
-
-  LocalBitBoard guard_move_bit{{0}};
-
-  for(size_t i=0; i<kLocalBitBoardNum; i++){
-    const auto state_bit = local_bit_board_[i];
-
-    const auto stone_bit = GetPlayerStoneBit<P>(state_bit);
-    const auto open_bit = GetOpenPositionBit(state_bit);
-
-    const auto four_bit = SearchFour<kBlackTurn>(stone_bit, open_bit, &(guard_move_bit[i]));
-
-    if(four_bit != 0){
-      std::vector<BoardPosition> guard_move_position;
-      GetBoardPositionList(guard_move_bit, &guard_move_position);
-
-      assert(!guard_move_position.empty());
-      *guard_move = GetBoardMove(guard_move_position[0]);
-
-      return true;
-    }
-  }
-
-  return false;
-}
-
-template<size_t N>
 void LineNeighborhood<N>::GetBoardPositionList(const LocalBitBoard &bit_list, std::vector<BoardPosition> * const board_position_list) const
 {
   assert(board_position_list != nullptr);
@@ -126,6 +96,82 @@ void LineNeighborhood<N>::GetBoardPositionList(const LocalBitBoard &bit_list, st
 }
 
 template<size_t N>
+template<PlayerTurn P>
+const bool LineNeighborhood<N>::IsOpenFour() const
+{
+  for(size_t i=0; i<kLocalBitBoardNum; i++){
+    const auto state_bit = local_bit_board_[i];
+
+    const auto stone_bit = GetPlayerStoneBit<P>(state_bit);
+    const auto open_bit = GetOpenPositionBit(state_bit);
+
+    const auto open_four_bit = SearchOpenFour<P>(stone_bit, open_bit);
+
+    if(open_four_bit != 0){
+      return true;
+    }
+  }
+  
+  return false;
+}
+
+template<size_t N>
+template<PlayerTurn P>
+const bool LineNeighborhood<N>::IsFour(MovePosition * const guard_move) const
+{
+  assert(guard_move != nullptr);
+
+  LocalBitBoard guard_move_bit{{0}};
+
+  for(size_t i=0; i<kLocalBitBoardNum; i++){
+    const auto state_bit = local_bit_board_[i];
+
+    const auto stone_bit = GetPlayerStoneBit<P>(state_bit);
+    const auto open_bit = GetOpenPositionBit(state_bit);
+
+    const auto four_bit = SearchFour<P>(stone_bit, open_bit, &(guard_move_bit[i]));
+
+    if(four_bit != 0){
+      std::vector<BoardPosition> guard_move_position;
+      GetBoardPositionList(guard_move_bit, &guard_move_position);
+
+      assert(!guard_move_position.empty());
+      *guard_move = GetBoardMove(guard_move_position[0]);
+
+      return true;
+    }
+  }
+
+  return false;
+}
+
+template<size_t N>
+template<PlayerTurn P>
+const bool LineNeighborhood<N>::IsDoubleFour() const
+{
+  LocalBitBoard four_bit{{0}};
+
+  for(size_t i=0; i<kLocalBitBoardNum; i++){
+    const auto state_bit = local_bit_board_[i];
+
+    const auto stone_bit = GetPlayerStoneBit<P>(state_bit);
+    const auto open_bit = GetOpenPositionBit(state_bit);
+
+    const auto open_four_bit = SearchOpenFour<P>(stone_bit, open_bit);
+    four_bit[i] = SearchFour<P>(stone_bit, open_bit);
+
+    // 達四があると四のパターンが2カ所マッチするので片方をオフにする
+    four_bit[i] ^= open_four_bit;
+  }
+
+  if(IsMultipleBit(four_bit[0], four_bit[1])){
+    return true;
+  }
+
+  return false;
+}
+
+template<size_t N>
 const ForbiddenCheckState LineNeighborhood<N>::ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list) const
 {
   assert(next_open_four_list != nullptr);
@@ -149,20 +195,7 @@ const ForbiddenCheckState LineNeighborhood<N>::ForbiddenCheck(std::vector<BoardP
   }
 
   // 四々
-  LocalBitBoard four_bit{{0}};
-
-  for(size_t i=0; i<kLocalBitBoardNum; i++){
-    const auto black_bit = local_black_bit[i];
-    const auto open_bit = local_open_bit[i];
-
-    const auto open_four_bit = SearchOpenFour<kBlackTurn>(black_bit, open_bit);
-    four_bit[i] = SearchFour<kBlackTurn>(black_bit, open_bit);
-
-    // 達四があると四のパターンが2カ所マッチするので片方をオフにする
-    four_bit[i] ^= open_four_bit;
-  }
-
-  if(IsMultipleBit(four_bit[0], four_bit[1])){
+  if(IsDoubleFour<kBlackTurn>()){
     return kForbiddenMove;
   }
 
