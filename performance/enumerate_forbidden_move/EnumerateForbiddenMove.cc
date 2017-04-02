@@ -35,12 +35,12 @@ int main(int argc, char* argv[])
   // 棋譜データベースの読込
   const string diagram_db_file = arg_map["db"].as<string>();
 
-  cerr << "Read diagram_db: " << diagram_db_file << endl;
+  cerr << "Read game_record DB: " << diagram_db_file << endl;
 
   map<string, StringVector> diagram_db;
   ReadCSV(diagram_db_file, &diagram_db);
 
-  const auto board_str_list = diagram_db["diagram"];
+  const auto board_str_list = diagram_db["game_record"];
 
   vector< shared_ptr<MoveList> > board_move_list;
   board_move_list.reserve(board_str_list.size());
