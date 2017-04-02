@@ -149,7 +149,8 @@ template<size_t N>
 template<PlayerTurn P>
 const bool LineNeighborhood<N>::IsDoubleFour() const
 {
-  LocalBitBoard four_bit{{0}};
+  // 「五連にする位置」(= 四の防手位置)の数をカウントする
+  LocalBitBoard four_guard_bit{{0}};
 
   for(size_t i=0; i<kLocalBitBoardNum; i++){
     const auto state_bit = local_bit_board_[i];
@@ -158,13 +159,13 @@ const bool LineNeighborhood<N>::IsDoubleFour() const
     const auto open_bit = GetOpenPositionBit(state_bit);
 
     const auto open_four_bit = SearchOpenFour<P>(stone_bit, open_bit);
-    four_bit[i] = SearchFour<P>(stone_bit, open_bit);
+    SearchFour<P>(stone_bit, open_bit, &(four_guard_bit[i]));
 
-    // 達四があると四のパターンが2カ所マッチするので片方をオフにする
-    four_bit[i] ^= open_four_bit;
+    // 達四があると五連にする位置が2カ所あるので重複カウントしないように片方をオフにする
+    four_guard_bit[i] ^= open_four_bit;
   }
 
-  if(IsMultipleBit(four_bit[0], four_bit[1])){
+  if(IsMultipleBit(four_guard_bit[0], four_guard_bit[1])){
     return true;
   }
 
@@ -195,20 +196,20 @@ const ForbiddenCheckState LineNeighborhood<N>::ForbiddenCheck(std::vector<BoardP
   }
 
   // 四々
-  LocalBitBoard four_bit{{0}};
+  LocalBitBoard four_guard_bit{{0}};
 
   for(size_t i=0; i<kLocalBitBoardNum; i++){
     const auto black_bit = local_black_bit[i];
     const auto open_bit = local_open_bit[i];
 
     const auto open_four_bit = SearchOpenFour<kBlackTurn>(black_bit, open_bit);
-    four_bit[i] = SearchFour<kBlackTurn>(black_bit, open_bit);
+    SearchFour<kBlackTurn>(black_bit, open_bit, &(four_guard_bit[i]));
 
     // 達四があると四のパターンが2カ所マッチするので片方をオフにする
-    four_bit[i] ^= open_four_bit;
+    four_guard_bit[i] ^= open_four_bit;
   }
 
-  if(IsMultipleBit(four_bit[0], four_bit[1])){
+  if(IsMultipleBit(four_guard_bit[0], four_guard_bit[1])){
     return kForbiddenMove;
   }
 

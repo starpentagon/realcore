@@ -461,6 +461,38 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
 
       EXPECT_EQ(expect, is_double_four);
     }
-  }  
+  }
+  {
+    // 否 四四
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . x . . . . . . . | B 
+    // C | . . . . x . o . . . . . . | C 
+    // D | . o x . . x o . . . * . . | D 
+    // E | . o x o . . o . o . x . . | E 
+    // F | . . x x o o x x x o . o . | F 
+    // G | . . o x x . x o o . x . . | G 
+    // H | . o x x . o x . x x o . . | H 
+    // I | . o . o o x o o . o . . x | I 
+    // J | . . . x x x o o x o x . . | J 
+    // K | . x . o o o x x x . o . . | K 
+    // L | . . * . x . o x o o * x . | L 
+    // M | . . . . . . x o o . . . . | M 
+    // N | . . . . . o x x . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhhihfijifiigighjkigikhjhkgkjhjggjkjhggfjjjlfgkikhlhlglkmlklljjeegdgiljminimhmfihngnflhlfjekejfkdhffdfceehchefeigdhdjfkflemfnieedecdddcickhcfchegb"));
+    
+    for(const auto move : in_board_move_list){
+      if(bit_board.GetState(move) != kOpenPosition){
+        continue;
+      }
+      
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      const bool expect = false;
+
+      EXPECT_EQ(expect, is_double_four);
+    }
+  }
 }
 }   // namespace realcore
