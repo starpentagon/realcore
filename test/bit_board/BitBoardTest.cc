@@ -189,6 +189,11 @@ TEST_F(BitBoardTest, GetBitBoardIndexListTest)
     EXPECT_EQ(8, index_list[kVerticalDirection]);
     EXPECT_EQ(16, index_list[kLeftDiagonalDirection]);
     EXPECT_EQ(31, index_list[kRightDiagonalDirection]);
+
+    EXPECT_EQ(0, GetBitBoardIndex(x, y, kLateralDirection));
+    EXPECT_EQ(8, GetBitBoardIndex(x, y, kVerticalDirection));
+    EXPECT_EQ(16, GetBitBoardIndex(x, y, kLeftDiagonalDirection));
+    EXPECT_EQ(31, GetBitBoardIndex(x, y, kRightDiagonalDirection));
   }
   {
     // 盤内
@@ -200,6 +205,11 @@ TEST_F(BitBoardTest, GetBitBoardIndexListTest)
     EXPECT_EQ(12, index_list[kVerticalDirection]);
     EXPECT_EQ(23, index_list[kLeftDiagonalDirection]);
     EXPECT_EQ(31, index_list[kRightDiagonalDirection]);
+
+    EXPECT_EQ(4, GetBitBoardIndex(x, y, kLateralDirection));
+    EXPECT_EQ(12, GetBitBoardIndex(x, y, kVerticalDirection));
+    EXPECT_EQ(23, GetBitBoardIndex(x, y, kLeftDiagonalDirection));
+    EXPECT_EQ(31, GetBitBoardIndex(x, y, kRightDiagonalDirection));
   }      
   {
     // 右下の境界
@@ -211,6 +221,11 @@ TEST_F(BitBoardTest, GetBitBoardIndexListTest)
     EXPECT_EQ(15, index_list[kVerticalDirection]);
     EXPECT_EQ(22, index_list[kLeftDiagonalDirection]);
     EXPECT_EQ(31, index_list[kRightDiagonalDirection]);
+
+    EXPECT_EQ(7, GetBitBoardIndex(x, y, kLateralDirection));
+    EXPECT_EQ(15, GetBitBoardIndex(x, y, kVerticalDirection));
+    EXPECT_EQ(22, GetBitBoardIndex(x, y, kLeftDiagonalDirection));
+    EXPECT_EQ(31, GetBitBoardIndex(x, y, kRightDiagonalDirection));
   }      
 }
 
@@ -225,6 +240,11 @@ TEST_F(BitBoardTest, GetBitBoardShiftListTest){
     EXPECT_EQ(34, shift_list[kVerticalDirection]);
     EXPECT_EQ(0, shift_list[kLeftDiagonalDirection]);
     EXPECT_EQ(0, shift_list[kRightDiagonalDirection]);
+
+    EXPECT_EQ(34, GetBitBoardShift(x, y, kLateralDirection));
+    EXPECT_EQ(34, GetBitBoardShift(x, y, kVerticalDirection));
+    EXPECT_EQ(0, GetBitBoardShift(x, y, kLeftDiagonalDirection));
+    EXPECT_EQ(0, GetBitBoardShift(x, y, kRightDiagonalDirection));
   }
   {
     // 盤内
@@ -236,6 +256,11 @@ TEST_F(BitBoardTest, GetBitBoardShiftListTest){
     EXPECT_EQ(18, shift_list[kVerticalDirection]);
     EXPECT_EQ(48, shift_list[kLeftDiagonalDirection]);
     EXPECT_EQ(48, shift_list[kRightDiagonalDirection]);
+
+    EXPECT_EQ(48, GetBitBoardShift(x, y, kLateralDirection));
+    EXPECT_EQ(18, GetBitBoardShift(x, y, kVerticalDirection));
+    EXPECT_EQ(48, GetBitBoardShift(x, y, kLeftDiagonalDirection));
+    EXPECT_EQ(48, GetBitBoardShift(x, y, kRightDiagonalDirection));
   }
   {
     // 右下の境界
@@ -247,6 +272,11 @@ TEST_F(BitBoardTest, GetBitBoardShiftListTest){
     EXPECT_EQ(62, shift_list[kVerticalDirection]);
     EXPECT_EQ(28, shift_list[kLeftDiagonalDirection]);
     EXPECT_EQ(28, shift_list[kRightDiagonalDirection]);
+
+    EXPECT_EQ(62, GetBitBoardShift(x, y, kLateralDirection));
+    EXPECT_EQ(62, GetBitBoardShift(x, y, kVerticalDirection));
+    EXPECT_EQ(28, GetBitBoardShift(x, y, kLeftDiagonalDirection));
+    EXPECT_EQ(28, GetBitBoardShift(x, y, kRightDiagonalDirection));
   }    
 }
 

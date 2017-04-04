@@ -131,14 +131,32 @@ private:
   Bitboard bit_board_;    //!< 盤面状態を保持するBit board
 };    // class BitBoard
 
-// --- (x, y)座標 => index/shift ---
+// --- BoardPosition/(x, y)座標 => index/shift ---
 //! @brief BoardPositionに対応するBitBoard配列のindexを取得する
 //! @param board_position BoardPosition
 //! @retval BitBoard配列のindex
 inline const size_t GetBitBoardIndex(const BoardPosition board_position);
 
+//! @brief (x, y)座標, BoardDirectionに対応するBitBoard配列のindexを取得する(template版)
+//! @param kDirection 盤面方向
+//! @param x x座標
+//! @param y y座標
+//! @retval BitBoard配列のindex
+template<BoardDirection kDirection>
+inline const size_t GetBitBoardIndex(const Cordinate x, const Cordinate y);
+
+//! @brief (x, y)座標, BoardDirectionに対応するBitBoard配列のindexを取得する(non-template版)
+inline const size_t GetBitBoardIndex(const Cordinate x, const Cordinate y, const BoardDirection direction);
+
 //! @brief BoardPositionに対応するシフト量を取得する
 inline const size_t GetBitBoardShift(const BoardPosition board_position);
+
+//! @brief (x, y)座標, BoardDirectionに対応するBitBoard配列のシフト量を取得する(template版)
+template<BoardDirection kDirection>
+inline const size_t GetBitBoardShift(const Cordinate x, const Cordinate y);
+
+//! @brief (x, y)座標, BoardDirectionに対応するBitBoard配列のシフト量を取得する(non-template版)
+inline const size_t GetBitBoardShift(const Cordinate x, const Cordinate y, const BoardDirection direction);
 
 //! @brief (x, y)座標から各方向のBitBoard配列のindexを取得する
 //! @param x x座標

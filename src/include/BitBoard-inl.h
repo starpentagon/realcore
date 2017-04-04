@@ -15,10 +15,75 @@ inline const size_t GetBitBoardIndex(const BoardPosition board_position)
   return index;
 }
 
+template<BoardDirection kDirection>
+inline const size_t GetBitBoardIndex(const Cordinate x, const Cordinate y)
+{
+  assert(IsInBoard(x, y));
+
+  switch(kDirection)
+  {
+  case kLateralDirection:
+    return y / 2;
+  case kVerticalDirection:
+    return x / 2 + 8;
+  case kLeftDiagonalDirection:
+    return ((x + y - 2) % 16) / 2 + 16;
+  case kRightDiagonalDirection: 
+    return ((y - x + 14) % 16) / 2 + 24;
+  }
+}
+
+inline const size_t GetBitBoardIndex(const Cordinate x, const Cordinate y, const BoardDirection direction)
+{
+  switch(direction)
+  {
+  case kLateralDirection:
+    return GetBitBoardIndex<kLateralDirection>(x, y);
+  case kVerticalDirection:
+    return GetBitBoardIndex<kVerticalDirection>(x, y);
+  case kLeftDiagonalDirection:
+    return GetBitBoardIndex<kLeftDiagonalDirection>(x, y);
+  case kRightDiagonalDirection: 
+    return GetBitBoardIndex<kRightDiagonalDirection>(x, y);
+  }
+}
+
 inline const size_t GetBitBoardShift(const BoardPosition board_position)
 {
   const size_t shift_val = 2 * (board_position % 32);
   return shift_val;
+}
+
+template<BoardDirection kDirection>
+inline const size_t GetBitBoardShift(const Cordinate x, const Cordinate y)
+{
+  assert(IsInBoard(x, y));
+
+  switch(kDirection)
+  {
+  case kLateralDirection:
+    return 2 * x + 32 * (y % 2);
+  case kVerticalDirection:
+    return 2 * y + 32 * (x % 2);
+  case kLeftDiagonalDirection:
+  case kRightDiagonalDirection: 
+    return 2 * (y - 1) + 32 * ((x + y) % 2);
+  }
+}
+
+inline const size_t GetBitBoardShift(const Cordinate x, const Cordinate y, const BoardDirection direction)
+{
+  switch(direction)
+  {
+  case kLateralDirection:
+    return GetBitBoardShift<kLateralDirection>(x, y);
+  case kVerticalDirection:
+    return GetBitBoardShift<kVerticalDirection>(x, y);
+  case kLeftDiagonalDirection:
+    return GetBitBoardShift<kLeftDiagonalDirection>(x, y);
+  case kRightDiagonalDirection: 
+    return GetBitBoardShift<kRightDiagonalDirection>(x, y);
+  }
 }
 
 inline const PositionState BitBoard::GetState(const MovePosition move) const
