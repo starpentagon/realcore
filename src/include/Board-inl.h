@@ -69,6 +69,15 @@ const bool Board::IsNormalMove(const MovePosition move) const
   return true;
 }
 
+inline const bool Board::IsNormalMove(const bool black_turn, const MovePosition move) const
+{
+  if(black_turn){
+    return IsNormal<kBlackTurn>(move);
+  }else{
+    return IsNormal<kWhiteTurn>(move);
+  }
+}
+
 template<PlayerTurn P>
 const bool Board::IsTerminateMove(const MovePosition move) const
 {
@@ -100,6 +109,16 @@ const bool Board::IsTerminateMove(const MovePosition move) const
 
   return false;
 }
+
+inline const bool Board::IsTerminateMove(const bool black_turn, const MovePosition move) const
+{
+  if(black_turn){
+    return IsTerminateMove<kBlackTurn>(move);
+  }else{
+    return IsTerminateMove<kWhiteTurn>(move);
+  }
+}
+
 }   // namespace realcore
 
 #endif    // BOARD_INL_H
