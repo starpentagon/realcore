@@ -30,6 +30,9 @@ inline const size_t GetBitBoardIndex(const Cordinate x, const Cordinate y)
     return ((x + y - 2) % 16) / 2 + 16;
   case kRightDiagonalDirection: 
     return ((y - x + 14) % 16) / 2 + 24;
+  default:
+    assert(false);
+    return 0;
   }
 }
 
@@ -45,6 +48,9 @@ inline const size_t GetBitBoardIndex(const Cordinate x, const Cordinate y, const
     return GetBitBoardIndex<kLeftDiagonalDirection>(x, y);
   case kRightDiagonalDirection: 
     return GetBitBoardIndex<kRightDiagonalDirection>(x, y);
+  default:
+    assert(false);
+    return 0;
   }
 }
 
@@ -68,6 +74,9 @@ inline const size_t GetBitBoardShift(const Cordinate x, const Cordinate y)
   case kLeftDiagonalDirection:
   case kRightDiagonalDirection: 
     return 2 * (y - 1) + 32 * ((x + y) % 2);
+  default:
+    assert(false);
+    return 0;
   }
 }
 
@@ -83,6 +92,9 @@ inline const size_t GetBitBoardShift(const Cordinate x, const Cordinate y, const
     return GetBitBoardShift<kLeftDiagonalDirection>(x, y);
   case kRightDiagonalDirection: 
     return GetBitBoardShift<kRightDiagonalDirection>(x, y);
+  default:
+    assert(false);
+    return 0;
   }
 }
 
@@ -107,22 +119,16 @@ inline const PositionState BitBoard::GetState(const BoardPosition board_position
 
 inline void GetBitBoardIndexList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const index_list)
 {
-  assert(IsInBoard(x, y));
-
-  (*index_list)[kLateralDirection] = y / 2;
-  (*index_list)[kVerticalDirection] = x / 2 + 8;
-  (*index_list)[kLeftDiagonalDirection] = ((x + y - 2) % 16) / 2 + 16;
-  (*index_list)[kRightDiagonalDirection] = ((y - x + 14) % 16) / 2 + 24;
+  for(const auto direction : GetBoardDirection()){
+    (*index_list)[direction] = GetBitBoardIndex(x, y, direction);
+  }
 }
 
 inline void GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const shift_list)
 {
-  assert(IsInBoard(x, y));
-
-  (*shift_list)[kLateralDirection] = 2 * x + 32 * (y % 2);
-  (*shift_list)[kVerticalDirection] = 2 * y + 32 * (x % 2);
-  (*shift_list)[kLeftDiagonalDirection] = 2 * (y - 1) + 32 * ((x + y) % 2);
-  (*shift_list)[kRightDiagonalDirection] = 2 * (y - 1) + 32 * ((x + y) % 2);
+  for(const auto direction : GetBoardDirection()){
+    (*shift_list)[direction] = GetBitBoardShift(x, y, direction);
+  }
 }
 
 template<>
