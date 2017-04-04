@@ -241,6 +241,17 @@ inline const BoardPosition GetBoardPosition(const size_t index, const size_t shi
   return (32 * index + shift / 2);
 }
 
+inline const BoardPosition GetBoardPosition(const MovePosition move, const BoardDirection direction)
+{
+  Cordinate x = 0, y = 0;
+  GetMoveCordinate(move, &x, &y);
+
+  const size_t index = GetBitBoardIndex(x, y, direction);
+  const size_t shift = GetBitBoardShift(x, y, direction);
+
+  return GetBoardPosition(index, shift);
+}
+
 inline const BoardDirection GetBoardDirection(const BoardPosition board_position)
 {
   constexpr size_t kMaxLateralBoardPosition = 255;

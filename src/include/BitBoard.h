@@ -172,12 +172,18 @@ inline void GetBitBoardIndexList(const Cordinate x, const Cordinate y, std::arra
 //! @pre (x, y)は盤内であること
 inline void GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const shift_list);
 
-// --- (index, shift) => BoardPosition ---
+// --- (index, shift)/(MovePosition, BoardDirection) => BoardPosition ---
 //! @brief BitBoard配列のindexとshift量からBoardPositionを算出する関数
 //! @param index BitBoard配列のindex
 //! @param shift BitBoard配列のshift量
 //! @retval 対応するBoardPosition
 inline const BoardPosition GetBoardPosition(const size_t index, const size_t shift);
+
+//! @brief MovePositionとBoardDirectionからBoardPositionを算出する関数
+//! @param move 指し手位置
+//! @param direction 盤面方向
+//! @retval 対応するBoardPosition
+inline const BoardPosition GetBoardPosition(const MovePosition move, const BoardDirection direction);
 
 // --- BoardPosition => BoardDirection ---
 //! @brief BoardPositionから対応する方向を返す関数

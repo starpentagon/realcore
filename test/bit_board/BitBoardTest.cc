@@ -158,6 +158,7 @@ TEST_F(BitBoardTest, GetBoardMoveTest)
     for(size_t i=0; i<kBoardDirectionNum; i++)
     {
       const BoardPosition board_position = GetBoardPosition(index_list[i], shift_list[i]);
+      EXPECT_EQ(board_position, GetBoardPosition(move, static_cast<BoardDirection>(i)));
       move_board_position_list[move].push_back(board_position);
     }
   }
