@@ -65,6 +65,8 @@ public:
   //! @see doc/02_terminate_definition/normality.pptx
   template<PlayerTurn P>
   const bool IsNormalMove(const MovePosition move) const;
+  
+  const bool IsNormalMove(const bool black_turn, const MovePosition move) const;
 
   //! @brief 指し手が終端手かどうかをチェックする
   //! @param move 指し手位置
@@ -75,6 +77,8 @@ public:
   //! @see doc/02_terminate_definition/normality.pptx
   template<PlayerTurn P>
   const bool IsTerminateMove(const MovePosition move) const;
+  
+  const bool IsTerminateMove(const bool black_turn, const MovePosition move) const;
 
 protected:
   //! @brief 盤面状態を保持するBitBoard
