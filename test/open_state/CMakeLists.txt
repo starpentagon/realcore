@@ -24,7 +24,7 @@ link_directories($ENV{GTEST_DIR}/googlemock/gtest)
 # ソースファイル
 add_executable(
     ${project_name}
-#    $ENV{REALCORE_DIR}/src/CSVReader.cc
+#    $ENV{REALCORE_DIR}/src/MoveList.cc
     ../OpenStateTest.cc
 )
 

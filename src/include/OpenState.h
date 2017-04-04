@@ -50,8 +50,10 @@ namespace realcore{
     void SetGuardPositionList(const std::vector<BoardPosition> &guard_position_list);
 
     //! @brief 指定の指し手位置が影響領域かどうかを判定する
+    //! @param P 指し手の手番
     //! @param move 指し手位置
     //! @retval true 影響領域に入る
+    template<PlayerTurn P>
     const bool IsInfluenceMove(const MovePosition move) const;
 
   private:
