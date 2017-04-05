@@ -30,6 +30,15 @@ inline const std::uint64_t SearchNextOverline(const std::uint64_t stone_bit, con
 template<PlayerTurn P>
 inline const std::uint64_t SearchOpenFour(const std::uint64_t stone_bit, const std::uint64_t open_bit);
 
+//! @brief 達四点を検索する
+//! @param P 手番
+//! @param stone_bit 黒石 or 白石フラグ
+//! @param open_bit 空点フラグ
+//! @param open_state_bit 達四点となる位置フラグの格納先
+//! @retval XO[B3O1]OX(黒番), O[W3O1]O(白番)パターンのうち[(B|W)3O1]の右端の位置に1を立てた値
+template<PlayerTurn P>
+inline const std::uint64_t SearchNextOpenFour(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::uint64_t * const open_state_bit);
+
 //! @brief 四を検索する
 //! @param P 手番
 //! @param stone_bit 黒石 or 白石フラグ

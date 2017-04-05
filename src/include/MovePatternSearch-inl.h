@@ -6,6 +6,7 @@
 namespace realcore
 {
 
+// 長連
 inline const bool IsOverline(const std::uint64_t black_bit)
 {
   constexpr size_t kOverlineStone = 6;    // 6個以上連続する黒石は長連
@@ -15,6 +16,7 @@ inline const bool IsOverline(const std::uint64_t black_bit)
   return is_overline;
 }
 
+// 長連点
 inline const std::uint64_t SearchNextOverline(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::uint64_t * const open_state_bit)
 {
   assert(open_state_bit != nullptr);
@@ -60,6 +62,40 @@ inline const std::uint64_t SearchOpenFour(const std::uint64_t stone_bit, const s
   open_four_bit &= overline_mask;
 
   return open_four_bit;
+}
+
+// 達四点
+template<PlayerTurn P>
+inline const std::uint64_t SearchNextOpenFour(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::uint64_t * const open_state_bit)
+{
+  assert(open_state_bit != nullptr);
+
+  // [B3O1][W3O1]パターンを検索する
+  constexpr size_t kPatternSize = 4;
+  std::array<uint64_t, kPatternSize> pattern_bit_list;
+  GetStoneWithOneOpenBit<kPatternSize>(stone_bit, open_bit, &pattern_bit_list);
+  
+  // 長連筋をマスクする(XO[B3O1]OX, X\ne B)
+  std::uint64_t overline_mask = ~(0ULL);
+  
+  if(P == kBlackTurn){
+    overline_mask = ~LeftShift<2>(stone_bit) & ~RightShift<5>(stone_bit);
+  }
+
+  std::uint64_t next_open_four = 0;
+  *open_state_bit = 0;
+
+  for(size_t i=0; i<kPatternSize; i++){
+    auto next_open_four_pattern = pattern_bit_list[i];    // [B3O1][W3O1]
+    next_open_four_pattern &= LeftShift<1>(open_bit);     // [B3O1]O, [W3O1]O
+    next_open_four_pattern &= RightShift<4>(open_bit);    // O[B3O1]O, O[W3O1]O
+    next_open_four_pattern &= overline_mask;              // XO[B3O1]O, O[W3O1]O
+
+    next_open_four |= next_open_four_pattern;
+    *open_state_bit |= next_open_four_pattern << (2 * i);
+  }
+  
+  return next_open_four;
 }
 
 // 四

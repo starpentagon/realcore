@@ -259,6 +259,50 @@ void LineNeighborhood<N>::GetOpenState(std::vector< OpenState<Pattern> > *open_s
   GetOpenState<Pattern, P>(stone_bit, open_bit, open_state_list);
 }
 
+template<size_t N>
+template<OpenStatePattern Pattern, PlayerTurn P>
+void LineNeighborhood<N>::GetOpenStateOpenFour(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const
+{
+  static_assert(N == kOpenStateNeighborhoodSize, "N must be kOpenStateNeighborhoodSize for calling GetOpenState.");
+  static_assert(Pattern == kNextOpenFourBlack || Pattern == kNextOpenFourWhite, "Pattern must be kNextOpenFour[Black|White]");
+  static_assert(GetPatternPlayerTurn(Pattern) == P, "Pattern's turn must be consistent with player turn.'");
+
+  LocalBitBoard search_bit{{0}}, open_state_bit{{0}};
+
+  for(size_t i=0; i<kLocalBitBoardNum; i++){
+    search_bit[i] = SearchNextOpenFour<P>(stone_bit[i], open_bit[i], &open_state_bit[i]);
+  }
+
+  if(open_state_bit[0] == 0 && open_state_bit[1] == 0){
+    return;
+  }
+
+  std::vector<BoardPosition> open_state_position_list, pattern_position_list;
+
+  GetBoardPositionList(open_state_bit, &open_state_position_list);  
+  GetBoardPositionList(search_bit, &pattern_position_list);
+
+  constexpr size_t kPatternLength = 6;    //!< パターン長
+  constexpr size_t kOpenCount = 1;        //!< 設定する空点状態の数
+  constexpr size_t kMaxSearchBitCount = (2 * kOpenStateNeighborhoodSize + 1) - kPatternLength + 1;
+  constexpr size_t kListSize = 4 * kOpenCount * kMaxSearchBitCount;
+  open_state_list->reserve(kListSize);
+
+  // 空点位置×パターン位置ごとにOpenStateオブジェクトを設定する
+  for(const auto pattern_position : pattern_position_list){
+    const auto pattern_direction = realcore::GetBoardDirection(pattern_position);
+    for(const auto open_state_position : open_state_position_list){
+      const auto open_state_direction = realcore::GetBoardDirection(open_state_position);
+
+      if(open_state_direction != pattern_direction){
+        continue;
+      }
+
+      open_state_list->emplace_back(open_state_position, pattern_position);
+    }
+  }
+}
+
 }   // namespace realcore
 
 #endif    // LINE_NEIGHBORHOOD_INL_H

@@ -200,6 +200,162 @@ namespace realcore
     }
   }
 
+  TEST(MovePatternSearchTest, SearchNextOpenFourBlackTest)
+  {
+    constexpr PlayerTurn P = kBlackTurn;
+
+    {
+      // 四連点パターン_1(黒, 三連)
+      const string pattern = "OOBBBOO";
+      const auto test_bit = GetStateBit(pattern);
+      const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+      const auto open_bit = GetOpenPositionBit(test_bit);
+
+      uint64_t open_state_bit = 0;
+      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+
+      constexpr uint64_t expect_bit = LeftShift<1>(0b1) | LeftShift<2>(0b1);
+      ASSERT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_open_state_bit = LeftShift<1>(0b1) | LeftShift<5>(0b1);
+      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+    }
+    {
+      // 四連点パターン_2(黒, トビ三)
+      const string pattern = "OBOBBOO";
+      const auto test_bit = GetStateBit(pattern);
+      const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+      const auto open_bit = GetOpenPositionBit(test_bit);
+
+      uint64_t open_state_bit = 0;
+      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+
+      constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+      ASSERT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_open_state_bit = LeftShift<4>(0b1);
+      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+    }
+    {
+      // 四連点パターン_3(黒, 長連筋)
+      const string pattern = "BOOBBBOO";
+      const auto test_bit = GetStateBit(pattern);
+      const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+      const auto open_bit = GetOpenPositionBit(test_bit);
+
+      uint64_t open_state_bit = 0;
+      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+
+      constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+      ASSERT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_open_state_bit = LeftShift<1>(0b1);
+      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+    }
+    {
+      // 否四連点パターン(黒, 長連筋)
+      const string pattern = "BOOBBBOOB";
+      const auto test_bit = GetStateBit(pattern);
+      const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+      const auto open_bit = GetOpenPositionBit(test_bit);
+
+      uint64_t open_state_bit = 0;
+      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+
+      constexpr uint64_t expect_bit = 0;
+      ASSERT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_open_state_bit = 0;
+      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+    }
+    {
+      // 否四連点パターン(黒)
+      const string pattern = "BOOBBOOB";
+      const auto test_bit = GetStateBit(pattern);
+      const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+      const auto open_bit = GetOpenPositionBit(test_bit);
+
+      uint64_t open_state_bit = 0;
+      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+
+      constexpr uint64_t expect_bit = 0;
+      ASSERT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_open_state_bit = 0;
+      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+    }
+  }
+
+  TEST(MovePatternSearchTest, SearchNextOpenFourWhiteTest)
+  {
+    constexpr PlayerTurn P = kWhiteTurn;
+
+    {
+      // 四連点パターン_1(白, 三連)
+      const string pattern = "OOWWWOO";
+      const auto test_bit = GetStateBit(pattern);
+      const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+      const auto open_bit = GetOpenPositionBit(test_bit);
+
+      uint64_t open_state_bit = 0;
+      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+
+      constexpr uint64_t expect_bit = LeftShift<1>(0b1) | LeftShift<2>(0b1);
+      ASSERT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_open_state_bit = LeftShift<1>(0b1) | LeftShift<5>(0b1);
+      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+    }
+    {
+      // 四連点パターン_2(白, トビ三)
+      const string pattern = "OWOWWOO";
+      const auto test_bit = GetStateBit(pattern);
+      const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+      const auto open_bit = GetOpenPositionBit(test_bit);
+
+      uint64_t open_state_bit = 0;
+      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+
+      constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+      ASSERT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_open_state_bit = LeftShift<4>(0b1);
+      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+    }
+    {
+      // 四連点パターン_3(白, 長連筋)
+      const string pattern = "WOOWWWOO";
+      const auto test_bit = GetStateBit(pattern);
+      const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+      const auto open_bit = GetOpenPositionBit(test_bit);
+
+      uint64_t open_state_bit = 0;
+      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+
+      constexpr uint64_t expect_bit = LeftShift<1>(0b1) | LeftShift<2>(0b1);
+      ASSERT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_open_state_bit = LeftShift<1>(0b1) | LeftShift<5>(0b1);
+      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+    }
+    {
+      // 否四連点パターン(白)
+      const string pattern = "WOOWWOOW";
+      const auto test_bit = GetStateBit(pattern);
+      const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+      const auto open_bit = GetOpenPositionBit(test_bit);
+
+      uint64_t open_state_bit = 0;
+      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+
+      constexpr uint64_t expect_bit = 0;
+      ASSERT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_open_state_bit = 0;
+      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+    }
+  }
+
   TEST(MovePatternSearchTest, SearchFourTest)
   {
     {

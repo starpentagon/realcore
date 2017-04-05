@@ -30,7 +30,10 @@ void LineNeighborhood<kOpenStateNeighborhoodSize>::GetOpenState<kNextOverline, k
   GetBoardPositionList(open_state_bit, &open_state_position_list);  
   GetBoardPositionList(search_bit, &pattern_position_list);
 
-  constexpr size_t kListSize = 8 * kOpenStateNeighborhoodSize;    // 各方向最大(2N * 空点１ヶ所) * 4方向
+  constexpr size_t kPatternLength = 6;    //!< パターン長
+  constexpr size_t kOpenCount = 1;        //!< 設定する空点状態の数
+  constexpr size_t kMaxSearchBitCount = (2 * kOpenStateNeighborhoodSize + 1) - kPatternLength + 1;
+  constexpr size_t kListSize = 4 * kOpenCount * kMaxSearchBitCount;
   open_state_list->reserve(kListSize);
 
   // 空点位置×パターン位置ごとにOpenStateオブジェクトを設定する
@@ -48,6 +51,15 @@ void LineNeighborhood<kOpenStateNeighborhoodSize>::GetOpenState<kNextOverline, k
   }
 }
 
+template<>
+template<>
+void LineNeighborhood<kOpenStateNeighborhoodSize>::GetOpenState<kNextOpenFourBlack, kBlackTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextOpenFourBlack> > *open_state_list) const
+{
+  assert(open_state_list != nullptr);
+  assert(open_state_list->empty());
+
+  GetOpenStateOpenFour<kNextOpenFourBlack, kBlackTurn>(stone_bit, open_bit, open_state_list);
+}
 
 }   // namesapce realcore
 
