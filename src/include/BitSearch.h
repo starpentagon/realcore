@@ -73,6 +73,10 @@ inline constexpr std::uint64_t GetWhiteStoneBit(const StateBit state_bit);
 template<PlayerTurn P>
 constexpr std::uint64_t GetPlayerStoneBit(const StateBit state_bit);
 
+static constexpr size_t kSixStonePattern = 6;    //<! 6個の石のパターン
+static constexpr size_t kFiveStonePattern = 5;   //<! 5個の石のパターン
+static constexpr size_t kFourStonePattern = 4;   //<! 4個の石のパターン
+
 //! @brief 空点フラグを返す
 //! @param state_bit State Bit
 //! @retval 空点の位置に1を立てた値
@@ -94,6 +98,11 @@ inline const std::uint64_t GetConsectiveStoneBit(const std::uint64_t stone_bit);
 //! @note 検索結果には合致したパターンの最小シフト量の位置に１を立てた値が入る
 template<size_t N>
 inline void GetStoneWithOneOpenBit(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, N> * const pattern_bit_list);
+
+//! @brief [BnO1][WnO1]パターンのOの位置を返す
+//! @param index 検索結果のindex
+//! @param pattern_bit 検索結果フラグ
+inline const std::uint64_t GetOpenBitInPattern(const size_t index, const std::uint64_t pattern_bit);
 
 //! @brief ビットの数が1つだけ立っているかをチェックする
 //! @param bit ビット数を求めるbit(i=1,2)

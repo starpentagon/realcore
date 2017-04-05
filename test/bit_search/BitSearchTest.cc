@@ -382,4 +382,16 @@ TEST(BitSearchTest, GetConsectiveBitTest)
   }
 }
 
+TEST(BitSearchTest, GetOpenBitInPattern)
+{
+  constexpr uint64_t test_bit = 0b1;
+
+  for(size_t index=0; index<5; index++){
+    const uint64_t expect = 0b1 << (index * 2);
+    const auto result = GetOpenBitInPattern(index, test_bit);
+  
+    EXPECT_EQ(expect, result);
+  }
+}
+
 }   // namespace realcore

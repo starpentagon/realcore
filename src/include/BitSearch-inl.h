@@ -165,6 +165,11 @@ inline const bool IsMultipleBit(const std::uint64_t bit_1, const std::uint64_t b
   return true;
 }
 
+inline const std::uint64_t GetOpenBitInPattern(const size_t index, const std::uint64_t pattern_bit)
+{
+  return pattern_bit << (2 * index);
+}
+
 }   // namespace realcore
 
 #endif    // BIT_SEARCH_INL_H
