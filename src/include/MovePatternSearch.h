@@ -15,12 +15,11 @@ namespace realcore{
 //! @retval true 長連が生じている
 inline const bool IsOverline(const std::uint64_t black_bit);
 
-//! @brief 長連点が生じているか判定する
+//! @brief 長連点(B[B3O1]B)が生じているか判定する
 //! @param stone_bit 黒石フラグ
 //! @param open_bit 空点フラグ
-//! @param open_state_bit 長連点となる位置フラグの格納先
-//! @retval B[B3O1]Bパターンのうち[B3O1]の右端の位置に1を立てた値
-inline const std::uint64_t SearchNextOverline(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::uint64_t * const open_state_bit);
+//! @param pattern_search_bit_list B[B3O1]Bパターンの検索結果
+inline void SearchNextOverline(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, kFourStonePattern> * const pattern_search_bit_list);
 
 //! @brief 達四を検索する
 //! @param P 手番

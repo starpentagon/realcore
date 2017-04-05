@@ -43,14 +43,24 @@ namespace realcore
       const auto stone_bit = GetBlackStoneBit(test_bit);
       const auto open_bit = GetOpenPositionBit(test_bit);
 
-      uint64_t open_state_bit = 0;
-      const auto search_bit = SearchNextOverline(stone_bit, open_bit, &open_state_bit);
+      array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
+      SearchNextOverline(stone_bit, open_bit, &pattern_search_bit_list);
 
-      constexpr uint64_t expect_bit = LeftShift<1>(0b1);
-      ASSERT_EQ(expect_bit, search_bit);
+      for(size_t i=0; i<kFourStonePattern; i++){
+        const auto search_bit = pattern_search_bit_list[i];
+        const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      constexpr uint64_t expect_open_state_bit = LeftShift<3>(0b1);
-      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        if(i == 2){
+          constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+          ASSERT_EQ(expect_bit, search_bit);
+
+          constexpr uint64_t expect_open_state_bit = LeftShift<3>(0b1);
+          ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        }else{
+          ASSERT_EQ(0, search_bit);
+          ASSERT_EQ(0, open_state_bit);
+        }
+      }
     }
     {
       // 長連点パターン
@@ -59,14 +69,30 @@ namespace realcore
       const auto stone_bit = GetBlackStoneBit(test_bit);
       const auto open_bit = GetOpenPositionBit(test_bit);
 
-      uint64_t open_state_bit = 0;
-      const auto search_bit = SearchNextOverline(stone_bit, open_bit, &open_state_bit);
+      array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
+      SearchNextOverline(stone_bit, open_bit, &pattern_search_bit_list);
 
-      constexpr uint64_t expect_bit = LeftShift<1>(0b1) | LeftShift<2>(0b1);
-      ASSERT_EQ(expect_bit, search_bit);
+      for(size_t i=0; i<kFourStonePattern; i++){
+        const auto search_bit = pattern_search_bit_list[i];
+        const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      constexpr uint64_t expect_open_state_bit = LeftShift<3>(0b1);
-      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        if(i == 1){
+          constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+          ASSERT_EQ(expect_bit, search_bit);
+
+          constexpr uint64_t expect_open_state_bit = LeftShift<3>(0b1);
+          ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        }else if(i == 2){
+          constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+          ASSERT_EQ(expect_bit, search_bit);
+
+          constexpr uint64_t expect_open_state_bit = LeftShift<3>(0b1);
+          ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        }else{
+          ASSERT_EQ(0, search_bit);
+          ASSERT_EQ(0, open_state_bit);
+        }
+      }
     }
     {
       // 非長連パターン
@@ -75,14 +101,16 @@ namespace realcore
       const auto stone_bit = GetBlackStoneBit(test_bit);
       const auto open_bit = GetOpenPositionBit(test_bit);
 
-      uint64_t open_state_bit = 0;
-      const auto search_bit = SearchNextOverline(stone_bit, open_bit, &open_state_bit);
+      array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
+      SearchNextOverline(stone_bit, open_bit, &pattern_search_bit_list);
 
-      constexpr uint64_t expect_bit = 0;
-      ASSERT_EQ(expect_bit, search_bit);
+      for(size_t i=0; i<kFourStonePattern; i++){
+        const auto search_bit = pattern_search_bit_list[i];
+        const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      constexpr uint64_t expect_open_state_bit = 0;
-      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0, open_state_bit);
+      }
     }
   }
 

@@ -1,6 +1,8 @@
 #ifndef MOVE_PATTERN_SEARCH_INL_H
 #define MOVE_PATTERN_SEARCH_INL_H
 
+#include <algorithm>
+
 #include "MovePatternSearch.h"
 
 namespace realcore
@@ -17,36 +19,26 @@ inline const bool IsOverline(const std::uint64_t black_bit)
 }
 
 // 長連点
-inline const std::uint64_t SearchNextOverline(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::uint64_t * const open_state_bit)
+inline void SearchNextOverline(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, kFourStonePattern> * const pattern_search_bit_list)
 {
-  assert(open_state_bit != nullptr);
+  assert(pattern_search_bit_list != nullptr);
+  assert(*std::min_element(pattern_search_bit_list->begin(), pattern_search_bit_list->end()) == 0);
+  assert(*std::max_element(pattern_search_bit_list->begin(), pattern_search_bit_list->end()) == 0);
 
   // [B3O1]パターンを検索する
-  constexpr size_t kPatternSize = 4;
-  std::array<uint64_t, kPatternSize> pattern_bit_list;
-  GetStoneWithOneOpenBit<kPatternSize>(stone_bit, open_bit, &pattern_bit_list);
+  GetStoneWithOneOpenBit<kFourStonePattern>(stone_bit, open_bit, pattern_search_bit_list);
   
-  std::uint64_t next_overline = 0;
-  *open_state_bit = 0;
-
-  for(size_t i=0; i<kPatternSize; i++){
-    auto next_overline_pattern = pattern_bit_list[i];    // [B3O1]
-    next_overline_pattern &= LeftShift<1>(stone_bit);   // [B3O1]B
-    next_overline_pattern &= RightShift<4>(stone_bit);    // B[B3O1]B
-
-    next_overline |= next_overline_pattern;
-    *open_state_bit |= next_overline_pattern << (2 * i);
+  for(size_t i=0; i<kFourStonePattern; i++){
+    (*pattern_search_bit_list)[i] &= LeftShift<1>(stone_bit);    // [B3O1]B
+    (*pattern_search_bit_list)[i] &= RightShift<4>(stone_bit);   // B[B3O1]B
   }
-  
-  return next_overline;
 }
 
 // 達四
 template<PlayerTurn P>
 inline const std::uint64_t SearchOpenFour(const std::uint64_t stone_bit, const std::uint64_t open_bit)
 {
-  constexpr size_t kFourStone = 4;
-  std::uint64_t four_stone_bit = GetConsectiveStoneBit<kFourStone>(stone_bit);  // 4個以上連続する石のフラグ
+  std::uint64_t four_stone_bit = GetConsectiveStoneBit<kFourStonePattern>(stone_bit);  // 4個以上連続する石のフラグ
 
   std::uint64_t open_four_bit = open_bit;      // O
   open_four_bit &= RightShift<1>(four_stone_bit);  // BBBBO, WWWWO
@@ -71,9 +63,8 @@ inline const std::uint64_t SearchNextOpenFour(const std::uint64_t stone_bit, con
   assert(open_state_bit != nullptr);
 
   // [B3O1][W3O1]パターンを検索する
-  constexpr size_t kPatternSize = 4;
-  std::array<uint64_t, kPatternSize> pattern_bit_list;
-  GetStoneWithOneOpenBit<kPatternSize>(stone_bit, open_bit, &pattern_bit_list);
+  std::array<uint64_t, kFourStonePattern> pattern_bit_list;
+  GetStoneWithOneOpenBit<kFourStonePattern>(stone_bit, open_bit, &pattern_bit_list);
   
   // 長連筋をマスクする(XO[B3O1]OX, X\ne B)
   std::uint64_t overline_mask = ~(0ULL);
@@ -85,14 +76,14 @@ inline const std::uint64_t SearchNextOpenFour(const std::uint64_t stone_bit, con
   std::uint64_t next_open_four = 0;
   *open_state_bit = 0;
 
-  for(size_t i=0; i<kPatternSize; i++){
+  for(size_t i=0; i<kFourStonePattern; i++){
     auto next_open_four_pattern = pattern_bit_list[i];    // [B3O1][W3O1]
     next_open_four_pattern &= LeftShift<1>(open_bit);     // [B3O1]O, [W3O1]O
     next_open_four_pattern &= RightShift<4>(open_bit);    // O[B3O1]O, O[W3O1]O
     next_open_four_pattern &= overline_mask;              // XO[B3O1]O, O[W3O1]O
 
     next_open_four |= next_open_four_pattern;
-    *open_state_bit |= next_open_four_pattern << (2 * i);
+    *open_state_bit |= GetOpenBitInPattern(i, next_open_four_pattern);
   }
   
   return next_open_four;
@@ -106,9 +97,8 @@ inline const std::uint64_t SearchFour(const std::uint64_t stone_bit, const std::
   *guard_move_bit = 0;
 
   // [B4O1][W4O1]パターンを検索する
-  constexpr size_t kPatternSize = 5;
-  std::array<uint64_t, kPatternSize> pattern_bit_list;
-  GetStoneWithOneOpenBit<kPatternSize>(stone_bit, open_bit, &pattern_bit_list);
+  std::array<uint64_t, kFiveStonePattern> pattern_bit_list;
+  GetStoneWithOneOpenBit<kFiveStonePattern>(stone_bit, open_bit, &pattern_bit_list);
   
   // 長連筋をマスクする(X[B4O1]X, X\ne B)
   std::uint64_t overline_mask = ~(0ULL);
@@ -119,11 +109,11 @@ inline const std::uint64_t SearchFour(const std::uint64_t stone_bit, const std::
 
   std::uint64_t four_bit = 0;
   
-  for(size_t i=0; i<kPatternSize; i++){
+  for(size_t i=0; i<kFiveStonePattern; i++){
     const std::uint64_t pattern_bit = pattern_bit_list[i] & overline_mask;
     
     four_bit |= pattern_bit;
-    *guard_move_bit |= pattern_bit << (2 * i);
+    *guard_move_bit |= GetOpenBitInPattern(i, pattern_bit);
   } 
 
   return four_bit;
@@ -144,9 +134,8 @@ inline const std::uint64_t SearchSemiThree(const std::uint64_t stone_bit, const 
   assert(*next_open_four_bit == 0);
 
   // [B3O1][W3O1]パターンを検索する
-  constexpr size_t kPatternSize = 4;
-  std::array<std::uint64_t, kPatternSize> pattern_bit_list;
-  GetStoneWithOneOpenBit<kPatternSize>(stone_bit, open_bit, &pattern_bit_list);
+  std::array<std::uint64_t, kFourStonePattern> pattern_bit_list;
+  GetStoneWithOneOpenBit<kFourStonePattern>(stone_bit, open_bit, &pattern_bit_list);
 
   // O[(B|W|O|X)4]Oのマスク
   const std::uint64_t open_mask = RightShift<5>(open_bit) & open_bit;
@@ -160,7 +149,7 @@ inline const std::uint64_t SearchSemiThree(const std::uint64_t stone_bit, const 
 
   std::uint64_t three_bit = 0;
 
-  for(size_t i=0; i<kPatternSize; i++){
+  for(size_t i=0; i<kFourStonePattern; i++){
     auto three_pattern_bit = RightShift<1>(pattern_bit_list[i]);  // [B301][W3O1]
     three_pattern_bit &= open_mask;     // O[B3O1]O, O[W3O1]O
     three_pattern_bit &= overline_mask; // XO[B3O1]OX
