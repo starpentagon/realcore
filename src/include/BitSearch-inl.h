@@ -86,6 +86,59 @@ inline void GetStoneWithOneOpenBit(const std::uint64_t stone_bit, const std::uin
   }
 }
 
+inline const size_t GetLessIndexOfTwo(const size_t index)
+{
+  assert(index < kTwoOfFivePattern);
+  
+  static const std::array<size_t, kTwoOfFivePattern> less_index{{
+    0,
+    0, 1,
+    0, 1, 2,
+    0, 1, 2, 3,
+  }};
+
+  return less_index[index];
+}
+
+inline const size_t GetGreaterIndexOfTwo(const size_t index)
+{
+  assert(index < kTwoOfFivePattern);
+  
+  static const std::array<size_t, kTwoOfFivePattern> greater_index{{
+    1,
+    2, 2,
+    3, 3, 3,
+    4, 4, 4, 4
+  }};
+
+  return greater_index[index];
+}
+
+template<std::size_t N>
+inline void GetStoneWithTwoOpenBit(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, N> * const pattern_bit_list)
+{
+  static_assert(N == kTwoOfFourPattern || N == kTwoOfFivePattern, "N must be kTwoOfFourPattern(= 6) or kTwoOfFivePattern(= 10)");
+  assert(pattern_bit_list != nullptr);
+
+  // パターン長M(=[B3O2]なら5, [B2O2]なら4)
+  constexpr size_t M = N == kTwoOfFourPattern ? 4 : 5;
+
+  for(size_t open_index=0; open_index<N; ++open_index){
+    // open_indexのみOで残りが黒石 or 白石のパターンを検索する
+    size_t open_less_index = GetLessIndexOfTwo(open_index);
+    size_t open_greater_index = GetGreaterIndexOfTwo(open_index);
+
+    std::uint64_t search_bit = open_less_index == 0 ? open_bit : stone_bit;
+
+    for(size_t shift=1; shift<M; ++shift){
+      const std::uint64_t check_bit = (shift == open_less_index || shift == open_greater_index) ? open_bit : stone_bit;
+      search_bit &= check_bit >> (2 * shift);
+    }
+
+    (*pattern_bit_list)[open_index] = search_bit;
+  }
+}
+
 inline std::uint64_t GetRightmostBit(const std::uint64_t bit)
 {
   const int64_t signed_bit = static_cast<int64_t>(bit);

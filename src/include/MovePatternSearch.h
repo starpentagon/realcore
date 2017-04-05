@@ -49,6 +49,14 @@ inline const std::uint64_t SearchFour(const std::uint64_t stone_bit, const std::
 template<PlayerTurn P>
 inline const std::uint64_t SearchFour(const std::uint64_t stone_bit, const std::uint64_t open_bit);
 
+//! @brief 四ノビ点を検索する
+//! @param P 手番
+//! @param stone_bit 黒石 or 白石フラグ
+//! @param open_bit 空点フラグ
+//! @param pattern_search_bit_list X[B3O2]X, [W3O2]パターンの検索結果
+template<PlayerTurn P>
+inline void SearchNextFour(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, kTwoOfFivePattern> * const pattern_search_bit_list);
+
 //! @brief 見かけの三(Semi-three)を検索する
 //! @param P 手番
 //! @param stone_bit 黒石 or 白石フラグ

@@ -187,7 +187,7 @@ TEST(BitSearchTest, GetConsectiveStoneBit)
 TEST(BitSearchTest, GetStoneWithOneOpenBitTest)
 {
   {
-    // OBBBOからBBBO, OBBBを検索
+    // OBBBOから[B3O1]を検索
     const StateBit test_pattern = GetStateBit("OBBBO");
     const StateBit black_bit = GetBlackStoneBit(test_pattern);
     const StateBit open_bit = GetOpenPositionBit(test_pattern);
@@ -207,7 +207,7 @@ TEST(BitSearchTest, GetStoneWithOneOpenBitTest)
     EXPECT_EQ(expect_bit_2, pattern_bit_list[3]);
   }
   {
-    // OBBOBからBBOBを検索
+    // OBBOBから[B3O1]を検索
     const StateBit test_pattern = GetStateBit("OBBOB");
     const StateBit black_bit = GetBlackStoneBit(test_pattern);
     const StateBit open_bit = GetOpenPositionBit(test_pattern);
@@ -226,7 +226,7 @@ TEST(BitSearchTest, GetStoneWithOneOpenBitTest)
     EXPECT_EQ(0, pattern_bit_list[3]);
   }
   {
-    // OBOBBからBOBBを検索
+    // OBOBBから[B3O1]を検索
     const StateBit test_pattern = GetStateBit("OBOBB");
     const StateBit black_bit = GetBlackStoneBit(test_pattern);
     const StateBit open_bit = GetOpenPositionBit(test_pattern);
@@ -244,6 +244,124 @@ TEST(BitSearchTest, GetStoneWithOneOpenBitTest)
 
     EXPECT_EQ(0, pattern_bit_list[3]);
   }
+}
+
+TEST(BitSearchTest, GetStoneWithTwoOpenBitTest)
+{
+  {
+    // OBBOBOBから[B2O2]を検索
+    const StateBit test_pattern = GetStateBit("OBBOBOB");
+    const StateBit stone_bit = GetBlackStoneBit(test_pattern);
+    const StateBit open_bit = GetOpenPositionBit(test_pattern);
+    constexpr size_t kPattern = kTwoOfFourPattern;
+    
+    array<uint64_t, kPattern> pattern_bit_list{{0}};
+    GetStoneWithTwoOpenBit<kPattern>(stone_bit, open_bit, &pattern_bit_list);
+
+    for(size_t i=0; i<kPattern; i++){
+      const auto pattern_bit = pattern_bit_list[i];
+
+      if(i == 4){
+        // OBB|OBOB|
+        constexpr uint64_t expect = LeftShift<0>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else if(i == 1){
+        // OB|BOBO|B
+        constexpr uint64_t expect = LeftShift<1>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else if(i == 3){
+        // |OBBO|BOB
+        constexpr uint64_t expect = LeftShift<3>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else{
+        EXPECT_EQ(0, pattern_bit);
+      }
+    }
+  }
+  {
+    // OOBBBOOから[B3O2]を検索
+    const StateBit test_pattern = GetStateBit("OOBBBOO");
+    const StateBit stone_bit = GetBlackStoneBit(test_pattern);
+    const StateBit open_bit = GetOpenPositionBit(test_pattern);
+    constexpr size_t kPattern = kTwoOfFivePattern;
+    
+    array<uint64_t, kPattern> pattern_bit_list{{0}};
+    GetStoneWithTwoOpenBit<kPattern>(stone_bit, open_bit, &pattern_bit_list);
+
+    for(size_t i=0; i<kPattern; i++){
+      const auto pattern_bit = pattern_bit_list[i];
+
+      if(i == 0){
+        // OO|BBBOO|
+        constexpr uint64_t expect = LeftShift<0>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else if(i == 6){
+        // O|OBBBO|O
+        constexpr uint64_t expect = LeftShift<1>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else if(i == 9){
+        // |OOBBB|OO
+        constexpr uint64_t expect = LeftShift<2>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else{
+        EXPECT_EQ(0, pattern_bit);
+      }
+    }
+  }
+  {
+    // WOWOWWWBから[W3O2]を検索
+    const StateBit test_pattern = GetStateBit("WOWOWWWB");
+    const StateBit stone_bit = GetWhiteStoneBit(test_pattern);
+    const StateBit open_bit = GetOpenPositionBit(test_pattern);
+    constexpr size_t kPattern = kTwoOfFivePattern;
+    
+    array<uint64_t, kPattern> pattern_bit_list{{0}};
+    GetStoneWithTwoOpenBit<kPattern>(stone_bit, open_bit, &pattern_bit_list);
+
+    for(size_t i=0; i<kPattern; i++){
+      const auto pattern_bit = pattern_bit_list[i];
+
+      if(i == 8){
+        // W|OWOWW|WB
+        constexpr uint64_t expect = LeftShift<2>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else if(i == 4){
+        // |WOWOW|WWB
+        constexpr uint64_t expect = LeftShift<3>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else{
+        EXPECT_EQ(0, pattern_bit);
+      }
+    }
+  }
+}
+
+TEST(BitSearchTest, GetLessIndexOfTwoTest)
+{
+  EXPECT_EQ(0, GetLessIndexOfTwo(0));
+  EXPECT_EQ(0, GetLessIndexOfTwo(1));
+  EXPECT_EQ(1, GetLessIndexOfTwo(2));
+  EXPECT_EQ(0, GetLessIndexOfTwo(3));
+  EXPECT_EQ(1, GetLessIndexOfTwo(4));
+  EXPECT_EQ(2, GetLessIndexOfTwo(5));
+  EXPECT_EQ(0, GetLessIndexOfTwo(6));
+  EXPECT_EQ(1, GetLessIndexOfTwo(7));
+  EXPECT_EQ(2, GetLessIndexOfTwo(8));
+  EXPECT_EQ(3, GetLessIndexOfTwo(9));
+}
+
+TEST(BitSearchTest, GetGreaterIndexOfTwoTest)
+{
+  EXPECT_EQ(1, GetGreaterIndexOfTwo(0));
+  EXPECT_EQ(2, GetGreaterIndexOfTwo(1));
+  EXPECT_EQ(2, GetGreaterIndexOfTwo(2));
+  EXPECT_EQ(3, GetGreaterIndexOfTwo(3));
+  EXPECT_EQ(3, GetGreaterIndexOfTwo(4));
+  EXPECT_EQ(3, GetGreaterIndexOfTwo(5));
+  EXPECT_EQ(4, GetGreaterIndexOfTwo(6));
+  EXPECT_EQ(4, GetGreaterIndexOfTwo(7));
+  EXPECT_EQ(4, GetGreaterIndexOfTwo(8));
+  EXPECT_EQ(4, GetGreaterIndexOfTwo(9));
 }
 
 TEST(BitSearchTest, IsSingleBit)

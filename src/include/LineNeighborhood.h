@@ -90,6 +90,10 @@ private:
   template<OpenStatePattern Pattern, PlayerTurn P>
   void GetOpenStateOpenFour(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const;
 
+  //! @brief 空点状態を返す(四ノビ点版)
+  template<OpenStatePattern Pattern, PlayerTurn P>
+  void GetOpenStateFour(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const;
+
   //! @brief 直線近傍の状態を保持する
   //! @note local_bit_board_[0]の下位32bit: 横方向(14-15bit目が中心)
   //! @note local_bit_board_[0]の上位32bit: 縦方向(46-47bit目が中心)

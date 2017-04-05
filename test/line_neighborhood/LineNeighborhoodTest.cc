@@ -225,7 +225,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateOpenFourBlackTest)
 
 TEST_F(LineNeighborhoodTest, GetOpenStateOpenFourWhiteTest)
 {
-  // kNextOpenFourBlack
+  // kNextOpenFourWhite
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
   // B | . . . . . . . . . . . . . | B 
@@ -261,6 +261,110 @@ TEST_F(LineNeighborhoodTest, GetOpenStateOpenFourWhiteTest)
   const BoardPosition open_position_2 = GetBoardPosition(kMoveKG, direction);
   const BoardPosition pattern_position_2 = GetBoardPosition(kMoveHG, direction);
   OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
+
+  ASSERT_EQ(2, open_state_list.size());
+  EXPECT_TRUE(expect_1 == open_state_list[0]);
+  EXPECT_TRUE(expect_2 == open_state_list[1]);
+}
+
+TEST_F(LineNeighborhoodTest, GetOpenStateFourBlackTest)
+{
+  // kNextFourBlack
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . * . . . x . . . * . . | D 
+  // E | . . . . . . . . . o . . . | E 
+  // F | . . . . . . x . . . . . . | F 
+  // G | . . . . . . . o . . . . . | G 
+  // H | . . . . . . x . . . . . . | H 
+  // I | . . . . . . . . . . . . . | I 
+  // J | . . . . . . . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  constexpr OpenStatePattern kPattern = kNextFourBlack;
+  constexpr PlayerTurn P = GetPatternPlayerTurn(kPattern);
+  BitBoard bit_board(MoveList("hhighfkehd"));
+  constexpr MovePosition move = kMoveHD;
+  LineNeighborhood<kOpenStateNeighborhoodSize> line_neighborhood(move, bit_board);
+
+  vector< OpenState<kPattern> > open_state_list, expect_list;
+  line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
+
+  const BoardDirection direction = kVerticalDirection;
+
+  const BoardPosition open_position_1 = GetBoardPosition(kMoveHE, direction);
+  const BoardPosition pattern_position_1 = GetBoardPosition(kMoveHD, direction);
+  OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
+
+  vector<BoardPosition> guard_1;
+  guard_1.push_back(GetBoardPosition(kMoveHG, direction));
+  expect_1.SetGuardPositionList(guard_1);
+
+  const BoardPosition open_position_2 = GetBoardPosition(kMoveHG, direction);
+  const BoardPosition pattern_position_2 = GetBoardPosition(kMoveHD, direction);
+  OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
+
+  vector<BoardPosition> guard_2;
+  guard_2.push_back(GetBoardPosition(kMoveHE, direction));
+  expect_2.SetGuardPositionList(guard_2);
+
+  ASSERT_EQ(2, open_state_list.size());
+  EXPECT_TRUE(expect_1 == open_state_list[0]);
+  EXPECT_TRUE(expect_2 == open_state_list[1]);
+}
+
+TEST_F(LineNeighborhoodTest, GetOpenStateFourWhiteTest)
+{
+  // kNextFourWhite
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . o . | C 
+  // D | . . * . . . x . . . * . . | D 
+  // E | . . . . . . . . . o . . . | E 
+  // F | . . . . . . x . . . . . . | F 
+  // G | . . . . . . . o . . . . . | G 
+  // H | . . . . . . x . . . . . . | H 
+  // I | . . . . . . . . . . . . . | I 
+  // J | . . . . . . . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  constexpr OpenStatePattern kPattern = kNextFourWhite;
+  constexpr PlayerTurn P = GetPatternPlayerTurn(kPattern);
+  BitBoard bit_board(MoveList("hhighfkehdmc"));
+  constexpr MovePosition move = kMoveMC;
+  LineNeighborhood<kOpenStateNeighborhoodSize> line_neighborhood(move, bit_board);
+
+  vector< OpenState<kPattern> > open_state_list, expect_list;
+  line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
+
+  const BoardDirection direction = kLeftDiagonalDirection;
+
+  const BoardPosition open_position_1 = GetBoardPosition(kMoveLD, direction);
+  const BoardPosition pattern_position_1 = GetBoardPosition(kMoveMC, direction);
+  OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
+
+  vector<BoardPosition> guard_1;
+  guard_1.push_back(GetBoardPosition(kMoveJF, direction));
+  expect_1.SetGuardPositionList(guard_1);
+
+  const BoardPosition open_position_2 = GetBoardPosition(kMoveJF, direction);
+  const BoardPosition pattern_position_2 = GetBoardPosition(kMoveMC, direction);
+  OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
+
+  vector<BoardPosition> guard_2;
+  guard_2.push_back(GetBoardPosition(kMoveLD, direction));
+  expect_2.SetGuardPositionList(guard_2);
 
   ASSERT_EQ(2, open_state_list.size());
   EXPECT_TRUE(expect_1 == open_state_list[0]);

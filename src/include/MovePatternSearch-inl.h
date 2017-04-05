@@ -117,6 +117,26 @@ inline const std::uint64_t SearchFour(const std::uint64_t stone_bit, const std::
   return SearchFour<P>(stone_bit, open_bit, &guard_move_bit);
 }
 
+template<PlayerTurn P>
+inline void SearchNextFour(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, kTwoOfFivePattern> * const pattern_search_bit_list)
+{
+  assert(pattern_search_bit_list != nullptr);
+  assert(*std::min_element(pattern_search_bit_list->begin(), pattern_search_bit_list->end()) == 0);
+  assert(*std::max_element(pattern_search_bit_list->begin(), pattern_search_bit_list->end()) == 0);
+
+  // [B3O2][W3O2]パターンを検索する
+  GetStoneWithTwoOpenBit<kTwoOfFivePattern>(stone_bit, open_bit, pattern_search_bit_list);
+  
+  if(P == kBlackTurn){
+    // 長連筋をマスクする(X[B3O2]X, X\ne B)
+    const std::uint64_t overline_mask = ~LeftShift<1>(stone_bit) & ~RightShift<5>(stone_bit);
+
+    for(size_t i=0; i<kTwoOfFivePattern; i++){
+      (*pattern_search_bit_list)[i] &= overline_mask;              // X[B3O2]X, [W3O2]
+    }
+  }
+}
+
 // 三
 template<PlayerTurn P>
 inline const std::uint64_t SearchSemiThree(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::uint64_t * const next_open_four_bit)
