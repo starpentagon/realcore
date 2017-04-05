@@ -18,6 +18,49 @@ public:
     EXPECT_EQ(pattern_position, open_state.pattern_position_);
     EXPECT_TRUE(open_state.check_position_list_.empty());
     EXPECT_TRUE(open_state.guard_position_list_.empty());
+
+    {
+      // kNextOverline
+      OpenState<kNextOverline> open_state(pattern_position);
+      EXPECT_EQ(0, open_state.check_position_list_.capacity());
+      EXPECT_EQ(0, open_state.guard_position_list_.capacity());
+    }
+    {
+      // kNextOpenFourBlack
+      OpenState<kNextOpenFourBlack> open_state(pattern_position);
+      EXPECT_EQ(0, open_state.check_position_list_.capacity());
+      EXPECT_EQ(0, open_state.guard_position_list_.capacity());
+    }
+    {
+      // kNextOpenFourWhite
+      OpenState<kNextOpenFourWhite> open_state(pattern_position);
+      EXPECT_EQ(0, open_state.check_position_list_.capacity());
+      EXPECT_EQ(0, open_state.guard_position_list_.capacity());
+    }
+    {
+      // kNextFourBlack
+      OpenState<kNextFourBlack> open_state(pattern_position);
+      EXPECT_EQ(0, open_state.check_position_list_.capacity());
+      EXPECT_EQ(1, open_state.guard_position_list_.capacity());
+    }
+    {
+      // kNextFourWhite
+      OpenState<kNextFourWhite> open_state(pattern_position);
+      EXPECT_EQ(0, open_state.check_position_list_.capacity());
+      EXPECT_EQ(1, open_state.guard_position_list_.capacity());
+    }
+    {
+      // kNextSemiThreeBlack
+      OpenState<kNextSemiThreeBlack> open_state(pattern_position);
+      EXPECT_EQ(2, open_state.check_position_list_.capacity());
+      EXPECT_EQ(4, open_state.guard_position_list_.capacity());
+    }
+    {
+      // kNextSemiThreeWhite
+      OpenState<kNextSemiThreeWhite> open_state(pattern_position);
+      EXPECT_EQ(0, open_state.check_position_list_.capacity());
+      EXPECT_EQ(4, open_state.guard_position_list_.capacity());
+    }
   }
 };
 

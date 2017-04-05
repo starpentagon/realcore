@@ -1,5 +1,6 @@
 #ifndef OPEN_STATE_INL_H
 #define OPEN_STATE_INL_H
+#include <cassert>
 
 #include "Move.h"
 #include "BitBoard.h"
@@ -12,6 +13,32 @@ template<OpenStatePattern Pattern>
 OpenState<Pattern>::OpenState(const BoardPosition pattern_position)
 : pattern_position_(pattern_position)
 {
+  switch(Pattern)
+  {
+  case kNextOverline:
+  case kNextOpenFourBlack:
+  case kNextOpenFourWhite:
+    check_position_list_.reserve(0);
+    guard_position_list_.reserve(0);
+    break;
+
+  case kNextFourBlack:
+  case kNextFourWhite:
+    check_position_list_.reserve(0);
+    guard_position_list_.reserve(1);
+    break;
+
+  case kNextSemiThreeBlack:
+    check_position_list_.reserve(2);
+    guard_position_list_.reserve(4);
+    break;
+  case kNextSemiThreeWhite:
+    check_position_list_.reserve(0);
+    guard_position_list_.reserve(4);
+    break;
+  default:
+    assert(false);
+  }
 }
 
 template<OpenStatePattern Pattern>
