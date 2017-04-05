@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
-#include "Move.h"
+#include "MoveList.h"
+#include "OpenState.h"
 #include "LineNeighborhood.h"
 
 using namespace std;
@@ -138,6 +139,44 @@ TEST_F(LineNeighborhoodTest, GetBoardDirectionTest)
 TEST_F(LineNeighborhoodTest, GetBoardPositionListTest)
 {
   GetBoardPositionListTest();
+}
+
+TEST_F(LineNeighborhoodTest, GetOpenStateOverlineTest)
+{
+  // kNextOverline
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . . . . . . . . . . | E 
+  // F | . . . . . . . . . . . . . | F 
+  // G | . . . . . . o . . . . o . | G 
+  // H | . . . . . o x x x . x x o | H 
+  // I | . . . . . . . . . . . . . | I 
+  // J | . . . . . . . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  constexpr OpenStatePattern kPattern = kNextOverline;
+  constexpr PlayerTurn P = GetPatternPlayerTurn(kPattern);
+  BitBoard bit_board(MoveList("hhhgihghmhnhlhmgjh"));
+  constexpr MovePosition move = kMoveJH;
+  LineNeighborhood<kOpenStateNeighborhoodSize> line_neighborhood(move, bit_board);
+
+  vector< OpenState<kPattern> > open_state_list, expect_list;
+  line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
+
+  const BoardDirection direction = kLateralDirection;
+  const BoardPosition open_position = GetBoardPosition(kMoveKH, direction);
+  const BoardPosition pattern_position = GetBoardPosition(kMoveIH, direction);
+  OpenState<kPattern> expect(open_position, pattern_position);
+
+  ASSERT_EQ(1, open_state_list.size());
+  EXPECT_TRUE(expect == open_state_list[0]);
 }
 
 }   // namespace realcore

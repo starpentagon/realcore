@@ -29,14 +29,14 @@ enum ForbiddenCheckState : std::uint8_t
 //! @param state_bit StateBit
 //! @retval シフト後のStateBit
 template<size_t N>
-inline const StateBit RightShift(const StateBit state_bit);
+inline constexpr StateBit RightShift(const StateBit state_bit);
 
 //! @brief 状態を左シフトする
 //! @param N 左シフトする状態数
 //! @param state_bit StateBit
 //! @retval シフト後のStateBit
 template<size_t N>
-inline const StateBit LeftShift(const StateBit state_bit);
+inline constexpr StateBit LeftShift(const StateBit state_bit);
 
 //! @brief 状態文字列([B|W|O|X]*)に対応するStateBitを返す
 //! @param str 状態文字列([B|W|O|X| ]*)

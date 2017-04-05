@@ -10,8 +10,8 @@ namespace realcore
 {
 
 template<OpenStatePattern Pattern>
-OpenState<Pattern>::OpenState(const BoardPosition pattern_position)
-: pattern_position_(pattern_position)
+OpenState<Pattern>::OpenState(const BoardPosition open_position, const BoardPosition pattern_position)
+: open_position_(open_position), pattern_position_(pattern_position)
 {
   switch(Pattern)
   {
@@ -45,6 +45,12 @@ template<OpenStatePattern Pattern>
 OpenState<Pattern>::OpenState(const OpenState<Pattern> &open_state)
 {
   *this = open_state;
+}
+
+template<OpenStatePattern Pattern>
+inline const BoardPosition OpenState<Pattern>::GetOpenPosition() const
+{
+  return open_position_;
 }
 
 template<OpenStatePattern Pattern>
@@ -108,6 +114,10 @@ inline const bool OpenState<Pattern>::IsInfluenceMove(const MovePosition move) c
 template<OpenStatePattern Pattern>
 bool IsEqual(const OpenState<Pattern> &open_state_1, const OpenState<Pattern> &open_state_2)
 {
+  if(open_state_1.open_position_ != open_state_2.open_position_){
+    return false;
+  }
+
   if(open_state_1.pattern_position_ != open_state_2.pattern_position_){
     return false;
   }
@@ -138,6 +148,7 @@ inline const bool OpenState<Pattern>::operator!=(const OpenState<Pattern> &open_
 template<OpenStatePattern Pattern>
 void Copy(const OpenState<Pattern> &open_state_from, OpenState<Pattern> * const open_state_to)
 {
+  open_state_to->open_position_ = open_state_from.open_position_;
   open_state_to->pattern_position_ = open_state_from.pattern_position_;
   open_state_to->check_position_list_ = open_state_from.check_position_list_;
   open_state_to->guard_position_list_ = open_state_from.guard_position_list_;
@@ -151,6 +162,11 @@ inline const OpenState<Pattern>& OpenState<Pattern>::operator=(const OpenState<P
   }
 
   return *this;
+}
+
+inline constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern)
+{
+  return ((pattern == kNextOpenFourWhite) || (pattern == kNextFourWhite) || (pattern == kNextSemiThreeWhite)) ? kWhiteTurn : kBlackTurn;
 }
 
 }   // namespace realcore

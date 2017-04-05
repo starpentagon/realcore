@@ -14,14 +14,14 @@ namespace realcore
 constexpr std::uint64_t kUpperBitMask = 0b0101010101010101010101010101010101010101010101010101010101010101;
 
 template<size_t N>
-inline const StateBit RightShift(const StateBit state_bit)
+inline constexpr StateBit RightShift(const StateBit state_bit)
 {
   static_assert(0 <= N && N <= 31, "N must be in [0, 31]");
   return state_bit >> (2 * N);
 }
 
 template<size_t N>
-inline const StateBit LeftShift(const StateBit state_bit)
+inline constexpr StateBit LeftShift(const StateBit state_bit)
 {
   static_assert(0 <= N && N <= 31, "N must be in [0, 31]");
   return state_bit << (2 * N);

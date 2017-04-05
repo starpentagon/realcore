@@ -22,6 +22,9 @@ enum OpenStatePattern : std::uint8_t
   kNextSemiThreeWhite,    //!< 見かけの三ノビ点(白)
 };
 
+//! @brief 指し手パターンが黒番, 白番どちらのパターンなのかを返す
+constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern);
+
 // 前方宣言
 template<OpenStatePattern Pattern> class OpenState;
 class OpenStateTest;
@@ -47,7 +50,7 @@ class OpenState{
 
 public:
   //! @brief コンストラクタ
-  OpenState(const BoardPosition pattern_position);
+  OpenState(const BoardPosition open_position, const BoardPosition pattern_position);
   OpenState(const OpenState<Pattern> &open_state);
 
   //! @brief 代入演算子
@@ -56,6 +59,9 @@ public:
   //! @brief 比較演算子
   const bool operator==(const OpenState<Pattern> &open_state) const;
   const bool operator!=(const OpenState<Pattern> &open_state) const;
+
+  //! @brief 空点の盤面位置を返す
+  const BoardPosition GetOpenPosition() const;
 
   //! @brief チェック対象位置のリストを取得する
   const std::vector<BoardPosition>& GetCheckPositionList() const;
@@ -79,7 +85,8 @@ public:
   const bool IsInfluenceMove(const MovePosition move) const;
 
 private:
-  BoardPosition pattern_position_;    //!< パターンの開始位置
+  BoardPosition open_position_;                       //!< 空点位置
+  BoardPosition pattern_position_;                    //!< パターンの開始位置
   std::vector<BoardPosition> check_position_list_;    //!< チェック対象位置（見かけの三の四連にする位置）
   std::vector<BoardPosition> guard_position_list_;    //!< 防手位置
 };

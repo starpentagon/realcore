@@ -3,6 +3,7 @@
 
 #include "MovePatternSearch.h"
 #include "BitBoard.h"
+#include "OpenState.h"
 #include "LineNeighborhood.h"
 
 namespace realcore
@@ -61,6 +62,9 @@ void LineNeighborhood<N>::GetBoardPositionList(const LocalBitBoard &bit_list, st
   assert(board_position_list != nullptr);
   assert(board_position_list->empty());
 
+  // 1方向(2N + 1)個 * 4方向 = 8N + 4個
+  board_position_list->reserve(8 * N + 4);
+
   constexpr size_t kMinUpperBitIndex = 32;
   constexpr size_t kLowerCenter = 14;   // 下位32bitの中心位置
   constexpr size_t kUpperCenter = 46;   // 上位32bitの中心位置
@@ -76,7 +80,7 @@ void LineNeighborhood<N>::GetBoardPositionList(const LocalBitBoard &bit_list, st
   
   for(size_t list_index=0; list_index<kLocalBitBoardNum; list_index++){
     std::vector<size_t> bit_index_list;
-    bit_index_list.reserve(30);   // 1方向最大15個 * 2方向 = 30個
+    bit_index_list.reserve(4 * N + 2);   // 1方向(2N + 1)個 * 2方向 = 4N + 2個
 
     GetBitIndexList(bit_list[list_index], &bit_index_list);
 
@@ -232,6 +236,27 @@ const ForbiddenCheckState LineNeighborhood<N>::ForbiddenCheck(std::vector<BoardP
   GetBoardPositionList(next_open_four_bit, next_open_four_list);
 
   return kPossibleForbiddenMove;
+}
+
+template<size_t N>
+template<OpenStatePattern Pattern, PlayerTurn P>
+void LineNeighborhood<N>::GetOpenState(std::vector< OpenState<Pattern> > *open_state_list) const
+{
+  // パターンの手番と着手の手番が異なる場合、パターンがマッチすることはないので抜ける
+  if(GetPatternPlayerTurn(Pattern) != P){
+    return;
+  }
+
+  LocalBitBoard stone_bit{{0}}, open_bit{{0}};
+
+  for(size_t i=0; i<kLocalBitBoardNum; i++){
+    const auto state_bit = local_bit_board_[i];
+
+    stone_bit[i] = GetPlayerStoneBit<P>(state_bit);
+    open_bit[i] = GetOpenPositionBit(state_bit);
+  }
+  
+  GetOpenState<Pattern, P>(stone_bit, open_bit, open_state_list);
 }
 
 }   // namespace realcore

@@ -15,6 +15,30 @@ inline const bool IsOverline(const std::uint64_t black_bit)
   return is_overline;
 }
 
+inline const std::uint64_t SearchNextOverline(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::uint64_t * const open_state_bit)
+{
+  assert(open_state_bit != nullptr);
+
+  // [B3O1]パターンを検索する
+  constexpr size_t kPatternSize = 4;
+  std::array<uint64_t, kPatternSize> pattern_bit_list;
+  GetStoneWithOneOpenBit<kPatternSize>(stone_bit, open_bit, &pattern_bit_list);
+  
+  std::uint64_t next_overline = 0;
+  *open_state_bit = 0;
+
+  for(size_t i=0; i<kPatternSize; i++){
+    auto next_overline_pattern = pattern_bit_list[i];    // [B3O1]
+    next_overline_pattern &= LeftShift<1>(stone_bit);   // [B3O1]B
+    next_overline_pattern &= RightShift<4>(stone_bit);    // B[B3O1]B
+
+    next_overline |= next_overline_pattern;
+    *open_state_bit |= next_overline_pattern << (2 * i);
+  }
+  
+  return next_overline;
+}
+
 // 達四
 template<PlayerTurn P>
 inline const std::uint64_t SearchOpenFour(const std::uint64_t stone_bit, const std::uint64_t open_bit)

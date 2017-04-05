@@ -18,8 +18,13 @@ namespace realcore
 static constexpr size_t kLocalBitBoardNum = 2;
 typedef std::array<StateBit, kLocalBitBoardNum> LocalBitBoard;
 
+//! 空点状態更新用の直線近傍の長さ
+static constexpr size_t kOpenStateNeighborhoodSize = 5;
+
 // 前方宣言
 enum MovePosition : std::uint8_t;
+enum OpenStatePattern : std::uint8_t;
+template<OpenStatePattern Pattern> class OpenState;
 class BitBoard;
 
 //! @brief moveを中心としたN路の直線近傍を管理するクラス
@@ -60,6 +65,12 @@ public:
   //! @retval kNonForbiddenMove 否禁
   const ForbiddenCheckState ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list) const;
 
+  //! @brief 空点状態を返す
+  //! @param Pattern 空点状態の対象となる指し手パターン(長連点, 達四点, etc)
+  //! @param open_state_list 空点状態リストの格納先
+  template<OpenStatePattern Pattern, PlayerTurn P>
+  void GetOpenState(std::vector< OpenState<Pattern> > *open_state_list) const;
+
 private:
   //! @brief local_bit_board配列のindexとbit indexから対応する方向を求める
   const BoardDirection GetBoardDirection(const size_t index, const size_t bit_index) const;
@@ -68,6 +79,12 @@ private:
   //! @param bit_list 位置を求めるbit
   //! @param board_position_list BoardPositionの格納先
   void GetBoardPositionList(const LocalBitBoard &bit_list, std::vector<BoardPosition> * const board_position_list) const;
+
+  //! @brief 空点状態を返す
+  //! @param Pattern 空点状態の対象となる指し手パターン(長連点, 達四点, etc)
+  //! @param open_state_list 空点状態リストの格納先
+  template<OpenStatePattern Pattern, PlayerTurn P>
+  void GetOpenState(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const;
 
   //! @brief 直線近傍の状態を保持する
   //! @note local_bit_board_[0]の下位32bit: 横方向(14-15bit目が中心)

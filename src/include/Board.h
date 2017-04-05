@@ -20,6 +20,8 @@ enum MovePosition : std::uint8_t;
 class BoardTest;
 class Board;
 
+
+
 //! @brief 2つのBoardを比較する
 //! @param board_1, 2: 比較対象
 //! @retval true 2つのBoardが同一の内容を保持
@@ -86,6 +88,7 @@ protected:
 
   //! @brief 盤面の指し手リスト
   MoveList move_list_;
+
 };
 
 }   // namespace realcore

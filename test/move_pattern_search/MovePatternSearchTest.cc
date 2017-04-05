@@ -34,6 +34,58 @@ namespace realcore
     }
   }
 
+  TEST(MovePatternSearchTest, SearchNextOverlineTest)
+  {
+    {
+      // 長連点パターン
+      const string pattern = "BBOBBB";
+      const auto test_bit = GetStateBit(pattern);
+      const auto stone_bit = GetBlackStoneBit(test_bit);
+      const auto open_bit = GetOpenPositionBit(test_bit);
+
+      uint64_t open_state_bit = 0;
+      const auto search_bit = SearchNextOverline(stone_bit, open_bit, &open_state_bit);
+
+      constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+      ASSERT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_open_state_bit = LeftShift<3>(0b1);
+      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+    }
+    {
+      // 長連点パターン
+      const string pattern = "BBBOBBB";
+      const auto test_bit = GetStateBit(pattern);
+      const auto stone_bit = GetBlackStoneBit(test_bit);
+      const auto open_bit = GetOpenPositionBit(test_bit);
+
+      uint64_t open_state_bit = 0;
+      const auto search_bit = SearchNextOverline(stone_bit, open_bit, &open_state_bit);
+
+      constexpr uint64_t expect_bit = LeftShift<1>(0b1) | LeftShift<2>(0b1);
+      ASSERT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_open_state_bit = LeftShift<3>(0b1);
+      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+    }
+    {
+      // 非長連パターン
+      const string pattern = "BBOBB";
+      const auto test_bit = GetStateBit(pattern);
+      const auto stone_bit = GetBlackStoneBit(test_bit);
+      const auto open_bit = GetOpenPositionBit(test_bit);
+
+      uint64_t open_state_bit = 0;
+      const auto search_bit = SearchNextOverline(stone_bit, open_bit, &open_state_bit);
+
+      constexpr uint64_t expect_bit = 0;
+      ASSERT_EQ(expect_bit, search_bit);
+
+      constexpr uint64_t expect_open_state_bit = 0;
+      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+    }
+  }
+
   TEST(MovePatternSearchTest, SearchOpenFourTest)
   {
     {
