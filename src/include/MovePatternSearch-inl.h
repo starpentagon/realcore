@@ -58,13 +58,13 @@ inline const std::uint64_t SearchOpenFour(const std::uint64_t stone_bit, const s
 
 // 達四点
 template<PlayerTurn P>
-inline const std::uint64_t SearchNextOpenFour(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::uint64_t * const open_state_bit)
-{
-  assert(open_state_bit != nullptr);
+inline void SearchNextOpenFour(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, kFourStonePattern> * const pattern_search_bit_list){
+  assert(pattern_search_bit_list != nullptr);
+  assert(*std::min_element(pattern_search_bit_list->begin(), pattern_search_bit_list->end()) == 0);
+  assert(*std::max_element(pattern_search_bit_list->begin(), pattern_search_bit_list->end()) == 0);
 
   // [B3O1][W3O1]パターンを検索する
-  std::array<uint64_t, kFourStonePattern> pattern_bit_list;
-  GetStoneWithOneOpenBit<kFourStonePattern>(stone_bit, open_bit, &pattern_bit_list);
+  GetStoneWithOneOpenBit<kFourStonePattern>(stone_bit, open_bit, pattern_search_bit_list);
   
   // 長連筋をマスクする(XO[B3O1]OX, X\ne B)
   std::uint64_t overline_mask = ~(0ULL);
@@ -73,20 +73,11 @@ inline const std::uint64_t SearchNextOpenFour(const std::uint64_t stone_bit, con
     overline_mask = ~LeftShift<2>(stone_bit) & ~RightShift<5>(stone_bit);
   }
 
-  std::uint64_t next_open_four = 0;
-  *open_state_bit = 0;
-
   for(size_t i=0; i<kFourStonePattern; i++){
-    auto next_open_four_pattern = pattern_bit_list[i];    // [B3O1][W3O1]
-    next_open_four_pattern &= LeftShift<1>(open_bit);     // [B3O1]O, [W3O1]O
-    next_open_four_pattern &= RightShift<4>(open_bit);    // O[B3O1]O, O[W3O1]O
-    next_open_four_pattern &= overline_mask;              // XO[B3O1]O, O[W3O1]O
-
-    next_open_four |= next_open_four_pattern;
-    *open_state_bit |= GetOpenBitInPattern(i, next_open_four_pattern);
+    (*pattern_search_bit_list)[i] &= LeftShift<1>(open_bit);     // [B3O1]O, [W3O1]O
+    (*pattern_search_bit_list)[i] &= RightShift<4>(open_bit);    // O[B3O1]O, O[W3O1]O
+    (*pattern_search_bit_list)[i] &= overline_mask;              // XO[B3O1]O, O[W3O1]O
   }
-  
-  return next_open_four;
 }
 
 // 四

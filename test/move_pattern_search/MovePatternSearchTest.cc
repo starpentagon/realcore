@@ -239,14 +239,30 @@ namespace realcore
       const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
       const auto open_bit = GetOpenPositionBit(test_bit);
 
-      uint64_t open_state_bit = 0;
-      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+      array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
+      SearchNextOpenFour<P>(stone_bit, open_bit, &pattern_search_bit_list);
 
-      constexpr uint64_t expect_bit = LeftShift<1>(0b1) | LeftShift<2>(0b1);
-      ASSERT_EQ(expect_bit, search_bit);
+      for(size_t i=0; i<kFourStonePattern; i++){
+        const auto search_bit = pattern_search_bit_list[i];
+        const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      constexpr uint64_t expect_open_state_bit = LeftShift<1>(0b1) | LeftShift<5>(0b1);
-      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        if(i == 0){
+          constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+          ASSERT_EQ(expect_bit, search_bit);
+
+          constexpr uint64_t expect_open_state_bit = LeftShift<1>(0b1);
+          ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        }else if(i == 3){
+          constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+          ASSERT_EQ(expect_bit, search_bit);
+
+          constexpr uint64_t expect_open_state_bit = LeftShift<5>(0b1);
+          ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        }else{
+          ASSERT_EQ(0, search_bit);
+          ASSERT_EQ(0, open_state_bit);
+        }
+      }
     }
     {
       // 四連点パターン_2(黒, トビ三)
@@ -255,14 +271,24 @@ namespace realcore
       const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
       const auto open_bit = GetOpenPositionBit(test_bit);
 
-      uint64_t open_state_bit = 0;
-      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+      array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
+      SearchNextOpenFour<P>(stone_bit, open_bit, &pattern_search_bit_list);
 
-      constexpr uint64_t expect_bit = LeftShift<2>(0b1);
-      ASSERT_EQ(expect_bit, search_bit);
+      for(size_t i=0; i<kFourStonePattern; i++){
+        const auto search_bit = pattern_search_bit_list[i];
+        const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      constexpr uint64_t expect_open_state_bit = LeftShift<4>(0b1);
-      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        if(i == 2){
+          constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+          ASSERT_EQ(expect_bit, search_bit);
+
+          constexpr uint64_t expect_open_state_bit = LeftShift<4>(0b1);
+          ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        }else{
+          ASSERT_EQ(0, search_bit);
+          ASSERT_EQ(0, open_state_bit);
+        }
+      }
     }
     {
       // 四連点パターン_3(黒, 長連筋)
@@ -271,14 +297,24 @@ namespace realcore
       const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
       const auto open_bit = GetOpenPositionBit(test_bit);
 
-      uint64_t open_state_bit = 0;
-      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+      array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
+      SearchNextOpenFour<P>(stone_bit, open_bit, &pattern_search_bit_list);
 
-      constexpr uint64_t expect_bit = LeftShift<1>(0b1);
-      ASSERT_EQ(expect_bit, search_bit);
+      for(size_t i=0; i<kFourStonePattern; i++){
+        const auto search_bit = pattern_search_bit_list[i];
+        const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      constexpr uint64_t expect_open_state_bit = LeftShift<1>(0b1);
-      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        if(i == 0){
+          constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+          ASSERT_EQ(expect_bit, search_bit);
+
+          constexpr uint64_t expect_open_state_bit = LeftShift<1>(0b1);
+          ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        }else{
+          ASSERT_EQ(0, search_bit);
+          ASSERT_EQ(0, open_state_bit);
+        }
+      }
     }
     {
       // 否四連点パターン(黒, 長連筋)
@@ -287,14 +323,16 @@ namespace realcore
       const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
       const auto open_bit = GetOpenPositionBit(test_bit);
 
-      uint64_t open_state_bit = 0;
-      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+      array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
+      SearchNextOpenFour<P>(stone_bit, open_bit, &pattern_search_bit_list);
 
-      constexpr uint64_t expect_bit = 0;
-      ASSERT_EQ(expect_bit, search_bit);
+      for(size_t i=0; i<kFourStonePattern; i++){
+        const auto search_bit = pattern_search_bit_list[i];
+        const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      constexpr uint64_t expect_open_state_bit = 0;
-      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0, open_state_bit);
+      }
     }
     {
       // 否四連点パターン(黒)
@@ -303,14 +341,16 @@ namespace realcore
       const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
       const auto open_bit = GetOpenPositionBit(test_bit);
 
-      uint64_t open_state_bit = 0;
-      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+      array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
+      SearchNextOpenFour<P>(stone_bit, open_bit, &pattern_search_bit_list);
 
-      constexpr uint64_t expect_bit = 0;
-      ASSERT_EQ(expect_bit, search_bit);
+      for(size_t i=0; i<kFourStonePattern; i++){
+        const auto search_bit = pattern_search_bit_list[i];
+        const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      constexpr uint64_t expect_open_state_bit = 0;
-      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0, open_state_bit);
+      }
     }
   }
 
@@ -325,14 +365,30 @@ namespace realcore
       const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
       const auto open_bit = GetOpenPositionBit(test_bit);
 
-      uint64_t open_state_bit = 0;
-      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+      array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
+      SearchNextOpenFour<P>(stone_bit, open_bit, &pattern_search_bit_list);
 
-      constexpr uint64_t expect_bit = LeftShift<1>(0b1) | LeftShift<2>(0b1);
-      ASSERT_EQ(expect_bit, search_bit);
+      for(size_t i=0; i<kFourStonePattern; i++){
+        const auto search_bit = pattern_search_bit_list[i];
+        const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      constexpr uint64_t expect_open_state_bit = LeftShift<1>(0b1) | LeftShift<5>(0b1);
-      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        if(i == 0){
+          constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+          ASSERT_EQ(expect_bit, search_bit);
+
+          constexpr uint64_t expect_open_state_bit = LeftShift<1>(0b1);
+          ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        }else if(i == 3){
+          constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+          ASSERT_EQ(expect_bit, search_bit);
+
+          constexpr uint64_t expect_open_state_bit = LeftShift<5>(0b1);
+          ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        }else{
+          ASSERT_EQ(0, search_bit);
+          ASSERT_EQ(0, open_state_bit);
+        }
+      }
     }
     {
       // 四連点パターン_2(白, トビ三)
@@ -341,14 +397,24 @@ namespace realcore
       const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
       const auto open_bit = GetOpenPositionBit(test_bit);
 
-      uint64_t open_state_bit = 0;
-      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+      array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
+      SearchNextOpenFour<P>(stone_bit, open_bit, &pattern_search_bit_list);
 
-      constexpr uint64_t expect_bit = LeftShift<2>(0b1);
-      ASSERT_EQ(expect_bit, search_bit);
+      for(size_t i=0; i<kFourStonePattern; i++){
+        const auto search_bit = pattern_search_bit_list[i];
+        const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      constexpr uint64_t expect_open_state_bit = LeftShift<4>(0b1);
-      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        if(i == 2){
+          constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+          ASSERT_EQ(expect_bit, search_bit);
+
+          constexpr uint64_t expect_open_state_bit = LeftShift<4>(0b1);
+          ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        }else{
+          ASSERT_EQ(0, search_bit);
+          ASSERT_EQ(0, open_state_bit);
+        }
+      }
     }
     {
       // 四連点パターン_3(白, 長連筋)
@@ -357,14 +423,30 @@ namespace realcore
       const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
       const auto open_bit = GetOpenPositionBit(test_bit);
 
-      uint64_t open_state_bit = 0;
-      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+      array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
+      SearchNextOpenFour<P>(stone_bit, open_bit, &pattern_search_bit_list);
 
-      constexpr uint64_t expect_bit = LeftShift<1>(0b1) | LeftShift<2>(0b1);
-      ASSERT_EQ(expect_bit, search_bit);
+      for(size_t i=0; i<kFourStonePattern; i++){
+        const auto search_bit = pattern_search_bit_list[i];
+        const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      constexpr uint64_t expect_open_state_bit = LeftShift<1>(0b1) | LeftShift<5>(0b1);
-      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        if(i == 0){
+          constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+          ASSERT_EQ(expect_bit, search_bit);
+
+          constexpr uint64_t expect_open_state_bit = LeftShift<1>(0b1);
+          ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        }else if(i == 3){
+          constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+          ASSERT_EQ(expect_bit, search_bit);
+
+          constexpr uint64_t expect_open_state_bit = LeftShift<5>(0b1);
+          ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        }else{
+          ASSERT_EQ(0, search_bit);
+          ASSERT_EQ(0, open_state_bit);
+        }
+      }
     }
     {
       // 否四連点パターン(白)
@@ -373,14 +455,16 @@ namespace realcore
       const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
       const auto open_bit = GetOpenPositionBit(test_bit);
 
-      uint64_t open_state_bit = 0;
-      const auto search_bit = SearchNextOpenFour<P>(stone_bit, open_bit, &open_state_bit);
+      array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
+      SearchNextOpenFour<P>(stone_bit, open_bit, &pattern_search_bit_list);
 
-      constexpr uint64_t expect_bit = 0;
-      ASSERT_EQ(expect_bit, search_bit);
+      for(size_t i=0; i<kFourStonePattern; i++){
+        const auto search_bit = pattern_search_bit_list[i];
+        const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      constexpr uint64_t expect_open_state_bit = 0;
-      ASSERT_EQ(expect_open_state_bit, open_state_bit);
+        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0, open_state_bit);
+      }
     }
   }
 

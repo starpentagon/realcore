@@ -215,7 +215,51 @@ TEST_F(LineNeighborhoodTest, GetOpenStateOpenFourBlackTest)
   OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
 
   const BoardPosition open_position_2 = GetBoardPosition(kMoveKH, direction);
-  const BoardPosition pattern_position_2 = GetBoardPosition(kMoveKH, direction);
+  const BoardPosition pattern_position_2 = GetBoardPosition(kMoveHH, direction);
+  OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
+
+  ASSERT_EQ(2, open_state_list.size());
+  EXPECT_TRUE(expect_1 == open_state_list[0]);
+  EXPECT_TRUE(expect_2 == open_state_list[1]);
+}
+
+TEST_F(LineNeighborhoodTest, GetOpenStateOpenFourWhiteTest)
+{
+  // kNextOpenFourBlack
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . . . . . . . . . . | E 
+  // F | . . . . . . . . . . . . . | F 
+  // G | . . . . . . o o o . . . . | G 
+  // H | . . . . . . x x x . . . . | H 
+  // I | . . . . . . . . . . . . . | I 
+  // J | . . . . . . . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  constexpr OpenStatePattern kPattern = kNextOpenFourWhite;
+  constexpr PlayerTurn P = GetPatternPlayerTurn(kPattern);
+  BitBoard bit_board(MoveList("hhhgihigjhjg"));
+  constexpr MovePosition move = kMoveJG;
+  LineNeighborhood<kOpenStateNeighborhoodSize> line_neighborhood(move, bit_board);
+
+  vector< OpenState<kPattern> > open_state_list, expect_list;
+  line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
+
+  const BoardDirection direction = kLateralDirection;
+
+  const BoardPosition open_position_1 = GetBoardPosition(kMoveGG, direction);
+  const BoardPosition pattern_position_1 = GetBoardPosition(kMoveGG, direction);
+  OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
+
+  const BoardPosition open_position_2 = GetBoardPosition(kMoveKG, direction);
+  const BoardPosition pattern_position_2 = GetBoardPosition(kMoveHG, direction);
   OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
 
   ASSERT_EQ(2, open_state_list.size());

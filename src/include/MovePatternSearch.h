@@ -33,10 +33,9 @@ inline const std::uint64_t SearchOpenFour(const std::uint64_t stone_bit, const s
 //! @param P 手番
 //! @param stone_bit 黒石 or 白石フラグ
 //! @param open_bit 空点フラグ
-//! @param open_state_bit 達四点となる位置フラグの格納先
-//! @retval XO[B3O1]OX(黒番), O[W3O1]O(白番)パターンのうち[(B|W)3O1]の右端の位置に1を立てた値
+//! @param pattern_search_bit_list XO[B3O1]OX, O[W3O1]Oパターンの検索結果
 template<PlayerTurn P>
-inline const std::uint64_t SearchNextOpenFour(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::uint64_t * const open_state_bit);
+inline void SearchNextOpenFour(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, kFourStonePattern> * const pattern_search_bit_list);
 
 //! @brief 四を検索する
 //! @param P 手番
