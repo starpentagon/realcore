@@ -42,6 +42,12 @@ OpenState<Pattern>::OpenState(const BoardPosition pattern_position)
 }
 
 template<OpenStatePattern Pattern>
+OpenState<Pattern>::OpenState(const OpenState<Pattern> &open_state)
+{
+  *this = open_state;
+}
+
+template<OpenStatePattern Pattern>
 inline const std::vector<BoardPosition>& OpenState<Pattern>::GetCheckPositionList() const
 {
   return check_position_list_;
@@ -97,6 +103,54 @@ inline const bool OpenState<Pattern>::IsInfluenceMove(const MovePosition move) c
     assert(false);
     return false;
   }
+}
+
+template<OpenStatePattern Pattern>
+bool IsEqual(const OpenState<Pattern> &open_state_1, const OpenState<Pattern> &open_state_2)
+{
+  if(open_state_1.pattern_position_ != open_state_2.pattern_position_){
+    return false;
+  }
+
+  if(open_state_1.check_position_list_ != open_state_2.check_position_list_){
+    return false;
+  }
+
+  if(open_state_1.guard_position_list_ != open_state_2.guard_position_list_){
+    return false;
+  }
+
+  return true;
+}
+
+template<OpenStatePattern Pattern>
+inline const bool OpenState<Pattern>::operator==(const OpenState<Pattern> &open_state) const
+{
+  return IsEqual(*this, open_state);
+}
+
+template<OpenStatePattern Pattern>
+inline const bool OpenState<Pattern>::operator!=(const OpenState<Pattern> &open_state) const
+{
+  return !(*this == open_state);
+}
+
+template<OpenStatePattern Pattern>
+void Copy(const OpenState<Pattern> &open_state_from, OpenState<Pattern> * const open_state_to)
+{
+  open_state_to->pattern_position_ = open_state_from.pattern_position_;
+  open_state_to->check_position_list_ = open_state_from.check_position_list_;
+  open_state_to->guard_position_list_ = open_state_from.guard_position_list_;
+}
+
+template<OpenStatePattern Pattern>
+inline const OpenState<Pattern>& OpenState<Pattern>::operator=(const OpenState<Pattern> &open_state)
+{
+  if(this != &open_state){
+    Copy(open_state, this);
+  }
+
+  return *this;
 }
 
 }   // namespace realcore

@@ -211,4 +211,121 @@ TEST_F(OpenStateTest, IsInfluenceMove)
     }
   }
 }
+
+TEST_F(OpenStateTest, IsEqualTest)
+{
+  constexpr BoardPosition pattern_position_1 = 1, pattern_position_2 = 1, pattern_position_3 = 2;
+  OpenState<kNextOverline> open_state_1(pattern_position_1);
+  OpenState<kNextOverline> open_state_2(pattern_position_2);
+  OpenState<kNextOverline> open_state_3(pattern_position_3);
+
+  EXPECT_TRUE(IsEqual<kNextOverline>(open_state_1, open_state_2));
+  EXPECT_FALSE(IsEqual<kNextOverline>(open_state_1, open_state_3));
+
+  vector<BoardPosition> check_position_list;
+  check_position_list.push_back(0);
+
+  open_state_1.SetCheckPositionList(check_position_list);
+  EXPECT_FALSE(IsEqual<kNextOverline>(open_state_1, open_state_2));
+
+  open_state_2.SetCheckPositionList(check_position_list);
+  EXPECT_TRUE(IsEqual<kNextOverline>(open_state_1, open_state_2));
+  
+  vector<BoardPosition> guard_position_list;
+  guard_position_list.push_back(1);
+
+  open_state_1.SetGuardPositionList(guard_position_list);
+  EXPECT_FALSE(IsEqual<kNextOverline>(open_state_1, open_state_2));
+
+  open_state_2.SetGuardPositionList(guard_position_list);
+  EXPECT_TRUE(IsEqual<kNextOverline>(open_state_1, open_state_2));
+}
+
+TEST_F(OpenStateTest, CompareOperTest)
+{
+  constexpr BoardPosition pattern_position_1 = 1, pattern_position_2 = 1, pattern_position_3 = 2;
+  OpenState<kNextOverline> open_state_1(pattern_position_1);
+  OpenState<kNextOverline> open_state_2(pattern_position_2);
+  OpenState<kNextOverline> open_state_3(pattern_position_3);
+
+  EXPECT_TRUE(open_state_1 == open_state_2);
+  EXPECT_TRUE(open_state_1 != open_state_3);
+
+  vector<BoardPosition> check_position_list;
+  check_position_list.push_back(0);
+
+  open_state_1.SetCheckPositionList(check_position_list);
+  EXPECT_TRUE(open_state_1 != open_state_2);
+
+  open_state_2.SetCheckPositionList(check_position_list);
+  EXPECT_TRUE(open_state_1 == open_state_2);
+  
+  vector<BoardPosition> guard_position_list;
+  guard_position_list.push_back(1);
+
+  open_state_1.SetGuardPositionList(guard_position_list);
+  EXPECT_TRUE(open_state_1 != open_state_2);
+
+  open_state_2.SetGuardPositionList(guard_position_list);
+  EXPECT_TRUE(open_state_1 == open_state_2);
+}
+
+TEST_F(OpenStateTest, CopyTest)
+{
+  constexpr BoardPosition pattern_position_1 = 1, pattern_position_2 = 2;
+  OpenState<kNextOverline> open_state_1(pattern_position_1);
+  OpenState<kNextOverline> open_state_2(pattern_position_2);
+
+  vector<BoardPosition> check_position_list;
+  check_position_list.push_back(0);
+  open_state_1.SetCheckPositionList(check_position_list);
+
+  vector<BoardPosition> guard_position_list;
+  guard_position_list.push_back(1);
+  open_state_1.SetGuardPositionList(guard_position_list);
+
+  EXPECT_FALSE(IsEqual<kNextOverline>(open_state_1, open_state_2));
+  Copy<kNextOverline>(open_state_1, &open_state_2);
+
+  EXPECT_TRUE(IsEqual<kNextOverline>(open_state_1, open_state_2)); 
+}
+
+TEST_F(OpenStateTest, AssignOperTest)
+{
+  constexpr BoardPosition pattern_position_1 = 1, pattern_position_2 = 2;
+  OpenState<kNextOverline> open_state_1(pattern_position_1);
+  OpenState<kNextOverline> open_state_2(pattern_position_2);
+
+  vector<BoardPosition> check_position_list;
+  check_position_list.push_back(0);
+  open_state_1.SetCheckPositionList(check_position_list);
+
+  vector<BoardPosition> guard_position_list;
+  guard_position_list.push_back(1);
+  open_state_1.SetGuardPositionList(guard_position_list);
+
+  EXPECT_TRUE(open_state_1 != open_state_2);
+  open_state_2 = open_state_1;
+
+  EXPECT_TRUE(open_state_1 == open_state_2);
+}
+
+TEST_F(OpenStateTest, CopyConstructorTest)
+{
+  constexpr BoardPosition pattern_position_1 = 1, pattern_position_2 = 2;
+  OpenState<kNextOverline> open_state_1(pattern_position_1);
+
+  vector<BoardPosition> check_position_list;
+  check_position_list.push_back(0);
+  open_state_1.SetCheckPositionList(check_position_list);
+
+  vector<BoardPosition> guard_position_list;
+  guard_position_list.push_back(1);
+  open_state_1.SetGuardPositionList(guard_position_list);
+
+  OpenState<kNextOverline> open_state_2(open_state_1);
+
+  EXPECT_TRUE(open_state_1 == open_state_2);
+}
+
 }   // namespace realcore
