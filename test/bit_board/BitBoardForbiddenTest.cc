@@ -464,8 +464,10 @@ TEST_F(BitBoardTest, IsDoubleThreeTest)
       
       if(move == kMoveIG){
         EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
+        EXPECT_TRUE(bit_board.IsDoubleThreeMove<kBlackTurn>(move));
       }else{
         EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
+        EXPECT_FALSE(bit_board.IsDoubleThreeMove<kBlackTurn>(move));
       }
 
       EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
@@ -500,8 +502,10 @@ TEST_F(BitBoardTest, IsDoubleThreeTest)
       
       if(move == kMoveJH){
         EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
+        EXPECT_TRUE(bit_board.IsDoubleThreeMove<kBlackTurn>(move));        
       }else{
         EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
+        EXPECT_FALSE(bit_board.IsDoubleThreeMove<kBlackTurn>(move));
       }
 
       EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
@@ -544,8 +548,10 @@ TEST_F(BitBoardTest, IsDoubleThreeTest)
 
       if(is_forbidden){
         EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
+        EXPECT_TRUE(bit_board.IsDoubleThreeMove<kBlackTurn>(move));
       }else{
         EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
+        EXPECT_FALSE(bit_board.IsDoubleThreeMove<kBlackTurn>(move));
       }
 
       EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
@@ -578,6 +584,7 @@ TEST_F(BitBoardTest, IsDoubleThreeTest)
       }
 
       EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
+      EXPECT_FALSE(bit_board.IsDoubleThree<kBlackTurn>(move));
       EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
     }
   }

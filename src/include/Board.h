@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <array>
 #include <stack>
+#include <bitset>
 
 #include "RealCore.h"
 #include "BitBoard.h"
@@ -17,6 +18,10 @@
 
 namespace realcore
 {
+
+// 指し手のビットを管理するbitset
+typedef std::bitset<kMoveNum> MoveBitSet;
+
 // 前方宣言
 enum MovePosition : std::uint8_t;
 class BoardTest;
@@ -81,6 +86,10 @@ public:
   const bool IsTerminateMove(const MovePosition move) const;
   
   const bool IsTerminateMove(const bool black_turn, const MovePosition move) const;
+
+  //! @brief 禁点を列挙する
+  //! @param 禁点の格納先
+  void EnumerateForbiddenMoves(MoveBitSet * const forbidden_move_set) const;
 
 protected:
   //! @brief 盤面状態を保持するBitBoard

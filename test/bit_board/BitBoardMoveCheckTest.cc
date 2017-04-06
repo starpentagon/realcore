@@ -495,4 +495,9 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
     }
   }
 }
+
+TEST_F(BitBoardTest, IsDoubleThreeMoveTest)
+{
+  
+}
 }   // namespace realcore
