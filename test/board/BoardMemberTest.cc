@@ -3,6 +3,7 @@
 
 #include "Move.h"
 #include "MoveList.h"
+#include "BoardOpenState.h"
 #include "Board.h"
 
 using namespace std;
@@ -125,6 +126,114 @@ public:
         }else{
           EXPECT_FALSE(board.IsNormalMove<kBlackTurn>(move));
         }
+      }
+    }
+  }
+
+  void BitBoardTest(){
+    Board board;
+    BitBoard bit_board;
+
+    ASSERT_TRUE(board.bit_board_ == bit_board);
+
+    // 黒の着手
+    board.MakeMove(kMoveHH);
+    bit_board.SetState<kBlackStone>(kMoveHH);
+
+    ASSERT_TRUE(board.bit_board_ == bit_board);
+
+    // 白の着手
+    board.MakeMove(kMoveHG);
+    bit_board.SetState<kWhiteStone>(kMoveHG);
+
+    ASSERT_TRUE(board.bit_board_ == bit_board);
+
+    // 1手戻す
+    board.UndoMove();
+    bit_board.SetState<kOpenPosition>(kMoveHG);
+
+    ASSERT_TRUE(board.bit_board_ == bit_board);
+    
+    // 1手戻す
+    board.UndoMove();
+    bit_board.SetState<kOpenPosition>(kMoveHH);
+
+    ASSERT_TRUE(board.bit_board_ == bit_board);
+  }
+
+  void MoveListTest(){
+    Board board;
+    MoveList move_list;
+
+    ASSERT_TRUE(board.move_list_ == move_list);
+
+    // 黒の着手
+    board.MakeMove(kMoveHH);
+    move_list += kMoveHH;
+
+    ASSERT_TRUE(board.move_list_ == move_list);
+
+    // 白の着手
+    board.MakeMove(kMoveHG);
+    move_list += kMoveHG;
+
+    ASSERT_TRUE(board.move_list_ == move_list);
+
+    // 1手戻す
+    board.UndoMove();
+    --move_list;
+
+    ASSERT_TRUE(board.move_list_ == move_list);
+    
+    // 1手戻す
+    board.UndoMove();
+    --move_list;
+
+    ASSERT_TRUE(board.move_list_ == move_list);
+  }
+
+  void BoardOpenStateStackTest(){
+    Board board;
+
+    {
+      // 初期化時は要素数1で初期状態のBoardOpenStateがtop
+      ASSERT_EQ(1, board.board_open_state_stack_.size());
+      
+      const auto &board_open_state = board.board_open_state_stack_.top();
+      BoardOpenState init_state;
+      EXPECT_TRUE(board_open_state == init_state);
+    }
+
+    {
+      // MakeMove時に更新されているかチェック
+      MoveList board_move_list("hhigff");
+      BoardOpenState update_state;
+
+      stack<BoardOpenState> state_stack;
+      state_stack.emplace();
+
+      BitBoard bit_board;
+      PlayerTurn player_turn = kBlackTurn;
+
+      for(const auto move : board_move_list){
+        board.MakeMove(move);
+
+        bit_board.SetState(move, GetPlayerStone(player_turn));
+        update_state.Update(player_turn == kBlackTurn, move, bit_board);
+
+        const auto &board_open_state = board.board_open_state_stack_.top();
+        EXPECT_TRUE(board_open_state == update_state);
+
+        state_stack.emplace(update_state);
+        player_turn = GetOpponentTurn(player_turn);
+      }
+
+      // UndoMove時に更新されているかチェック
+      for(size_t i=0; i<board_move_list.size(); i++){
+        board.UndoMove();
+        state_stack.pop();
+
+        EXPECT_TRUE(board.board_open_state_stack_.top() == state_stack.top());
       }
     }
   }
@@ -334,6 +443,21 @@ TEST_F(BoardTest, IsTerminateMoveTest)
       EXPECT_FALSE(is_terminate);
     }
   }
+}
+
+TEST_F(BoardTest, BitBoardTest)
+{
+  BitBoardTest();
+}
+
+TEST_F(BoardTest, MoveListTest)
+{
+  MoveListTest();
+}
+
+TEST_F(BoardTest, BoardOpenStateStackTest)
+{
+  BoardOpenStateStackTest();
 }
 
 }

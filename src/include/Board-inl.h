@@ -10,27 +10,6 @@
 
 namespace realcore
 {
-
-inline void Board::MakeMove(const MovePosition move)
-{
-  if(move_list_.IsBlackTurn()){
-    bit_board_.SetState<kBlackStone>(move);
-  }else{
-    bit_board_.SetState<kWhiteStone>(move);
-  }
-
-  move_list_ += move;
-}
-
-inline void Board::UndoMove()
-{
-  assert(move_list_.empty());
-
-  const auto move = move_list_.GetLastMove();
-  bit_board_.SetState<kOpenPosition>(move);
-  --move_list_;
-}
-
 template<PlayerTurn P>
 const bool Board::IsNormalMove(const MovePosition move) const
 {

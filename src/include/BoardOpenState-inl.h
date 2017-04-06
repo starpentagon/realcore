@@ -29,6 +29,15 @@ inline const bool BoardOpenState::operator!=(const BoardOpenState &rhs) const
   return !(*this == rhs);
 }
 
+inline void BoardOpenState::Update(const bool black_turn, const MovePosition move, const BitBoard &bit_board)
+{
+  if(black_turn){
+    Update<kBlackTurn>(move, bit_board);
+  }else{
+    Update<kWhiteTurn>(move, bit_board);
+  }
+}
+
 inline const std::vector< OpenState<kNextOverline> >& BoardOpenState::GetNextOverline() const{
   return next_overline_;
 }
@@ -88,6 +97,8 @@ void BoardOpenState::AddElement(const LineNeighborhood<kOpenStateNeighborhoodSiz
 template<PlayerTurn P>
 void BoardOpenState::Update(const MovePosition move, const BitBoard &bit_board)
 {
+  assert(bit_board.GetState(move) == GetPlayerStone(P));
+  
   LineNeighborhood<kOpenStateNeighborhoodSize> line_neighborhood(move, bit_board);
 
   {

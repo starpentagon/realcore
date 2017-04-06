@@ -8,10 +8,12 @@
 
 #include <cstdint>
 #include <array>
+#include <stack>
 
 #include "RealCore.h"
 #include "BitBoard.h"
 #include "MoveList.h"
+#include "BoardOpenState.h"
 
 namespace realcore
 {
@@ -87,6 +89,8 @@ protected:
   //! @brief 盤面の指し手リスト
   MoveList move_list_;
 
+  //! @brief 盤面空点状態スタック
+  std::stack<BoardOpenState> board_open_state_stack_;
 };
 
 }   // namespace realcore
