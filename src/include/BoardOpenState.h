@@ -33,6 +33,13 @@ public:
   BoardOpenState();
   BoardOpenState(const BoardOpenState &board_open_state);
 
+  //! @brief 代入演算子
+  const BoardOpenState& operator=(const BoardOpenState &rhs);
+
+  //! @brief 比較演算子
+  const bool operator==(const BoardOpenState &rhs) const;
+  const bool operator!=(const BoardOpenState &rhs) const;
+
   //! @brief 着手による空点状態の変更を反映する
   //! @param P 手番
   //! @param move 着手

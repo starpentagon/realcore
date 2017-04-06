@@ -9,6 +9,11 @@ BoardOpenState::BoardOpenState()
 {
 }
 
+BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state)
+{
+  *this = board_open_state;
+}
+
 bool IsEqual(const BoardOpenState &lhs, const BoardOpenState &rhs)
 {
   if(lhs.GetNextOverline() != rhs.GetNextOverline()){

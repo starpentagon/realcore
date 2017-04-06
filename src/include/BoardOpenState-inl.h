@@ -10,6 +10,25 @@
 namespace realcore
 {
 
+inline const BoardOpenState& BoardOpenState::operator=(const BoardOpenState &rhs)
+{
+  if(this != &rhs){
+    Copy(rhs, this);
+  }
+
+  return *this;
+}
+
+inline const bool BoardOpenState::operator==(const BoardOpenState &rhs) const
+{
+  return IsEqual(*this, rhs);
+}
+
+inline const bool BoardOpenState::operator!=(const BoardOpenState &rhs) const
+{
+  return !(*this == rhs);
+}
+
 inline const std::vector< OpenState<kNextOverline> >& BoardOpenState::GetNextOverline() const{
   return next_overline_;
 }

@@ -334,12 +334,33 @@ TEST(BoardOpenStateTest, IsEqualTest)
 
   EXPECT_FALSE(IsEqual(state_1, state_2));
 
-  // 空間状態がすべて空になる
+  // 空間状態がすべて空になりstate_2と等しくなる
   move = kMoveEE;
   bit_board.SetState<kWhiteStone>(move);
   state_1.Update<kWhiteTurn>(move, bit_board);
 
   EXPECT_TRUE(IsEqual(state_1, state_2));
+}
+
+TEST(BoardOpenStateTest, CompareOperTest)
+{
+  BoardOpenState state_1, state_2;
+
+  EXPECT_TRUE(state_1 == state_2);
+
+  MoveList board_move_list("hhigff");
+  BitBoard bit_board(board_move_list);
+  MovePosition move = board_move_list.GetLastMove();
+  state_1.Update<kBlackTurn>(move, bit_board);
+
+  EXPECT_TRUE(state_1 != state_2);
+
+  // 空間状態がすべて空になりstate_2と等しくなる
+  move = kMoveEE;
+  bit_board.SetState<kWhiteStone>(move);
+  state_1.Update<kWhiteTurn>(move, bit_board);
+
+  EXPECT_TRUE(state_1 == state_2);
 }
 
 TEST(BoardOpenStateTest, CopyTest)
@@ -356,4 +377,33 @@ TEST(BoardOpenStateTest, CopyTest)
   Copy(state_1, &state_2);
   EXPECT_TRUE(IsEqual(state_1, state_2));
 }
+
+TEST(BoardOpenStateTest, AssignOperTest)
+{
+  BoardOpenState state_1, state_2;
+
+  MoveList board_move_list("hhigff");
+  BitBoard bit_board(board_move_list);
+  MovePosition move = board_move_list.GetLastMove();
+  state_1.Update<kBlackTurn>(move, bit_board);
+
+  EXPECT_TRUE(state_1 != state_2);
+
+  state_2 = state_1;
+  EXPECT_TRUE(state_1 == state_2);
+}
+
+TEST(BoardOpenStateTest, CopyConstructerTest)
+{
+  BoardOpenState state_1;
+
+  MoveList board_move_list("hhigff");
+  BitBoard bit_board(board_move_list);
+  MovePosition move = board_move_list.GetLastMove();
+  state_1.Update<kBlackTurn>(move, bit_board);
+
+  BoardOpenState state_2(state_1);
+  EXPECT_TRUE(state_1 == state_2);
+}
+
 }   // namespace realcore
