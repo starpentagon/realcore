@@ -72,9 +72,9 @@ const bool Board::IsNormalMove(const MovePosition move) const
 inline const bool Board::IsNormalMove(const bool black_turn, const MovePosition move) const
 {
   if(black_turn){
-    return IsNormal<kBlackTurn>(move);
+    return IsNormalMove<kBlackTurn>(move);
   }else{
-    return IsNormal<kWhiteTurn>(move);
+    return IsNormalMove<kWhiteTurn>(move);
   }
 }
 
