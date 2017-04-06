@@ -53,14 +53,14 @@ public:
     {
       // kNextSemiThreeBlack
       OpenState<kNextSemiThreeBlack> open_state(open_position, pattern_position);
-      EXPECT_EQ(2, open_state.check_position_list_.capacity());
-      EXPECT_EQ(4, open_state.guard_position_list_.capacity());
+      EXPECT_EQ(1, open_state.check_position_list_.capacity());
+      EXPECT_EQ(3, open_state.guard_position_list_.capacity());
     }
     {
       // kNextSemiThreeWhite
       OpenState<kNextSemiThreeWhite> open_state(open_position, pattern_position);
       EXPECT_EQ(0, open_state.check_position_list_.capacity());
-      EXPECT_EQ(4, open_state.guard_position_list_.capacity());
+      EXPECT_EQ(3, open_state.guard_position_list_.capacity());
     }
   }
 };

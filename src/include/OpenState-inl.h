@@ -1,5 +1,6 @@
 #ifndef OPEN_STATE_INL_H
 #define OPEN_STATE_INL_H
+
 #include <cassert>
 
 #include "Move.h"
@@ -29,12 +30,12 @@ OpenState<Pattern>::OpenState(const BoardPosition open_position, const BoardPosi
     break;
 
   case kNextSemiThreeBlack:
-    check_position_list_.reserve(2);
-    guard_position_list_.reserve(4);
+    check_position_list_.reserve(1);
+    guard_position_list_.reserve(3);
     break;
   case kNextSemiThreeWhite:
     check_position_list_.reserve(0);
-    guard_position_list_.reserve(4);
+    guard_position_list_.reserve(3);
     break;
   default:
     assert(false);

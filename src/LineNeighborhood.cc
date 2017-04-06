@@ -79,5 +79,19 @@ void LineNeighborhood<kOpenStateNeighborhoodSize>::GetOpenState<kNextFourWhite, 
   GetOpenStateFour<kNextFourWhite, kWhiteTurn>(stone_bit, open_bit, open_state_list);
 }
 
+template<>
+template<>
+void LineNeighborhood<kOpenStateNeighborhoodSize>::GetOpenState<kNextSemiThreeBlack, kBlackTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextSemiThreeBlack> > *open_state_list) const
+{
+  GetOpenStateSemiThree<kNextSemiThreeBlack, kBlackTurn>(stone_bit, open_bit, open_state_list);
+}
+
+template<>
+template<>
+void LineNeighborhood<kOpenStateNeighborhoodSize>::GetOpenState<kNextSemiThreeWhite, kWhiteTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextSemiThreeWhite> > *open_state_list) const
+{
+  GetOpenStateSemiThree<kNextSemiThreeWhite, kWhiteTurn>(stone_bit, open_bit, open_state_list);
+}
+
 }   // namesapce realcore
 

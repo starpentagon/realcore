@@ -176,6 +176,30 @@ inline const std::uint64_t SearchSemiThree(const std::uint64_t stone_bit, const 
   return three_bit;
 }
 
+template<PlayerTurn P>
+inline void SearchNextSemiThree(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, kTwoOfFourPattern> * const pattern_search_bit_list)
+{
+  assert(pattern_search_bit_list != nullptr);
+  assert(*std::min_element(pattern_search_bit_list->begin(), pattern_search_bit_list->end()) == 0);
+  assert(*std::max_element(pattern_search_bit_list->begin(), pattern_search_bit_list->end()) == 0);
+
+  // [B2O2][W2O2]パターンを検索する
+  GetStoneWithTwoOpenBit<kTwoOfFourPattern>(stone_bit, open_bit, pattern_search_bit_list);
+
+  // 長連筋をマスクする(XO[B2O2]OX, X\ne B)
+  std::uint64_t overline_mask = ~(0ULL);
+  
+  if(P == kBlackTurn){
+    overline_mask = ~LeftShift<2>(stone_bit) & ~RightShift<5>(stone_bit);
+  }
+  
+  for(size_t i=0; i<kTwoOfFourPattern; i++){
+    (*pattern_search_bit_list)[i] &= LeftShift<1>(open_bit);    // [B2O2]O, [W2O2]O
+    (*pattern_search_bit_list)[i] &= RightShift<4>(open_bit);   // O[B2O2]O, O[W2O2]O
+    (*pattern_search_bit_list)[i] &= overline_mask;             // XO[B2O2]OX, O[W2O2]O
+  }
+}
+
 }   // namespace realcore
 
 #endif  // MOVE_PATTERN_SEARCH_INL_H

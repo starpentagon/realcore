@@ -373,6 +373,89 @@ void LineNeighborhood<N>::GetOpenStateFour(const LocalBitBoard &stone_bit, const
     }
   }
 }
+
+template<size_t N>
+template<OpenStatePattern Pattern, PlayerTurn P>
+void LineNeighborhood<N>::GetOpenStateSemiThree(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const
+{
+  static_assert(N == kOpenStateNeighborhoodSize, "N must be kOpenStateNeighborhoodSize for calling GetOpenState.");
+  static_assert(Pattern == kNextSemiThreeBlack || Pattern == kNextSemiThreeWhite, "Pattern must be kNextSemiThree[Black|White]");
+  static_assert(GetPatternPlayerTurn(Pattern) == P, "Pattern's turn must be consistent with player turn.'");
+
+  assert(open_state_list != nullptr);
+  assert(open_state_list->empty());
+
+  constexpr size_t kPatternNum = kTwoOfFourPattern;
+
+  std::array<LocalBitBoard, kPatternNum> pattern_search_bit;
+  std::array<LocalBitBoard, kPatternNum> open_state_bit_1, open_state_bit_2;
+
+  for(size_t i=0; i<kLocalBitBoardNum; i++){
+    std::array<uint64_t, kPatternNum> pattern_search_bit_list{{0}};
+    SearchNextSemiThree<P>(stone_bit[i], open_bit[i], &pattern_search_bit_list);
+
+    for(size_t index=0; index<kPatternNum; index++){
+      pattern_search_bit[index][i] = pattern_search_bit_list[index];
+      
+      const size_t less_index = GetLessIndexOfTwo(index);
+      const size_t greater_index = GetGreaterIndexOfTwo(index);
+      
+      open_state_bit_1[index][i] = GetOpenBitInPattern(less_index, pattern_search_bit_list[index]);
+      open_state_bit_2[index][i] = GetOpenBitInPattern(greater_index, pattern_search_bit_list[index]);
+    }
+  }
+
+  constexpr size_t kPatternLength = 6;    //!< パターン長
+  constexpr size_t kOpenCount = 2;        //!< 設定する空点状態の数
+  constexpr size_t kMaxSearchBitCount = (2 * kOpenStateNeighborhoodSize + 1) - kPatternLength + 1;
+  constexpr size_t kListSize = 4 * kOpenCount * kMaxSearchBitCount;
+  open_state_list->reserve(kListSize);
+
+  for(size_t index=0; index<kPatternNum; index++){
+    std::vector<BoardPosition> open_state_position_list_1, open_state_position_list_2, pattern_position_list;
+
+    GetBoardPositionList(pattern_search_bit[index], &pattern_position_list);
+    GetBoardPositionList(open_state_bit_1[index], &open_state_position_list_1);
+    GetBoardPositionList(open_state_bit_2[index], &open_state_position_list_2);
+
+    assert(pattern_position_list.size() == open_state_position_list_1.size());
+    assert(pattern_position_list.size() == open_state_position_list_2.size());
+
+    for(size_t i=0, size=open_state_position_list_1.size(); i<size; i++){
+      const auto open_state_position_1 = open_state_position_list_1[i];
+      const auto open_state_position_2 = open_state_position_list_2[i];
+      const auto pattern_position = pattern_position_list[i];
+
+      const auto guard_position_1 = pattern_position - 1;
+      const auto guard_position_2 = pattern_position + 4;
+
+      {
+        open_state_list->emplace_back(open_state_position_1, pattern_position);
+
+        if(P == kBlackTurn){
+          std::vector<BoardPosition> check_list{open_state_position_2};
+          open_state_list->back().SetCheckPositionList(check_list);
+        }
+        
+        std::vector<BoardPosition> guard_list_1{open_state_position_2, guard_position_1, guard_position_2};
+        open_state_list->back().SetGuardPositionList(guard_list_1);
+      }
+      {
+        open_state_list->emplace_back(open_state_position_2, pattern_position);
+        
+        if(P == kBlackTurn){
+          std::vector<BoardPosition> check_list{open_state_position_1};
+          open_state_list->back().SetCheckPositionList(check_list);
+        }
+
+        std::vector<BoardPosition> guard_list_2{open_state_position_1, guard_position_1, guard_position_2};
+        open_state_list->back().SetGuardPositionList(guard_list_2);
+      }
+
+    }
+  }
+}
+
 }   // namespace realcore
 
 #endif    // LINE_NEIGHBORHOOD_INL_H
