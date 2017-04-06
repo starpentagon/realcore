@@ -12,9 +12,23 @@ namespace realcore
 {
 
 //! 前方宣言
+class BoardOpenState;
+
+//! @brief 2つのBoardOpenStateを比較する
+//! @param board_1, 2: 比較対象
+//! @retval true 2つのBoardが同一の内容を保持
+bool IsEqual(const BoardOpenState &lhs, const BoardOpenState &rhs);
+
+//! @brief コピーを作成する
+//! @param from コピー元
+//! @param to コピー先
+void Copy(const BoardOpenState &from, BoardOpenState * const to);
+
 //! @brief 空点状態の差分計算クラス
 class BoardOpenState
 {
+  friend void Copy(const BoardOpenState &board_from, BoardOpenState * const board_to);
+
 public:
   BoardOpenState();
   BoardOpenState(const BoardOpenState &board_open_state);

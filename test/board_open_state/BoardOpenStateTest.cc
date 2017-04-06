@@ -254,7 +254,7 @@ TEST(BoardOpenStateTest, UpdateSemiThreeBlackTest)
   // N | . . . . . . . . . . . . . | N 
   // O + --------------------------+ O 
   //   A B C D E F G H I J K L M N O 
-   MoveList board_move_list("hhigff");
+  MoveList board_move_list("hhigff");
   BitBoard bit_board(board_move_list);
   MovePosition move = board_move_list.GetLastMove();
 
@@ -321,4 +321,39 @@ TEST(BoardOpenStateTest, UpdateSemiThreeWhiteTest)
   }
 }
 
+TEST(BoardOpenStateTest, IsEqualTest)
+{
+  BoardOpenState state_1, state_2;
+
+  EXPECT_TRUE(IsEqual(state_1, state_2));
+
+  MoveList board_move_list("hhigff");
+  BitBoard bit_board(board_move_list);
+  MovePosition move = board_move_list.GetLastMove();
+  state_1.Update<kBlackTurn>(move, bit_board);
+
+  EXPECT_FALSE(IsEqual(state_1, state_2));
+
+  // 空間状態がすべて空になる
+  move = kMoveEE;
+  bit_board.SetState<kWhiteStone>(move);
+  state_1.Update<kWhiteTurn>(move, bit_board);
+
+  EXPECT_TRUE(IsEqual(state_1, state_2));
+}
+
+TEST(BoardOpenStateTest, CopyTest)
+{
+  BoardOpenState state_1, state_2;
+
+  MoveList board_move_list("hhigff");
+  BitBoard bit_board(board_move_list);
+  MovePosition move = board_move_list.GetLastMove();
+  state_1.Update<kBlackTurn>(move, bit_board);
+
+  EXPECT_FALSE(IsEqual(state_1, state_2));
+
+  Copy(state_1, &state_2);
+  EXPECT_TRUE(IsEqual(state_1, state_2));
+}
 }   // namespace realcore
