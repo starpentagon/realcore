@@ -225,6 +225,15 @@ TEST_F(OpenStateTest, GetOpenPositionTest)
   EXPECT_EQ(open_position, open_state.GetOpenPosition());
 }
 
+TEST_F(OpenStateTest, GetPatternPositionTest)
+{
+  constexpr BoardPosition open_position = 1;
+  constexpr BoardPosition pattern_position = 2;
+
+  OpenState<kNextOverline> open_state(open_position, pattern_position);
+  EXPECT_EQ(pattern_position, open_state.GetPatternPosition());
+}
+
 TEST_F(OpenStateTest, IsEqualTest)
 {
   constexpr BoardPosition open_position_1 = 0, open_position_2 = 0, open_position_3 = 1;

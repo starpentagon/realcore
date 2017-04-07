@@ -55,6 +55,12 @@ inline const BoardPosition OpenState<Pattern>::GetOpenPosition() const
 }
 
 template<OpenStatePattern Pattern>
+inline const BoardPosition OpenState<Pattern>::GetPatternPosition() const
+{
+  return pattern_position_;
+}
+
+template<OpenStatePattern Pattern>
 inline const std::vector<BoardPosition>& OpenState<Pattern>::GetCheckPositionList() const
 {
   return check_position_list_;

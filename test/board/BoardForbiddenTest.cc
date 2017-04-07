@@ -3,22 +3,20 @@
 
 #include "Move.h"
 #include "MoveList.h"
-#include "BitBoard.h"
+#include "Board.h"
 
 using namespace std;
 
 namespace realcore
 {
-class BitBoardTest
+class BoardTest
 : public ::testing::Test
 {
 public:
 };
 
-TEST_F(BitBoardTest, IsOverlineTest)
+TEST_F(BoardTest, IsOverlineTest)
 {
-  const auto in_board_move_list = GetAllInBoardMove();
-
   {
     // 長連
     //   A B C D E F G H I J K L M N O 
@@ -38,28 +36,18 @@ TEST_F(BitBoardTest, IsOverlineTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhigihghjhhgmhhilhii"));
+    Board board(MoveList("hhigihghjhhgmhhilhii"));
+    MoveBitSet forbidden_move_set;
 
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      if(move == kMoveKH){
-        EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-      }else{
-        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-      }
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveKH]);
   }
 }
 
-TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
+TEST_F(BoardTest, IsOneLineDoubleFourTest)
 {
-  const auto in_board_move_list = GetAllInBoardMove();
-
   {
     // 両頭の四々_1
     //   A B C D E F G H I J K L M N O 
@@ -79,23 +67,13 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhignhghkhkilhoh"));
+    Board board(MoveList("hhignhghkhkilhoh"));
+    MoveBitSet forbidden_move_set;
 
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      if(move == kMoveJH){
-        EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }else{
-        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveJH]);
   }
   {
     // 両頭の四々_2
@@ -116,23 +94,13 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhhihbhahdgehfie"));
+    Board board(MoveList("hhhihbhahdgehfie"));
+    MoveBitSet forbidden_move_set;
 
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      if(move == kMoveHE){
-        EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }else{
-        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveHE]);
   }
   {
     // 両頭の四々_3
@@ -153,23 +121,13 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhghnhohkhjgjhli"));
+    Board board(MoveList("hhghnhohkhjgjhli"));
+    MoveBitSet forbidden_move_set;
 
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      if(move == kMoveLH){
-        EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }else{
-        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveLH]);
   }
   {
     // 長蛇の四々_1
@@ -190,23 +148,13 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhgiigiioaggnbjhldhf"));
+    Board board(MoveList("hhgiigiioaggnbjhldhf"));
+    MoveBitSet forbidden_move_set;
 
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      if(move == kMoveKE){
-        EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }else{
-        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveKE]);
   }
   {
     // 長蛇の四々_2
@@ -227,23 +175,13 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhgiigiioaggnbjhkehf"));
+    Board board(MoveList("hhgiigiioaggnbjhkehf"));
+    MoveBitSet forbidden_move_set;
 
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      if(move == kMoveLD){
-        EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }else{
-        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveLD]);
   }
   {
     // 双竜の四々
@@ -264,30 +202,18 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhkkjjkiiiikddaabbbaccab"));
+    Board board(MoveList("hhkkjjkiiiikddaabbbaccab"));
+    MoveBitSet forbidden_move_set;
 
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      if(move == kMoveFF){
-        EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }else{
-        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveFF]);
   }
 }
 
-TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
+TEST_F(BoardTest, IsTwoLineDoubleFourTest)
 {
-  const auto in_board_move_list = GetAllInBoardMove();
-
   {
     // 四々(2直線, 四のみ)
     //   A B C D E F G H I J K L M N O 
@@ -307,23 +233,13 @@ TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhkkjjkiiikchfjcjdidielj"));
+    Board board(MoveList("hhkkjjkiiikchfjcjdidielj"));
+    MoveBitSet forbidden_move_set;
 
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      if(move == kMoveGG){
-        EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }else{
-        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveGG]);
   }
   {
     // 四々(2直線, 達四のみ)
@@ -344,23 +260,13 @@ TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhkkiiddeglddgdlffllfgbg"));
-  
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      if(move == kMoveGG){
-        EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }else{
-        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }
+    Board board(MoveList("hhkkiiddeglddgdlffllfgbg"));
+    MoveBitSet forbidden_move_set;
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
+
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveGG]);
   }
   {
     // 四々(2直線, 達四、四混在)
@@ -381,23 +287,67 @@ TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhkkiiddeglddgdlffjjfgbg"));
-  
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      if(move == kMoveGG){
-        EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }else{
-        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      }
+    Board board(MoveList("hhkkiiddeglddgdlffjjfgbg"));
+    MoveBitSet forbidden_move_set;
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
+
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveGG]);
+  }
+  {
+    // 四々
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . o . . x . . . . . | E 
+    // F | . . . x . x o o o x o . . | F 
+    // G | . . . . o o x x x o . . . | G 
+    // H | . . . . . o x . x . . . . | H 
+    // I | . . . . . x o o o x . . . | I 
+    // J | . . . . o . o x x o o o x o J 
+    // K | . . . . . x . o . x . . x | K 
+    // L | . . * . . . . . o x x x x o L 
+    // M | . . . . . . . . . o x . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhhihghfjgghiggggijfiefgefifgffejjjikkikkiljijhjlliigklfkfkgjhfjklkjmljllmmjnlolnkojnjkm"));
+    MoveBitSet forbidden_move_set;
+
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
+
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveNN]);
+  }
+  {
+    // 四々
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . o * . . | D 
+    // E | . . . . . . . . x . . . . | E 
+    // F | . . . . . . x x o x . . . | F 
+    // G | . . . . . . . o o x o . . | G 
+    // H | . . . . . . x o o x o . . | H 
+    // I | . . . . . . o o x o x . . | I 
+    // J | . . . . o o . o x . o . . | J 
+    // K | . . . . x x o x x x o x . | K 
+    // L | . . * . . . x x x o * . . | L 
+    // M | . . . . . . o x o . . . . | M 
+    // N | . . . . . . x x x . . . . | N 
+    // O + ----------o --o --o ------+ O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhhijjiiikkijijhkgighfihifljmklhkhlglijgkfjfjekdjkgjfkjmilhmimijgkhkhlfjjlkliniokklkhngojnko"));
+    MoveBitSet forbidden_move_set;
+
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
+
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveFN]);
   }
   {
     // 否禁(達四)
@@ -418,24 +368,17 @@ TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhldihddghdl"));
-  
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-      EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    Board board(MoveList("hhldihddghdl"));
+    MoveBitSet forbidden_move_set;
+
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
+
+    EXPECT_TRUE(forbidden_move_set.none());
   }
 }
 
-TEST_F(BitBoardTest, IsDoubleThreeTest)
+TEST_F(BoardTest, IsDoubleThreeTest)
 {
-  const auto in_board_move_list = GetAllInBoardMove();
-
   {
     // 三々
     //   A B C D E F G H I J K L M N O 
@@ -455,21 +398,13 @@ TEST_F(BitBoardTest, IsDoubleThreeTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhhggiggjhghkifg"));
-  
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      if(move == kMoveIG){
-        EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-      }else{
-        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-      }
+    Board board(MoveList("hhhggiggjhghkifg"));
+    MoveBitSet forbidden_move_set;
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
+
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveIG]);
   }
   {
     // 三々(禁点による否禁点の存在)
@@ -491,21 +426,13 @@ TEST_F(BitBoardTest, IsDoubleThreeTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O   
-    BitBoard bit_board(MoveList("hhhdlfldjjddkgllghdljihl"));
-  
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      if(move == kMoveJH){
-        EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-      }else{
-        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-      }
+    Board board(MoveList("hhhdlfldjjddkgllghdljihl"));
+    MoveBitSet forbidden_move_set;
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
+
+    ASSERT_EQ(1, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveJH]);
   }
   {
     // 三々(判定路が必要になる複雑なケース)
@@ -526,30 +453,20 @@ TEST_F(BitBoardTest, IsDoubleThreeTest)
     // N | . . . . . . . . . . . . . | N 
     // O + ------o --o --------o ----o O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhoobjahciagemeodigochlofmccellcgkhcdjoa"));
-  
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
-      
-      bool is_forbidden = move == kMoveDH;
-      is_forbidden |= move == kMoveCJ;
-      is_forbidden |= move == kMoveEJ;
-      is_forbidden |= move == kMoveCK;
-      is_forbidden |= move == kMoveDK;
-      is_forbidden |= move == kMoveEK;
-      is_forbidden |= move == kMoveDL;
-      is_forbidden |= move == kMoveFL;
+    Board board(MoveList("hhoobjahciagemeodigochlofmccellcgkhcdjoa"));
+    MoveBitSet forbidden_move_set;
 
-      if(is_forbidden){
-        EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-      }else{
-        EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-      }
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    ASSERT_EQ(8, forbidden_move_set.count());
+    EXPECT_TRUE(forbidden_move_set[kMoveDH]);
+    EXPECT_TRUE(forbidden_move_set[kMoveCJ]);
+    EXPECT_TRUE(forbidden_move_set[kMoveEJ]);
+    EXPECT_TRUE(forbidden_move_set[kMoveCK]);
+    EXPECT_TRUE(forbidden_move_set[kMoveDK]);
+    EXPECT_TRUE(forbidden_move_set[kMoveEK]);
+    EXPECT_TRUE(forbidden_move_set[kMoveDL]);
+    EXPECT_TRUE(forbidden_move_set[kMoveFL]);
   }
   {
     // 否禁(三々)
@@ -570,29 +487,12 @@ TEST_F(BitBoardTest, IsDoubleThreeTest)
     // N | o . . . . . . . . . . . . | N 
     // O o --o --o --o --o --o --o --+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhbdddamecbnfdhdeecojdoakdndleaolfeoghgoeiioejkochmo"));
-  
-    for(const auto move : in_board_move_list){
-      if(bit_board.GetState(move) != kOpenPosition){
-        continue;
-      }
+    Board board(MoveList("hhbdddamecbnfdhdeecojdoakdndleaolfeoghgoeiioejkochmo"));
+    MoveBitSet forbidden_move_set;
 
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
-  }
-  {
-    // 盤内以外
-    BitBoard bit_board;
+    board.EnumerateForbiddenMoves(&forbidden_move_set);
 
-    for(auto move : GetAllMove()){
-      if(IsInBoardMove(move)){
-        continue;
-      }
-
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-      EXPECT_FALSE(bit_board.IsForbiddenMove<kWhiteTurn>(move));
-    }
+    EXPECT_TRUE(forbidden_move_set.none());
   }
 }
 }

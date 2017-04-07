@@ -120,10 +120,6 @@ public:
   template<PlayerTurn P>
   const bool IsDoubleFourMove(const MovePosition move) const;
 
-  //! @brief 指し手が三々かチェックする
-  template<PlayerTurn P>
-  const bool IsDoubleThreeMove(const MovePosition move) const;
-
   //! @brief 指し手が禁手かチェックする
   //! @param move 指し手位置
   //! @retval true 指し手が禁手

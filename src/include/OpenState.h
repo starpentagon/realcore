@@ -63,6 +63,9 @@ public:
   //! @brief 空点の盤面位置を返す
   const BoardPosition GetOpenPosition() const;
 
+  //! @brief パターンの開始位置を返す
+  const BoardPosition GetPatternPosition() const;
+
   //! @brief チェック対象位置のリストを取得する
   const std::vector<BoardPosition>& GetCheckPositionList() const;
   
