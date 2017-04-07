@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
 
   option.add_options()
     ("db", value<string>(), "棋譜データベース(csv)")
+    ("open-state", "空点状態による列挙法を使用")
     ("help,h", "ヘルプを表示");
   
   variables_map arg_map;
@@ -58,16 +59,24 @@ int main(int argc, char* argv[])
   vector< shared_ptr<MoveList> > forbidden_board_list, forbidden_move_list;
   auto start_time = chrono::system_clock::now();
   size_t board_count = 0, forbidden_count = 0;
+  const bool is_open_state_method = arg_map.count("open-state");
 
   for(const auto& move_list : board_move_list){
     MoveList board_move;
+    Board board;
 
     for(const auto move : (*move_list)){
       board_move += move;
       board_count++;
 
       MoveList forbidden_move;
-      CheckEachPoint(board_move, &forbidden_move);
+
+      if(is_open_state_method){
+        board.MakeMove(move);
+        EnumerateOpenState(board, &forbidden_move);
+      }else{
+        CheckEachPoint(board_move, &forbidden_move);
+      }
 
       if(!forbidden_move.empty()){
         // 禁手が存在する場合は盤面と禁手リストを記録する
@@ -95,7 +104,7 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-void CheckEachPoint(const realcore::MoveList &board_move, realcore::MoveList * const forbidden_move)
+void CheckEachPoint(const MoveList &board_move, MoveList * const forbidden_move)
 {
   if(!board_move.IsBlackTurn()){
     return;
@@ -112,6 +121,18 @@ void CheckEachPoint(const realcore::MoveList &board_move, realcore::MoveList * c
     }
 
     if(bit_board.IsForbiddenMove<kBlackTurn>(move)){
+      (*forbidden_move) += move;
+    }
+  }
+}
+
+void EnumerateOpenState(const Board &board, MoveList * const forbidden_move)
+{
+  MoveBitSet forbidden_bit_set;
+  board.EnumerateForbiddenMoves(&forbidden_bit_set);
+
+  for(const auto move : GetAllInBoardMove()){
+    if(forbidden_bit_set[move]){
       (*forbidden_move) += move;
     }
   }

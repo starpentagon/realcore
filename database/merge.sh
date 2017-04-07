@@ -1,6 +1,6 @@
 #!/bin/bash
 
-diagram_db='diagram_db.csv'
+diagram_db='game_record_db_raw.csv'
 
 if [ -e ${diagram_db} ]; then
   rm ${diagram_db}

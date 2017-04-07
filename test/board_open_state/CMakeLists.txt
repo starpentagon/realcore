@@ -1,13 +1,8 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # プロジェクト名
-set(project_name enumerate_forbidden_move)
+set(project_name board_open_state_test)
 project(${project_name} CXX)
-
-# Build Type(Release or Debug)
-#set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_BUILD_TYPE Release)
-# message(STATUS "${CMAKE_CXX_FLAGS_RELEASE}")
 
 # ccache
 find_program(CCACHE_FOUND ccache)
@@ -21,22 +16,25 @@ add_definitions("-Wall -std=c++14")
 
 # インクルードパス
 include_directories($ENV{REALCORE_DIR}/src/include)
+include_directories($ENV{GTEST_DIR}/googletest/include)
 
 # ライブラリパス
-link_directories($ENV{BOOST_DIR}/lib)
+link_directories($ENV{GTEST_DIR}/googlemock/gtest)
 
 # ソースファイル
 add_executable(
     ${project_name}
-    $ENV{REALCORE_DIR}/src/CSVReader.cc
     $ENV{REALCORE_DIR}/src/MoveList.cc
+    $ENV{REALCORE_DIR}/src/BitBoard.cc
     $ENV{REALCORE_DIR}/src/LineNeighborhood.cc
     $ENV{REALCORE_DIR}/src/BoardOpenState.cc
-    $ENV{REALCORE_DIR}/src/Board.cc
-    $ENV{REALCORE_DIR}/src/BitBoard.cc
-    ../EnumerateForbiddenMove.cc
+    ../BoardOpenStateTest.cc
 )
 
 # ライブラリ
-target_link_libraries(${project_name} boost_program_options)
+target_link_libraries(${project_name} gtest)
+target_link_libraries(${project_name} gtest_main)
+
+# Ubuntuでgoogle testをビルドするためにはpthreadが必要
+target_link_libraries(${project_name} pthread)
 

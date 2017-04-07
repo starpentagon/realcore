@@ -15,10 +15,87 @@ inline const size_t GetBitBoardIndex(const BoardPosition board_position)
   return index;
 }
 
+template<BoardDirection kDirection>
+inline const size_t GetBitBoardIndex(const Cordinate x, const Cordinate y)
+{
+  assert(IsInBoard(x, y));
+
+  switch(kDirection)
+  {
+  case kLateralDirection:
+    return y / 2;
+  case kVerticalDirection:
+    return x / 2 + 8;
+  case kLeftDiagonalDirection:
+    return ((x + y - 2) % 16) / 2 + 16;
+  case kRightDiagonalDirection: 
+    return ((y - x + 14) % 16) / 2 + 24;
+  default:
+    assert(false);
+    return 0;
+  }
+}
+
+inline const size_t GetBitBoardIndex(const Cordinate x, const Cordinate y, const BoardDirection direction)
+{
+  switch(direction)
+  {
+  case kLateralDirection:
+    return GetBitBoardIndex<kLateralDirection>(x, y);
+  case kVerticalDirection:
+    return GetBitBoardIndex<kVerticalDirection>(x, y);
+  case kLeftDiagonalDirection:
+    return GetBitBoardIndex<kLeftDiagonalDirection>(x, y);
+  case kRightDiagonalDirection: 
+    return GetBitBoardIndex<kRightDiagonalDirection>(x, y);
+  default:
+    assert(false);
+    return 0;
+  }
+}
+
 inline const size_t GetBitBoardShift(const BoardPosition board_position)
 {
   const size_t shift_val = 2 * (board_position % 32);
   return shift_val;
+}
+
+template<BoardDirection kDirection>
+inline const size_t GetBitBoardShift(const Cordinate x, const Cordinate y)
+{
+  assert(IsInBoard(x, y));
+
+  switch(kDirection)
+  {
+  case kLateralDirection:
+    return 2 * x + 32 * (y % 2);
+  case kVerticalDirection:
+    return 2 * y + 32 * (x % 2);
+  case kLeftDiagonalDirection:
+  case kRightDiagonalDirection: 
+    return 2 * (y - 1) + 32 * ((x + y) % 2);
+  default:
+    assert(false);
+    return 0;
+  }
+}
+
+inline const size_t GetBitBoardShift(const Cordinate x, const Cordinate y, const BoardDirection direction)
+{
+  switch(direction)
+  {
+  case kLateralDirection:
+    return GetBitBoardShift<kLateralDirection>(x, y);
+  case kVerticalDirection:
+    return GetBitBoardShift<kVerticalDirection>(x, y);
+  case kLeftDiagonalDirection:
+    return GetBitBoardShift<kLeftDiagonalDirection>(x, y);
+  case kRightDiagonalDirection: 
+    return GetBitBoardShift<kRightDiagonalDirection>(x, y);
+  default:
+    assert(false);
+    return 0;
+  }
 }
 
 inline const PositionState BitBoard::GetState(const MovePosition move) const
@@ -42,22 +119,16 @@ inline const PositionState BitBoard::GetState(const BoardPosition board_position
 
 inline void GetBitBoardIndexList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const index_list)
 {
-  assert(IsInBoard(x, y));
-
-  (*index_list)[kLateralDirection] = y / 2;
-  (*index_list)[kVerticalDirection] = x / 2 + 8;
-  (*index_list)[kLeftDiagonalDirection] = ((x + y - 2) % 16) / 2 + 16;
-  (*index_list)[kRightDiagonalDirection] = ((y - x + 14) % 16) / 2 + 24;
+  for(const auto direction : GetBoardDirection()){
+    (*index_list)[direction] = GetBitBoardIndex(x, y, direction);
+  }
 }
 
 inline void GetBitBoardShiftList(const Cordinate x, const Cordinate y, std::array<size_t, kBoardDirectionNum> * const shift_list)
 {
-  assert(IsInBoard(x, y));
-
-  (*shift_list)[kLateralDirection] = 2 * x + 32 * (y % 2);
-  (*shift_list)[kVerticalDirection] = 2 * y + 32 * (x % 2);
-  (*shift_list)[kLeftDiagonalDirection] = 2 * (y - 1) + 32 * ((x + y) % 2);
-  (*shift_list)[kRightDiagonalDirection] = 2 * (y - 1) + 32 * ((x + y) % 2);
+  for(const auto direction : GetBoardDirection()){
+    (*shift_list)[direction] = GetBitBoardShift(x, y, direction);
+  }
 }
 
 template<>
@@ -168,6 +239,17 @@ inline void BitBoard::SetState(const MovePosition move, const PositionState stat
 inline const BoardPosition GetBoardPosition(const size_t index, const size_t shift)
 {
   return (32 * index + shift / 2);
+}
+
+inline const BoardPosition GetBoardPosition(const MovePosition move, const BoardDirection direction)
+{
+  Cordinate x = 0, y = 0;
+  GetMoveCordinate(move, &x, &y);
+
+  const size_t index = GetBitBoardIndex(x, y, direction);
+  const size_t shift = GetBitBoardShift(x, y, direction);
+
+  return GetBoardPosition(index, shift);
 }
 
 inline const BoardDirection GetBoardDirection(const BoardPosition board_position)

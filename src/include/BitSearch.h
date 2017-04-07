@@ -29,14 +29,14 @@ enum ForbiddenCheckState : std::uint8_t
 //! @param state_bit StateBit
 //! @retval シフト後のStateBit
 template<size_t N>
-inline const StateBit RightShift(const StateBit state_bit);
+inline constexpr StateBit RightShift(const StateBit state_bit);
 
 //! @brief 状態を左シフトする
 //! @param N 左シフトする状態数
 //! @param state_bit StateBit
 //! @retval シフト後のStateBit
 template<size_t N>
-inline const StateBit LeftShift(const StateBit state_bit);
+inline constexpr StateBit LeftShift(const StateBit state_bit);
 
 //! @brief 状態文字列([B|W|O|X]*)に対応するStateBitを返す
 //! @param str 状態文字列([B|W|O|X| ]*)
@@ -73,6 +73,10 @@ inline constexpr std::uint64_t GetWhiteStoneBit(const StateBit state_bit);
 template<PlayerTurn P>
 constexpr std::uint64_t GetPlayerStoneBit(const StateBit state_bit);
 
+static constexpr size_t kSixStonePattern = 6;    //<! 6個の石のパターン
+static constexpr size_t kFiveStonePattern = 5;   //<! 5個の石のパターン
+static constexpr size_t kFourStonePattern = 4;   //<! 4個の石のパターン
+
 //! @brief 空点フラグを返す
 //! @param state_bit State Bit
 //! @retval 空点の位置に1を立てた値
@@ -94,6 +98,30 @@ inline const std::uint64_t GetConsectiveStoneBit(const std::uint64_t stone_bit);
 //! @note 検索結果には合致したパターンの最小シフト量の位置に１を立てた値が入る
 template<size_t N>
 inline void GetStoneWithOneOpenBit(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, N> * const pattern_bit_list);
+
+//! @brief [BnO1][WnO1]パターンのOの位置を返す
+//! @param index 検索結果のindex
+//! @param pattern_bit 検索結果フラグ
+inline const std::uint64_t GetOpenBitInPattern(const size_t index, const std::uint64_t pattern_bit);
+
+static const size_t kTwoOfFourPattern = 6;   // = 4C2
+static const size_t kTwoOfFivePattern = 10;  // = 10C2
+
+//! @brief [BnO2][WnO2]パターンを検索する
+//! @param N パターン長(=n+2C2=(n+2)(n+1)/2)
+//! @param stone_bit 黒石 or 白石フラグ
+//! @param open_bit 空点フラグ
+//! @param pattern_bit_list 検索結果フラグ
+//! @note pattern_bit_listにはOの位置が(0, 1)(0, 2),...,(3, 4)に対応する検索結果が格納される
+//! @note 検索結果には合致したパターンの最小シフト量の位置に１を立てた値が入る
+template<size_t N>
+inline void GetStoneWithTwoOpenBit(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, N> * const pattern_bit_list);
+
+//! @brief [BnO2][WnO2]パターンのOの位置の小さい方を返す
+inline const size_t GetLessIndexOfTwo(const size_t index);
+
+//! @brief [BnO2][WnO2]パターンのOの位置の大きい方を返す
+inline const size_t GetGreaterIndexOfTwo(const size_t index);
 
 //! @brief ビットの数が1つだけ立っているかをチェックする
 //! @param bit ビット数を求めるbit(i=1,2)
