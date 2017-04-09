@@ -19,19 +19,25 @@ int main(int argc, char* argv[])
 
   option.add_options()
     ("db", value<string>(), "棋譜データベース(csv)")
-    ("open-state", "空点状態による列挙法を使用")
+    ("mode", value<string>()->default_value("point"), "point:各点チェック, enum:列挙法, enum-diff:差分法列挙")
     ("help,h", "ヘルプを表示");
   
   variables_map arg_map;
   store(parse_command_line(argc, argv, option), arg_map);
 
-  if(arg_map.count("help") || !arg_map.count("db")){
+  const auto mode = arg_map["mode"].as<string>();
+  bool is_help = arg_map.count("help") || !arg_map.count("db");
+  is_help |= !(mode == "point" || mode == "enum" || mode == "enum-diff");
+
+  if(is_help){
     cout << "Usage: " << argv[0] << " [options]" << endl;
     cout << option;
     cout << endl;
 
     return 0;
   }
+
+  cerr << "Mode: " << mode << endl;
 
   // 棋譜データベースの読込
   const string diagram_db_file = arg_map["db"].as<string>();
@@ -59,21 +65,29 @@ int main(int argc, char* argv[])
   vector< shared_ptr<MoveList> > forbidden_board_list, forbidden_move_list;
   auto start_time = chrono::system_clock::now();
   size_t board_count = 0, forbidden_count = 0;
-  const bool is_open_state_method = arg_map.count("open-state");
 
   for(const auto& move_list : board_move_list){
     MoveList board_move;
     Board board;
+    BitBoard bit_board;
+    bool is_black_turn = true;
 
     for(const auto move : (*move_list)){
-      board_move += move;
-      board_count++;
-
       MoveList forbidden_move;
+      board_move += move;
 
-      if(is_open_state_method){
+      if(mode == "enum-diff"){
         board.MakeMove(move);
         EnumerateOpenState(board, &forbidden_move);
+      }else if(mode == "enum"){
+        if(is_black_turn){
+          bit_board.SetState<kBlackStone>(move);
+        }else{
+          bit_board.SetState<kWhiteStone>(move);
+          EnumerateOpenState(bit_board, &forbidden_move);
+        }
+  
+        is_black_turn = !is_black_turn;
       }else{
         CheckEachPoint(board_move, &forbidden_move);
       }
@@ -88,6 +102,8 @@ int main(int argc, char* argv[])
 
         forbidden_count += forbidden_move.size();
       }
+
+      board_count++;
     }
   }
 
@@ -130,6 +146,18 @@ void EnumerateOpenState(const Board &board, MoveList * const forbidden_move)
 {
   MoveBitSet forbidden_bit_set;
   board.EnumerateForbiddenMoves(&forbidden_bit_set);
+
+  for(const auto move : GetAllInBoardMove()){
+    if(forbidden_bit_set[move]){
+      (*forbidden_move) += move;
+    }
+  }
+}
+
+void EnumerateOpenState(const BitBoard &bit_board, MoveList * const forbidden_move)
+{
+  MoveBitSet forbidden_bit_set;
+  bit_board.EnumerateForbiddenMoves(&forbidden_bit_set);
 
   for(const auto move : GetAllInBoardMove()){
     if(forbidden_bit_set[move]){
