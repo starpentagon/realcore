@@ -104,6 +104,9 @@ inline void GetStoneWithOneOpenBit(const std::uint64_t stone_bit, const std::uin
 //! @param pattern_bit 検索結果フラグ
 inline const std::uint64_t GetOpenBitInPattern(const size_t index, const std::uint64_t pattern_bit);
 
+//! @brief [BnOm][WnOm]のパターン位置(BoardPosition)と空点indexから空点のBoardPositionを返す
+inline const BoardPosition GetOpenBoardPosition(const BoardPosition pattern_position, const size_t open_index);
+
 static const size_t kTwoOfFourPattern = 6;   // = 4C2
 static const size_t kTwoOfFivePattern = 10;  // = 10C2
 

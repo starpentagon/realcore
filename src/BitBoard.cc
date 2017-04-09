@@ -3,6 +3,7 @@
 
 #include "MoveList.h"
 #include "LineNeighborhood.h"
+#include "BoardOpenState.h"
 #include "BitBoard.h"
 
 using namespace std;
@@ -85,7 +86,7 @@ const bool BitBoard::IsForbiddenMove<kBlackTurn>(const MovePosition move) const
   // 禁手チェックはmoveの長さ5の直線近傍をチェックすれば十分
   // @see doc/06_forbidden_check/forbidden_check.pptx
   constexpr size_t kForbiddenCheck = 5;
-  LineNeighborhood<kForbiddenCheck> line_neighbor(move, *this);
+  LineNeighborhood line_neighbor(move, kForbiddenCheck, *this);
 
   line_neighbor.SetCenterState<kBlackStone>();
 
@@ -137,6 +138,195 @@ const bool BitBoard::IsForbiddenMove<kWhiteTurn>(const MovePosition move) const
 {
   // 白番に禁手はない
   return false;
+}
+
+void BitBoard::GetBoardOpenState(BoardOpenState * const board_open_state) const
+{
+  assert(board_open_state->empty());
+
+  for(size_t index=0; index<kBitBoardElementNum; index++)
+  {
+    const auto state_bit = bit_board_[index];
+    const auto black_bit = GetBlackStoneBit(state_bit);
+    const auto white_bit = GetWhiteStoneBit(state_bit);
+    const auto open_bit = GetOpenPositionBit(state_bit);
+
+    GetOpenStateOverline(index, black_bit, open_bit, board_open_state);
+
+    GetOpenStateOpenFour<kBlackTurn>(index, black_bit, open_bit, board_open_state);
+    GetOpenStateOpenFour<kWhiteTurn>(index, white_bit, open_bit, board_open_state);
+
+    GetOpenStateFour<kBlackTurn>(index, black_bit, open_bit, board_open_state);
+    GetOpenStateFour<kWhiteTurn>(index, white_bit, open_bit, board_open_state);
+
+    GetOpenStateSemiThree<kBlackTurn>(index, black_bit, open_bit, board_open_state);
+    GetOpenStateSemiThree<kWhiteTurn>(index, white_bit, open_bit, board_open_state);
+  }
+}
+
+void BitBoard::GetOpenStateOverline(const size_t index, const std::uint64_t stone_bit, const std::uint64_t open_bit, BoardOpenState * const board_open_state) const
+{
+  assert(board_open_state != nullptr);
+
+  // @todo stone_bitが0, 1-bitでないことを事前チェックすることで高速化する可能性あり
+  std::array<std::uint64_t, kFourStonePattern> overline_search{{0}};
+  SearchNextOverline(stone_bit, open_bit, &overline_search);
+
+  for(size_t pattern_index=0; pattern_index<kFourStonePattern; pattern_index++){
+    const auto search_bit = overline_search[pattern_index];
+    std::vector<size_t> bit_index_list;
+    
+    GetBitIndexList(search_bit, &bit_index_list);
+
+    for(const auto shift : bit_index_list){
+      const BoardPosition pattern_position = GetBoardPosition(index, shift);
+      const BoardPosition open_position = GetOpenBoardPosition(pattern_position, pattern_index);
+      board_open_state->AddNextOverline(open_position, pattern_position);
+    }
+  }
+}
+
+void BitBoard::EnumerateForbiddenMoves(const BoardOpenState &board_open_state, MoveBitSet * const forbidden_move_set) const
+{
+  assert(forbidden_move_set != nullptr);
+  assert(forbidden_move_set->none());
+
+  {
+    // 長連点
+    const auto& next_overline_list = board_open_state.GetNextOverline();
+    
+    for(const auto &open_state : next_overline_list){
+      const auto open_position = open_state.GetOpenPosition();
+      const auto move = GetBoardMove(open_position);
+
+      forbidden_move_set->set(move);
+    }
+  }
+  {
+    // 四々点
+    const auto& next_open_four_list = board_open_state.GetNextOpenFourBlack();
+
+    // 達四があると四ノビパターンが２回マッチされてしまう
+    // ->達四の空点位置とパターン位置が一致する四はスキップしてカウントする。
+    // ->達四の空点位置とパターン位置を記録しておく
+    vector<int> open_four_key_list;
+    open_four_key_list.reserve(next_open_four_list.size());
+
+    for(const auto &open_state : next_open_four_list){
+      // XO[B3O1]OXの一番の右のOの位置を五連を作る位置の一つとして記録する
+      const auto pattern_position = open_state.GetPatternPosition();
+      const auto open_position = open_state.GetOpenPosition();
+      const int open_four_key = (static_cast<int>(open_position) << 16) | static_cast<int>(pattern_position);
+      open_four_key_list.emplace_back(open_four_key);
+    }
+
+    // 同一空点に五連を作る位置が２ヶ所以上あるかを調べる
+    array<int, kMoveNum> next_five_position_table;
+    next_five_position_table.fill(-1);
+
+    const auto& next_four_list = board_open_state.GetNextFourBlack();
+
+    for(const auto &open_state : next_four_list){
+      const auto pattern_position = open_state.GetPatternPosition();
+      const auto open_position = open_state.GetOpenPosition();
+      const int open_four_key = (static_cast<int>(open_position) << 16) | static_cast<int>(pattern_position);
+
+      // 達四と空点位置, パターン位置が一致する四はスキップする
+      vector<int>::const_iterator find_it = find(open_four_key_list.begin(), open_four_key_list.end(), open_four_key);
+
+      if(find_it != open_four_key_list.end()){
+        // 達四にマッチした四パターンのためスキップする
+        continue;
+      }
+
+      const auto next_five_position = open_state.GetGuardPositionList()[0];   // 防手位置 = 次に五連を作る位置
+      const auto move = GetBoardMove(open_position);
+
+      const bool is_double_four = next_five_position_table[move] >= 0 && next_five_position_table[move] != static_cast<int>(next_five_position);
+      next_five_position_table[move] = next_five_position;
+
+      if(is_double_four){
+        forbidden_move_set->set(move);
+      }
+    }
+  }
+  
+  // 三々点
+  const auto& next_semi_three_list = board_open_state.GetNextSemiThreeBlack();
+  vector<MovePosition> multi_semi_three_move_list;
+  multi_semi_three_move_list.reserve(next_semi_three_list.size() / 2);    // 三々点１つに三ノビ点は２つはあるため三々点は三ノビ点の半数以下
+    
+  {
+    // 見かけの三々点
+    // 2方向以上で見かけの三々になる指し手位置を求める
+    array<bitset<kBoardDirectionNum>, kMoveNum> move_direction_semi_three;
+
+    for(const auto &open_state : next_semi_three_list){
+      const auto open_position = open_state.GetOpenPosition();
+      const auto move = GetBoardMove(open_position);
+      const auto direction = GetBoardDirection(open_position);
+
+      move_direction_semi_three[move].set(direction);
+    }
+
+    for(const auto &open_state : next_semi_three_list){
+      const auto open_position = open_state.GetOpenPosition();
+      const auto move = GetBoardMove(open_position);
+
+      if(move_direction_semi_three[move].count() >= 2){
+        multi_semi_three_move_list.emplace_back(move);
+        move_direction_semi_three[move].reset();
+      }
+    }
+  }
+
+  if(multi_semi_three_move_list.empty()){
+    return;
+  }
+
+  // 「見かけの三々」が「三々」かチェックする
+  array<bitset<kBoardDirectionNum>, kMoveNum> move_direction_three;
+  BitBoard check_bit_board(*this);
+
+  for(const auto &open_state : next_semi_three_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    vector<MovePosition>::const_iterator find_it = find(multi_semi_three_move_list.begin(), multi_semi_three_move_list.end(), move);
+    
+    if(find_it == multi_semi_three_move_list.end()){
+      // 「見かけの三々」点ではない
+      continue;
+    }
+    
+    const auto direction = GetBoardDirection(open_position);
+    
+    if(move_direction_three[move].test(direction)){
+      // チェック済の方向
+      continue;
+    }
+
+    check_bit_board.SetState<kBlackStone>(move);
+
+    for(const auto check_position : open_state.GetCheckPositionList()){
+      const auto check_move = GetBoardMove(check_position);
+      const bool is_forbidden = check_bit_board.IsForbiddenMove<kBlackTurn>(check_move);
+
+      if(is_forbidden){
+        continue;
+      }
+      
+      move_direction_three[move].set(direction);
+
+      if(move_direction_three[move].count() >= 2){
+        forbidden_move_set->set(move);
+      }
+
+      break;
+    }
+
+    check_bit_board.SetState<kOpenPosition>(move);
+  }
 }
 
 const string BitBoard::str() const

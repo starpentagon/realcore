@@ -3,6 +3,7 @@
 #include "MoveList.h"
 #include "OpenState.h"
 #include "LineNeighborhood.h"
+#include "BitBoard.h"
 
 using namespace std;
 
@@ -13,8 +14,9 @@ class LineNeighborhoodTest
 {
 public:
   void DefaultConstructorTest(){
+    constexpr size_t distance = 1;
     BitBoard bit_board;
-    LineNeighborhood<1> line_neighborhood(kMoveHH, bit_board);
+    LineNeighborhood line_neighborhood(kMoveHH, distance, bit_board);
 
     const StateBit expect_bit = (GetStateBit("OOOXXXXXX") << 32ULL) | GetStateBit("OOOXXXXXX");
 
@@ -28,10 +30,11 @@ public:
   void SetCenterStateTest()
   {
     BitBoard bit_board;
+    constexpr size_t distance = 1;
 
     {
       // 黒石設定
-      LineNeighborhood<1> line_neighborhood(kMoveHH, bit_board);
+      LineNeighborhood line_neighborhood(kMoveHH, distance, bit_board);
       line_neighborhood.SetCenterState<kBlackStone>();
       
       const StateBit expect_bit = (GetStateBit("OBOXXXXXX") << 32ULL) | GetStateBit("OBOXXXXXX");
@@ -42,7 +45,7 @@ public:
     }
     {
       // 白石設定
-      LineNeighborhood<1> line_neighborhood(kMoveHH, bit_board);
+      LineNeighborhood line_neighborhood(kMoveHH, distance, bit_board);
       line_neighborhood.SetCenterState<kWhiteStone>();
       
       const StateBit expect_bit = (GetStateBit("OWOXXXXXX") << 32ULL) | GetStateBit("OWOXXXXXX");
@@ -55,8 +58,10 @@ public:
 
   void GetBoardDirectionTest()
   {
+    constexpr size_t distance = 1;
+    
     BitBoard bit_board;
-    LineNeighborhood<1> line_neighborhood(kMoveHH, bit_board);
+    LineNeighborhood line_neighborhood(kMoveHH, distance, bit_board);
     
     {
       // 横方向
@@ -103,7 +108,9 @@ public:
   void GetBoardPositionListTest()
   {
     BitBoard bit_board;
-    LineNeighborhood<7> line_neighborhood(kMoveHH, bit_board);
+    constexpr size_t distance = 7;
+    
+    LineNeighborhood line_neighborhood(kMoveHH, distance, bit_board);
     LocalBitBoard bit_list{{0}};
 
     bit_list[0] = (0b1ULL << 0) | (0b01ULL << 34);
@@ -165,7 +172,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateOverlineTest)
   constexpr PlayerTurn P = GetPatternPlayerTurn(kPattern);
   BitBoard bit_board(MoveList("hhhgihghmhnhlhmgjh"));
   constexpr MovePosition move = kMoveJH;
-  LineNeighborhood<kOpenStateNeighborhoodSize> line_neighborhood(move, bit_board);
+  LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
   vector< OpenState<kPattern> > open_state_list, expect_list;
   line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
@@ -203,7 +210,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateOpenFourBlackTest)
   constexpr PlayerTurn P = GetPatternPlayerTurn(kPattern);
   BitBoard bit_board(MoveList("hhhgihigjh"));
   constexpr MovePosition move = kMoveJH;
-  LineNeighborhood<kOpenStateNeighborhoodSize> line_neighborhood(move, bit_board);
+  LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
   vector< OpenState<kPattern> > open_state_list, expect_list;
   line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
@@ -247,7 +254,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateOpenFourWhiteTest)
   constexpr PlayerTurn P = GetPatternPlayerTurn(kPattern);
   BitBoard bit_board(MoveList("hhhgihigjhjg"));
   constexpr MovePosition move = kMoveJG;
-  LineNeighborhood<kOpenStateNeighborhoodSize> line_neighborhood(move, bit_board);
+  LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
   vector< OpenState<kPattern> > open_state_list, expect_list;
   line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
@@ -291,7 +298,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateFourBlackTest)
   constexpr PlayerTurn P = GetPatternPlayerTurn(kPattern);
   BitBoard bit_board(MoveList("hhighfkehd"));
   constexpr MovePosition move = kMoveHD;
-  LineNeighborhood<kOpenStateNeighborhoodSize> line_neighborhood(move, bit_board);
+  LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
   vector< OpenState<kPattern> > open_state_list, expect_list;
   line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
@@ -343,7 +350,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateFourWhiteTest)
   constexpr PlayerTurn P = GetPatternPlayerTurn(kPattern);
   BitBoard bit_board(MoveList("hhighfkehdmc"));
   constexpr MovePosition move = kMoveMC;
-  LineNeighborhood<kOpenStateNeighborhoodSize> line_neighborhood(move, bit_board);
+  LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
   vector< OpenState<kPattern> > open_state_list, expect_list;
   line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
@@ -395,7 +402,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeBlackTest)
   constexpr PlayerTurn P = GetPatternPlayerTurn(kPattern);
   BitBoard bit_board(MoveList("hhigff"));
   constexpr MovePosition move = kMoveFF;
-  LineNeighborhood<kOpenStateNeighborhoodSize> line_neighborhood(move, bit_board);
+  LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
   vector< OpenState<kPattern> > open_state_list, expect_list;
   line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
@@ -493,7 +500,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeWhiteTest)
   constexpr PlayerTurn P = GetPatternPlayerTurn(kPattern);
   BitBoard bit_board(MoveList("hhigffid"));
   constexpr MovePosition move = kMoveID;
-  LineNeighborhood<kOpenStateNeighborhoodSize> line_neighborhood(move, bit_board);
+  LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
   vector< OpenState<kPattern> > open_state_list, expect_list;
   line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);

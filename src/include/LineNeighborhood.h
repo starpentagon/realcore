@@ -28,11 +28,10 @@ template<OpenStatePattern Pattern> class OpenState;
 class BitBoard;
 
 //! @brief moveを中心としたN路の直線近傍を管理するクラス
-template<size_t N>
 class LineNeighborhood{
     friend class LineNeighborhoodTest;
 public:
-  LineNeighborhood(const MovePosition move, const BitBoard &board);
+  LineNeighborhood(const MovePosition move, const size_t distance, const BitBoard &board);
 
   //! @brief 中心に状態を設定する
   //! @param S 黒石 or 白石
@@ -107,6 +106,9 @@ private:
   
   //! @brief 中心位置
   MovePosition move_;
+
+  //! @brief 近傍の長さ
+  size_t distance_;
 };  // class LineNeighborhood
 
 }   // namespace realcore

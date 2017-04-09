@@ -9,7 +9,6 @@
 #include <cstdint>
 #include <array>
 #include <stack>
-#include <bitset>
 
 #include "RealCore.h"
 #include "BitBoard.h"
@@ -18,10 +17,6 @@
 
 namespace realcore
 {
-
-// 指し手のビットを管理するbitset
-typedef std::bitset<kMoveNum> MoveBitSet;
-
 // 前方宣言
 enum MovePosition : std::uint8_t;
 class BoardTest;

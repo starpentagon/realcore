@@ -2,29 +2,13 @@
 #define LINE_NEIGHBORHOOD_INL_H
 
 #include "MovePatternSearch.h"
-#include "BitBoard.h"
 #include "OpenState.h"
 #include "LineNeighborhood.h"
 
 namespace realcore
 {
-
-template<size_t N>
-LineNeighborhood<N>::LineNeighborhood(const MovePosition move, const BitBoard &bit_board)
-: local_bit_board_{{0}}, move_(move)
-{
-  std::array<StateBit, kBoardDirectionNum> line_neighborhood;
-  bit_board.GetLineNeighborhoodStateBit<N>(move, &line_neighborhood);
-
-  local_bit_board_[0] |= line_neighborhood[kLateralDirection];
-  local_bit_board_[0] |= line_neighborhood[kVerticalDirection] << 32ULL;
-  local_bit_board_[1] |= line_neighborhood[kLeftDiagonalDirection];
-  local_bit_board_[1] |= line_neighborhood[kRightDiagonalDirection] << 32ULL;
-}
-
-template<size_t N>
 template<PositionState S>
-inline void LineNeighborhood<N>::SetCenterState()
+inline void LineNeighborhood::SetCenterState()
 {
   static_assert(S == kBlackStone || S == kWhiteStone, "PositionState must be kBlackStone or kWhiteStone");
   
@@ -45,8 +29,7 @@ inline void LineNeighborhood<N>::SetCenterState()
   local_bit_board_[1] ^= stone_xor_mask;
 }
 
-template<size_t N>
-inline const BoardDirection LineNeighborhood<N>::GetBoardDirection(const size_t index, const size_t bit_index) const
+inline const BoardDirection LineNeighborhood::GetBoardDirection(const size_t index, const size_t bit_index) const
 {
   const auto &board_direction_list = realcore::GetBoardDirection();
 
@@ -56,54 +39,8 @@ inline const BoardDirection LineNeighborhood<N>::GetBoardDirection(const size_t 
   return board_direction_list[direction_index];
 }
 
-template<size_t N>
-void LineNeighborhood<N>::GetBoardPositionList(const LocalBitBoard &bit_list, std::vector<BoardPosition> * const board_position_list) const
-{
-  assert(board_position_list != nullptr);
-  assert(board_position_list->empty());
-
-  if(bit_list[0] == 0 && bit_list[1] == 0){
-    return;
-  }
-
-  // 1方向(2N + 1)個 * 4方向 = 8N + 4個
-  board_position_list->reserve(8 * N + 4);
-
-  constexpr size_t kMinUpperBitIndex = 32;
-  constexpr size_t kLowerCenter = 14;   // 下位32bitの中心位置
-  constexpr size_t kUpperCenter = 46;   // 上位32bitの中心位置
-
-  Cordinate x = 0, y = 0;
-  GetMoveCordinate(move_, &x, &y);
-
-  std::array<size_t, kBoardDirectionNum> index_list;
-  GetBitBoardIndexList(x, y, &index_list);
-
-  std::array<size_t, kBoardDirectionNum> shift_list;
-  GetBitBoardShiftList(x, y, &shift_list);
-  
-  for(size_t list_index=0; list_index<kLocalBitBoardNum; list_index++){
-    std::vector<size_t> bit_index_list;
-    GetBitIndexList(bit_list[list_index], &bit_index_list);
-
-    for(const auto bit_index : bit_index_list){
-      const auto direction = GetBoardDirection(list_index, bit_index);
-      const auto index = index_list[direction];
-      const auto shift = shift_list[direction];
-      
-      // BitBoard配列での達四位置に対応するシフト量を求める
-      const auto center_shift = bit_index < kMinUpperBitIndex ? kLowerCenter : kUpperCenter;
-      const auto open_four_shift = shift + GetIndexDifference(center_shift, bit_index);
-
-      const auto board_position = GetBoardPosition(index, open_four_shift);
-      board_position_list->push_back(board_position);
-    }
-  }
-}
-
-template<size_t N>
 template<PlayerTurn P>
-const bool LineNeighborhood<N>::IsOpenFour() const
+const bool LineNeighborhood::IsOpenFour() const
 {
   for(size_t i=0; i<kLocalBitBoardNum; i++){
     const auto state_bit = local_bit_board_[i];
@@ -121,9 +58,8 @@ const bool LineNeighborhood<N>::IsOpenFour() const
   return false;
 }
 
-template<size_t N>
 template<PlayerTurn P>
-const bool LineNeighborhood<N>::IsFour(MovePosition * const guard_move) const
+const bool LineNeighborhood::IsFour(MovePosition * const guard_move) const
 {
   assert(guard_move != nullptr);
 
@@ -151,9 +87,8 @@ const bool LineNeighborhood<N>::IsFour(MovePosition * const guard_move) const
   return false;
 }
 
-template<size_t N>
 template<PlayerTurn P>
-const bool LineNeighborhood<N>::IsDoubleFour() const
+const bool LineNeighborhood::IsDoubleFour() const
 {
   // 「五連にする位置」(= 四の防手位置)の数をカウントする
   LocalBitBoard four_guard_bit{{0}};
@@ -178,71 +113,8 @@ const bool LineNeighborhood<N>::IsDoubleFour() const
   return false;
 }
 
-template<size_t N>
-const ForbiddenCheckState LineNeighborhood<N>::ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list) const
-{
-  assert(next_open_four_list != nullptr);
-  assert(next_open_four_list->empty());
-
-  LocalBitBoard local_black_bit{{0}};
-  LocalBitBoard local_open_bit{{0}};
-
-  for(size_t i=0; i<kLocalBitBoardNum; i++){
-    const auto state_bit = local_bit_board_[i];
-
-    local_black_bit[i] = GetBlackStoneBit(state_bit);
-    local_open_bit[i] = GetOpenPositionBit(state_bit);
-  }
-
-  // 長連
-  for(const auto black_bit : local_black_bit){
-    if(IsOverline(black_bit)){
-      return kForbiddenMove;
-    }
-  }
-
-  // 四々
-  LocalBitBoard four_guard_bit{{0}};
-
-  for(size_t i=0; i<kLocalBitBoardNum; i++){
-    const auto black_bit = local_black_bit[i];
-    const auto open_bit = local_open_bit[i];
-
-    const auto open_four_bit = SearchOpenFour<kBlackTurn>(black_bit, open_bit);
-    SearchFour<kBlackTurn>(black_bit, open_bit, &(four_guard_bit[i]));
-
-    // 達四があると四のパターンが2カ所マッチするので片方をオフにする
-    four_guard_bit[i] ^= open_four_bit;
-  }
-
-  if(IsMultipleBit(four_guard_bit[0], four_guard_bit[1])){
-    return kForbiddenMove;
-  }
-
-  // 見かけの三々
-  LocalBitBoard semi_three_bit{{0}};
-  LocalBitBoard next_open_four_bit{{0}};
-
-  for(size_t i=0; i<kLocalBitBoardNum; i++){
-    const auto black_bit = local_black_bit[i];
-    const auto open_bit = local_open_bit[i];
-
-    semi_three_bit[i] = SearchSemiThree<kBlackTurn>(black_bit, open_bit, &(next_open_four_bit[i]));
-  }
-
-  if(!IsMultipleBit(semi_three_bit[0], semi_three_bit[1])){
-    return kNonForbiddenMove;
-  }
-
-  // 見かけの三々が2つ以上存在する
-  GetBoardPositionList(next_open_four_bit, next_open_four_list);
-
-  return kPossibleForbiddenMove;
-}
-
-template<size_t N>
 template<OpenStatePattern Pattern, PlayerTurn P>
-void LineNeighborhood<N>::GetOpenState(std::vector< OpenState<Pattern> > *open_state_list) const
+void LineNeighborhood::GetOpenState(std::vector< OpenState<Pattern> > *open_state_list) const
 {
   // パターンの手番と着手の手番が異なる場合、パターンがマッチすることはないので抜ける
   if(GetPatternPlayerTurn(Pattern) != P){
@@ -261,11 +133,10 @@ void LineNeighborhood<N>::GetOpenState(std::vector< OpenState<Pattern> > *open_s
   GetOpenState<Pattern, P>(stone_bit, open_bit, open_state_list);
 }
 
-template<size_t N>
 template<OpenStatePattern Pattern, PlayerTurn P>
-void LineNeighborhood<N>::GetOpenStateOpenFour(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const
+void LineNeighborhood::GetOpenStateOpenFour(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const
 {
-  static_assert(N == kOpenStateNeighborhoodSize, "N must be kOpenStateNeighborhoodSize for calling GetOpenState.");
+  assert(distance_ == kOpenStateNeighborhoodSize);
   static_assert(Pattern == kNextOpenFourBlack || Pattern == kNextOpenFourWhite, "Pattern must be kNextOpenFour[Black|White]");
   static_assert(GetPatternPlayerTurn(Pattern) == P, "Pattern's turn must be consistent with player turn.'");
 
@@ -308,11 +179,10 @@ void LineNeighborhood<N>::GetOpenStateOpenFour(const LocalBitBoard &stone_bit, c
   }
 }
 
-template<size_t N>
 template<OpenStatePattern Pattern, PlayerTurn P>
-void LineNeighborhood<N>::GetOpenStateFour(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const
+void LineNeighborhood::GetOpenStateFour(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const
 {
-  static_assert(N == kOpenStateNeighborhoodSize, "N must be kOpenStateNeighborhoodSize for calling GetOpenState.");
+  assert(distance_ == kOpenStateNeighborhoodSize);
   static_assert(Pattern == kNextFourBlack || Pattern == kNextFourWhite, "Pattern must be kNextFour[Black|White]");
   static_assert(GetPatternPlayerTurn(Pattern) == P, "Pattern's turn must be consistent with player turn.'");
 
@@ -376,11 +246,10 @@ void LineNeighborhood<N>::GetOpenStateFour(const LocalBitBoard &stone_bit, const
   }
 }
 
-template<size_t N>
 template<OpenStatePattern Pattern, PlayerTurn P>
-void LineNeighborhood<N>::GetOpenStateSemiThree(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const
+void LineNeighborhood::GetOpenStateSemiThree(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const
 {
-  static_assert(N == kOpenStateNeighborhoodSize, "N must be kOpenStateNeighborhoodSize for calling GetOpenState.");
+  assert(distance_ == kOpenStateNeighborhoodSize);
   static_assert(Pattern == kNextSemiThreeBlack || Pattern == kNextSemiThreeWhite, "Pattern must be kNextSemiThree[Black|White]");
   static_assert(GetPatternPlayerTurn(Pattern) == P, "Pattern's turn must be consistent with player turn.'");
 
@@ -453,7 +322,6 @@ void LineNeighborhood<N>::GetOpenStateSemiThree(const LocalBitBoard &stone_bit, 
         GuardPositionList guard_list_2{{open_state_position_1, guard_position_1, guard_position_2}};
         open_state_list->back().SetGuardPositionList(guard_list_2);
       }
-
     }
   }
 }

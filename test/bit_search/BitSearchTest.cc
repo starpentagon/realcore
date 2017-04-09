@@ -500,7 +500,7 @@ TEST(BitSearchTest, GetConsectiveBitTest)
   }
 }
 
-TEST(BitSearchTest, GetOpenBitInPattern)
+TEST(BitSearchTest, GetOpenBitInPatternTest)
 {
   constexpr uint64_t test_bit = 0b1;
 
@@ -512,4 +512,17 @@ TEST(BitSearchTest, GetOpenBitInPattern)
   }
 }
 
+TEST(BitSearchTest, GetOpenBoardPositionTest)
+{
+  {
+    const auto result = GetOpenBoardPosition(128, 0);
+    const BoardPosition expect = 128;
+    EXPECT_EQ(expect, result);
+  }
+  {
+    const auto result = GetOpenBoardPosition(128, 1);
+    const BoardPosition expect = 129;
+    EXPECT_EQ(expect, result);
+  }
+}
 }   // namespace realcore

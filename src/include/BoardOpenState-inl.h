@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "OpenState.h"
+#include "LineNeighborhood.h"
 #include "BoardOpenState.h"
 
 namespace realcore
@@ -42,12 +43,27 @@ inline const std::vector< OpenState<kNextOverline> >& BoardOpenState::GetNextOve
   return next_overline_;
 }
 
+inline void BoardOpenState::AddNextOverline(const BoardPosition open_position, const BoardPosition pattern_position)
+{
+  next_overline_.emplace_back(open_position, pattern_position);
+}
+
 inline const std::vector< OpenState<kNextOpenFourBlack> >& BoardOpenState::GetNextOpenFourBlack() const{
   return next_open_four_black_;
 }
 
 inline const std::vector< OpenState<kNextOpenFourWhite> >& BoardOpenState::GetNextOpenFourWhite() const{
   return next_open_four_white_;
+}
+
+template<PlayerTurn P>
+inline void BoardOpenState::AddNextOpenFour(const BoardPosition open_position, const BoardPosition pattern_position)
+{
+  if(P == kBlackTurn){
+    next_open_four_black_.emplace_back(open_position, pattern_position);
+  }else{
+    next_open_four_white_.emplace_back(open_position, pattern_position);
+  }
 }
 
 inline const std::vector< OpenState<kNextFourBlack> >& BoardOpenState::GetNextFourBlack() const{
@@ -58,12 +74,37 @@ inline const std::vector< OpenState<kNextFourWhite> >& BoardOpenState::GetNextFo
   return next_four_white_;
 }
 
+template<PlayerTurn P>
+inline void BoardOpenState::AddNextFour(const BoardPosition open_position, const BoardPosition pattern_position, const BoardPosition guard_position)
+{
+  if(P == kBlackTurn){
+    next_four_black_.emplace_back(open_position, pattern_position);
+    next_four_black_.back().SetGuardPositionList({{guard_position}});
+  }else{
+    next_four_white_.emplace_back(open_position, pattern_position);
+    next_four_white_.back().SetGuardPositionList({{guard_position}});
+  }  
+}
+
 inline const std::vector< OpenState<kNextSemiThreeBlack> >& BoardOpenState::GetNextSemiThreeBlack() const{
   return next_semi_three_black_;
 }
 
 inline const std::vector< OpenState<kNextSemiThreeWhite> >& BoardOpenState::GetNextSemiThreeWhite() const{
   return next_semi_three_white_;
+}
+
+template<PlayerTurn P>
+inline void BoardOpenState::AddNextSemiThree(const BoardPosition open_position, const BoardPosition pattern_position, const BoardPosition check_position, const GuardPositionList &guard_position_list)
+{
+  if(P == kBlackTurn){
+    next_semi_three_black_.emplace_back(open_position, pattern_position);
+    next_semi_three_black_.back().SetCheckPositionList({{check_position}});
+    next_semi_three_black_.back().SetGuardPositionList(guard_position_list);
+  }else{
+    next_semi_three_white_.emplace_back(open_position, pattern_position);
+    next_semi_three_white_.back().SetGuardPositionList(guard_position_list);
+  }  
 }
 
 template<OpenStatePattern Pattern, PlayerTurn P>
@@ -84,7 +125,7 @@ void BoardOpenState::ClearInfluencedElement(const std::vector< OpenState<Pattern
 }
 
 template<OpenStatePattern Pattern, PlayerTurn P>
-void BoardOpenState::AddElement(const LineNeighborhood<kOpenStateNeighborhoodSize> &line_neighbor, std::vector< OpenState<Pattern> > * const added_open_state_list) const
+void BoardOpenState::AddElement(const LineNeighborhood &line_neighbor, std::vector< OpenState<Pattern> > * const added_open_state_list) const
 {
   assert(added_open_state_list != nullptr);
 
@@ -97,9 +138,7 @@ void BoardOpenState::AddElement(const LineNeighborhood<kOpenStateNeighborhoodSiz
 template<PlayerTurn P>
 void BoardOpenState::Update(const MovePosition move, const BitBoard &bit_board)
 {
-  assert(bit_board.GetState(move) == GetPlayerStone(P));
-  
-  LineNeighborhood<kOpenStateNeighborhoodSize> line_neighborhood(move, bit_board);
+  LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
   {
     // 長連点
@@ -173,6 +212,19 @@ void BoardOpenState::Update(const MovePosition move, const BitBoard &bit_board)
   }
 }
 
+inline const bool BoardOpenState::empty() const
+{
+  const bool is_empty =
+    next_overline_.empty() &&
+    next_open_four_black_.empty() &&
+    next_open_four_white_.empty() &&
+    next_four_black_.empty() &&
+    next_four_white_.empty() &&
+    next_semi_three_black_.empty() &&
+    next_semi_three_white_.empty();
+
+  return is_empty;
+}
 
 }   // namespace realcore
 

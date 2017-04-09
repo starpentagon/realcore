@@ -4,7 +4,7 @@
 #include <cassert>
 
 #include "Move.h"
-#include "BitBoard.h"
+#include "Conversion.h"
 #include "OpenState.h"
 
 namespace realcore

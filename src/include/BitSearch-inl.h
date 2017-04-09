@@ -86,6 +86,11 @@ inline void GetStoneWithOneOpenBit(const std::uint64_t stone_bit, const std::uin
   }
 }
 
+inline const BoardPosition GetOpenBoardPosition(const BoardPosition pattern_position, const size_t open_index)
+{
+  return pattern_position + open_index;
+}
+
 inline const size_t GetLessIndexOfTwo(const size_t index)
 {
   assert(index < kTwoOfFivePattern);

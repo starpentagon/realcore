@@ -1,11 +1,8 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # プロジェクト名
-set(project_name bit_board_test)
+set(project_name conversion_test)
 project(${project_name} CXX)
-
-# Build Type(Release or Debug)
-set(CMAKE_BUILD_TYPE Debug)
 
 # ccache
 find_program(CCACHE_FOUND ccache)
@@ -27,17 +24,7 @@ link_directories($ENV{GTEST_DIR}/googlemock/gtest)
 # ソースファイル
 add_executable(
     ${project_name}
-    $ENV{REALCORE_DIR}/src/RealCore.cc
-    $ENV{REALCORE_DIR}/src/BitSearch.cc
-    $ENV{REALCORE_DIR}/src/Move.cc
-    $ENV{REALCORE_DIR}/src/MoveList.cc
-    $ENV{REALCORE_DIR}/src/LineNeighborhood.cc
-    $ENV{REALCORE_DIR}/src/BoardOpenState.cc
-    $ENV{REALCORE_DIR}/src/BitBoard.cc
-    ../BitBoardTest.cc
-    ../BitBoardMemberTest.cc
-    ../BitBoardForbiddenTest.cc
-    ../BitBoardMoveCheckTest.cc
+    ../ConversionTest.cc
 )
 
 # ライブラリ

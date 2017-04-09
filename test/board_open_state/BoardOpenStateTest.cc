@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "MoveList.h"
+#include "BitBoard.h"
 #include "BoardOpenState.h"
 
 namespace realcore
@@ -406,4 +407,16 @@ TEST(BoardOpenStateTest, CopyConstructerTest)
   EXPECT_TRUE(state_1 == state_2);
 }
 
+TEST(BoardOpenStateTest, EmptyTest)
+{
+  BoardOpenState state_1;
+  EXPECT_TRUE(state_1.empty());
+
+  MoveList board_move_list("hhigff");
+  BitBoard bit_board(board_move_list);
+  MovePosition move = board_move_list.GetLastMove();
+  state_1.Update<kBlackTurn>(move, bit_board);
+  
+  EXPECT_FALSE(state_1.empty());
+}
 }   // namespace realcore

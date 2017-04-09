@@ -6,6 +6,7 @@
 #ifndef BOARD_OPEN_STATE_H
 #define BOARD_OPEN_STATE_H
 
+#include <vector>
 #include "OpenState.h"
 
 namespace realcore
@@ -13,6 +14,9 @@ namespace realcore
 
 //! 前方宣言
 class BoardOpenState;
+
+class LineNeighborhood;
+class BitBoard;
 
 //! @brief 2つのBoardOpenStateを比較する
 //! @param board_1, 2: 比較対象
@@ -52,11 +56,18 @@ public:
   //! @brief 長連点のリストを返す
   const std::vector< OpenState<kNextOverline> >& GetNextOverline() const;
 
+  //! @brief 長連点のリストを追加する
+  void AddNextOverline(const BoardPosition open_position, const BoardPosition pattern_position);
+
   //! @brief 達四点(黒)のリストを返す
   const std::vector< OpenState<kNextOpenFourBlack> >& GetNextOpenFourBlack() const;
 
   //! @brief 達四点(白)のリストを返す
   const std::vector< OpenState<kNextOpenFourWhite> >& GetNextOpenFourWhite() const;
+
+  //! @brief 達四点を追加する
+  template<PlayerTurn P>
+  void AddNextOpenFour(const BoardPosition open_position, const BoardPosition pattern_position);
 
   //! @brief 四ノビ点(黒)のリストを返す
   const std::vector< OpenState<kNextFourBlack> >& GetNextFourBlack() const;
@@ -64,11 +75,22 @@ public:
   //! @brief 四ノビ点(白)のリストを返す
   const std::vector< OpenState<kNextFourWhite> >& GetNextFourWhite() const;
 
+  //! @brief 四ノビ点を追加する
+  template<PlayerTurn P>
+  void AddNextFour(const BoardPosition open_position, const BoardPosition pattern_position, const BoardPosition guard_position);
+
   //! @brief 見かけの三ノビ点(黒)のリストを返す
   const std::vector< OpenState<kNextSemiThreeBlack> >& GetNextSemiThreeBlack() const;
 
   //! @brief 見かけの三ノビ点(白)のリストを返す
   const std::vector< OpenState<kNextSemiThreeWhite> >& GetNextSemiThreeWhite() const;
+
+  //! @brief 見かけの三ノビ点を追加する
+  template<PlayerTurn P>
+  void AddNextSemiThree(const BoardPosition open_position, const BoardPosition pattern_position, const BoardPosition check_position, const GuardPositionList &guard_position_list);
+
+  //! @brief すべての空点状態が空かどうかを判定する
+  const bool empty() const;
   
 private:
   //! @brief 着手の影響を受けるOpenState要素を削除したリストを生成する
@@ -82,7 +104,7 @@ private:
   //! @brief 着手によるOpenState要素を追加する
   //! @param added_open_state_list 新たに発生したOpenStateのリスト
   template<OpenStatePattern Pattern, PlayerTurn P>
-  void AddElement(const LineNeighborhood<kOpenStateNeighborhoodSize> &line_neighbor, std::vector< OpenState<Pattern> > * const added_open_state_list) const;
+  void AddElement(const LineNeighborhood &line_neighbor, std::vector< OpenState<Pattern> > * const added_open_state_list) const;
 
   std::vector< OpenState<kNextOverline> > next_overline_;          //!< 長連点
   std::vector< OpenState<kNextOpenFourBlack> > next_open_four_black_;   //!< 達四点(黒)
