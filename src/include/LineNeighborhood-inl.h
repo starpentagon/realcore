@@ -113,11 +113,11 @@ const bool LineNeighborhood::IsDoubleFour() const
   return false;
 }
 
-template<OpenStatePattern Pattern, PlayerTurn P>
-void LineNeighborhood::GetOpenState(std::vector< OpenState<Pattern> > *open_state_list) const
+template<PlayerTurn P>
+void LineNeighborhood::GetOpenState(OpenStatePattern pattern, std::vector<OpenState> *open_state_list) const
 {
   // パターンの手番と着手の手番が異なる場合、パターンがマッチすることはないので抜ける
-  if(GetPatternPlayerTurn(Pattern) != P){
+  if(GetPatternPlayerTurn(pattern) != P){
     return;
   }
 
@@ -130,15 +130,32 @@ void LineNeighborhood::GetOpenState(std::vector< OpenState<Pattern> > *open_stat
     open_bit[i] = GetOpenPositionBit(state_bit);
   }
   
-  GetOpenState<Pattern, P>(stone_bit, open_bit, open_state_list);
+  switch(pattern){
+  case kNextOverline:
+    GetOpenStateOverline(stone_bit, open_bit, open_state_list);
+    break;
+  
+  case kNextOpenFourBlack:
+  case kNextOpenFourWhite:
+    GetOpenStateOpenFour<P>(stone_bit, open_bit, open_state_list);
+    break;
+
+  case kNextFourBlack:
+  case kNextFourWhite:
+    GetOpenStateFour<P>(stone_bit, open_bit, open_state_list);
+    break;
+
+  case kNextSemiThreeBlack:
+  case kNextSemiThreeWhite:
+    GetOpenStateSemiThree<P>(stone_bit, open_bit, open_state_list);
+    break;
+  }
 }
 
-template<OpenStatePattern Pattern, PlayerTurn P>
-void LineNeighborhood::GetOpenStateOpenFour(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const
+template<PlayerTurn P>
+void LineNeighborhood::GetOpenStateOpenFour(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector<OpenState> *open_state_list) const
 {
   assert(distance_ == kOpenStateNeighborhoodSize);
-  static_assert(Pattern == kNextOpenFourBlack || Pattern == kNextOpenFourWhite, "Pattern must be kNextOpenFour[Black|White]");
-  static_assert(GetPatternPlayerTurn(Pattern) == P, "Pattern's turn must be consistent with player turn.'");
 
   assert(open_state_list != nullptr);
   assert(open_state_list->empty());
@@ -174,17 +191,16 @@ void LineNeighborhood::GetOpenStateOpenFour(const LocalBitBoard &stone_bit, cons
       const auto open_state_position = open_state_position_list[i];
       const auto pattern_position = pattern_position_list[i];
 
-      open_state_list->emplace_back(open_state_position, pattern_position);
+      constexpr OpenStatePattern Pattern = (P == kBlackTurn) ? kNextOpenFourBlack : kNextOpenFourWhite;
+      open_state_list->emplace_back(Pattern, open_state_position, pattern_position);
     }
   }
 }
 
-template<OpenStatePattern Pattern, PlayerTurn P>
-void LineNeighborhood::GetOpenStateFour(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const
+template<PlayerTurn P>
+void LineNeighborhood::GetOpenStateFour(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector<OpenState> *open_state_list) const
 {
   assert(distance_ == kOpenStateNeighborhoodSize);
-  static_assert(Pattern == kNextFourBlack || Pattern == kNextFourWhite, "Pattern must be kNextFour[Black|White]");
-  static_assert(GetPatternPlayerTurn(Pattern) == P, "Pattern's turn must be consistent with player turn.'");
 
   assert(open_state_list != nullptr);
   assert(open_state_list->empty());
@@ -229,15 +245,16 @@ void LineNeighborhood::GetOpenStateFour(const LocalBitBoard &stone_bit, const Lo
       const auto open_state_position_1 = open_state_position_list_1[i];
       const auto open_state_position_2 = open_state_position_list_2[i];
       const auto pattern_position = pattern_position_list[i];
+      constexpr OpenStatePattern pattern = (P == kBlackTurn) ? kNextFourBlack : kNextFourWhite;
 
       {
-        open_state_list->emplace_back(open_state_position_1, pattern_position);
+        open_state_list->emplace_back(pattern, open_state_position_1, pattern_position);
         
         GuardPositionList guard_list_1{{open_state_position_2}};
         open_state_list->back().SetGuardPositionList(guard_list_1);
       }
       {
-        open_state_list->emplace_back(open_state_position_2, pattern_position);
+        open_state_list->emplace_back(pattern, open_state_position_2, pattern_position);
         
         GuardPositionList guard_list_2{{open_state_position_1}};
         open_state_list->back().SetGuardPositionList(guard_list_2);
@@ -246,12 +263,10 @@ void LineNeighborhood::GetOpenStateFour(const LocalBitBoard &stone_bit, const Lo
   }
 }
 
-template<OpenStatePattern Pattern, PlayerTurn P>
-void LineNeighborhood::GetOpenStateSemiThree(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector< OpenState<Pattern> > *open_state_list) const
+template<PlayerTurn P>
+void LineNeighborhood::GetOpenStateSemiThree(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector<OpenState> *open_state_list) const
 {
   assert(distance_ == kOpenStateNeighborhoodSize);
-  static_assert(Pattern == kNextSemiThreeBlack || Pattern == kNextSemiThreeWhite, "Pattern must be kNextSemiThree[Black|White]");
-  static_assert(GetPatternPlayerTurn(Pattern) == P, "Pattern's turn must be consistent with player turn.'");
 
   assert(open_state_list != nullptr);
   assert(open_state_list->empty());
@@ -299,9 +314,10 @@ void LineNeighborhood::GetOpenStateSemiThree(const LocalBitBoard &stone_bit, con
 
       const auto guard_position_1 = pattern_position - 1;
       const auto guard_position_2 = pattern_position + 4;
+      constexpr OpenStatePattern pattern = (P == kBlackTurn) ? kNextSemiThreeBlack : kNextSemiThreeWhite;
 
       {
-        open_state_list->emplace_back(open_state_position_1, pattern_position);
+        open_state_list->emplace_back(pattern, open_state_position_1, pattern_position);
 
         if(P == kBlackTurn){
           open_state_list->back().SetCheckPosition(open_state_position_2);
@@ -311,7 +327,7 @@ void LineNeighborhood::GetOpenStateSemiThree(const LocalBitBoard &stone_bit, con
         open_state_list->back().SetGuardPositionList(guard_list_1);
       }
       {
-        open_state_list->emplace_back(open_state_position_2, pattern_position);
+        open_state_list->emplace_back(pattern, open_state_position_2, pattern_position);
         
         if(P == kBlackTurn){
           open_state_list->back().SetCheckPosition(open_state_position_1);

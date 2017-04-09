@@ -193,7 +193,7 @@ void BitBoard::EnumerateForbiddenMoves(const BoardOpenState &board_open_state, M
 
   {
     // 長連点
-    const auto& next_overline_list = board_open_state.GetNextOverline();
+    const auto& next_overline_list = board_open_state.GetList(kNextOverline);
     
     for(const auto &open_state : next_overline_list){
       const auto open_position = open_state.GetOpenPosition();
@@ -204,7 +204,7 @@ void BitBoard::EnumerateForbiddenMoves(const BoardOpenState &board_open_state, M
   }
   {
     // 四々点
-    const auto& next_open_four_list = board_open_state.GetNextOpenFourBlack();
+    const auto& next_open_four_list = board_open_state.GetList(kNextOpenFourBlack);
 
     // 達四があると四ノビパターンが２回マッチされてしまう
     // ->達四の空点位置とパターン位置が一致する四はスキップしてカウントする。
@@ -224,7 +224,7 @@ void BitBoard::EnumerateForbiddenMoves(const BoardOpenState &board_open_state, M
     array<int, kMoveNum> next_five_position_table;
     next_five_position_table.fill(-1);
 
-    const auto& next_four_list = board_open_state.GetNextFourBlack();
+    const auto& next_four_list = board_open_state.GetList(kNextFourBlack);
 
     for(const auto &open_state : next_four_list){
       const auto pattern_position = open_state.GetPatternPosition();
@@ -252,7 +252,7 @@ void BitBoard::EnumerateForbiddenMoves(const BoardOpenState &board_open_state, M
   }
   
   // 三々点
-  const auto& next_semi_three_list = board_open_state.GetNextSemiThreeBlack();
+  const auto& next_semi_three_list = board_open_state.GetList(kNextSemiThreeBlack);
   vector<MovePosition> multi_semi_three_move_list;
   multi_semi_three_move_list.reserve(next_semi_three_list.size() / 2);    // 三々点１つに三ノビ点は２つはあるため三々点は三ノビ点の半数以下
     

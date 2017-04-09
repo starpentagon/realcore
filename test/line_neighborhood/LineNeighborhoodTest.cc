@@ -174,13 +174,13 @@ TEST_F(LineNeighborhoodTest, GetOpenStateOverlineTest)
   constexpr MovePosition move = kMoveJH;
   LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
-  vector< OpenState<kPattern> > open_state_list, expect_list;
-  line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
+  vector<OpenState> open_state_list, expect_list;
+  line_neighborhood.GetOpenState<P>(kPattern, &open_state_list);
 
   const BoardDirection direction = kLateralDirection;
   const BoardPosition open_position = GetBoardPosition(kMoveKH, direction);
   const BoardPosition pattern_position = GetBoardPosition(kMoveIH, direction);
-  OpenState<kPattern> expect(open_position, pattern_position);
+  OpenState expect(kPattern, open_position, pattern_position);
 
   ASSERT_EQ(1, open_state_list.size());
   EXPECT_TRUE(expect == open_state_list[0]);
@@ -212,18 +212,18 @@ TEST_F(LineNeighborhoodTest, GetOpenStateOpenFourBlackTest)
   constexpr MovePosition move = kMoveJH;
   LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
-  vector< OpenState<kPattern> > open_state_list, expect_list;
-  line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
+  vector<OpenState> open_state_list, expect_list;
+  line_neighborhood.GetOpenState<P>(kPattern, &open_state_list);
 
   const BoardDirection direction = kLateralDirection;
 
   const BoardPosition open_position_1 = GetBoardPosition(kMoveGH, direction);
   const BoardPosition pattern_position_1 = GetBoardPosition(kMoveGH, direction);
-  OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
+  OpenState expect_1(kPattern, open_position_1, pattern_position_1);
 
   const BoardPosition open_position_2 = GetBoardPosition(kMoveKH, direction);
   const BoardPosition pattern_position_2 = GetBoardPosition(kMoveHH, direction);
-  OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
+  OpenState expect_2(kPattern, open_position_2, pattern_position_2);
 
   ASSERT_EQ(2, open_state_list.size());
   EXPECT_TRUE(expect_1 == open_state_list[0]);
@@ -256,18 +256,18 @@ TEST_F(LineNeighborhoodTest, GetOpenStateOpenFourWhiteTest)
   constexpr MovePosition move = kMoveJG;
   LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
-  vector< OpenState<kPattern> > open_state_list, expect_list;
-  line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
+  vector<OpenState> open_state_list, expect_list;
+  line_neighborhood.GetOpenState<P>(kPattern, &open_state_list);
 
   const BoardDirection direction = kLateralDirection;
 
   const BoardPosition open_position_1 = GetBoardPosition(kMoveGG, direction);
   const BoardPosition pattern_position_1 = GetBoardPosition(kMoveGG, direction);
-  OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
+  OpenState expect_1(kPattern, open_position_1, pattern_position_1);
 
   const BoardPosition open_position_2 = GetBoardPosition(kMoveKG, direction);
   const BoardPosition pattern_position_2 = GetBoardPosition(kMoveHG, direction);
-  OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
+  OpenState expect_2(kPattern, open_position_2, pattern_position_2);
 
   ASSERT_EQ(2, open_state_list.size());
   EXPECT_TRUE(expect_1 == open_state_list[0]);
@@ -300,14 +300,14 @@ TEST_F(LineNeighborhoodTest, GetOpenStateFourBlackTest)
   constexpr MovePosition move = kMoveHD;
   LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
-  vector< OpenState<kPattern> > open_state_list, expect_list;
-  line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
+  vector<OpenState> open_state_list, expect_list;
+  line_neighborhood.GetOpenState<P>(kPattern, &open_state_list);
 
   const BoardDirection direction = kVerticalDirection;
 
   const BoardPosition open_position_1 = GetBoardPosition(kMoveHE, direction);
   const BoardPosition pattern_position_1 = GetBoardPosition(kMoveHD, direction);
-  OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
+  OpenState expect_1(kPattern, open_position_1, pattern_position_1);
 
   GuardPositionList guard_1{{0}};
   guard_1[0] = GetBoardPosition(kMoveHG, direction);
@@ -315,7 +315,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateFourBlackTest)
 
   const BoardPosition open_position_2 = GetBoardPosition(kMoveHG, direction);
   const BoardPosition pattern_position_2 = GetBoardPosition(kMoveHD, direction);
-  OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
+  OpenState expect_2(kPattern, open_position_2, pattern_position_2);
 
   GuardPositionList guard_2{{0}};
   guard_2[0] = GetBoardPosition(kMoveHE, direction);
@@ -352,14 +352,14 @@ TEST_F(LineNeighborhoodTest, GetOpenStateFourWhiteTest)
   constexpr MovePosition move = kMoveMC;
   LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
-  vector< OpenState<kPattern> > open_state_list, expect_list;
-  line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
+  vector<OpenState> open_state_list, expect_list;
+  line_neighborhood.GetOpenState<P>(kPattern, &open_state_list);
 
   const BoardDirection direction = kLeftDiagonalDirection;
 
   const BoardPosition open_position_1 = GetBoardPosition(kMoveLD, direction);
   const BoardPosition pattern_position_1 = GetBoardPosition(kMoveMC, direction);
-  OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
+  OpenState expect_1(kPattern, open_position_1, pattern_position_1);
 
   GuardPositionList guard_1{{0}};
   guard_1[0] = GetBoardPosition(kMoveJF, direction);
@@ -367,7 +367,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateFourWhiteTest)
 
   const BoardPosition open_position_2 = GetBoardPosition(kMoveJF, direction);
   const BoardPosition pattern_position_2 = GetBoardPosition(kMoveMC, direction);
-  OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
+  OpenState expect_2(kPattern, open_position_2, pattern_position_2);
 
   GuardPositionList guard_2{{0}};
   guard_2[0] = GetBoardPosition(kMoveLD, direction);
@@ -404,15 +404,15 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeBlackTest)
   constexpr MovePosition move = kMoveFF;
   LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
-  vector< OpenState<kPattern> > open_state_list, expect_list;
-  line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
+  vector<OpenState> open_state_list, expect_list;
+  line_neighborhood.GetOpenState<P>(kPattern, &open_state_list);
 
   const BoardDirection direction = kRightDiagonalDirection;
 
   // OpenState at kMoveEE by pattern kMoveEE
   const BoardPosition open_position_1 = GetBoardPosition(kMoveEE, direction);
   const BoardPosition pattern_position_1 = GetBoardPosition(kMoveEE, direction);
-  OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
+  OpenState expect_1(kPattern, open_position_1, pattern_position_1);
 
   const auto check_1 = GetBoardPosition(kMoveGG, direction);
   expect_1.SetCheckPosition(check_1);
@@ -426,7 +426,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeBlackTest)
   // OpenState at kMoveGG by pattern kMoveEE
   const BoardPosition open_position_2 = GetBoardPosition(kMoveGG, direction);
   const BoardPosition pattern_position_2 = GetBoardPosition(kMoveEE, direction);
-  OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
+  OpenState expect_2(kPattern, open_position_2, pattern_position_2);
 
   const auto check_2 = GetBoardPosition(kMoveEE, direction);
   expect_2.SetCheckPosition(check_2);
@@ -440,7 +440,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeBlackTest)
   // OpenState at kMoveGG by pattern kMoveFF
   const BoardPosition open_position_3 = GetBoardPosition(kMoveGG, direction);
   const BoardPosition pattern_position_3 = GetBoardPosition(kMoveFF, direction);
-  OpenState<kPattern> expect_3(open_position_3, pattern_position_3);
+  OpenState expect_3(kPattern, open_position_3, pattern_position_3);
 
   const auto check_3 = GetBoardPosition(kMoveII, direction);
   expect_3.SetCheckPosition(check_3);
@@ -454,7 +454,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeBlackTest)
   // OpenState at kMoveII by pattern kMoveFF
   const BoardPosition open_position_4 = GetBoardPosition(kMoveII, direction);
   const BoardPosition pattern_position_4 = GetBoardPosition(kMoveFF, direction);
-  OpenState<kPattern> expect_4(open_position_4, pattern_position_4);
+  OpenState expect_4(kPattern, open_position_4, pattern_position_4);
 
   const auto check_4 = GetBoardPosition(kMoveGG, direction);
   expect_4.SetCheckPosition(check_4);
@@ -498,15 +498,15 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeWhiteTest)
   constexpr MovePosition move = kMoveID;
   LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
-  vector< OpenState<kPattern> > open_state_list, expect_list;
-  line_neighborhood.GetOpenState<kPattern, P>(&open_state_list);
+  vector<OpenState> open_state_list, expect_list;
+  line_neighborhood.GetOpenState<P>(kPattern, &open_state_list);
 
   const BoardDirection direction = kVerticalDirection;
 
   // OpenState at kMoveIE by pattern kMoveID
   const BoardPosition open_position_1 = GetBoardPosition(kMoveIE, direction);
   const BoardPosition pattern_position_1 = GetBoardPosition(kMoveID, direction);
-  OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
+  OpenState expect_1(kPattern, open_position_1, pattern_position_1);
 
   GuardPositionList guard_1{{0}};
   guard_1[0] = GetBoardPosition(kMoveIF, direction);
@@ -517,7 +517,7 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeWhiteTest)
   // OpenState at kMoveIF by pattern kMoveID
   const BoardPosition open_position_2 = GetBoardPosition(kMoveIF, direction);
   const BoardPosition pattern_position_2 = GetBoardPosition(kMoveID, direction);
-  OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
+  OpenState expect_2(kPattern, open_position_2, pattern_position_2);
 
   GuardPositionList guard_2{{0}};
   guard_2[0] = GetBoardPosition(kMoveIE, direction);

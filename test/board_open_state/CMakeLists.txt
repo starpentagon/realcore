@@ -27,6 +27,7 @@ add_executable(
     $ENV{REALCORE_DIR}/src/MoveList.cc
     $ENV{REALCORE_DIR}/src/BitBoard.cc
     $ENV{REALCORE_DIR}/src/LineNeighborhood.cc
+    $ENV{REALCORE_DIR}/src/OpenState.cc
     $ENV{REALCORE_DIR}/src/BoardOpenState.cc
     ../BoardOpenStateTest.cc
 )

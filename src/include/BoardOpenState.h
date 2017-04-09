@@ -13,6 +13,7 @@ namespace realcore
 {
 
 //! 前方宣言
+class OpenState;
 class BoardOpenState;
 
 class LineNeighborhood;
@@ -53,37 +54,20 @@ public:
   void Update(const MovePosition move, const BitBoard &bit_board);
   void Update(const bool black_turn, const MovePosition move, const BitBoard &bit_board);
 
-  //! @brief 長連点のリストを返す
-  const std::vector< OpenState<kNextOverline> >& GetNextOverline() const;
+  //! @brief 空点状態のリストを返す
+  //! @param pattern 指し手パターン(長連点, 達四点, etc)
+  const std::vector<OpenState>& GetList(const OpenStatePattern pattern) const;
 
   //! @brief 長連点のリストを追加する
   void AddNextOverline(const BoardPosition open_position, const BoardPosition pattern_position);
-
-  //! @brief 達四点(黒)のリストを返す
-  const std::vector< OpenState<kNextOpenFourBlack> >& GetNextOpenFourBlack() const;
-
-  //! @brief 達四点(白)のリストを返す
-  const std::vector< OpenState<kNextOpenFourWhite> >& GetNextOpenFourWhite() const;
 
   //! @brief 達四点を追加する
   template<PlayerTurn P>
   void AddNextOpenFour(const BoardPosition open_position, const BoardPosition pattern_position);
 
-  //! @brief 四ノビ点(黒)のリストを返す
-  const std::vector< OpenState<kNextFourBlack> >& GetNextFourBlack() const;
-
-  //! @brief 四ノビ点(白)のリストを返す
-  const std::vector< OpenState<kNextFourWhite> >& GetNextFourWhite() const;
-
   //! @brief 四ノビ点を追加する
   template<PlayerTurn P>
   void AddNextFour(const BoardPosition open_position, const BoardPosition pattern_position, const BoardPosition guard_position);
-
-  //! @brief 見かけの三ノビ点(黒)のリストを返す
-  const std::vector< OpenState<kNextSemiThreeBlack> >& GetNextSemiThreeBlack() const;
-
-  //! @brief 見かけの三ノビ点(白)のリストを返す
-  const std::vector< OpenState<kNextSemiThreeWhite> >& GetNextSemiThreeWhite() const;
 
   //! @brief 見かけの三ノビ点を追加する
   template<PlayerTurn P>
@@ -98,21 +82,21 @@ private:
   //! @param open_state_list move着手前のOpenStateのリスト
   //! @param move 着手
   //! @param cleared_open_state_list move着手による影響分を除外したOpenStateのリスト
-  template<OpenStatePattern Pattern, PlayerTurn P>
-  void ClearInfluencedElement(const std::vector< OpenState<Pattern> > &open_state_list, const MovePosition move, std::vector< OpenState<Pattern> > * const cleared_open_state_list) const;
+  template<PlayerTurn P>
+  void ClearInfluencedElement(const std::vector<OpenState> &open_state_list, const MovePosition move, std::vector<OpenState> * const cleared_open_state_list) const;
 
   //! @brief 着手によるOpenState要素を追加する
   //! @param added_open_state_list 新たに発生したOpenStateのリスト
-  template<OpenStatePattern Pattern, PlayerTurn P>
-  void AddElement(const LineNeighborhood &line_neighbor, std::vector< OpenState<Pattern> > * const added_open_state_list) const;
+  template<PlayerTurn P>
+  void AddElement(const OpenStatePattern pattern, const LineNeighborhood &line_neighbor, std::vector<OpenState> * const added_open_state_list) const;
 
-  std::vector< OpenState<kNextOverline> > next_overline_;          //!< 長連点
-  std::vector< OpenState<kNextOpenFourBlack> > next_open_four_black_;   //!< 達四点(黒)
-  std::vector< OpenState<kNextOpenFourWhite> > next_open_four_white_;   //!< 達四点(白)
-  std::vector< OpenState<kNextFourBlack> > next_four_black_;        //!< 四ノビ点(黒)
-  std::vector< OpenState<kNextFourWhite> > next_four_white_;        //!< 四ノビ点(白)
-  std::vector< OpenState<kNextSemiThreeBlack> > next_semi_three_black_;  //!< 見かけの三ノビ点(黒)
-  std::vector< OpenState<kNextSemiThreeWhite> > next_semi_three_white_;  //!< 見かけの三ノビ点(白)
+  std::vector<OpenState> next_overline_;                 //!< 長連点
+  std::vector<OpenState> next_open_four_black_;     //!< 達四点(黒)
+  std::vector<OpenState> next_open_four_white_;     //!< 達四点(白)
+  std::vector<OpenState> next_four_black_;              //!< 四ノビ点(黒)
+  std::vector<OpenState> next_four_white_;              //!< 四ノビ点(白)
+  std::vector<OpenState> next_semi_three_black_;   //!< 見かけの三ノビ点(黒)
+  std::vector<OpenState> next_semi_three_white_;   //!< 見かけの三ノビ点(白)
 };
 }   // namespace realcore 
 

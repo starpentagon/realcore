@@ -11,13 +11,13 @@ TEST(BoardOpenStateTest, DefaultConstructor)
 {
   BoardOpenState board_open_state;
 
-  EXPECT_TRUE(board_open_state.GetNextOverline().empty());
-  EXPECT_TRUE(board_open_state.GetNextOpenFourBlack().empty());
-  EXPECT_TRUE(board_open_state.GetNextOpenFourWhite().empty());
-  EXPECT_TRUE(board_open_state.GetNextFourBlack().empty());
-  EXPECT_TRUE(board_open_state.GetNextFourWhite().empty());
-  EXPECT_TRUE(board_open_state.GetNextSemiThreeBlack().empty());
-  EXPECT_TRUE(board_open_state.GetNextSemiThreeWhite().empty());
+  EXPECT_TRUE(board_open_state.GetList(kNextOverline).empty());
+  EXPECT_TRUE(board_open_state.GetList(kNextOpenFourBlack).empty());
+  EXPECT_TRUE(board_open_state.GetList(kNextOpenFourWhite).empty());
+  EXPECT_TRUE(board_open_state.GetList(kNextFourBlack).empty());
+  EXPECT_TRUE(board_open_state.GetList(kNextFourWhite).empty());
+  EXPECT_TRUE(board_open_state.GetList(kNextSemiThreeBlack).empty());
+  EXPECT_TRUE(board_open_state.GetList(kNextSemiThreeWhite).empty());
 }
 
 TEST(BoardOpenStateTest, UpdateOverlineTest)
@@ -49,7 +49,7 @@ TEST(BoardOpenStateTest, UpdateOverlineTest)
   board_open_state.Update<kBlackTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextOverline();
+    const auto &open_state_list = board_open_state.GetList(kNextOverline);
     ASSERT_EQ(1, open_state_list.size());
   }
 
@@ -59,7 +59,7 @@ TEST(BoardOpenStateTest, UpdateOverlineTest)
   board_open_state.Update<kWhiteTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextOverline();
+    const auto &open_state_list = board_open_state.GetList(kNextOverline);
     ASSERT_EQ(0, open_state_list.size());
   }
 }
@@ -92,7 +92,7 @@ TEST(BoardOpenStateTest, UpdateOpenFourBlackTest)
   board_open_state.Update<kBlackTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextOpenFourBlack();
+    const auto &open_state_list = board_open_state.GetList(kNextOpenFourBlack);
     ASSERT_EQ(2, open_state_list.size());
   }
 
@@ -102,7 +102,7 @@ TEST(BoardOpenStateTest, UpdateOpenFourBlackTest)
   board_open_state.Update<kWhiteTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextOpenFourBlack();
+    const auto &open_state_list = board_open_state.GetList(kNextOpenFourBlack);
     ASSERT_EQ(0, open_state_list.size());    
   }
 }
@@ -135,7 +135,7 @@ TEST(BoardOpenStateTest, UpdateOpenFourWhiteTest)
   board_open_state.Update<kWhiteTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextOpenFourWhite();
+    const auto &open_state_list = board_open_state.GetList(kNextOpenFourWhite);
     ASSERT_EQ(2, open_state_list.size());
   }
 
@@ -145,7 +145,7 @@ TEST(BoardOpenStateTest, UpdateOpenFourWhiteTest)
   board_open_state.Update<kBlackTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextOpenFourWhite();
+    const auto &open_state_list = board_open_state.GetList(kNextOpenFourWhite);
     ASSERT_EQ(0, open_state_list.size());    
   }
 }
@@ -178,7 +178,7 @@ TEST(BoardOpenStateTest, UpdateFourBlackTest)
   board_open_state.Update<kBlackTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextFourBlack();
+    const auto &open_state_list = board_open_state.GetList(kNextFourBlack);
     ASSERT_EQ(2, open_state_list.size());
   }
 
@@ -188,7 +188,7 @@ TEST(BoardOpenStateTest, UpdateFourBlackTest)
   board_open_state.Update<kWhiteTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextFourBlack();
+    const auto &open_state_list = board_open_state.GetList(kNextFourBlack);
     ASSERT_EQ(0, open_state_list.size());    
   }
 }
@@ -221,7 +221,7 @@ TEST(BoardOpenStateTest, UpdateFourWhiteTest)
   board_open_state.Update<kWhiteTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextFourWhite();
+    const auto &open_state_list = board_open_state.GetList(kNextFourWhite);
     ASSERT_EQ(2, open_state_list.size());
   }
 
@@ -231,7 +231,7 @@ TEST(BoardOpenStateTest, UpdateFourWhiteTest)
   board_open_state.Update<kBlackTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextFourWhite();
+    const auto &open_state_list = board_open_state.GetList(kNextFourWhite);
     ASSERT_EQ(0, open_state_list.size());    
   }
 }
@@ -264,7 +264,7 @@ TEST(BoardOpenStateTest, UpdateSemiThreeBlackTest)
   board_open_state.Update<kBlackTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextSemiThreeBlack();
+    const auto &open_state_list = board_open_state.GetList(kNextSemiThreeBlack);
     ASSERT_EQ(4, open_state_list.size());
   }
 
@@ -274,7 +274,7 @@ TEST(BoardOpenStateTest, UpdateSemiThreeBlackTest)
   board_open_state.Update<kWhiteTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextSemiThreeBlack();
+    const auto &open_state_list = board_open_state.GetList(kNextSemiThreeBlack);
     ASSERT_EQ(0, open_state_list.size());    
   }
 }
@@ -307,7 +307,7 @@ TEST(BoardOpenStateTest, UpdateSemiThreeWhiteTest)
   board_open_state.Update<kWhiteTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextSemiThreeWhite();
+    const auto &open_state_list = board_open_state.GetList(kNextSemiThreeWhite);
     ASSERT_EQ(2, open_state_list.size());
   }
 
@@ -317,7 +317,7 @@ TEST(BoardOpenStateTest, UpdateSemiThreeWhiteTest)
   board_open_state.Update<kBlackTurn>(move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextSemiThreeWhite();
+    const auto &open_state_list = board_open_state.GetList(kNextSemiThreeWhite);
     ASSERT_EQ(0, open_state_list.size());    
   }
 }

@@ -151,8 +151,7 @@ void LineNeighborhood::GetBoardPositionList(const LocalBitBoard &bit_list, std::
   }
 }
 
-template<>
-void LineNeighborhood::GetOpenState<kNextOverline, kBlackTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextOverline> > *open_state_list) const
+void LineNeighborhood::GetOpenStateOverline(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector<OpenState> *open_state_list) const
 {
   assert(distance_ == kOpenStateNeighborhoodSize);
   assert(open_state_list != nullptr);
@@ -189,45 +188,9 @@ void LineNeighborhood::GetOpenState<kNextOverline, kBlackTurn>(const LocalBitBoa
       const auto open_state_position = open_state_position_list[i];
       const auto pattern_position = pattern_position_list[i];
 
-      open_state_list->emplace_back(open_state_position, pattern_position);
+      open_state_list->emplace_back(kNextOverline, open_state_position, pattern_position);
     }
   }
-}
-
-template<>
-void LineNeighborhood::GetOpenState<kNextOpenFourBlack, kBlackTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextOpenFourBlack> > *open_state_list) const
-{
-  GetOpenStateOpenFour<kNextOpenFourBlack, kBlackTurn>(stone_bit, open_bit, open_state_list);
-}
-
-template<>
-void LineNeighborhood::GetOpenState<kNextOpenFourWhite, kWhiteTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextOpenFourWhite> > *open_state_list) const
-{
-  GetOpenStateOpenFour<kNextOpenFourWhite, kWhiteTurn>(stone_bit, open_bit, open_state_list);
-}
-
-template<>
-void LineNeighborhood::GetOpenState<kNextFourBlack, kBlackTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextFourBlack> > *open_state_list) const
-{
-  GetOpenStateFour<kNextFourBlack, kBlackTurn>(stone_bit, open_bit, open_state_list);
-}
-
-template<>
-void LineNeighborhood::GetOpenState<kNextFourWhite, kWhiteTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextFourWhite> > *open_state_list) const
-{
-  GetOpenStateFour<kNextFourWhite, kWhiteTurn>(stone_bit, open_bit, open_state_list);
-}
-
-template<>
-void LineNeighborhood::GetOpenState<kNextSemiThreeBlack, kBlackTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextSemiThreeBlack> > *open_state_list) const
-{
-  GetOpenStateSemiThree<kNextSemiThreeBlack, kBlackTurn>(stone_bit, open_bit, open_state_list);
-}
-
-template<>
-void LineNeighborhood::GetOpenState<kNextSemiThreeWhite, kWhiteTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextSemiThreeWhite> > *open_state_list) const
-{
-  GetOpenStateSemiThree<kNextSemiThreeWhite, kWhiteTurn>(stone_bit, open_bit, open_state_list);
 }
 
 }   // namesapce realcore

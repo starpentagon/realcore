@@ -39,82 +39,85 @@ inline void BoardOpenState::Update(const bool black_turn, const MovePosition mov
   }
 }
 
-inline const std::vector< OpenState<kNextOverline> >& BoardOpenState::GetNextOverline() const{
-  return next_overline_;
+inline const std::vector<OpenState>& BoardOpenState::GetList(const OpenStatePattern pattern) const
+{
+  switch(pattern){
+  case kNextOverline:
+    return next_overline_;
+  
+  case kNextOpenFourBlack:
+    return next_open_four_black_;
+  
+  case kNextOpenFourWhite:
+    return next_open_four_white_;
+
+  case kNextFourBlack:
+    return next_four_black_;
+
+  case kNextFourWhite:
+    return next_four_white_;
+
+  case kNextSemiThreeBlack:
+    return next_semi_three_black_;
+
+  case kNextSemiThreeWhite:
+    return next_semi_three_white_;
+
+  default:
+    assert(false);
+    static std::vector<OpenState> dummy;
+    return dummy;
+  }
 }
 
 inline void BoardOpenState::AddNextOverline(const BoardPosition open_position, const BoardPosition pattern_position)
 {
-  next_overline_.emplace_back(open_position, pattern_position);
-}
-
-inline const std::vector< OpenState<kNextOpenFourBlack> >& BoardOpenState::GetNextOpenFourBlack() const{
-  return next_open_four_black_;
-}
-
-inline const std::vector< OpenState<kNextOpenFourWhite> >& BoardOpenState::GetNextOpenFourWhite() const{
-  return next_open_four_white_;
+  next_overline_.emplace_back(kNextOverline, open_position, pattern_position);
 }
 
 template<PlayerTurn P>
 inline void BoardOpenState::AddNextOpenFour(const BoardPosition open_position, const BoardPosition pattern_position)
 {
   if(P == kBlackTurn){
-    next_open_four_black_.emplace_back(open_position, pattern_position);
+    next_open_four_black_.emplace_back(kNextOpenFourBlack, open_position, pattern_position);
   }else{
-    next_open_four_white_.emplace_back(open_position, pattern_position);
+    next_open_four_white_.emplace_back(kNextOpenFourWhite, open_position, pattern_position);
   }
-}
-
-inline const std::vector< OpenState<kNextFourBlack> >& BoardOpenState::GetNextFourBlack() const{
-  return next_four_black_;
-}
-
-inline const std::vector< OpenState<kNextFourWhite> >& BoardOpenState::GetNextFourWhite() const{
-  return next_four_white_;
 }
 
 template<PlayerTurn P>
 inline void BoardOpenState::AddNextFour(const BoardPosition open_position, const BoardPosition pattern_position, const BoardPosition guard_position)
 {
   if(P == kBlackTurn){
-    next_four_black_.emplace_back(open_position, pattern_position);
+    next_four_black_.emplace_back(kNextFourBlack, open_position, pattern_position);
     next_four_black_.back().SetGuardPositionList({{guard_position}});
   }else{
-    next_four_white_.emplace_back(open_position, pattern_position);
+    next_four_white_.emplace_back(kNextFourWhite, open_position, pattern_position);
     next_four_white_.back().SetGuardPositionList({{guard_position}});
   }  
-}
-
-inline const std::vector< OpenState<kNextSemiThreeBlack> >& BoardOpenState::GetNextSemiThreeBlack() const{
-  return next_semi_three_black_;
-}
-
-inline const std::vector< OpenState<kNextSemiThreeWhite> >& BoardOpenState::GetNextSemiThreeWhite() const{
-  return next_semi_three_white_;
 }
 
 template<PlayerTurn P>
 inline void BoardOpenState::AddNextSemiThree(const BoardPosition open_position, const BoardPosition pattern_position, const BoardPosition check_position, const GuardPositionList &guard_position_list)
 {
   if(P == kBlackTurn){
-    next_semi_three_black_.emplace_back(open_position, pattern_position);
+    next_semi_three_black_.emplace_back(kNextSemiThreeBlack, open_position, pattern_position);
     next_semi_three_black_.back().SetCheckPosition(check_position);
     next_semi_three_black_.back().SetGuardPositionList(guard_position_list);
   }else{
-    next_semi_three_white_.emplace_back(open_position, pattern_position);
+    next_semi_three_white_.emplace_back(kNextSemiThreeWhite, open_position, pattern_position);
     next_semi_three_white_.back().SetGuardPositionList(guard_position_list);
   }  
 }
 
-template<OpenStatePattern Pattern, PlayerTurn P>
-void BoardOpenState::ClearInfluencedElement(const std::vector< OpenState<Pattern> > &open_state_list, const MovePosition move, std::vector< OpenState<Pattern> > * const cleared_open_state_list) const
+template<PlayerTurn P>
+void BoardOpenState::ClearInfluencedElement(const std::vector<OpenState> &open_state_list, const MovePosition move, std::vector<OpenState> * const cleared_open_state_list) const
 {
   assert(cleared_open_state_list != nullptr);
   assert(cleared_open_state_list->empty());
 
   for(const auto &open_state : open_state_list){
-    const bool is_influenced = open_state.template IsInfluenceMove<P>(move);
+    const bool is_influenced = open_state.IsInfluenceMove<P>(move);
     
     if(is_influenced){
       continue;
@@ -124,13 +127,13 @@ void BoardOpenState::ClearInfluencedElement(const std::vector< OpenState<Pattern
   }
 }
 
-template<OpenStatePattern Pattern, PlayerTurn P>
-void BoardOpenState::AddElement(const LineNeighborhood &line_neighbor, std::vector< OpenState<Pattern> > * const added_open_state_list) const
+template<PlayerTurn P>
+void BoardOpenState::AddElement(const OpenStatePattern pattern, const LineNeighborhood &line_neighbor, std::vector<OpenState> * const added_open_state_list) const
 {
   assert(added_open_state_list != nullptr);
 
-  std::vector< OpenState<Pattern> > open_state_list;
-  line_neighbor.GetOpenState<Pattern, P>(&open_state_list);
+  std::vector<OpenState> open_state_list;
+  line_neighbor.GetOpenState<P>(pattern, &open_state_list);
 
   added_open_state_list->insert(added_open_state_list->end(), open_state_list.begin(), open_state_list.end());
 }
@@ -144,9 +147,9 @@ void BoardOpenState::Update(const MovePosition move, const BitBoard &bit_board)
     // 長連点
     constexpr OpenStatePattern kPattern = kNextOverline;
 
-    std::vector< OpenState<kPattern> > updated_list;
-    ClearInfluencedElement<kPattern, P>(next_overline_, move, &updated_list);
-    AddElement<kPattern, P>(line_neighborhood, &updated_list);
+    std::vector<OpenState> updated_list;
+    ClearInfluencedElement<P>(next_overline_, move, &updated_list);
+    AddElement<P>(kPattern, line_neighborhood, &updated_list);
 
     next_overline_ = updated_list;
   }
@@ -154,9 +157,9 @@ void BoardOpenState::Update(const MovePosition move, const BitBoard &bit_board)
     // 達四点(黒)
     constexpr OpenStatePattern kPattern = kNextOpenFourBlack;
 
-    std::vector< OpenState<kPattern> > updated_list;
-    ClearInfluencedElement<kPattern, P>(next_open_four_black_, move, &updated_list);
-    AddElement<kPattern, P>(line_neighborhood, &updated_list);
+    std::vector<OpenState> updated_list;
+    ClearInfluencedElement<P>(next_open_four_black_, move, &updated_list);
+    AddElement<P>(kPattern, line_neighborhood, &updated_list);
 
     next_open_four_black_ = updated_list;
   }
@@ -164,9 +167,9 @@ void BoardOpenState::Update(const MovePosition move, const BitBoard &bit_board)
     // 達四点(白)
     constexpr OpenStatePattern kPattern = kNextOpenFourWhite;
 
-    std::vector< OpenState<kPattern> > updated_list;
-    ClearInfluencedElement<kPattern, P>(next_open_four_white_, move, &updated_list);
-    AddElement<kPattern, P>(line_neighborhood, &updated_list);
+    std::vector<OpenState> updated_list;
+    ClearInfluencedElement<P>(next_open_four_white_, move, &updated_list);
+    AddElement<P>(kPattern, line_neighborhood, &updated_list);
 
     next_open_four_white_ = updated_list;
   }
@@ -174,9 +177,9 @@ void BoardOpenState::Update(const MovePosition move, const BitBoard &bit_board)
     // 四ノビ点(黒)
     constexpr OpenStatePattern kPattern = kNextFourBlack;
 
-    std::vector< OpenState<kPattern> > updated_list;
-    ClearInfluencedElement<kPattern, P>(next_four_black_, move, &updated_list);
-    AddElement<kPattern, P>(line_neighborhood, &updated_list);
+    std::vector<OpenState> updated_list;
+    ClearInfluencedElement<P>(next_four_black_, move, &updated_list);
+    AddElement<P>(kPattern, line_neighborhood, &updated_list);
 
     next_four_black_ = updated_list;
   }
@@ -184,9 +187,9 @@ void BoardOpenState::Update(const MovePosition move, const BitBoard &bit_board)
     // 四ノビ点(白)
     constexpr OpenStatePattern kPattern = kNextFourWhite;
 
-    std::vector< OpenState<kPattern> > updated_list;
-    ClearInfluencedElement<kPattern, P>(next_four_white_, move, &updated_list);
-    AddElement<kPattern, P>(line_neighborhood, &updated_list);
+    std::vector<OpenState> updated_list;
+    ClearInfluencedElement<P>(next_four_white_, move, &updated_list);
+    AddElement<P>(kPattern, line_neighborhood, &updated_list);
 
     next_four_white_ = updated_list;
   }
@@ -194,9 +197,9 @@ void BoardOpenState::Update(const MovePosition move, const BitBoard &bit_board)
     // 見かけの三ノビ点(黒)
     constexpr OpenStatePattern kPattern = kNextSemiThreeBlack;
 
-    std::vector< OpenState<kPattern> > updated_list;
-    ClearInfluencedElement<kPattern, P>(next_semi_three_black_, move, &updated_list);
-    AddElement<kPattern, P>(line_neighborhood, &updated_list);
+    std::vector<OpenState> updated_list;
+    ClearInfluencedElement<P>(next_semi_three_black_, move, &updated_list);
+    AddElement<P>(kPattern, line_neighborhood, &updated_list);
 
     next_semi_three_black_ = updated_list;
   }
@@ -204,9 +207,9 @@ void BoardOpenState::Update(const MovePosition move, const BitBoard &bit_board)
     // 見かけの三ノビ点(白)
     constexpr OpenStatePattern kPattern = kNextSemiThreeWhite;
 
-    std::vector< OpenState<kPattern> > updated_list;
-    ClearInfluencedElement<kPattern, P>(next_semi_three_white_, move, &updated_list);
-    AddElement<kPattern, P>(line_neighborhood, &updated_list);
+    std::vector<OpenState> updated_list;
+    ClearInfluencedElement<P>(next_semi_three_white_, move, &updated_list);
+    AddElement<P>(kPattern, line_neighborhood, &updated_list);
 
     next_semi_three_white_ = updated_list;
   }
