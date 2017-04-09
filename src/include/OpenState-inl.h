@@ -12,34 +12,8 @@ namespace realcore
 
 template<OpenStatePattern Pattern>
 OpenState<Pattern>::OpenState(const BoardPosition open_position, const BoardPosition pattern_position)
-: open_position_(open_position), pattern_position_(pattern_position)
+: open_position_(open_position), pattern_position_(pattern_position), check_position_list_{{0}}, guard_position_list_{{0}} 
 {
-  switch(Pattern)
-  {
-  case kNextOverline:
-  case kNextOpenFourBlack:
-  case kNextOpenFourWhite:
-    check_position_list_.reserve(0);
-    guard_position_list_.reserve(0);
-    break;
-
-  case kNextFourBlack:
-  case kNextFourWhite:
-    check_position_list_.reserve(0);
-    guard_position_list_.reserve(1);
-    break;
-
-  case kNextSemiThreeBlack:
-    check_position_list_.reserve(1);
-    guard_position_list_.reserve(3);
-    break;
-  case kNextSemiThreeWhite:
-    check_position_list_.reserve(0);
-    guard_position_list_.reserve(3);
-    break;
-  default:
-    assert(false);
-  }
 }
 
 template<OpenStatePattern Pattern>
@@ -61,25 +35,25 @@ inline const BoardPosition OpenState<Pattern>::GetPatternPosition() const
 }
 
 template<OpenStatePattern Pattern>
-inline const std::vector<BoardPosition>& OpenState<Pattern>::GetCheckPositionList() const
+inline const CheckPositionList& OpenState<Pattern>::GetCheckPositionList() const
 {
   return check_position_list_;
 }
 
 template<OpenStatePattern Pattern>
-inline void OpenState<Pattern>::SetCheckPositionList(const std::vector<BoardPosition> &check_position_list)
+inline void OpenState<Pattern>::SetCheckPositionList(const CheckPositionList &check_position_list)
 {
   check_position_list_ = check_position_list;
 }
 
 template<OpenStatePattern Pattern>
-inline const std::vector<BoardPosition>& OpenState<Pattern>::GetGuardPositionList() const
+inline const GuardPositionList& OpenState<Pattern>::GetGuardPositionList() const
 {
   return guard_position_list_;
 }
 
 template<OpenStatePattern Pattern>
-inline void OpenState<Pattern>::SetGuardPositionList(const std::vector<BoardPosition> &guard_position_list)
+inline void OpenState<Pattern>::SetGuardPositionList(const GuardPositionList &guard_position_list)
 {
   guard_position_list_ = guard_position_list;
 }
@@ -175,7 +149,6 @@ inline constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern)
 {
   return ((pattern == kNextOpenFourWhite) || (pattern == kNextFourWhite) || (pattern == kNextSemiThreeWhite)) ? kWhiteTurn : kBlackTurn;
 }
-
 }   // namespace realcore
 
 #endif    // OPEN_STATE_INL_H

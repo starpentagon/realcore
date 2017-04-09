@@ -173,14 +173,24 @@ inline size_t GetNumberOfTrailingZeros(const std::uint64_t bit, const std::uint6
 inline void GetBitIndexList(std::uint64_t bit, std::vector<size_t> * const index_list)
 {
   assert(index_list != nullptr);
-  index_list->reserve(64);
+  
+  //! @note index_list->reserve(64)としてからemplace_backするより、いったんarrayに入れてからコピーした方が10%程度高速
+  std::array<std::uint64_t, 64> index_array;
+  size_t index_count = 0;
 
   while(bit != 0){
     const std::uint64_t rightmost_bit = GetRightmostBit(bit);
     const size_t rightmost_bit_index = GetNumberOfTrailingZeros(bit, rightmost_bit);
-    index_list->push_back(rightmost_bit_index);
+    index_array[index_count] = rightmost_bit_index;
+    ++index_count;
 
     bit ^= rightmost_bit;
+  }
+
+  index_list->reserve(index_count);
+
+  for(size_t i=0; i<index_count; i++){
+    index_list->emplace_back(index_array[i]);
   }
 }
 

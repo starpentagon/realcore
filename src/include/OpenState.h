@@ -5,7 +5,7 @@
 #ifndef OPEN_STATE_H
 #define OPEN_STATE_H
 
-#include <vector>
+#include <array>
 
 #include "RealCore.h"
 
@@ -24,6 +24,12 @@ enum OpenStatePattern : std::uint8_t
 
 //! @brief 指し手パターンが黒番, 白番どちらのパターンなのかを返す
 constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern);
+
+//! @brief 指し手パターンごとのチェック対象位置リスト
+typedef std::array<BoardPosition, 1> CheckPositionList;
+
+//! @brief 指し手パターンごとの防手対象位置リスト
+typedef std::array<BoardPosition, 3> GuardPositionList;
 
 // 前方宣言
 template<OpenStatePattern Pattern> class OpenState;
@@ -67,18 +73,18 @@ public:
   const BoardPosition GetPatternPosition() const;
 
   //! @brief チェック対象位置のリストを取得する
-  const std::vector<BoardPosition>& GetCheckPositionList() const;
+  const CheckPositionList& GetCheckPositionList() const;
   
   //! @brief チェック対象位置リストを設定する
   //! @param check_position_list 設定するチェック対象位置リスト
-  void SetCheckPositionList(const std::vector<BoardPosition> &check_position_list);
+  void SetCheckPositionList(const CheckPositionList &check_position_list);
 
   //! @brief 防手位置のリストを取得する
-  const std::vector<BoardPosition>& GetGuardPositionList() const;
+  const GuardPositionList& GetGuardPositionList() const;
 
   //! @brief 防手位置のリストを設定する
   //! @param guard_position_list 設定する防手位置リスト
-  void SetGuardPositionList(const std::vector<BoardPosition> &guard_position_list);
+  void SetGuardPositionList(const GuardPositionList &guard_position_list);
 
   //! @brief 指定の指し手位置が影響領域かどうかを判定する
   //! @param P 指し手の手番
@@ -88,10 +94,10 @@ public:
   const bool IsInfluenceMove(const MovePosition move) const;
 
 private:
-  BoardPosition open_position_;                       //!< 空点位置
-  BoardPosition pattern_position_;                    //!< パターンの開始位置
-  std::vector<BoardPosition> check_position_list_;    //!< チェック対象位置（見かけの三の四連にする位置）
-  std::vector<BoardPosition> guard_position_list_;    //!< 防手位置
+  BoardPosition open_position_;              //!< 空点位置
+  BoardPosition pattern_position_;           //!< パターンの開始位置
+  CheckPositionList check_position_list_;    //!< チェック対象位置（見かけの三の四連にする位置）
+  GuardPositionList guard_position_list_;    //!< 防手位置
 };
 }   // namespace realcore
 

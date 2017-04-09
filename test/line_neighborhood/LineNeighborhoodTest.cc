@@ -302,16 +302,16 @@ TEST_F(LineNeighborhoodTest, GetOpenStateFourBlackTest)
   const BoardPosition pattern_position_1 = GetBoardPosition(kMoveHD, direction);
   OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
 
-  vector<BoardPosition> guard_1;
-  guard_1.push_back(GetBoardPosition(kMoveHG, direction));
+  GuardPositionList guard_1{{0}};
+  guard_1[0] = GetBoardPosition(kMoveHG, direction);
   expect_1.SetGuardPositionList(guard_1);
 
   const BoardPosition open_position_2 = GetBoardPosition(kMoveHG, direction);
   const BoardPosition pattern_position_2 = GetBoardPosition(kMoveHD, direction);
   OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
 
-  vector<BoardPosition> guard_2;
-  guard_2.push_back(GetBoardPosition(kMoveHE, direction));
+  GuardPositionList guard_2{{0}};
+  guard_2[0] = GetBoardPosition(kMoveHE, direction);
   expect_2.SetGuardPositionList(guard_2);
 
   ASSERT_EQ(2, open_state_list.size());
@@ -354,16 +354,16 @@ TEST_F(LineNeighborhoodTest, GetOpenStateFourWhiteTest)
   const BoardPosition pattern_position_1 = GetBoardPosition(kMoveMC, direction);
   OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
 
-  vector<BoardPosition> guard_1;
-  guard_1.push_back(GetBoardPosition(kMoveJF, direction));
+  GuardPositionList guard_1{{0}};
+  guard_1[0] = GetBoardPosition(kMoveJF, direction);
   expect_1.SetGuardPositionList(guard_1);
 
   const BoardPosition open_position_2 = GetBoardPosition(kMoveJF, direction);
   const BoardPosition pattern_position_2 = GetBoardPosition(kMoveMC, direction);
   OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
 
-  vector<BoardPosition> guard_2;
-  guard_2.push_back(GetBoardPosition(kMoveLD, direction));
+  GuardPositionList guard_2{{0}};
+  guard_2[0] = GetBoardPosition(kMoveLD, direction);
   expect_2.SetGuardPositionList(guard_2);
 
   ASSERT_EQ(2, open_state_list.size());
@@ -407,14 +407,14 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeBlackTest)
   const BoardPosition pattern_position_1 = GetBoardPosition(kMoveEE, direction);
   OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
 
-  vector<BoardPosition> check_1;
-  check_1.push_back(GetBoardPosition(kMoveGG, direction));
+  CheckPositionList check_1{{0}};
+  check_1[0] = GetBoardPosition(kMoveGG, direction);
   expect_1.SetCheckPositionList(check_1);
 
-  vector<BoardPosition> guard_1;
-  guard_1.push_back(GetBoardPosition(kMoveGG, direction));
-  guard_1.push_back(GetBoardPosition(kMoveDD, direction));
-  guard_1.push_back(GetBoardPosition(kMoveII, direction));
+  GuardPositionList guard_1{{0}};
+  guard_1[0] = GetBoardPosition(kMoveGG, direction);
+  guard_1[1] = GetBoardPosition(kMoveDD, direction);
+  guard_1[2] = GetBoardPosition(kMoveII, direction);
   expect_1.SetGuardPositionList(guard_1);
 
   // OpenState at kMoveGG by pattern kMoveEE
@@ -422,14 +422,14 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeBlackTest)
   const BoardPosition pattern_position_2 = GetBoardPosition(kMoveEE, direction);
   OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
 
-  vector<BoardPosition> check_2;
-  check_2.push_back(GetBoardPosition(kMoveEE, direction));
+  CheckPositionList check_2{{0}};
+  check_2[0] = GetBoardPosition(kMoveEE, direction);
   expect_2.SetCheckPositionList(check_2);
 
-  vector<BoardPosition> guard_2;
-  guard_2.push_back(GetBoardPosition(kMoveEE, direction));
-  guard_2.push_back(GetBoardPosition(kMoveDD, direction));
-  guard_2.push_back(GetBoardPosition(kMoveII, direction));
+  GuardPositionList guard_2{{0}};
+  guard_2[0] = GetBoardPosition(kMoveEE, direction);
+  guard_2[1] = GetBoardPosition(kMoveDD, direction);
+  guard_2[2] = GetBoardPosition(kMoveII, direction);
   expect_2.SetGuardPositionList(guard_2);
 
   // OpenState at kMoveGG by pattern kMoveFF
@@ -437,14 +437,14 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeBlackTest)
   const BoardPosition pattern_position_3 = GetBoardPosition(kMoveFF, direction);
   OpenState<kPattern> expect_3(open_position_3, pattern_position_3);
 
-  vector<BoardPosition> check_3;
-  check_3.push_back(GetBoardPosition(kMoveII, direction));
+  CheckPositionList check_3{{0}};
+  check_3[0] = GetBoardPosition(kMoveII, direction);
   expect_3.SetCheckPositionList(check_3);
 
-  vector<BoardPosition> guard_3;
-  guard_3.push_back(GetBoardPosition(kMoveII, direction));
-  guard_3.push_back(GetBoardPosition(kMoveEE, direction));
-  guard_3.push_back(GetBoardPosition(kMoveJJ, direction));
+  GuardPositionList guard_3{{0}};
+  guard_3[0] = GetBoardPosition(kMoveII, direction);
+  guard_3[1] = GetBoardPosition(kMoveEE, direction);
+  guard_3[2] = GetBoardPosition(kMoveJJ, direction);
   expect_3.SetGuardPositionList(guard_3);
 
   // OpenState at kMoveII by pattern kMoveFF
@@ -452,14 +452,14 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeBlackTest)
   const BoardPosition pattern_position_4 = GetBoardPosition(kMoveFF, direction);
   OpenState<kPattern> expect_4(open_position_4, pattern_position_4);
 
-  vector<BoardPosition> check_4;
-  check_4.push_back(GetBoardPosition(kMoveGG, direction));
+  CheckPositionList check_4{{0}};
+  check_4[0] = GetBoardPosition(kMoveGG, direction);
   expect_4.SetCheckPositionList(check_4);
 
-  vector<BoardPosition> guard_4;
-  guard_4.push_back(GetBoardPosition(kMoveGG, direction));
-  guard_4.push_back(GetBoardPosition(kMoveEE, direction));
-  guard_4.push_back(GetBoardPosition(kMoveJJ, direction));
+  GuardPositionList guard_4{{0}};
+  guard_4[0] = GetBoardPosition(kMoveGG, direction);
+  guard_4[1] = GetBoardPosition(kMoveEE, direction);
+  guard_4[2] = GetBoardPosition(kMoveJJ, direction);
   expect_4.SetGuardPositionList(guard_4);
 
   ASSERT_EQ(4, open_state_list.size());
@@ -505,10 +505,10 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeWhiteTest)
   const BoardPosition pattern_position_1 = GetBoardPosition(kMoveID, direction);
   OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
 
-  vector<BoardPosition> guard_1;
-  guard_1.push_back(GetBoardPosition(kMoveIF, direction));
-  guard_1.push_back(GetBoardPosition(kMoveIC, direction));
-  guard_1.push_back(GetBoardPosition(kMoveIH, direction));
+  GuardPositionList guard_1{{0}};
+  guard_1[0] = GetBoardPosition(kMoveIF, direction);
+  guard_1[1] = GetBoardPosition(kMoveIC, direction);
+  guard_1[2] = GetBoardPosition(kMoveIH, direction);
   expect_1.SetGuardPositionList(guard_1);
 
   // OpenState at kMoveIF by pattern kMoveID
@@ -516,10 +516,10 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeWhiteTest)
   const BoardPosition pattern_position_2 = GetBoardPosition(kMoveID, direction);
   OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
 
-  vector<BoardPosition> guard_2;
-  guard_2.push_back(GetBoardPosition(kMoveIE, direction));
-  guard_2.push_back(GetBoardPosition(kMoveIC, direction));
-  guard_2.push_back(GetBoardPosition(kMoveIH, direction));
+  GuardPositionList guard_2{{0}};
+  guard_2[0] = GetBoardPosition(kMoveIE, direction);
+  guard_2[1] = GetBoardPosition(kMoveIC, direction);
+  guard_2[2] = GetBoardPosition(kMoveIH, direction);
   expect_2.SetGuardPositionList(guard_2);
 
   ASSERT_EQ(2, open_state_list.size());

@@ -17,51 +17,6 @@ public:
     OpenState<kNextOverline> open_state(open_position, pattern_position);
     
     EXPECT_EQ(pattern_position, open_state.pattern_position_);
-    EXPECT_TRUE(open_state.check_position_list_.empty());
-    EXPECT_TRUE(open_state.guard_position_list_.empty());
-
-    {
-      // kNextOverline
-      OpenState<kNextOverline> open_state(open_position, pattern_position);
-      EXPECT_EQ(0, open_state.check_position_list_.capacity());
-      EXPECT_EQ(0, open_state.guard_position_list_.capacity());
-    }
-    {
-      // kNextOpenFourBlack
-      OpenState<kNextOpenFourBlack> open_state(open_position, pattern_position);
-      EXPECT_EQ(0, open_state.check_position_list_.capacity());
-      EXPECT_EQ(0, open_state.guard_position_list_.capacity());
-    }
-    {
-      // kNextOpenFourWhite
-      OpenState<kNextOpenFourWhite> open_state(open_position, pattern_position);
-      EXPECT_EQ(0, open_state.check_position_list_.capacity());
-      EXPECT_EQ(0, open_state.guard_position_list_.capacity());
-    }
-    {
-      // kNextFourBlack
-      OpenState<kNextFourBlack> open_state(open_position, pattern_position);
-      EXPECT_EQ(0, open_state.check_position_list_.capacity());
-      EXPECT_EQ(1, open_state.guard_position_list_.capacity());
-    }
-    {
-      // kNextFourWhite
-      OpenState<kNextFourWhite> open_state(open_position, pattern_position);
-      EXPECT_EQ(0, open_state.check_position_list_.capacity());
-      EXPECT_EQ(1, open_state.guard_position_list_.capacity());
-    }
-    {
-      // kNextSemiThreeBlack
-      OpenState<kNextSemiThreeBlack> open_state(open_position, pattern_position);
-      EXPECT_EQ(1, open_state.check_position_list_.capacity());
-      EXPECT_EQ(3, open_state.guard_position_list_.capacity());
-    }
-    {
-      // kNextSemiThreeWhite
-      OpenState<kNextSemiThreeWhite> open_state(open_position, pattern_position);
-      EXPECT_EQ(0, open_state.check_position_list_.capacity());
-      EXPECT_EQ(3, open_state.guard_position_list_.capacity());
-    }
   }
 };
 
@@ -73,12 +28,12 @@ TEST_F(OpenStateTest, GetSetCheckPositionListTest)
 {
   constexpr BoardPosition open_position = 1;
   constexpr BoardPosition pattern_position = 1;
-  OpenState<kNextOverline> open_state(open_position, pattern_position);
+  OpenState<kNextSemiThreeBlack> open_state(open_position, pattern_position);
 
-  vector<BoardPosition> check_position_list;
+  CheckPositionList check_position_list{{0}};
   EXPECT_EQ(check_position_list, open_state.GetCheckPositionList());
 
-  check_position_list.push_back(2);
+  check_position_list[0] = 2;
   open_state.SetCheckPositionList(check_position_list);
   EXPECT_EQ(check_position_list, open_state.GetCheckPositionList());
 }
@@ -87,12 +42,12 @@ TEST_F(OpenStateTest, GetSetGuardPositionListTest)
 {
   constexpr BoardPosition open_position = 1;
   constexpr BoardPosition pattern_position = 1;
-  OpenState<kNextOverline> open_state(open_position, pattern_position);
+  OpenState<kNextSemiThreeBlack> open_state(open_position, pattern_position);
 
-  vector<BoardPosition> guard_position_list;
+  GuardPositionList guard_position_list{{0}};
   EXPECT_EQ(guard_position_list, open_state.GetGuardPositionList());
 
-  guard_position_list.push_back(3);
+  guard_position_list[0] = 3;
   open_state.SetGuardPositionList(guard_position_list);
   EXPECT_EQ(guard_position_list, open_state.GetGuardPositionList());
 }
@@ -238,45 +193,50 @@ TEST_F(OpenStateTest, IsEqualTest)
 {
   constexpr BoardPosition open_position_1 = 0, open_position_2 = 0, open_position_3 = 1;
   constexpr BoardPosition pattern_position_1 = 1, pattern_position_2 = 1, pattern_position_3 = 2;
-  OpenState<kNextOverline> open_state_1(open_position_1, pattern_position_1);
-  OpenState<kNextOverline> open_state_2(open_position_2, pattern_position_2);
-  OpenState<kNextOverline> open_state_3(open_position_3, pattern_position_3);
 
-  EXPECT_TRUE(IsEqual<kNextOverline>(open_state_1, open_state_2));
-  EXPECT_FALSE(IsEqual<kNextOverline>(open_state_1, open_state_3));
+  constexpr OpenStatePattern Pattern = kNextSemiThreeBlack;
 
-  vector<BoardPosition> check_position_list;
-  check_position_list.push_back(0);
+  OpenState<Pattern> open_state_1(open_position_1, pattern_position_1);
+  OpenState<Pattern> open_state_2(open_position_2, pattern_position_2);
+  OpenState<Pattern> open_state_3(open_position_3, pattern_position_3);
+
+  EXPECT_TRUE(IsEqual<Pattern>(open_state_1, open_state_2));
+  EXPECT_FALSE(IsEqual<Pattern>(open_state_1, open_state_3));
+
+  CheckPositionList check_position_list{{0}};
+  check_position_list[0] = 1;
 
   open_state_1.SetCheckPositionList(check_position_list);
-  EXPECT_FALSE(IsEqual<kNextOverline>(open_state_1, open_state_2));
+  EXPECT_FALSE(IsEqual<Pattern>(open_state_1, open_state_2));
 
   open_state_2.SetCheckPositionList(check_position_list);
-  EXPECT_TRUE(IsEqual<kNextOverline>(open_state_1, open_state_2));
+  EXPECT_TRUE(IsEqual<Pattern>(open_state_1, open_state_2));
   
-  vector<BoardPosition> guard_position_list;
-  guard_position_list.push_back(1);
+  GuardPositionList guard_position_list{{0}};
+  guard_position_list[0] = 1;
 
   open_state_1.SetGuardPositionList(guard_position_list);
-  EXPECT_FALSE(IsEqual<kNextOverline>(open_state_1, open_state_2));
+  EXPECT_FALSE(IsEqual<Pattern>(open_state_1, open_state_2));
 
   open_state_2.SetGuardPositionList(guard_position_list);
-  EXPECT_TRUE(IsEqual<kNextOverline>(open_state_1, open_state_2));
+  EXPECT_TRUE(IsEqual<Pattern>(open_state_1, open_state_2));
 }
 
 TEST_F(OpenStateTest, CompareOperTest)
 {
+  constexpr OpenStatePattern Pattern = kNextSemiThreeBlack;
+  
   constexpr BoardPosition open_position_1 = 0, open_position_2 = 0, open_position_3 = 1;
   constexpr BoardPosition pattern_position_1 = 1, pattern_position_2 = 1, pattern_position_3 = 2;
-  OpenState<kNextOverline> open_state_1(open_position_1, pattern_position_1);
-  OpenState<kNextOverline> open_state_2(open_position_2, pattern_position_2);
-  OpenState<kNextOverline> open_state_3(open_position_3, pattern_position_3);
+  OpenState<Pattern> open_state_1(open_position_1, pattern_position_1);
+  OpenState<Pattern> open_state_2(open_position_2, pattern_position_2);
+  OpenState<Pattern> open_state_3(open_position_3, pattern_position_3);
 
   EXPECT_TRUE(open_state_1 == open_state_2);
   EXPECT_TRUE(open_state_1 != open_state_3);
 
-  vector<BoardPosition> check_position_list;
-  check_position_list.push_back(0);
+  CheckPositionList check_position_list{{0}};
+  check_position_list[0] = 1;
 
   open_state_1.SetCheckPositionList(check_position_list);
   EXPECT_TRUE(open_state_1 != open_state_2);
@@ -284,8 +244,8 @@ TEST_F(OpenStateTest, CompareOperTest)
   open_state_2.SetCheckPositionList(check_position_list);
   EXPECT_TRUE(open_state_1 == open_state_2);
   
-  vector<BoardPosition> guard_position_list;
-  guard_position_list.push_back(1);
+  GuardPositionList guard_position_list{{0}};
+  guard_position_list[0] = 1;
 
   open_state_1.SetGuardPositionList(guard_position_list);
   EXPECT_TRUE(open_state_1 != open_state_2);
@@ -296,38 +256,42 @@ TEST_F(OpenStateTest, CompareOperTest)
 
 TEST_F(OpenStateTest, CopyTest)
 {
+  constexpr OpenStatePattern Pattern = kNextSemiThreeBlack;
+
   constexpr BoardPosition open_position_1 = 0, open_position_2 = 1;
   constexpr BoardPosition pattern_position_1 = 1, pattern_position_2 = 2;
-  OpenState<kNextOverline> open_state_1(open_position_1, pattern_position_1);
-  OpenState<kNextOverline> open_state_2(open_position_2, pattern_position_2);
+  OpenState<Pattern> open_state_1(open_position_1, pattern_position_1);
+  OpenState<Pattern> open_state_2(open_position_2, pattern_position_2);
 
-  vector<BoardPosition> check_position_list;
-  check_position_list.push_back(0);
+  CheckPositionList check_position_list{{0}};
+  check_position_list[0] = 1;
   open_state_1.SetCheckPositionList(check_position_list);
 
-  vector<BoardPosition> guard_position_list;
-  guard_position_list.push_back(1);
+  GuardPositionList guard_position_list{{0}};
+  guard_position_list[0] = 1;
   open_state_1.SetGuardPositionList(guard_position_list);
 
-  EXPECT_FALSE(IsEqual<kNextOverline>(open_state_1, open_state_2));
-  Copy<kNextOverline>(open_state_1, &open_state_2);
+  EXPECT_FALSE(IsEqual<Pattern>(open_state_1, open_state_2));
+  Copy<Pattern>(open_state_1, &open_state_2);
 
-  EXPECT_TRUE(IsEqual<kNextOverline>(open_state_1, open_state_2)); 
+  EXPECT_TRUE(IsEqual<Pattern>(open_state_1, open_state_2)); 
 }
 
 TEST_F(OpenStateTest, AssignOperTest)
 {
+  constexpr OpenStatePattern Pattern = kNextSemiThreeBlack;
+
   constexpr BoardPosition open_position_1 = 0, open_position_2 = 1;
   constexpr BoardPosition pattern_position_1 = 1, pattern_position_2 = 2;
-  OpenState<kNextOverline> open_state_1(open_position_1, pattern_position_1);
-  OpenState<kNextOverline> open_state_2(open_position_2, pattern_position_2);
+  OpenState<Pattern> open_state_1(open_position_1, pattern_position_1);
+  OpenState<Pattern> open_state_2(open_position_2, pattern_position_2);
 
-  vector<BoardPosition> check_position_list;
-  check_position_list.push_back(0);
+  CheckPositionList check_position_list{{0}};
+  check_position_list[0] = 0;
   open_state_1.SetCheckPositionList(check_position_list);
 
-  vector<BoardPosition> guard_position_list;
-  guard_position_list.push_back(1);
+  GuardPositionList guard_position_list{{0}};
+  guard_position_list[0] = 1;
   open_state_1.SetGuardPositionList(guard_position_list);
 
   EXPECT_TRUE(open_state_1 != open_state_2);
@@ -338,19 +302,21 @@ TEST_F(OpenStateTest, AssignOperTest)
 
 TEST_F(OpenStateTest, CopyConstructorTest)
 {
+  constexpr OpenStatePattern Pattern = kNextSemiThreeBlack;
+
   constexpr BoardPosition open_position_1 = 0;
   constexpr BoardPosition pattern_position_1 = 1;
-  OpenState<kNextOverline> open_state_1(open_position_1, pattern_position_1);
+  OpenState<Pattern> open_state_1(open_position_1, pattern_position_1);
 
-  vector<BoardPosition> check_position_list;
-  check_position_list.push_back(0);
+  CheckPositionList check_position_list{{0}};
+  check_position_list[0] = 0;
   open_state_1.SetCheckPositionList(check_position_list);
 
-  vector<BoardPosition> guard_position_list;
-  guard_position_list.push_back(1);
+  GuardPositionList guard_position_list{{0}};
+  guard_position_list[0] = 1;
   open_state_1.SetGuardPositionList(guard_position_list);
 
-  OpenState<kNextOverline> open_state_2(open_state_1);
+  OpenState<Pattern> open_state_2(open_state_1);
 
   EXPECT_TRUE(open_state_1 == open_state_2);
 }

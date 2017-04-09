@@ -62,6 +62,10 @@ void LineNeighborhood<N>::GetBoardPositionList(const LocalBitBoard &bit_list, st
   assert(board_position_list != nullptr);
   assert(board_position_list->empty());
 
+  if(bit_list[0] == 0 && bit_list[1] == 0){
+    return;
+  }
+
   // 1方向(2N + 1)個 * 4方向 = 8N + 4個
   board_position_list->reserve(8 * N + 4);
 
@@ -80,8 +84,6 @@ void LineNeighborhood<N>::GetBoardPositionList(const LocalBitBoard &bit_list, st
   
   for(size_t list_index=0; list_index<kLocalBitBoardNum; list_index++){
     std::vector<size_t> bit_index_list;
-    bit_index_list.reserve(4 * N + 2);   // 1方向(2N + 1)個 * 2方向 = 4N + 2個
-
     GetBitIndexList(bit_list[list_index], &bit_index_list);
 
     for(const auto bit_index : bit_index_list){
@@ -361,13 +363,13 @@ void LineNeighborhood<N>::GetOpenStateFour(const LocalBitBoard &stone_bit, const
       {
         open_state_list->emplace_back(open_state_position_1, pattern_position);
         
-        std::vector<BoardPosition> guard_list_1{open_state_position_2};
+        GuardPositionList guard_list_1{{open_state_position_2}};
         open_state_list->back().SetGuardPositionList(guard_list_1);
       }
       {
         open_state_list->emplace_back(open_state_position_2, pattern_position);
         
-        std::vector<BoardPosition> guard_list_2{open_state_position_1};
+        GuardPositionList guard_list_2{{open_state_position_1}};
         open_state_list->back().SetGuardPositionList(guard_list_2);
       }
     }
@@ -433,22 +435,22 @@ void LineNeighborhood<N>::GetOpenStateSemiThree(const LocalBitBoard &stone_bit, 
         open_state_list->emplace_back(open_state_position_1, pattern_position);
 
         if(P == kBlackTurn){
-          std::vector<BoardPosition> check_list{open_state_position_2};
+          CheckPositionList check_list{{open_state_position_2}};
           open_state_list->back().SetCheckPositionList(check_list);
         }
         
-        std::vector<BoardPosition> guard_list_1{open_state_position_2, guard_position_1, guard_position_2};
+        GuardPositionList guard_list_1{{open_state_position_2, guard_position_1, guard_position_2}};
         open_state_list->back().SetGuardPositionList(guard_list_1);
       }
       {
         open_state_list->emplace_back(open_state_position_2, pattern_position);
         
         if(P == kBlackTurn){
-          std::vector<BoardPosition> check_list{open_state_position_1};
+          CheckPositionList check_list{{open_state_position_1}};
           open_state_list->back().SetCheckPositionList(check_list);
         }
 
-        std::vector<BoardPosition> guard_list_2{open_state_position_1, guard_position_1, guard_position_2};
+        GuardPositionList guard_list_2{{open_state_position_1, guard_position_1, guard_position_2}};
         open_state_list->back().SetGuardPositionList(guard_list_2);
       }
 
