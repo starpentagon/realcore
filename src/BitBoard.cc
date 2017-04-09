@@ -168,7 +168,10 @@ void BitBoard::GetOpenStateOverline(const size_t index, const std::uint64_t ston
 {
   assert(board_open_state != nullptr);
 
-  // @todo stone_bitが0, 1-bitでないことを事前チェックすることで高速化する可能性あり
+  if(stone_bit == 0 || IsSingleBit(stone_bit)){
+    return;
+  }
+  
   std::array<std::uint64_t, kFourStonePattern> overline_search{{0}};
   SearchNextOverline(stone_bit, open_bit, &overline_search);
 

@@ -261,7 +261,10 @@ void BitBoard::GetOpenStateOpenFour(const size_t index, const std::uint64_t ston
 {
   assert(board_open_state != nullptr);
 
-  // @todo stone_bitが0, 1-bitでないことを事前チェックすることで高速化する可能性あり
+  if(stone_bit == 0 || IsSingleBit(stone_bit)){
+    return;
+  }
+
   constexpr size_t kPatternNum = kFourStonePattern;
   std::array<std::uint64_t, kPatternNum> pattern_search{{0}};
   SearchNextOpenFour<P>(stone_bit, open_bit, &pattern_search);
@@ -285,7 +288,10 @@ void BitBoard::GetOpenStateFour(const size_t index, const std::uint64_t stone_bi
 {
   assert(board_open_state != nullptr);
 
-  // @todo stone_bitが0, 1-bitでないことを事前チェックすることで高速化する可能性あり
+  if(stone_bit == 0 || IsSingleBit(stone_bit)){
+    return;
+  }
+  
   constexpr size_t kPatternNum = kTwoOfFivePattern;
   std::array<std::uint64_t, kPatternNum> pattern_search{{0}};
   SearchNextFour<P>(stone_bit, open_bit, &pattern_search);
@@ -326,7 +332,10 @@ void BitBoard::GetOpenStateSemiThree(const size_t index, const std::uint64_t sto
 {
   assert(board_open_state != nullptr);
 
-  // @todo stone_bitが0, 1-bitでないことを事前チェックすることで高速化する可能性あり
+  if(stone_bit == 0 || IsSingleBit(stone_bit)){
+    return;
+  }
+  
   constexpr size_t kPatternNum = kTwoOfFourPattern;
   std::array<std::uint64_t, kPatternNum> pattern_search{{0}};
   SearchNextSemiThree<P>(stone_bit, open_bit, &pattern_search);
