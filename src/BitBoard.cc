@@ -306,26 +306,22 @@ void BitBoard::EnumerateForbiddenMoves(const BoardOpenState &board_open_state, M
       continue;
     }
 
+    const auto check_position = open_state.GetCheckPosition();
+    const auto check_move = GetBoardMove(check_position);
+
     check_bit_board.SetState<kBlackStone>(move);
-
-    for(const auto check_position : open_state.GetCheckPositionList()){
-      const auto check_move = GetBoardMove(check_position);
-      const bool is_forbidden = check_bit_board.IsForbiddenMove<kBlackTurn>(check_move);
-
-      if(is_forbidden){
-        continue;
-      }
-      
-      move_direction_three[move].set(direction);
-
-      if(move_direction_three[move].count() >= 2){
-        forbidden_move_set->set(move);
-      }
-
-      break;
-    }
-
+    const bool is_forbidden = check_bit_board.IsForbiddenMove<kBlackTurn>(check_move);
     check_bit_board.SetState<kOpenPosition>(move);
+
+    if(is_forbidden){
+      continue;
+    }
+    
+    move_direction_three[move].set(direction);
+
+    if(move_direction_three[move].count() >= 2){
+      forbidden_move_set->set(move);
+    }
   }
 }
 

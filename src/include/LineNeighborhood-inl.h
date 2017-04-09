@@ -304,8 +304,7 @@ void LineNeighborhood::GetOpenStateSemiThree(const LocalBitBoard &stone_bit, con
         open_state_list->emplace_back(open_state_position_1, pattern_position);
 
         if(P == kBlackTurn){
-          CheckPositionList check_list{{open_state_position_2}};
-          open_state_list->back().SetCheckPositionList(check_list);
+          open_state_list->back().SetCheckPosition(open_state_position_2);
         }
         
         GuardPositionList guard_list_1{{open_state_position_2, guard_position_1, guard_position_2}};
@@ -315,8 +314,7 @@ void LineNeighborhood::GetOpenStateSemiThree(const LocalBitBoard &stone_bit, con
         open_state_list->emplace_back(open_state_position_2, pattern_position);
         
         if(P == kBlackTurn){
-          CheckPositionList check_list{{open_state_position_1}};
-          open_state_list->back().SetCheckPositionList(check_list);
+          open_state_list->back().SetCheckPosition(open_state_position_1);
         }
 
         GuardPositionList guard_list_2{{open_state_position_1, guard_position_1, guard_position_2}};

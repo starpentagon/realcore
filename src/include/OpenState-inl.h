@@ -12,7 +12,7 @@ namespace realcore
 
 template<OpenStatePattern Pattern>
 OpenState<Pattern>::OpenState(const BoardPosition open_position, const BoardPosition pattern_position)
-: open_position_(open_position), pattern_position_(pattern_position), check_position_list_{{0}}, guard_position_list_{{0}} 
+: open_position_(open_position), pattern_position_(pattern_position), check_position_(0), guard_position_list_{{0}} 
 {
 }
 
@@ -35,15 +35,15 @@ inline const BoardPosition OpenState<Pattern>::GetPatternPosition() const
 }
 
 template<OpenStatePattern Pattern>
-inline const CheckPositionList& OpenState<Pattern>::GetCheckPositionList() const
+inline const BoardPosition OpenState<Pattern>::GetCheckPosition() const
 {
-  return check_position_list_;
+  return check_position_;
 }
 
 template<OpenStatePattern Pattern>
-inline void OpenState<Pattern>::SetCheckPositionList(const CheckPositionList &check_position_list)
+inline void OpenState<Pattern>::SetCheckPosition(const BoardPosition check_position)
 {
-  check_position_list_ = check_position_list;
+  check_position_ = check_position;
 }
 
 template<OpenStatePattern Pattern>
@@ -103,7 +103,7 @@ bool IsEqual(const OpenState<Pattern> &open_state_1, const OpenState<Pattern> &o
     return false;
   }
 
-  if(open_state_1.check_position_list_ != open_state_2.check_position_list_){
+  if(open_state_1.check_position_ != open_state_2.check_position_){
     return false;
   }
 
@@ -131,7 +131,7 @@ void Copy(const OpenState<Pattern> &open_state_from, OpenState<Pattern> * const 
 {
   open_state_to->open_position_ = open_state_from.open_position_;
   open_state_to->pattern_position_ = open_state_from.pattern_position_;
-  open_state_to->check_position_list_ = open_state_from.check_position_list_;
+  open_state_to->check_position_ = open_state_from.check_position_;
   open_state_to->guard_position_list_ = open_state_from.guard_position_list_;
 }
 

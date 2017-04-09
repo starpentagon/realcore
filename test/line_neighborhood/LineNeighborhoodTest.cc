@@ -414,9 +414,8 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeBlackTest)
   const BoardPosition pattern_position_1 = GetBoardPosition(kMoveEE, direction);
   OpenState<kPattern> expect_1(open_position_1, pattern_position_1);
 
-  CheckPositionList check_1{{0}};
-  check_1[0] = GetBoardPosition(kMoveGG, direction);
-  expect_1.SetCheckPositionList(check_1);
+  const auto check_1 = GetBoardPosition(kMoveGG, direction);
+  expect_1.SetCheckPosition(check_1);
 
   GuardPositionList guard_1{{0}};
   guard_1[0] = GetBoardPosition(kMoveGG, direction);
@@ -429,9 +428,8 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeBlackTest)
   const BoardPosition pattern_position_2 = GetBoardPosition(kMoveEE, direction);
   OpenState<kPattern> expect_2(open_position_2, pattern_position_2);
 
-  CheckPositionList check_2{{0}};
-  check_2[0] = GetBoardPosition(kMoveEE, direction);
-  expect_2.SetCheckPositionList(check_2);
+  const auto check_2 = GetBoardPosition(kMoveEE, direction);
+  expect_2.SetCheckPosition(check_2);
 
   GuardPositionList guard_2{{0}};
   guard_2[0] = GetBoardPosition(kMoveEE, direction);
@@ -444,9 +442,8 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeBlackTest)
   const BoardPosition pattern_position_3 = GetBoardPosition(kMoveFF, direction);
   OpenState<kPattern> expect_3(open_position_3, pattern_position_3);
 
-  CheckPositionList check_3{{0}};
-  check_3[0] = GetBoardPosition(kMoveII, direction);
-  expect_3.SetCheckPositionList(check_3);
+  const auto check_3 = GetBoardPosition(kMoveII, direction);
+  expect_3.SetCheckPosition(check_3);
 
   GuardPositionList guard_3{{0}};
   guard_3[0] = GetBoardPosition(kMoveII, direction);
@@ -459,9 +456,8 @@ TEST_F(LineNeighborhoodTest, GetOpenStateSemiThreeBlackTest)
   const BoardPosition pattern_position_4 = GetBoardPosition(kMoveFF, direction);
   OpenState<kPattern> expect_4(open_position_4, pattern_position_4);
 
-  CheckPositionList check_4{{0}};
-  check_4[0] = GetBoardPosition(kMoveGG, direction);
-  expect_4.SetCheckPositionList(check_4);
+  const auto check_4 = GetBoardPosition(kMoveGG, direction);
+  expect_4.SetCheckPosition(check_4);
 
   GuardPositionList guard_4{{0}};
   guard_4[0] = GetBoardPosition(kMoveGG, direction);

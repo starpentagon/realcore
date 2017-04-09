@@ -99,7 +99,7 @@ inline void BoardOpenState::AddNextSemiThree(const BoardPosition open_position, 
 {
   if(P == kBlackTurn){
     next_semi_three_black_.emplace_back(open_position, pattern_position);
-    next_semi_three_black_.back().SetCheckPositionList({{check_position}});
+    next_semi_three_black_.back().SetCheckPosition(check_position);
     next_semi_three_black_.back().SetGuardPositionList(guard_position_list);
   }else{
     next_semi_three_white_.emplace_back(open_position, pattern_position);

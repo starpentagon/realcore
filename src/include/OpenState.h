@@ -25,9 +25,6 @@ enum OpenStatePattern : std::uint8_t
 //! @brief 指し手パターンが黒番, 白番どちらのパターンなのかを返す
 constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern);
 
-//! @brief 指し手パターンごとのチェック対象位置リスト
-typedef std::array<BoardPosition, 1> CheckPositionList;
-
 //! @brief 指し手パターンごとの防手対象位置リスト
 typedef std::array<BoardPosition, 3> GuardPositionList;
 
@@ -72,12 +69,12 @@ public:
   //! @brief パターンの開始位置を返す
   const BoardPosition GetPatternPosition() const;
 
-  //! @brief チェック対象位置のリストを取得する
-  const CheckPositionList& GetCheckPositionList() const;
+  //! @brief チェック対象位置を返す
+  const BoardPosition GetCheckPosition() const;
   
-  //! @brief チェック対象位置リストを設定する
+  //! @brief チェック対象位置を設定する
   //! @param check_position_list 設定するチェック対象位置リスト
-  void SetCheckPositionList(const CheckPositionList &check_position_list);
+  void SetCheckPosition(const BoardPosition check_position);
 
   //! @brief 防手位置のリストを取得する
   const GuardPositionList& GetGuardPositionList() const;
@@ -96,7 +93,7 @@ public:
 private:
   BoardPosition open_position_;              //!< 空点位置
   BoardPosition pattern_position_;           //!< パターンの開始位置
-  CheckPositionList check_position_list_;    //!< チェック対象位置（見かけの三の四連にする位置）
+  BoardPosition check_position_;        //!< チェック対象位置（見かけの三の四連にする位置）
   GuardPositionList guard_position_list_;    //!< 防手位置
 };
 }   // namespace realcore

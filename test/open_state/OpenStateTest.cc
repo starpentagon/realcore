@@ -30,12 +30,11 @@ TEST_F(OpenStateTest, GetSetCheckPositionListTest)
   constexpr BoardPosition pattern_position = 1;
   OpenState<kNextSemiThreeBlack> open_state(open_position, pattern_position);
 
-  CheckPositionList check_position_list{{0}};
-  EXPECT_EQ(check_position_list, open_state.GetCheckPositionList());
+  EXPECT_EQ(0, open_state.GetCheckPosition());
 
-  check_position_list[0] = 2;
-  open_state.SetCheckPositionList(check_position_list);
-  EXPECT_EQ(check_position_list, open_state.GetCheckPositionList());
+  constexpr BoardPosition check_position = 2;
+  open_state.SetCheckPosition(check_position);
+  EXPECT_EQ(check_position, open_state.GetCheckPosition());
 }
 
 TEST_F(OpenStateTest, GetSetGuardPositionListTest)
@@ -193,6 +192,7 @@ TEST_F(OpenStateTest, IsEqualTest)
 {
   constexpr BoardPosition open_position_1 = 0, open_position_2 = 0, open_position_3 = 1;
   constexpr BoardPosition pattern_position_1 = 1, pattern_position_2 = 1, pattern_position_3 = 2;
+  constexpr BoardPosition check_position_1 = 2, check_position_2 = 2;
 
   constexpr OpenStatePattern Pattern = kNextSemiThreeBlack;
 
@@ -203,13 +203,10 @@ TEST_F(OpenStateTest, IsEqualTest)
   EXPECT_TRUE(IsEqual<Pattern>(open_state_1, open_state_2));
   EXPECT_FALSE(IsEqual<Pattern>(open_state_1, open_state_3));
 
-  CheckPositionList check_position_list{{0}};
-  check_position_list[0] = 1;
-
-  open_state_1.SetCheckPositionList(check_position_list);
+  open_state_1.SetCheckPosition(check_position_1);
   EXPECT_FALSE(IsEqual<Pattern>(open_state_1, open_state_2));
 
-  open_state_2.SetCheckPositionList(check_position_list);
+  open_state_2.SetCheckPosition(check_position_2);
   EXPECT_TRUE(IsEqual<Pattern>(open_state_1, open_state_2));
   
   GuardPositionList guard_position_list{{0}};
@@ -228,6 +225,8 @@ TEST_F(OpenStateTest, CompareOperTest)
   
   constexpr BoardPosition open_position_1 = 0, open_position_2 = 0, open_position_3 = 1;
   constexpr BoardPosition pattern_position_1 = 1, pattern_position_2 = 1, pattern_position_3 = 2;
+  constexpr BoardPosition check_position = 3;
+
   OpenState<Pattern> open_state_1(open_position_1, pattern_position_1);
   OpenState<Pattern> open_state_2(open_position_2, pattern_position_2);
   OpenState<Pattern> open_state_3(open_position_3, pattern_position_3);
@@ -235,13 +234,10 @@ TEST_F(OpenStateTest, CompareOperTest)
   EXPECT_TRUE(open_state_1 == open_state_2);
   EXPECT_TRUE(open_state_1 != open_state_3);
 
-  CheckPositionList check_position_list{{0}};
-  check_position_list[0] = 1;
-
-  open_state_1.SetCheckPositionList(check_position_list);
+  open_state_1.SetCheckPosition(check_position);
   EXPECT_TRUE(open_state_1 != open_state_2);
 
-  open_state_2.SetCheckPositionList(check_position_list);
+  open_state_2.SetCheckPosition(check_position);
   EXPECT_TRUE(open_state_1 == open_state_2);
   
   GuardPositionList guard_position_list{{0}};
@@ -260,12 +256,12 @@ TEST_F(OpenStateTest, CopyTest)
 
   constexpr BoardPosition open_position_1 = 0, open_position_2 = 1;
   constexpr BoardPosition pattern_position_1 = 1, pattern_position_2 = 2;
+  constexpr BoardPosition check_position = 3;
+
   OpenState<Pattern> open_state_1(open_position_1, pattern_position_1);
   OpenState<Pattern> open_state_2(open_position_2, pattern_position_2);
 
-  CheckPositionList check_position_list{{0}};
-  check_position_list[0] = 1;
-  open_state_1.SetCheckPositionList(check_position_list);
+  open_state_1.SetCheckPosition(check_position);
 
   GuardPositionList guard_position_list{{0}};
   guard_position_list[0] = 1;
@@ -283,12 +279,12 @@ TEST_F(OpenStateTest, AssignOperTest)
 
   constexpr BoardPosition open_position_1 = 0, open_position_2 = 1;
   constexpr BoardPosition pattern_position_1 = 1, pattern_position_2 = 2;
+  constexpr BoardPosition check_position = 3;
+
   OpenState<Pattern> open_state_1(open_position_1, pattern_position_1);
   OpenState<Pattern> open_state_2(open_position_2, pattern_position_2);
 
-  CheckPositionList check_position_list{{0}};
-  check_position_list[0] = 0;
-  open_state_1.SetCheckPositionList(check_position_list);
+  open_state_1.SetCheckPosition(check_position);
 
   GuardPositionList guard_position_list{{0}};
   guard_position_list[0] = 1;
@@ -306,11 +302,11 @@ TEST_F(OpenStateTest, CopyConstructorTest)
 
   constexpr BoardPosition open_position_1 = 0;
   constexpr BoardPosition pattern_position_1 = 1;
+  constexpr BoardPosition check_position = 3;
+
   OpenState<Pattern> open_state_1(open_position_1, pattern_position_1);
 
-  CheckPositionList check_position_list{{0}};
-  check_position_list[0] = 0;
-  open_state_1.SetCheckPositionList(check_position_list);
+  open_state_1.SetCheckPosition(check_position);
 
   GuardPositionList guard_position_list{{0}};
   guard_position_list[0] = 1;
