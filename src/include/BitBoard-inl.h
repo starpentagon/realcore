@@ -271,8 +271,12 @@ void BitBoard::GetOpenStateOpenFour(const size_t index, const std::uint64_t ston
 
   for(size_t pattern_index=0; pattern_index<kPatternNum; pattern_index++){
     const auto search_bit = pattern_search[pattern_index];
-    std::vector<size_t> bit_index_list;
+
+    if(search_bit == 0){
+      continue;
+    }
     
+    std::vector<size_t> bit_index_list;
     GetBitIndexList(search_bit, &bit_index_list);
 
     for(const auto shift : bit_index_list){
@@ -298,8 +302,12 @@ void BitBoard::GetOpenStateFour(const size_t index, const std::uint64_t stone_bi
 
   for(size_t pattern_index=0; pattern_index<kPatternNum; pattern_index++){
     const auto search_bit = pattern_search[pattern_index];
-    std::vector<size_t> bit_index_list;
+
+    if(search_bit == 0){
+      continue;
+    }
     
+    std::vector<size_t> bit_index_list;
     GetBitIndexList(search_bit, &bit_index_list);
 
     for(const auto shift : bit_index_list){
@@ -342,8 +350,12 @@ void BitBoard::GetOpenStateSemiThree(const size_t index, const std::uint64_t sto
 
   for(size_t pattern_index=0; pattern_index<kPatternNum; pattern_index++){
     const auto search_bit = pattern_search[pattern_index];
+
+    if(search_bit == 0){
+      continue;
+    }
+
     std::vector<size_t> bit_index_list;
-    
     GetBitIndexList(search_bit, &bit_index_list);
 
     for(const auto shift : bit_index_list){

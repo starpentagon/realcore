@@ -177,8 +177,12 @@ void BitBoard::GetOpenStateOverline(const size_t index, const std::uint64_t ston
 
   for(size_t pattern_index=0; pattern_index<kFourStonePattern; pattern_index++){
     const auto search_bit = overline_search[pattern_index];
-    std::vector<size_t> bit_index_list;
+
+    if(search_bit == 0){
+      continue;
+    }
     
+    std::vector<size_t> bit_index_list;
     GetBitIndexList(search_bit, &bit_index_list);
 
     for(const auto shift : bit_index_list){
