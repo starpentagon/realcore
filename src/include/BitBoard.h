@@ -145,7 +145,7 @@ private:
 
   //! 指し手パターンの空点状態を取得する
   template<OpenStatePattern Pattern>
-  void GetOpenState(const size_t index, const std::uint64_t stone_bit, const std::uint64_t open_bit, BoardOpenState * const board_open_state) const;
+  void GetOpenState(const size_t index, const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, BoardOpenState * const board_open_state) const;
   
   //! @brief 空点状態を追加する
   //! @param pattern_search_index 検索パターンのindex

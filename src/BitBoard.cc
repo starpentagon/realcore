@@ -144,23 +144,26 @@ void BitBoard::GetBoardOpenState(BoardOpenState * const board_open_state) const
 {
   assert(board_open_state->empty());
 
-  for(size_t index=0; index<kBitBoardElementNum; index++)
+  for(size_t index=0; index<kBitBoardElementNum; index+=2)
   {
-    const auto state_bit = bit_board_[index];
-    const auto black_bit = GetBlackStoneBit(state_bit);
-    const auto white_bit = GetWhiteStoneBit(state_bit);
-    const auto open_bit = GetOpenPositionBit(state_bit);
+    const auto state_bit_even = bit_board_[index];
+    const auto state_bit_odd = bit_board_[index+1];
 
-    GetOpenState<kNextOverline>(index, black_bit, open_bit, board_open_state);
+    // 黒/白/空点ビットは２bit区切りの下位のみ設定されるため上位bitを使いbit board配列の2つをまとめてチェックする
+    const auto combined_black_bit = GetBlackStoneBit(state_bit_even) | (GetBlackStoneBit(state_bit_odd) << 1);
+    const auto combined_white_bit = GetWhiteStoneBit(state_bit_even) | (GetWhiteStoneBit(state_bit_odd) << 1);
+    const auto combined_open_bit = GetOpenPositionBit(state_bit_even) | (GetOpenPositionBit(state_bit_odd) << 1);
 
-    GetOpenState<kNextOpenFourBlack>(index, black_bit, open_bit, board_open_state);
-    GetOpenState<kNextOpenFourWhite>(index, white_bit, open_bit, board_open_state);
+    GetOpenState<kNextOverline>(index, combined_black_bit, combined_open_bit, board_open_state);
 
-    GetOpenState<kNextFourBlack>(index, black_bit, open_bit, board_open_state);
-    GetOpenState<kNextFourWhite>(index, white_bit, open_bit, board_open_state);
+    GetOpenState<kNextOpenFourBlack>(index, combined_black_bit, combined_open_bit, board_open_state);
+    GetOpenState<kNextOpenFourWhite>(index, combined_white_bit, combined_open_bit, board_open_state);
 
-    GetOpenState<kNextSemiThreeBlack>(index, black_bit, open_bit, board_open_state);
-    GetOpenState<kNextSemiThreeWhite>(index, white_bit, open_bit, board_open_state);
+    GetOpenState<kNextFourBlack>(index, combined_black_bit, combined_open_bit, board_open_state);
+    GetOpenState<kNextFourWhite>(index, combined_white_bit, combined_open_bit, board_open_state);
+
+    GetOpenState<kNextSemiThreeBlack>(index, combined_black_bit, combined_open_bit, board_open_state);
+    GetOpenState<kNextSemiThreeWhite>(index, combined_white_bit, combined_open_bit, board_open_state);
   }
 }
 

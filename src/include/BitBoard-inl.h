@@ -394,20 +394,20 @@ inline void BitBoard::AddOpenState<kNextSemiThreeWhite>(const size_t pattern_sea
 }
 
 template<OpenStatePattern Pattern>
-void BitBoard::GetOpenState(const size_t index, const std::uint64_t stone_bit, const std::uint64_t open_bit, BoardOpenState * const board_open_state) const
+void BitBoard::GetOpenState(const size_t index, const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, BoardOpenState * const board_open_state) const
 {
   constexpr bool is_multiple_stone_pattern = (Pattern == kNextOverline) || (Pattern == kNextOpenFourBlack) || (Pattern == kNextOpenFourWhite) ||
     (Pattern == kNextFourBlack) || (Pattern == kNextFourWhite) || (Pattern == kNextSemiThreeBlack) || (Pattern == kNextSemiThreeWhite);
 
   static_assert(is_multiple_stone_pattern, "The speeding up check assumes the pattern has multiple stones.");
 
-  if(stone_bit == 0 || IsSingleBit(stone_bit)){
+  if(combined_stone_bit == 0 || IsSingleBit(combined_stone_bit)){
     return;
   }
 
   constexpr size_t kPatternNum = GetOpenStatePatternNum(Pattern);
   std::array<std::uint64_t, kPatternNum> pattern_search{{0}};
-  SearchOpenStatePattern<Pattern>(stone_bit, open_bit, &pattern_search);
+  SearchOpenStatePattern<Pattern>(combined_stone_bit, combined_open_bit, &pattern_search);
 
   for(size_t pattern_index=0; pattern_index<kPatternNum; pattern_index++){
     const auto search_bit = pattern_search[pattern_index];
@@ -419,8 +419,11 @@ void BitBoard::GetOpenState(const size_t index, const std::uint64_t stone_bit, c
     std::vector<size_t> bit_index_list;
     GetBitIndexList(search_bit, &bit_index_list);
 
-    for(const auto shift : bit_index_list){
-      const BoardPosition pattern_position = GetBoardPosition(index, shift);
+    for(const auto combined_shift : bit_index_list){
+      const size_t bit_board_index = (combined_shift % 2 == 0) ? index : index + 1;
+      const size_t bit_board_shift = (combined_shift % 2 == 0) ? combined_shift : combined_shift - 1;
+
+      const BoardPosition pattern_position = GetBoardPosition(bit_board_index, bit_board_shift);
       AddOpenState<Pattern>(pattern_index, pattern_position, board_open_state);
     }
   }
