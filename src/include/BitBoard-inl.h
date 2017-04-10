@@ -256,18 +256,158 @@ const bool BitBoard::IsDoubleFourMove(const MovePosition move) const
   return line_neighbor.IsDoubleFour<P>();
 }
 
-template<PlayerTurn P>
-void BitBoard::GetOpenStateOpenFour(const size_t index, const std::uint64_t stone_bit, const std::uint64_t open_bit, BoardOpenState * const board_open_state) const
+template<>
+inline void BitBoard::AddOpenState<kNextOverline>(const size_t pattern_search_index, const BoardPosition pattern_position, BoardOpenState * const board_open_state) const
 {
   assert(board_open_state != nullptr);
+
+  const BoardPosition open_position = GetOpenBoardPosition(pattern_position, pattern_search_index);
+  board_open_state->AddNextOverline(open_position, pattern_position);
+}
+
+template<>
+inline void BitBoard::AddOpenState<kNextOpenFourBlack>(const size_t pattern_search_index, const BoardPosition pattern_position, BoardOpenState * const board_open_state) const
+{
+  assert(board_open_state != nullptr);
+
+  const BoardPosition open_position = GetOpenBoardPosition(pattern_position, pattern_search_index);
+  board_open_state->AddNextOpenFour<kBlackTurn>(open_position, pattern_position);
+}
+
+template<>
+inline void BitBoard::AddOpenState<kNextOpenFourWhite>(const size_t pattern_search_index, const BoardPosition pattern_position, BoardOpenState * const board_open_state) const
+{
+  assert(board_open_state != nullptr);
+
+  const BoardPosition open_position = GetOpenBoardPosition(pattern_position, pattern_search_index);
+  board_open_state->AddNextOpenFour<kWhiteTurn>(open_position, pattern_position);
+}
+
+template<>
+inline void BitBoard::AddOpenState<kNextFourBlack>(const size_t pattern_search_index, const BoardPosition pattern_position, BoardOpenState * const board_open_state) const
+{
+  assert(board_open_state != nullptr);
+
+  {
+    const size_t open_index = GetLessIndexOfTwo(pattern_search_index);
+    const size_t guard_index = GetGreaterIndexOfTwo(pattern_search_index);
+
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
+
+    board_open_state->AddNextFour<kBlackTurn>(open_position, pattern_position, guard_position);
+  }
+  {
+    const size_t open_index = GetGreaterIndexOfTwo(pattern_search_index);
+    const size_t guard_index = GetLessIndexOfTwo(pattern_search_index);
+
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
+
+    board_open_state->AddNextFour<kBlackTurn>(open_position, pattern_position, guard_position);
+  }
+}
+
+template<>
+inline void BitBoard::AddOpenState<kNextFourWhite>(const size_t pattern_search_index, const BoardPosition pattern_position, BoardOpenState * const board_open_state) const
+{
+  assert(board_open_state != nullptr);
+
+  {
+    const size_t open_index = GetLessIndexOfTwo(pattern_search_index);
+    const size_t guard_index = GetGreaterIndexOfTwo(pattern_search_index);
+
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
+
+    board_open_state->AddNextFour<kWhiteTurn>(open_position, pattern_position, guard_position);
+  }
+  {
+    const size_t open_index = GetGreaterIndexOfTwo(pattern_search_index);
+    const size_t guard_index = GetLessIndexOfTwo(pattern_search_index);
+
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
+
+    board_open_state->AddNextFour<kWhiteTurn>(open_position, pattern_position, guard_position);
+  }
+}
+
+template<>
+inline void BitBoard::AddOpenState<kNextSemiThreeBlack>(const size_t pattern_search_index, const BoardPosition pattern_position, BoardOpenState * const board_open_state) const
+{
+  assert(board_open_state != nullptr);
+
+  const BoardPosition left_side_guard_position = pattern_position + 4;  // O[B2O2]Oの左端のO
+  const BoardPosition right_side_guard_position = pattern_position - 1;  // O[B2O2]Oの右端のO
+
+  {
+    const size_t open_index = GetLessIndexOfTwo(pattern_search_index);
+    const size_t check_index = GetGreaterIndexOfTwo(pattern_search_index);
+
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    const BoardPosition check_position = GetOpenBoardPosition(pattern_position, check_index);
+    const GuardPositionList guard_position_list{{check_position, right_side_guard_position, left_side_guard_position}};
+
+    board_open_state->AddNextSemiThree<kBlackTurn>(open_position, pattern_position, check_position, guard_position_list);
+  }
+  {
+    const size_t open_index = GetGreaterIndexOfTwo(pattern_search_index);
+    const size_t check_index = GetLessIndexOfTwo(pattern_search_index);
+
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    const BoardPosition check_position = GetOpenBoardPosition(pattern_position, check_index);
+    const GuardPositionList guard_position_list{{check_position, right_side_guard_position, left_side_guard_position}};
+
+    board_open_state->AddNextSemiThree<kBlackTurn>(open_position, pattern_position, check_position, guard_position_list);
+  }
+}
+
+template<>
+inline void BitBoard::AddOpenState<kNextSemiThreeWhite>(const size_t pattern_search_index, const BoardPosition pattern_position, BoardOpenState * const board_open_state) const
+{
+  assert(board_open_state != nullptr);
+
+  const BoardPosition left_side_guard_position = pattern_position + 4;  // O[B2O2]Oの左端のO
+  const BoardPosition right_side_guard_position = pattern_position - 1;  // O[B2O2]Oの右端のO
+
+  {
+    const size_t open_index = GetLessIndexOfTwo(pattern_search_index);
+    const size_t check_index = GetGreaterIndexOfTwo(pattern_search_index);
+
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    const BoardPosition check_position = GetOpenBoardPosition(pattern_position, check_index);
+    const GuardPositionList guard_position_list{{check_position, right_side_guard_position, left_side_guard_position}};
+
+    board_open_state->AddNextSemiThree<kWhiteTurn>(open_position, pattern_position, check_position, guard_position_list);
+  }
+  {
+    const size_t open_index = GetGreaterIndexOfTwo(pattern_search_index);
+    const size_t check_index = GetLessIndexOfTwo(pattern_search_index);
+
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    const BoardPosition check_position = GetOpenBoardPosition(pattern_position, check_index);
+    const GuardPositionList guard_position_list{{check_position, right_side_guard_position, left_side_guard_position}};
+
+    board_open_state->AddNextSemiThree<kWhiteTurn>(open_position, pattern_position, check_position, guard_position_list);
+  }
+}
+
+template<OpenStatePattern Pattern>
+void BitBoard::GetOpenState(const size_t index, const std::uint64_t stone_bit, const std::uint64_t open_bit, BoardOpenState * const board_open_state) const
+{
+  constexpr bool is_multiple_stone_pattern = (Pattern == kNextOverline) || (Pattern == kNextOpenFourBlack) || (Pattern == kNextOpenFourWhite) ||
+    (Pattern == kNextFourBlack) || (Pattern == kNextFourWhite) || (Pattern == kNextSemiThreeBlack) || (Pattern == kNextSemiThreeWhite);
+
+  static_assert(is_multiple_stone_pattern, "The speeding up check assumes the pattern has multiple stones.");
 
   if(stone_bit == 0 || IsSingleBit(stone_bit)){
     return;
   }
 
-  constexpr size_t kPatternNum = kFourStonePattern;
+  constexpr size_t kPatternNum = GetOpenStatePatternNum(Pattern);
   std::array<std::uint64_t, kPatternNum> pattern_search{{0}};
-  SearchNextOpenFour<P>(stone_bit, open_bit, &pattern_search);
+  SearchOpenStatePattern<Pattern>(stone_bit, open_bit, &pattern_search);
 
   for(size_t pattern_index=0; pattern_index<kPatternNum; pattern_index++){
     const auto search_bit = pattern_search[pattern_index];
@@ -281,108 +421,7 @@ void BitBoard::GetOpenStateOpenFour(const size_t index, const std::uint64_t ston
 
     for(const auto shift : bit_index_list){
       const BoardPosition pattern_position = GetBoardPosition(index, shift);
-      const BoardPosition open_position = GetOpenBoardPosition(pattern_position, pattern_index);
-      board_open_state->AddNextOpenFour<P>(open_position, pattern_position);
-    }
-  }
-}
-
-template<PlayerTurn P>
-void BitBoard::GetOpenStateFour(const size_t index, const std::uint64_t stone_bit, const std::uint64_t open_bit, BoardOpenState * const board_open_state) const
-{
-  assert(board_open_state != nullptr);
-
-  if(stone_bit == 0 || IsSingleBit(stone_bit)){
-    return;
-  }
-  
-  constexpr size_t kPatternNum = kTwoOfFivePattern;
-  std::array<std::uint64_t, kPatternNum> pattern_search{{0}};
-  SearchNextFour<P>(stone_bit, open_bit, &pattern_search);
-
-  for(size_t pattern_index=0; pattern_index<kPatternNum; pattern_index++){
-    const auto search_bit = pattern_search[pattern_index];
-
-    if(search_bit == 0){
-      continue;
-    }
-    
-    std::vector<size_t> bit_index_list;
-    GetBitIndexList(search_bit, &bit_index_list);
-
-    for(const auto shift : bit_index_list){
-      const BoardPosition pattern_position = GetBoardPosition(index, shift);
-
-      {
-        const size_t open_index = GetLessIndexOfTwo(pattern_index);
-        const size_t guard_index = GetGreaterIndexOfTwo(pattern_index);
-
-        const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
-        const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
-
-        board_open_state->AddNextFour<P>(open_position, pattern_position, guard_position);
-      }
-      {
-        const size_t open_index = GetGreaterIndexOfTwo(pattern_index);
-        const size_t guard_index = GetLessIndexOfTwo(pattern_index);
-
-        const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
-        const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
-
-        board_open_state->AddNextFour<P>(open_position, pattern_position, guard_position);
-      }
-    }
-  }
-}
-
-template<PlayerTurn P>
-void BitBoard::GetOpenStateSemiThree(const size_t index, const std::uint64_t stone_bit, const std::uint64_t open_bit, BoardOpenState * const board_open_state) const
-{
-  assert(board_open_state != nullptr);
-
-  if(stone_bit == 0 || IsSingleBit(stone_bit)){
-    return;
-  }
-  
-  constexpr size_t kPatternNum = kTwoOfFourPattern;
-  std::array<std::uint64_t, kPatternNum> pattern_search{{0}};
-  SearchNextSemiThree<P>(stone_bit, open_bit, &pattern_search);
-
-  for(size_t pattern_index=0; pattern_index<kPatternNum; pattern_index++){
-    const auto search_bit = pattern_search[pattern_index];
-
-    if(search_bit == 0){
-      continue;
-    }
-
-    std::vector<size_t> bit_index_list;
-    GetBitIndexList(search_bit, &bit_index_list);
-
-    for(const auto shift : bit_index_list){
-      const BoardPosition pattern_position = GetBoardPosition(index, shift);
-      const BoardPosition left_side_guard_position = pattern_position + 4;  // O[B2O2]Oの左端のO
-      const BoardPosition right_side_guard_position = pattern_position - 1;  // O[B2O2]Oの右端のO
-
-      {
-        const size_t open_index = GetLessIndexOfTwo(pattern_index);
-        const size_t check_index = GetGreaterIndexOfTwo(pattern_index);
-
-        const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
-        const BoardPosition check_position = GetOpenBoardPosition(pattern_position, check_index);
-        const GuardPositionList guard_position_list{{check_position, right_side_guard_position, left_side_guard_position}};
-
-        board_open_state->AddNextSemiThree<P>(open_position, pattern_position, check_position, guard_position_list);
-      }
-      {
-        const size_t open_index = GetGreaterIndexOfTwo(pattern_index);
-        const size_t check_index = GetLessIndexOfTwo(pattern_index);
-
-        const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
-        const BoardPosition check_position = GetOpenBoardPosition(pattern_position, check_index);
-        const GuardPositionList guard_position_list{{check_position, right_side_guard_position, left_side_guard_position}};
-
-        board_open_state->AddNextSemiThree<P>(open_position, pattern_position, check_position, guard_position_list);
-      }
+      AddOpenState<Pattern>(pattern_index, pattern_position, board_open_state);
     }
   }
 }

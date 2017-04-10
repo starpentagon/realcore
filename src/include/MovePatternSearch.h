@@ -7,6 +7,7 @@
 #define MOVE_PATTERN_SEARCH_H
 
 #include "BitSearch.h"
+#include "OpenState.h"
 
 namespace realcore{
 
@@ -14,6 +15,14 @@ namespace realcore{
 //! @param black_bit 黒石フラグ
 //! @retval true 長連が生じている
 inline const bool IsOverline(const std::uint64_t black_bit);
+
+//! @brief 空点状態の指し手パターンのパターン検索数を返す
+//! @param pattern 空点状態の指し手パターン(長連点, 達四点, etc)
+//! @retval パターン検索数
+inline constexpr size_t GetOpenStatePatternNum(const OpenStatePattern pattern);
+
+template<OpenStatePattern Pattern>
+inline void SearchOpenStatePattern(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, GetOpenStatePatternNum(Pattern)> * const pattern_search_bit_list);
 
 //! @brief 長連点(B[B3O1]B)が生じているか判定する
 //! @param stone_bit 黒石フラグ

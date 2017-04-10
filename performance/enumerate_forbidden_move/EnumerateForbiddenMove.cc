@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
 
   option.add_options()
     ("db", value<string>(), "棋譜データベース(csv)")
+    ("log", "列挙結果を出力する")
     ("mode", value<string>()->default_value("point"), "point:各点チェック, enum:列挙法, enum-diff:差分法列挙")
     ("help,h", "ヘルプを表示");
   
@@ -65,6 +66,7 @@ int main(int argc, char* argv[])
   vector< shared_ptr<MoveList> > forbidden_board_list, forbidden_move_list;
   auto start_time = chrono::system_clock::now();
   size_t board_count = 0, forbidden_count = 0;
+  const bool is_output_result = arg_map.count("log");
 
   for(const auto& move_list : board_move_list){
     MoveList board_move;
@@ -89,18 +91,25 @@ int main(int argc, char* argv[])
   
         is_black_turn = !is_black_turn;
       }else{
-        CheckEachPoint(board_move, &forbidden_move);
+        if(is_black_turn){
+          bit_board.SetState<kBlackStone>(move);
+        }else{
+          bit_board.SetState<kWhiteStone>(move);
+          CheckEachPoint(board_move, &forbidden_move);
+        }
+  
+        is_black_turn = !is_black_turn;
       }
 
-      if(!forbidden_move.empty()){
+      forbidden_count += forbidden_move.size();
+
+      if(is_output_result && !forbidden_move.empty()){
         // 禁手が存在する場合は盤面と禁手リストを記録する
         auto forbidden_board = make_shared<MoveList>(board_move);
         auto forbidden = make_shared<MoveList>(forbidden_move);
 
         forbidden_board_list.push_back(forbidden_board);
         forbidden_move_list.push_back(forbidden);
-
-        forbidden_count += forbidden_move.size();
       }
 
       board_count++;
@@ -120,14 +129,8 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-void CheckEachPoint(const MoveList &board_move, MoveList * const forbidden_move)
+void CheckEachPoint(const BitBoard &bit_board, MoveList * const forbidden_move)
 {
-  if(!board_move.IsBlackTurn()){
-    return;
-  }
-
-  BitBoard bit_board(board_move);
-
   for(const auto move : GetAllInBoardMove())
   {
     auto state = bit_board.GetState(move);

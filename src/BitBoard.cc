@@ -151,45 +151,16 @@ void BitBoard::GetBoardOpenState(BoardOpenState * const board_open_state) const
     const auto white_bit = GetWhiteStoneBit(state_bit);
     const auto open_bit = GetOpenPositionBit(state_bit);
 
-    GetOpenStateOverline(index, black_bit, open_bit, board_open_state);
+    GetOpenState<kNextOverline>(index, black_bit, open_bit, board_open_state);
 
-    GetOpenStateOpenFour<kBlackTurn>(index, black_bit, open_bit, board_open_state);
-    GetOpenStateOpenFour<kWhiteTurn>(index, white_bit, open_bit, board_open_state);
+    GetOpenState<kNextOpenFourBlack>(index, black_bit, open_bit, board_open_state);
+    GetOpenState<kNextOpenFourWhite>(index, white_bit, open_bit, board_open_state);
 
-    GetOpenStateFour<kBlackTurn>(index, black_bit, open_bit, board_open_state);
-    GetOpenStateFour<kWhiteTurn>(index, white_bit, open_bit, board_open_state);
+    GetOpenState<kNextFourBlack>(index, black_bit, open_bit, board_open_state);
+    GetOpenState<kNextFourWhite>(index, white_bit, open_bit, board_open_state);
 
-    GetOpenStateSemiThree<kBlackTurn>(index, black_bit, open_bit, board_open_state);
-    GetOpenStateSemiThree<kWhiteTurn>(index, white_bit, open_bit, board_open_state);
-  }
-}
-
-void BitBoard::GetOpenStateOverline(const size_t index, const std::uint64_t stone_bit, const std::uint64_t open_bit, BoardOpenState * const board_open_state) const
-{
-  assert(board_open_state != nullptr);
-
-  if(stone_bit == 0 || IsSingleBit(stone_bit)){
-    return;
-  }
-  
-  std::array<std::uint64_t, kFourStonePattern> overline_search{{0}};
-  SearchNextOverline(stone_bit, open_bit, &overline_search);
-
-  for(size_t pattern_index=0; pattern_index<kFourStonePattern; pattern_index++){
-    const auto search_bit = overline_search[pattern_index];
-
-    if(search_bit == 0){
-      continue;
-    }
-    
-    std::vector<size_t> bit_index_list;
-    GetBitIndexList(search_bit, &bit_index_list);
-
-    for(const auto shift : bit_index_list){
-      const BoardPosition pattern_position = GetBoardPosition(index, shift);
-      const BoardPosition open_position = GetOpenBoardPosition(pattern_position, pattern_index);
-      board_open_state->AddNextOverline(open_position, pattern_position);
-    }
+    GetOpenState<kNextSemiThreeBlack>(index, black_bit, open_bit, board_open_state);
+    GetOpenState<kNextSemiThreeWhite>(index, white_bit, open_bit, board_open_state);
   }
 }
 

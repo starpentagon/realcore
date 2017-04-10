@@ -139,25 +139,21 @@ public:
   void EnumerateForbiddenMoves(MoveBitSet * const forbidden_move_set) const;
 
 private:
-  //! @brief 空点状態を取得する
+  //! @brief 盤面の空点状態を取得する
   //! @param board_open_state 空点状態の格納先
   void GetBoardOpenState(BoardOpenState * const board_open_state) const;
 
-  //! @brief 長連点の空点状態を取得する
-  void GetOpenStateOverline(const size_t index, const std::uint64_t stone_bit, const std::uint64_t open_bit, BoardOpenState * const board_open_state) const;
-
-  //! @brief 達四点版の空点状態を取得する
-  template<PlayerTurn P>
-  void GetOpenStateOpenFour(const size_t index, const std::uint64_t stone_bit, const std::uint64_t open_bit, BoardOpenState * const board_open_state) const;
-
-  //! @brief 四ノビ点版の空点状態を取得する
-  template<PlayerTurn P>
-  void GetOpenStateFour(const size_t index, const std::uint64_t stone_bit, const std::uint64_t open_bit, BoardOpenState * const board_open_state) const;
-
-  //! @brief 見かけの三ノビ点版の空点状態を取得する
-  template<PlayerTurn P>
-  void GetOpenStateSemiThree(const size_t index, const std::uint64_t stone_bit, const std::uint64_t open_bit, BoardOpenState * const board_open_state) const;
+  //! 指し手パターンの空点状態を取得する
+  template<OpenStatePattern Pattern>
+  void GetOpenState(const size_t index, const std::uint64_t stone_bit, const std::uint64_t open_bit, BoardOpenState * const board_open_state) const;
   
+  //! @brief 空点状態を追加する
+  //! @param pattern_search_index 検索パターンのindex
+  //! @param pattern_position 検索パターンのマッチ位置
+  //! @param board_open_state 空点状態の格納先
+  template<OpenStatePattern Pattern>
+  void AddOpenState(const size_t pattern_search_index, const BoardPosition pattern_position, BoardOpenState * const board_open_state) const;
+
   Bitboard bit_board_;    //!< 盤面状態を保持するBit board
 };    // class BitBoard
 

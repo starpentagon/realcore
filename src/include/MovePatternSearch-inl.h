@@ -18,6 +18,69 @@ inline const bool IsOverline(const std::uint64_t black_bit)
   return is_overline;
 }
 
+inline constexpr size_t GetOpenStatePatternNum(const OpenStatePattern pattern)
+{
+  switch(pattern)
+  {
+  case kNextOverline:       // B[B3O1]B
+  case kNextOpenFourBlack:  // XO[B3O1]OX
+  case kNextOpenFourWhite:  // O[W3O1]O
+    return 4;
+
+  case kNextFourBlack:      // X[B3O2]X
+  case kNextFourWhite:      // [W3O2]
+    return 10;
+  case kNextSemiThreeBlack: // XO[B2O2]OX
+  case kNextSemiThreeWhite: // O[W2O2]O
+    return 6;
+  default:
+    assert(false);
+    return 0;
+  }
+}
+
+template<>
+inline void SearchOpenStatePattern<kNextOverline>(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, GetOpenStatePatternNum(kNextOverline)> * const pattern_search_bit_list)
+{
+  SearchNextOverline(stone_bit, open_bit, pattern_search_bit_list);
+}
+
+template<>
+inline void SearchOpenStatePattern<kNextOpenFourBlack>(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, GetOpenStatePatternNum(kNextOpenFourBlack)> * const pattern_search_bit_list)
+{
+  SearchNextOpenFour<kBlackTurn>(stone_bit, open_bit, pattern_search_bit_list);
+}
+
+template<>
+inline void SearchOpenStatePattern<kNextOpenFourWhite>(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, GetOpenStatePatternNum(kNextOpenFourWhite)> * const pattern_search_bit_list)
+{
+  SearchNextOpenFour<kWhiteTurn>(stone_bit, open_bit, pattern_search_bit_list);
+}
+
+template<>
+inline void SearchOpenStatePattern<kNextFourBlack>(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, GetOpenStatePatternNum(kNextFourBlack)> * const pattern_search_bit_list)
+{
+  SearchNextFour<kBlackTurn>(stone_bit, open_bit, pattern_search_bit_list);
+}
+
+template<>
+inline void SearchOpenStatePattern<kNextFourWhite>(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, GetOpenStatePatternNum(kNextFourWhite)> * const pattern_search_bit_list)
+{
+  SearchNextFour<kWhiteTurn>(stone_bit, open_bit, pattern_search_bit_list);
+}
+
+template<>
+inline void SearchOpenStatePattern<kNextSemiThreeBlack>(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, GetOpenStatePatternNum(kNextSemiThreeBlack)> * const pattern_search_bit_list)
+{
+  SearchNextSemiThree<kBlackTurn>(stone_bit, open_bit, pattern_search_bit_list);
+}
+
+template<>
+inline void SearchOpenStatePattern<kNextSemiThreeWhite>(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, GetOpenStatePatternNum(kNextSemiThreeWhite)> * const pattern_search_bit_list)
+{
+  SearchNextSemiThree<kWhiteTurn>(stone_bit, open_bit, pattern_search_bit_list);
+}
+
 // 長連点
 inline void SearchNextOverline(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, kFourStonePattern> * const pattern_search_bit_list)
 {
