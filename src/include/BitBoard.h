@@ -31,6 +31,9 @@ class BitBoard;
 class BitBoardTest;
 class MoveList;
 
+//! MoveBitSetから指し手リストを取得する
+void GetMoveList(const MoveBitSet &move_bit_set, MoveList *move_list);
+
 //! @brief 2つのBitBoardを比較する
 //! @param bit_board_1, 2: 比較対象
 //! @retval true 2つのBoardが同一の内容を保持

@@ -82,6 +82,9 @@ static constexpr size_t kFourStonePattern = 4;   //<! 4個の石のパターン
 //! @retval 空点の位置に1を立てた値
 inline constexpr std::uint64_t GetOpenPositionBit(const StateBit state_bit);
 
+//! @brief 石フラグ(下位bitを利用)2つを結合(上位bitにも設定)したフラグを生成する
+inline constexpr std::uint64_t GetCombinedBit(std::uint64_t bit_even, std::uint64_t bit_odd);
+
 //! @brief 連続する同一N個の石フラグを返す
 //! @param N 連続する石数
 //! @param stone_bit 黒石 or 白石フラグ

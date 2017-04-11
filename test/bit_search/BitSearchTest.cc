@@ -525,4 +525,13 @@ TEST(BitSearchTest, GetOpenBoardPositionTest)
     EXPECT_EQ(expect, result);
   }
 }
+
+TEST(BitSearchTest, GetCombinedBitTest)
+{
+  constexpr uint64_t bit_1 = 0b0101, bit_2 = 0b0100;
+  constexpr auto result = GetCombinedBit(bit_1, bit_2);
+  constexpr uint64_t expected = 0b1101;
+
+  ASSERT_EQ(expected, result);
+}
 }   // namespace realcore

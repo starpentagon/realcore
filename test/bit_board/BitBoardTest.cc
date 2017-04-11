@@ -53,4 +53,23 @@ TEST_F(BitBoardTest, CopyTest)
   EXPECT_TRUE(IsEqual(bit_board_1, bit_board_2));
 }
 
+TEST_F(BitBoardTest, GetMoveListTest)
+{
+  MoveBitSet move_bit_set;
+
+  move_bit_set.set(kMoveAA);
+  move_bit_set.set(kMoveHH);
+  move_bit_set.set(kMoveOO);
+  move_bit_set.set(kNullMove);
+
+  MoveList move_list;
+  GetMoveList(move_bit_set, &move_list);
+
+  ASSERT_EQ(4, move_list.size());
+  EXPECT_EQ(kNullMove, move_list[0]);
+  EXPECT_EQ(kMoveAA, move_list[1]);
+  EXPECT_EQ(kMoveHH, move_list[2]);
+  EXPECT_EQ(kMoveOO, move_list[3]);
+}
+
 }   // namespace realcore

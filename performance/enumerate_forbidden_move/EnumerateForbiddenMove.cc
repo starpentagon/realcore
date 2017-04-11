@@ -148,22 +148,12 @@ void EnumerateOpenState(const Board &board, MoveList * const forbidden_move)
 {
   MoveBitSet forbidden_bit_set;
   board.EnumerateForbiddenMoves(&forbidden_bit_set);
-
-  for(const auto move : GetAllInBoardMove()){
-    if(forbidden_bit_set[move]){
-      (*forbidden_move) += move;
-    }
-  }
+  GetMoveList(forbidden_bit_set, forbidden_move);
 }
 
 void EnumerateOpenState(const BitBoard &bit_board, MoveList * const forbidden_move)
 {
   MoveBitSet forbidden_bit_set;
   bit_board.EnumerateForbiddenMoves(&forbidden_bit_set);
-
-  for(const auto move : GetAllInBoardMove()){
-    if(forbidden_bit_set[move]){
-      (*forbidden_move) += move;
-    }
-  }
+  GetMoveList(forbidden_bit_set, forbidden_move);
 }

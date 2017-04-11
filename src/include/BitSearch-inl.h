@@ -238,6 +238,11 @@ inline const std::uint64_t GetOpenBitInPattern(const size_t index, const std::ui
   return pattern_bit << (2 * index);
 }
 
+inline constexpr std::uint64_t GetCombinedBit(std::uint64_t bit_even, std::uint64_t bit_odd)
+{
+  return bit_even | (bit_odd << 1);
+}
+
 }   // namespace realcore
 
 #endif    // BIT_SEARCH_INL_H

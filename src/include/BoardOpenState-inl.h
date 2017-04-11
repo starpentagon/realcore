@@ -178,7 +178,7 @@ void BoardOpenState::ClearInfluencedOpenState(const std::vector<OpenState> &open
 {
   assert(cleared_open_state_list != nullptr);
   assert(cleared_open_state_list->empty());
-  
+
   cleared_open_state_list->reserve(open_state_list.size());
 
   for(const auto &open_state : open_state_list){

@@ -43,20 +43,16 @@ inline const BoardDirection LineNeighborhood::GetBoardDirection(const size_t ind
 template<PlayerTurn P>
 const bool LineNeighborhood::IsOpenFour() const
 {
-  for(size_t i=0; i<kLocalBitBoardNum; i++){
-    const auto state_bit = local_bit_board_[i];
+  const auto stone_bit_even = GetPlayerStoneBit<P>(local_bit_board_[0]);
+  const auto open_bit_even = GetOpenPositionBit(local_bit_board_[0]);
+  const auto stone_bit_odd = GetPlayerStoneBit<P>(local_bit_board_[1]);
+  const auto open_bit_odd = GetOpenPositionBit(local_bit_board_[1]);
 
-    const auto stone_bit = GetPlayerStoneBit<P>(state_bit);
-    const auto open_bit = GetOpenPositionBit(state_bit);
+  const auto combined_stone_bit = GetCombinedBit(stone_bit_even, stone_bit_odd);
+  const auto combined_open_bit = GetCombinedBit(open_bit_even, open_bit_odd);
 
-    const auto open_four_bit = SearchOpenFour<P>(stone_bit, open_bit);
-
-    if(open_four_bit != 0){
-      return true;
-    }
-  }
-  
-  return false;
+  const auto open_four_bit = SearchOpenFour<P>(combined_stone_bit, combined_open_bit);
+  return (open_four_bit != 0);
 }
 
 template<PlayerTurn P>

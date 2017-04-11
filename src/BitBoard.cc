@@ -150,9 +150,17 @@ void BitBoard::GetBoardOpenState(BoardOpenState * const board_open_state) const
     const auto state_bit_odd = bit_board_[index+1];
 
     // 黒/白/空点ビットは２bit区切りの下位のみ設定されるため上位bitを使いbit board配列の2つをまとめてチェックする
-    const auto combined_black_bit = GetBlackStoneBit(state_bit_even) | (GetBlackStoneBit(state_bit_odd) << 1);
-    const auto combined_white_bit = GetWhiteStoneBit(state_bit_even) | (GetWhiteStoneBit(state_bit_odd) << 1);
-    const auto combined_open_bit = GetOpenPositionBit(state_bit_even) | (GetOpenPositionBit(state_bit_odd) << 1);
+    const auto black_bit_even = GetBlackStoneBit(state_bit_even);
+    const auto black_bit_odd = GetBlackStoneBit(state_bit_odd);
+    const auto combined_black_bit =  GetCombinedBit(black_bit_even, black_bit_odd);
+
+    const auto white_bit_even = GetWhiteStoneBit(state_bit_even);
+    const auto white_bit_odd = GetWhiteStoneBit(state_bit_odd);
+    const auto combined_white_bit = GetCombinedBit(white_bit_even, white_bit_odd);
+    
+    const auto open_bit_even = GetOpenPositionBit(state_bit_even);
+    const auto open_bit_odd = GetOpenPositionBit(state_bit_odd);
+    const auto combined_open_bit = GetCombinedBit(open_bit_even, open_bit_odd);
 
     GetOpenState<kNextOverline>(index, combined_black_bit, combined_open_bit, board_open_state);
 
