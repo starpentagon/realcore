@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 3.5.1)
 set(project_name move_pattern_search_test)
 project(${project_name} CXX)
 
+# Build Type(Release or Debug)
+set(CMAKE_BUILD_TYPE Debug)
+
 # ccache
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)

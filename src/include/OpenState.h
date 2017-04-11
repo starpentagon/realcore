@@ -22,8 +22,8 @@ enum OpenStatePattern : std::uint8_t
   kNextSemiThreeWhite,    //!< 見かけの三ノビ点(白)
 };
 
-constexpr size_t OpenStatePatternNum = 7;
-const std::array<OpenStatePattern, OpenStatePatternNum>& GetAllOpenStatePattern();
+constexpr size_t kOpenStatePatternNum = 7;
+const std::array<OpenStatePattern, kOpenStatePatternNum>& GetAllOpenStatePattern();
 
 //! @brief 指し手パターンが黒番, 白番どちらのパターンなのかを返す
 constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern);

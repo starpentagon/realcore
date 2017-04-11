@@ -1,13 +1,36 @@
 #include "gtest/gtest.h"
 
+#include <vector>
+
 #include "MoveList.h"
 #include "BitBoard.h"
 #include "BoardOpenState.h"
 
+using namespace std;
+
 namespace realcore
 {
 
-TEST(BoardOpenStateTest, DefaultConstructor)
+class BoardOpenStateTest
+: public ::testing::Test
+{
+  void ClearInfluencedOpenStateTest(){
+    vector<OpenState> test_list;
+
+    test_list.emplace_back(kNextFourBlack, 37, 37);
+    test_list.emplace_back(kNextFourBlack, 41, 37);
+    test_list.emplace_back(kNextFourBlack, 41, 38);
+    test_list.emplace_back(kNextFourBlack, 42, 38);
+    
+    BoardOpenState board_open_state;
+    vector<OpenState> cleared_list;
+    
+    board_open_state.ClearInfluencedOpenState<kWhiteTurn>(test_list, kMoveIB, &cleared_list);
+    EXPECT_TRUE(cleared_list.empty());
+  }
+};
+
+TEST_F(BoardOpenStateTest, DefaultConstructor)
 {
   BoardOpenState board_open_state;
 
@@ -20,7 +43,7 @@ TEST(BoardOpenStateTest, DefaultConstructor)
   EXPECT_TRUE(board_open_state.GetList(kNextSemiThreeWhite).empty());
 }
 
-TEST(BoardOpenStateTest, UpdateOverlineTest)
+TEST_F(BoardOpenStateTest, UpdateOverlineTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -64,7 +87,7 @@ TEST(BoardOpenStateTest, UpdateOverlineTest)
   }
 }
 
-TEST(BoardOpenStateTest, UpdateOpenFourBlackTest)
+TEST_F(BoardOpenStateTest, UpdateOpenFourBlackTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -107,7 +130,7 @@ TEST(BoardOpenStateTest, UpdateOpenFourBlackTest)
   }
 }
 
-TEST(BoardOpenStateTest, UpdateOpenFourWhiteTest)
+TEST_F(BoardOpenStateTest, UpdateOpenFourWhiteTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -150,7 +173,7 @@ TEST(BoardOpenStateTest, UpdateOpenFourWhiteTest)
   }
 }
 
-TEST(BoardOpenStateTest, UpdateFourBlackTest)
+TEST_F(BoardOpenStateTest, UpdateFourBlackTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -193,7 +216,7 @@ TEST(BoardOpenStateTest, UpdateFourBlackTest)
   }
 }
 
-TEST(BoardOpenStateTest, UpdateFourWhiteTest)
+TEST_F(BoardOpenStateTest, UpdateFourWhiteTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -236,7 +259,7 @@ TEST(BoardOpenStateTest, UpdateFourWhiteTest)
   }
 }
 
-TEST(BoardOpenStateTest, UpdateSemiThreeBlackTest)
+TEST_F(BoardOpenStateTest, UpdateSemiThreeBlackTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -279,7 +302,7 @@ TEST(BoardOpenStateTest, UpdateSemiThreeBlackTest)
   }
 }
 
-TEST(BoardOpenStateTest, UpdateSemiThreeWhiteTest)
+TEST_F(BoardOpenStateTest, UpdateSemiThreeWhiteTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -322,7 +345,7 @@ TEST(BoardOpenStateTest, UpdateSemiThreeWhiteTest)
   }
 }
 
-TEST(BoardOpenStateTest, IsEqualTest)
+TEST_F(BoardOpenStateTest, IsEqualTest)
 {
   BoardOpenState state_1, state_2;
 
@@ -343,7 +366,7 @@ TEST(BoardOpenStateTest, IsEqualTest)
   EXPECT_TRUE(IsEqual(state_1, state_2));
 }
 
-TEST(BoardOpenStateTest, CompareOperTest)
+TEST_F(BoardOpenStateTest, CompareOperTest)
 {
   BoardOpenState state_1, state_2;
 
@@ -364,7 +387,7 @@ TEST(BoardOpenStateTest, CompareOperTest)
   EXPECT_TRUE(state_1 == state_2);
 }
 
-TEST(BoardOpenStateTest, CopyTest)
+TEST_F(BoardOpenStateTest, CopyTest)
 {
   BoardOpenState state_1, state_2;
 
@@ -379,7 +402,7 @@ TEST(BoardOpenStateTest, CopyTest)
   EXPECT_TRUE(IsEqual(state_1, state_2));
 }
 
-TEST(BoardOpenStateTest, AssignOperTest)
+TEST_F(BoardOpenStateTest, AssignOperTest)
 {
   BoardOpenState state_1, state_2;
 
@@ -394,7 +417,7 @@ TEST(BoardOpenStateTest, AssignOperTest)
   EXPECT_TRUE(state_1 == state_2);
 }
 
-TEST(BoardOpenStateTest, CopyConstructerTest)
+TEST_F(BoardOpenStateTest, CopyConstructerTest)
 {
   BoardOpenState state_1;
 
@@ -407,7 +430,7 @@ TEST(BoardOpenStateTest, CopyConstructerTest)
   EXPECT_TRUE(state_1 == state_2);
 }
 
-TEST(BoardOpenStateTest, EmptyTest)
+TEST_F(BoardOpenStateTest, EmptyTest)
 {
   BoardOpenState state_1;
   EXPECT_TRUE(state_1.empty());

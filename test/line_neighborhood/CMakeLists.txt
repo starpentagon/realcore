@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 3.5.1)
 set(project_name line_neighborhood_test)
 project(${project_name} CXX)
 
+# Build Type(Release or Debug)
+set(CMAKE_BUILD_TYPE Debug)
+
 # ccache
 find_program(CCACHE_FOUND ccache)
 if(CCACHE_FOUND)
@@ -29,6 +32,7 @@ add_executable(
     $ENV{REALCORE_DIR}/src/BitBoard.cc
     $ENV{REALCORE_DIR}/src/LineNeighborhood.cc
     $ENV{REALCORE_DIR}/src/OpenState.cc
+    $ENV{REALCORE_DIR}/src/BoardOpenState.cc
     ../LineNeighborhoodTest.cc
 )
 

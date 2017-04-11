@@ -86,8 +86,7 @@ void Board::MakeMove(const MovePosition move)
   move_list_ += move;
 
   const auto &current_board_open_state = board_open_state_stack_.top();
-  board_open_state_stack_.emplace(current_board_open_state);
-  board_open_state_stack_.top().Update(is_black_turn, move, bit_board_);
+  board_open_state_stack_.emplace(current_board_open_state, is_black_turn, move, bit_board_);
 }
 
 void Board::UndoMove()

@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
 {
   // オプション設定
   options_description option;
-
+  
   option.add_options()
     ("db", value<string>(), "棋譜データベース(csv)")
     ("log", "列挙結果を出力する")

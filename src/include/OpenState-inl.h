@@ -10,9 +10,9 @@
 namespace realcore
 {
 
-inline const std::array<OpenStatePattern, OpenStatePatternNum>& GetAllOpenStatePattern()
+inline const std::array<OpenStatePattern, kOpenStatePatternNum>& GetAllOpenStatePattern()
 {
-  static const std::array<OpenStatePattern, OpenStatePatternNum> all_open_state_pattern_list{{
+  static const std::array<OpenStatePattern, kOpenStatePatternNum> all_open_state_pattern_list{{
     kNextOverline,
     kNextOpenFourBlack,
     kNextOpenFourWhite,

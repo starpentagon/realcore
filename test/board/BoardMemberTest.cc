@@ -45,6 +45,30 @@ public:
     EXPECT_TRUE(board.move_list_ == board_expect.move_list_);
   }
 
+  void BoardOpenStateUpdateTest(){
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . x . . x x x o . . . . . | B 
+  // C | . . o . o . . o x x . . . | C 
+  // D | . . * o . x . o o o x . . | D 
+  // E | . . . x o . o . x o . o . | E 
+  // F | . . . . . o x x . o o o x | F 
+  // G | . . . . x o x o x x x x o | G 
+  // H | . . . . o . x . . o o . . | H 
+  // I | . . . . . x o . . . x . . | I 
+  // J | . . x . . . . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhhijggggiigfgfhhfhedjidifgfgdkfjekdjcjdldfeeeedhgfcfbkekcichblfmgmfnfmekgdccblhlikhlgnggbib"));
+    auto board_open_state = board.board_open_state_stack_.top();
+
+    ASSERT_EQ(2ULL, board_open_state.GetList(kNextFourBlack).size());
+  }
+
   void IsNormalMoveTest(){
     const auto in_board_move_list = GetAllInBoardMove();
     
@@ -460,4 +484,8 @@ TEST_F(BoardTest, BoardOpenStateStackTest)
   BoardOpenStateStackTest();
 }
 
+TEST_F(BoardTest, UpdateTest)
+{
+  BoardOpenStateUpdateTest();
+}
 }

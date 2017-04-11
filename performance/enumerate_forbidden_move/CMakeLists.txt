@@ -7,7 +7,6 @@ project(${project_name} CXX)
 # Build Type(Release or Debug)
 #set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BUILD_TYPE Release)
-# message(STATUS "${CMAKE_CXX_FLAGS_RELEASE}")
 
 # ccache
 find_program(CCACHE_FOUND ccache)

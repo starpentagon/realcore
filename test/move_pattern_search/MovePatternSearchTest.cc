@@ -36,13 +36,13 @@ TEST(MovePatternSearchTest, IsOverlineTest)
 
 TEST(MovePatternSearchTest, GetOpenStatePatternNumTest)
 {
-  EXPECT_EQ(4, GetOpenStatePatternNum(kNextOverline));
-  EXPECT_EQ(4, GetOpenStatePatternNum(kNextOpenFourBlack));
-  EXPECT_EQ(4, GetOpenStatePatternNum(kNextOpenFourWhite));
-  EXPECT_EQ(10, GetOpenStatePatternNum(kNextFourBlack));
-  EXPECT_EQ(10, GetOpenStatePatternNum(kNextFourWhite));
-  EXPECT_EQ(6, GetOpenStatePatternNum(kNextSemiThreeBlack));
-  EXPECT_EQ(6, GetOpenStatePatternNum(kNextSemiThreeWhite));
+  EXPECT_EQ(4ULL, GetOpenStatePatternNum(kNextOverline));
+  EXPECT_EQ(4ULL, GetOpenStatePatternNum(kNextOpenFourBlack));
+  EXPECT_EQ(4ULL, GetOpenStatePatternNum(kNextOpenFourWhite));
+  EXPECT_EQ(10ULL, GetOpenStatePatternNum(kNextFourBlack));
+  EXPECT_EQ(10ULL, GetOpenStatePatternNum(kNextFourWhite));
+  EXPECT_EQ(6ULL, GetOpenStatePatternNum(kNextSemiThreeBlack));
+  EXPECT_EQ(6ULL, GetOpenStatePatternNum(kNextSemiThreeWhite));
 }
 
 TEST(MovePatternSearchTest, SearchNextOverlineTest)
@@ -68,8 +68,8 @@ TEST(MovePatternSearchTest, SearchNextOverlineTest)
         constexpr uint64_t expect_open_state_bit = LeftShift<3>(0b1);
         ASSERT_EQ(expect_open_state_bit, open_state_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
-        ASSERT_EQ(0, open_state_bit);
+        ASSERT_EQ(0ULL, search_bit);
+        ASSERT_EQ(0ULL, open_state_bit);
       }
     }
   }
@@ -100,8 +100,8 @@ TEST(MovePatternSearchTest, SearchNextOverlineTest)
         constexpr uint64_t expect_open_state_bit = LeftShift<3>(0b1);
         ASSERT_EQ(expect_open_state_bit, open_state_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
-        ASSERT_EQ(0, open_state_bit);
+        ASSERT_EQ(0ULL, search_bit);
+        ASSERT_EQ(0ULL, open_state_bit);
       }
     }
   }
@@ -119,8 +119,8 @@ TEST(MovePatternSearchTest, SearchNextOverlineTest)
       const auto search_bit = pattern_search_bit_list[i];
       const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      ASSERT_EQ(0, search_bit);
-      ASSERT_EQ(0, open_state_bit);
+      ASSERT_EQ(0ULL, search_bit);
+      ASSERT_EQ(0ULL, open_state_bit);
     }
   }
 }
@@ -270,8 +270,8 @@ TEST(MovePatternSearchTest, SearchNextOpenFourBlackTest)
         constexpr uint64_t expect_open_state_bit = LeftShift<5>(0b1);
         ASSERT_EQ(expect_open_state_bit, open_state_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
-        ASSERT_EQ(0, open_state_bit);
+        ASSERT_EQ(0ULL, search_bit);
+        ASSERT_EQ(0ULL, open_state_bit);
       }
     }
   }
@@ -296,8 +296,8 @@ TEST(MovePatternSearchTest, SearchNextOpenFourBlackTest)
         constexpr uint64_t expect_open_state_bit = LeftShift<4>(0b1);
         ASSERT_EQ(expect_open_state_bit, open_state_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
-        ASSERT_EQ(0, open_state_bit);
+        ASSERT_EQ(0ULL, search_bit);
+        ASSERT_EQ(0ULL, open_state_bit);
       }
     }
   }
@@ -322,8 +322,8 @@ TEST(MovePatternSearchTest, SearchNextOpenFourBlackTest)
         constexpr uint64_t expect_open_state_bit = LeftShift<1>(0b1);
         ASSERT_EQ(expect_open_state_bit, open_state_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
-        ASSERT_EQ(0, open_state_bit);
+        ASSERT_EQ(0ULL, search_bit);
+        ASSERT_EQ(0ULL, open_state_bit);
       }
     }
   }
@@ -341,8 +341,8 @@ TEST(MovePatternSearchTest, SearchNextOpenFourBlackTest)
       const auto search_bit = pattern_search_bit_list[i];
       const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      ASSERT_EQ(0, search_bit);
-      ASSERT_EQ(0, open_state_bit);
+      ASSERT_EQ(0ULL, search_bit);
+      ASSERT_EQ(0ULL, open_state_bit);
     }
   }
   {
@@ -359,8 +359,8 @@ TEST(MovePatternSearchTest, SearchNextOpenFourBlackTest)
       const auto search_bit = pattern_search_bit_list[i];
       const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      ASSERT_EQ(0, search_bit);
-      ASSERT_EQ(0, open_state_bit);
+      ASSERT_EQ(0ULL, search_bit);
+      ASSERT_EQ(0ULL, open_state_bit);
     }
   }
 }
@@ -396,8 +396,8 @@ TEST(MovePatternSearchTest, SearchNextOpenFourWhiteTest)
         constexpr uint64_t expect_open_state_bit = LeftShift<5>(0b1);
         ASSERT_EQ(expect_open_state_bit, open_state_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
-        ASSERT_EQ(0, open_state_bit);
+        ASSERT_EQ(0ULL, search_bit);
+        ASSERT_EQ(0ULL, open_state_bit);
       }
     }
   }
@@ -422,8 +422,8 @@ TEST(MovePatternSearchTest, SearchNextOpenFourWhiteTest)
         constexpr uint64_t expect_open_state_bit = LeftShift<4>(0b1);
         ASSERT_EQ(expect_open_state_bit, open_state_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
-        ASSERT_EQ(0, open_state_bit);
+        ASSERT_EQ(0ULL, search_bit);
+        ASSERT_EQ(0ULL, open_state_bit);
       }
     }
   }
@@ -454,8 +454,8 @@ TEST(MovePatternSearchTest, SearchNextOpenFourWhiteTest)
         constexpr uint64_t expect_open_state_bit = LeftShift<5>(0b1);
         ASSERT_EQ(expect_open_state_bit, open_state_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
-        ASSERT_EQ(0, open_state_bit);
+        ASSERT_EQ(0ULL, search_bit);
+        ASSERT_EQ(0ULL, open_state_bit);
       }
     }
   }
@@ -473,8 +473,8 @@ TEST(MovePatternSearchTest, SearchNextOpenFourWhiteTest)
       const auto search_bit = pattern_search_bit_list[i];
       const auto open_state_bit = GetOpenBitInPattern(i, pattern_search_bit_list[i]);
 
-      ASSERT_EQ(0, search_bit);
-      ASSERT_EQ(0, open_state_bit);
+      ASSERT_EQ(0ULL, search_bit);
+      ASSERT_EQ(0ULL, open_state_bit);
     }
   }
 }
@@ -738,7 +738,7 @@ TEST(MovePatternSearchTest, SearchNextFourBlackTest)
         constexpr uint64_t expect_bit = LeftShift<2>(0b1);
         ASSERT_EQ(expect_bit, search_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0ULL, search_bit);
       }
     }
   }
@@ -764,7 +764,7 @@ TEST(MovePatternSearchTest, SearchNextFourBlackTest)
         constexpr uint64_t expect_bit = LeftShift<2>(0b1);
         ASSERT_EQ(expect_bit, search_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0ULL, search_bit);
       }
     }
   }
@@ -790,7 +790,7 @@ TEST(MovePatternSearchTest, SearchNextFourBlackTest)
         constexpr uint64_t expect_bit = LeftShift<1>(0b1);
         ASSERT_EQ(expect_bit, search_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0ULL, search_bit);
       }
     }
   }
@@ -807,7 +807,7 @@ TEST(MovePatternSearchTest, SearchNextFourBlackTest)
     for(size_t i=0; i<kTwoOfFivePattern; i++){
       const auto search_bit = pattern_search_bit_list[i];
 
-      ASSERT_EQ(0, search_bit);
+      ASSERT_EQ(0ULL, search_bit);
     }
   }
   {
@@ -823,7 +823,7 @@ TEST(MovePatternSearchTest, SearchNextFourBlackTest)
     for(size_t i=0; i<kTwoOfFivePattern; i++){
       const auto search_bit = pattern_search_bit_list[i];
 
-      ASSERT_EQ(0, search_bit);
+      ASSERT_EQ(0ULL, search_bit);
     }
   }
 }
@@ -858,7 +858,7 @@ TEST(MovePatternSearchTest, SearchNextFourWhiteTest)
         constexpr uint64_t expect_bit = LeftShift<2>(0b1);
         ASSERT_EQ(expect_bit, search_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0ULL, search_bit);
       }
     }
   }
@@ -884,7 +884,7 @@ TEST(MovePatternSearchTest, SearchNextFourWhiteTest)
         constexpr uint64_t expect_bit = LeftShift<2>(0b1);
         ASSERT_EQ(expect_bit, search_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0ULL, search_bit);
       }
     }
   }
@@ -918,7 +918,7 @@ TEST(MovePatternSearchTest, SearchNextFourWhiteTest)
         constexpr uint64_t expect_bit = LeftShift<3>(0b1);
         ASSERT_EQ(expect_bit, search_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0ULL, search_bit);
       }
     }
   }
@@ -934,7 +934,7 @@ TEST(MovePatternSearchTest, SearchNextFourWhiteTest)
 
     for(size_t i=0; i<kTwoOfFivePattern; i++){
       const auto search_bit = pattern_search_bit_list[i];
-      ASSERT_EQ(0, search_bit);
+      ASSERT_EQ(0ULL, search_bit);
     }
   }
 }
@@ -1225,7 +1225,7 @@ TEST(MovePatternSearchTest, SearchNextSemiThreeBlackTest)
         constexpr uint64_t expect_bit = LeftShift<2>(0b1);
         ASSERT_EQ(expect_bit, search_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0ULL, search_bit);
       }
     }
   }
@@ -1247,7 +1247,7 @@ TEST(MovePatternSearchTest, SearchNextSemiThreeBlackTest)
         constexpr uint64_t expect_bit = LeftShift<1>(0b1);
         ASSERT_EQ(expect_bit, search_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0ULL, search_bit);
       }
     }
   }
@@ -1263,7 +1263,7 @@ TEST(MovePatternSearchTest, SearchNextSemiThreeBlackTest)
 
     for(size_t i=0; i<kPatternCount; i++){
       const auto search_bit = pattern_search_bit_list[i];
-      ASSERT_EQ(0, search_bit);
+      ASSERT_EQ(0ULL, search_bit);
     }
   }
   {
@@ -1278,7 +1278,7 @@ TEST(MovePatternSearchTest, SearchNextSemiThreeBlackTest)
 
     for(size_t i=0; i<kPatternCount; i++){
       const auto search_bit = pattern_search_bit_list[i];
-      ASSERT_EQ(0, search_bit);
+      ASSERT_EQ(0ULL, search_bit);
     }
   }
 }
@@ -1311,7 +1311,7 @@ TEST(MovePatternSearchTest, SearchNextSemiWhiteTest)
         ASSERT_EQ(expect_bit, search_bit);
       }
       else{
-        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0ULL, search_bit);
       }
     }
   }
@@ -1333,7 +1333,7 @@ TEST(MovePatternSearchTest, SearchNextSemiWhiteTest)
         constexpr uint64_t expect_bit = LeftShift<2>(0b1);
         ASSERT_EQ(expect_bit, search_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0ULL, search_bit);
       }
     }
   }
@@ -1359,7 +1359,7 @@ TEST(MovePatternSearchTest, SearchNextSemiWhiteTest)
         constexpr uint64_t expect_bit = LeftShift<2>(0b1);
         ASSERT_EQ(expect_bit, search_bit);
       }else{
-        ASSERT_EQ(0, search_bit);
+        ASSERT_EQ(0ULL, search_bit);
       }
     }
   }
@@ -1375,7 +1375,7 @@ TEST(MovePatternSearchTest, SearchNextSemiWhiteTest)
 
     for(size_t i=0; i<kPatternCount; i++){
       const auto search_bit = pattern_search_bit_list[i];
-      ASSERT_EQ(0, search_bit);
+      ASSERT_EQ(0ULL, search_bit);
     }
   }
 }

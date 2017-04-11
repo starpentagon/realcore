@@ -25,6 +25,7 @@ static constexpr size_t kOpenStateNeighborhoodSize = 5;
 enum MovePosition : std::uint8_t;
 enum OpenStatePattern : std::uint8_t;
 class OpenState;
+class BoardOpenState;
 class BitBoard;
 
 //! @brief moveを中心としたN路の直線近傍を管理するクラス
@@ -64,35 +65,26 @@ public:
   //! @retval kNonForbiddenMove 否禁
   const ForbiddenCheckState ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list) const;
 
-  //! @brief 空点状態を返す
-  //! @param Pattern 空点状態の対象となる指し手パターン(長連点, 達四点, etc)
-  //! @param open_state_list 空点状態リストの格納先
+  //! @brief 空点状態を追加する
+  //! @param board_open_state 空点状態の格納先
   template<PlayerTurn P>
-  void GetOpenState(OpenStatePattern pattern, std::vector<OpenState> *open_state_list) const;
+  void AddOpenState(BoardOpenState * const board_open_state) const;
 
 private:
   //! @brief local_bit_board配列のindexとbit indexから対応する方向を求める
   const BoardDirection GetBoardDirection(const size_t index, const size_t bit_index) const;
+
+  //! 検索結果(combined bitのマッチ位置)からBoardPositionを求める
+  const BoardPosition GetBoardPosition(const size_t combined_shift) const;
 
   //! @brief 直線近傍でOnBitとなっているBoardPositionの位置を求める
   //! @param bit_list 位置を求めるbit
   //! @param board_position_list BoardPositionの格納先
   void GetBoardPositionList(const LocalBitBoard &bit_list, std::vector<BoardPosition> * const board_position_list) const;
 
-  //! @brief 空点状態を返す(長連点版)
-  void GetOpenStateOverline(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector<OpenState> *open_state_list) const;
-
-  //! @brief 空点状態を返す(達四点版)
-  template<PlayerTurn P>
-  void GetOpenStateOpenFour(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector<OpenState> *open_state_list) const;
-
-  //! @brief 空点状態を返す(四ノビ点版)
-  template<PlayerTurn P>
-  void GetOpenStateFour(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector<OpenState> *open_state_list) const;
-
-  //! @brief 空点状態を返す(見かけの三ノビ点版)
-  template<PlayerTurn P>
-  void GetOpenStateSemiThree(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector<OpenState> *open_state_list) const;
+  //! 指し手パターンの空点状態を取得する
+  template<OpenStatePattern Pattern>
+  void GetOpenState(const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, BoardOpenState * const board_open_state) const;
 
   //! @brief 直線近傍の状態を保持する
   //! @note local_bit_board_[0]の下位32bit: 横方向(14-15bit目が中心)

@@ -141,57 +141,37 @@ void LineNeighborhood::GetBoardPositionList(const LocalBitBoard &bit_list, std::
       const auto index = index_list[direction];
       const auto shift = shift_list[direction];
       
-      // BitBoard配列での達四位置に対応するシフト量を求める
+      // BitBoard配列での位置に対応するシフト量を求める
       const auto center_shift = bit_index < kMinUpperBitIndex ? kLowerCenter : kUpperCenter;
       const auto open_four_shift = shift + GetIndexDifference(center_shift, bit_index);
 
-      const auto board_position = GetBoardPosition(index, open_four_shift);
+      const auto board_position = realcore::GetBoardPosition(index, open_four_shift);
       board_position_list->push_back(board_position);
     }
   }
 }
 
-void LineNeighborhood::GetOpenStateOverline(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, std::vector<OpenState> *open_state_list) const
+template<>
+void LineNeighborhood::AddOpenState<kBlackTurn>(BoardOpenState * const board_open_state) const
 {
-  assert(distance_ == kOpenStateNeighborhoodSize);
-  assert(open_state_list != nullptr);
-  assert(open_state_list->empty());
+  const auto combined_black_stone = GetBlackStoneBit(local_bit_board_[0]) | (GetBlackStoneBit(local_bit_board_[1]) << 1);
+  const auto combined_open_stone = GetOpenPositionBit(local_bit_board_[0]) | (GetOpenPositionBit(local_bit_board_[1]) << 1);
 
-  array<LocalBitBoard, kFourStonePattern> pattern_search_bit;
-  array<LocalBitBoard, kFourStonePattern> open_state_bit;
-
-  for(size_t i=0; i<kLocalBitBoardNum; i++){
-    array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
-    SearchNextOverline(stone_bit[i], open_bit[i], &pattern_search_bit_list);
-
-    for(size_t index=0; index<kFourStonePattern; index++){
-      pattern_search_bit[index][i] = pattern_search_bit_list[index];
-      open_state_bit[index][i] = GetOpenBitInPattern(index, pattern_search_bit_list[index]);
-    }
-  }
-
-  constexpr size_t kPatternLength = 6;    //!< パターン長
-  constexpr size_t kOpenCount = 1;        //!< 設定する空点状態の数
-  constexpr size_t kMaxSearchBitCount = (2 * kOpenStateNeighborhoodSize + 1) - kPatternLength + 1;
-  constexpr size_t kListSize = 4 * kOpenCount * kMaxSearchBitCount;
-  open_state_list->reserve(kListSize);
-
-  for(size_t index=0; index<kFourStonePattern; index++){
-    vector<BoardPosition> open_state_position_list, pattern_position_list;
-
-    GetBoardPositionList(pattern_search_bit[index], &pattern_position_list);
-    GetBoardPositionList(open_state_bit[index], &open_state_position_list);
-
-    assert(pattern_position_list.size() == open_state_position_list.size());
-
-    for(size_t i=0, size=open_state_position_list.size(); i<size; i++){
-      const auto open_state_position = open_state_position_list[i];
-      const auto pattern_position = pattern_position_list[i];
-
-      open_state_list->emplace_back(kNextOverline, open_state_position, pattern_position);
-    }
-  }
+  GetOpenState<kNextOverline>(combined_black_stone, combined_open_stone, board_open_state);
+  GetOpenState<kNextOpenFourBlack>(combined_black_stone, combined_open_stone, board_open_state);
+  GetOpenState<kNextFourBlack>(combined_black_stone, combined_open_stone, board_open_state);
+  GetOpenState<kNextSemiThreeBlack>(combined_black_stone, combined_open_stone, board_open_state);
 }
 
+template<>
+void LineNeighborhood::AddOpenState<kWhiteTurn>(BoardOpenState * const board_open_state) const
+{
+  const auto combined_white_stone = GetWhiteStoneBit(local_bit_board_[0]) | (GetWhiteStoneBit(local_bit_board_[1]) << 1);
+  const auto combined_open_stone = GetOpenPositionBit(local_bit_board_[0]) | (GetOpenPositionBit(local_bit_board_[1]) << 1);
+
+  GetOpenState<kNextOpenFourWhite>(combined_white_stone, combined_open_stone, board_open_state);
+  GetOpenState<kNextFourWhite>(combined_white_stone, combined_open_stone, board_open_state);
+  GetOpenState<kNextSemiThreeWhite>(combined_white_stone, combined_open_stone, board_open_state);
+}
 }   // namesapce realcore
 
