@@ -54,15 +54,6 @@ public:
   const bool operator==(const BoardOpenState &rhs) const;
   const bool operator!=(const BoardOpenState &rhs) const;
 
-  //! @brief 着手による空点状態の変更を反映する
-  //! @param P 手番
-  //! @param move 着手
-  //! @param bit_board BitBoard
-  //! @pre moveは着手後であること
-  template<PlayerTurn P>
-  void Update(const MovePosition move, const BitBoard &bit_board);
-  void Update(const bool black_turn, const MovePosition move, const BitBoard &bit_board);
-
   //! @brief 空点状態のリストを返す
   //! @param pattern 指し手パターン(長連点, 達四点, etc)
   const std::vector<OpenState>& GetList(const OpenStatePattern pattern) const;

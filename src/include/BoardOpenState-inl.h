@@ -30,15 +30,6 @@ inline const bool BoardOpenState::operator!=(const BoardOpenState &rhs) const
   return !(*this == rhs);
 }
 
-inline void BoardOpenState::Update(const bool black_turn, const MovePosition move, const BitBoard &bit_board)
-{
-  if(black_turn){
-    Update<kBlackTurn>(move, bit_board);
-  }else{
-    Update<kWhiteTurn>(move, bit_board);
-  }
-}
-
 inline const std::vector<OpenState>& BoardOpenState::GetList(const OpenStatePattern pattern) const
 {
   return open_state_list_[pattern];
@@ -208,71 +199,6 @@ inline void BoardOpenState::ClearInfluencedOpenState(const bool is_black_turn, c
   }else{
     ClearInfluencedOpenState<kWhiteTurn>(open_state_list, move, cleared_open_state_list);
   }
-}
-
-template<PlayerTurn P>
-void BoardOpenState::Update(const MovePosition move, const BitBoard &bit_board)
-{
-  LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
-
-  {
-    // 長連点
-    constexpr OpenStatePattern Pattern = kNextOverline;
-
-    std::vector<OpenState> updated_list;
-    ClearInfluencedOpenState<P>(open_state_list_[Pattern], move, &updated_list);
-    open_state_list_[Pattern] = updated_list;
-  }
-  {
-    // 達四点(黒)
-    constexpr OpenStatePattern Pattern = kNextOpenFourBlack;
-
-    std::vector<OpenState> updated_list;
-    ClearInfluencedOpenState<P>(open_state_list_[Pattern], move, &updated_list);
-    open_state_list_[Pattern] = updated_list;
-  }
-  {
-    // 達四点(白)
-    constexpr OpenStatePattern Pattern = kNextOpenFourWhite;
-
-    std::vector<OpenState> updated_list;
-    ClearInfluencedOpenState<P>(open_state_list_[Pattern], move, &updated_list);
-    open_state_list_[Pattern] = updated_list;
-  }
-  {
-    // 四ノビ点(黒)
-    constexpr OpenStatePattern Pattern = kNextFourBlack;
-
-    std::vector<OpenState> updated_list;
-    ClearInfluencedOpenState<P>(open_state_list_[Pattern], move, &updated_list);
-    open_state_list_[Pattern] = updated_list;
-  }
-  {
-    // 四ノビ点(白)
-    constexpr OpenStatePattern Pattern = kNextFourWhite;
-
-    std::vector<OpenState> updated_list;
-    ClearInfluencedOpenState<P>(open_state_list_[Pattern], move, &updated_list);
-    open_state_list_[Pattern] = updated_list;
-  }
-  {
-    // 見かけの三ノビ点(黒)
-    constexpr OpenStatePattern Pattern = kNextSemiThreeBlack;
-
-    std::vector<OpenState> updated_list;
-    ClearInfluencedOpenState<P>(open_state_list_[Pattern], move, &updated_list);
-    open_state_list_[Pattern] = updated_list;
-  }
-  {
-    // 見かけの三ノビ点(白)
-    constexpr OpenStatePattern Pattern = kNextSemiThreeWhite;
-
-    std::vector<OpenState> updated_list;
-    ClearInfluencedOpenState<P>(open_state_list_[Pattern], move, &updated_list);
-    open_state_list_[Pattern] = updated_list;
-  }
-
-  line_neighborhood.AddOpenState<P>(this);
 }
 
 inline const bool BoardOpenState::empty() const

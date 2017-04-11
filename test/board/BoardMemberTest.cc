@@ -231,7 +231,6 @@ public:
     {
       // MakeMove時に更新されているかチェック
       MoveList board_move_list("hhigff");
-      BoardOpenState update_state;
 
       stack<BoardOpenState> state_stack;
       state_stack.emplace();
@@ -240,10 +239,11 @@ public:
       PlayerTurn player_turn = kBlackTurn;
 
       for(const auto move : board_move_list){
+        const auto prev_board_open_state = board.board_open_state_stack_.top();
         board.MakeMove(move);
 
         bit_board.SetState(move, GetPlayerStone(player_turn));
-        update_state.Update(player_turn == kBlackTurn, move, bit_board);
+        BoardOpenState update_state(prev_board_open_state, player_turn == kBlackTurn, move, bit_board);
 
         const auto &board_open_state = board.board_open_state_stack_.top();
         EXPECT_TRUE(board_open_state == update_state);
