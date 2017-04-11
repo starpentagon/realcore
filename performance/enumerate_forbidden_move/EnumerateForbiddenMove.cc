@@ -34,7 +34,6 @@ int main(int argc, char* argv[])
     cout << "Usage: " << argv[0] << " [options]" << endl;
     cout << option;
     cout << endl;
-
     return 0;
   }
 

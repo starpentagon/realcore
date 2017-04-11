@@ -13,7 +13,8 @@ namespace realcore
 
 Board::Board()
 {
-  board_open_state_stack_.emplace();
+  board_open_state_list_.reserve(kMoveNum);
+  board_open_state_list_.emplace_back();
 }
 
 Board::Board(const Board &board)
@@ -23,7 +24,7 @@ Board::Board(const Board &board)
 
 Board::Board(const MoveList &move_list)
 {
-  board_open_state_stack_.emplace();
+  board_open_state_list_.emplace_back();
 
   for(const auto move : move_list){
     MakeMove(move);
@@ -40,7 +41,7 @@ bool IsEqual(const Board &board_1, const Board &board_2)
     return false;
   }
 
-  if(board_1.board_open_state_stack_ != board_2.board_open_state_stack_){
+  if(board_1.board_open_state_list_ != board_2.board_open_state_list_){
     return false;
   }
 
@@ -61,7 +62,7 @@ void Copy(const Board &board_from, Board * const board_to)
 
   board_to->bit_board_ = board_from.bit_board_;
   board_to->move_list_ = board_from.move_list_;
-  board_to->board_open_state_stack_ = board_from.board_open_state_stack_;
+  board_to->board_open_state_list_ = board_from.board_open_state_list_;
 }
 
 const Board& Board::operator=(const Board &board)
@@ -85,8 +86,8 @@ void Board::MakeMove(const MovePosition move)
 
   move_list_ += move;
 
-  const auto &current_board_open_state = board_open_state_stack_.top();
-  board_open_state_stack_.emplace(current_board_open_state, is_black_turn, move, bit_board_);
+  const auto &current_board_open_state = board_open_state_list_.back();
+  board_open_state_list_.emplace_back(current_board_open_state, is_black_turn, move, bit_board_);
 }
 
 void Board::UndoMove()
@@ -97,7 +98,7 @@ void Board::UndoMove()
   bit_board_.SetState<kOpenPosition>(move);
   --move_list_;
 
-  board_open_state_stack_.pop();
+  board_open_state_list_.pop_back();
 }
 
 void Board::EnumerateForbiddenMoves(MoveBitSet * const forbidden_move_set) const
@@ -109,7 +110,7 @@ void Board::EnumerateForbiddenMoves(MoveBitSet * const forbidden_move_set) const
     return;
   }
 
-  const auto& board_open_state = board_open_state_stack_.top();
+  const auto& board_open_state = board_open_state_list_.back();
   bit_board_.EnumerateForbiddenMoves(board_open_state, forbidden_move_set);
 }
 
