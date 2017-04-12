@@ -56,6 +56,50 @@ public:
     }
   }
 
+  void GetPlayerStoneCombinedBitTest()
+  {
+    BitBoard bit_board;
+    constexpr size_t distance = 1;
+
+    {
+      // 黒石
+      LineNeighborhood line_neighborhood(kMoveHH, distance, bit_board);
+      line_neighborhood.SetCenterState<kBlackStone>();
+      
+      auto expect_bit = LeftShift<7>(0b1) | (LeftShift<7>(0b1) << 32ULL);
+      expect_bit |= expect_bit << 1;
+
+      ASSERT_EQ(expect_bit, line_neighborhood.GetPlayerStoneCombinedBit<kBlackTurn>());
+      ASSERT_EQ(0ULL, line_neighborhood.GetPlayerStoneCombinedBit<kWhiteTurn>());
+    }
+    {
+      // 白石
+      LineNeighborhood line_neighborhood(kMoveHH, distance, bit_board);
+      line_neighborhood.SetCenterState<kWhiteStone>();
+      
+      auto expect_bit = LeftShift<7>(0b1) | (LeftShift<7>(0b1) << 32ULL);
+      expect_bit |= expect_bit << 1;
+
+      ASSERT_EQ(0ULL, line_neighborhood.GetPlayerStoneCombinedBit<kBlackTurn>());
+      ASSERT_EQ(expect_bit, line_neighborhood.GetPlayerStoneCombinedBit<kWhiteTurn>());
+    }
+  }
+
+  void GetOpenPositionCombinedBitTest()
+  {
+    BitBoard bit_board;
+    constexpr size_t distance = 1;
+
+    LineNeighborhood line_neighborhood(kMoveHH, distance, bit_board);
+    line_neighborhood.SetCenterState<kBlackStone>();
+    
+    auto expect_bit = LeftShift<6>(0b1) | LeftShift<8>(0b1);
+    expect_bit |= expect_bit << 32ULL;
+    expect_bit |= expect_bit << 1ULL;
+
+    ASSERT_EQ(expect_bit, line_neighborhood.GetOpenPositionCombinedBit());
+  }
+
   void GetBoardDirectionTest()
   {
     constexpr size_t distance = 1;
@@ -218,5 +262,13 @@ TEST_F(LineNeighborhoodTest, GetBoardPositionTest)
   GetBoardPositionTest();
 }
 
+TEST_F(LineNeighborhoodTest, GetPlayerStoneCombinedBitTest)
+{
+  GetPlayerStoneCombinedBitTest();
+}
 
+TEST_F(LineNeighborhoodTest, GetOpenPositionCombinedBitTest)
+{
+  GetOpenPositionCombinedBitTest();
+}
 }   // namespace realcore

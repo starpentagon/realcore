@@ -216,6 +216,15 @@ inline const bool IsSingleBit(const std::uint64_t bit)
   return !(bit & (bit - 1));
 }
 
+inline const bool IsMultipleBit(const std::uint64_t bit)
+{
+  if(bit == 0 || IsSingleBit(bit)){
+    return false;
+  }
+
+  return true;
+}
+
 inline const bool IsMultipleBit(const std::uint64_t bit_1, const std::uint64_t bit_2)
 {
   // bit_1, bit_2のビット数が2未満になるのは以下の3通り

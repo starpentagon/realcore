@@ -43,13 +43,8 @@ inline const BoardDirection LineNeighborhood::GetBoardDirection(const size_t ind
 template<PlayerTurn P>
 const bool LineNeighborhood::IsOpenFour() const
 {
-  const auto stone_bit_even = GetPlayerStoneBit<P>(local_bit_board_[0]);
-  const auto open_bit_even = GetOpenPositionBit(local_bit_board_[0]);
-  const auto stone_bit_odd = GetPlayerStoneBit<P>(local_bit_board_[1]);
-  const auto open_bit_odd = GetOpenPositionBit(local_bit_board_[1]);
-
-  const auto combined_stone_bit = GetCombinedBit(stone_bit_even, stone_bit_odd);
-  const auto combined_open_bit = GetCombinedBit(open_bit_even, open_bit_odd);
+  const auto combined_stone_bit = GetPlayerStoneCombinedBit<P>();
+  const auto combined_open_bit = GetOpenPositionCombinedBit();
 
   const auto open_four_bit = SearchOpenFour<P>(combined_stone_bit, combined_open_bit);
   return (open_four_bit != 0);
@@ -60,25 +55,21 @@ const bool LineNeighborhood::IsFour(MovePosition * const guard_move) const
 {
   assert(guard_move != nullptr);
 
-  LocalBitBoard guard_move_bit{{0}};
+  const auto combined_stone_bit = GetPlayerStoneCombinedBit<P>();
+  const auto combined_open_bit = GetOpenPositionCombinedBit();
 
-  for(size_t i=0; i<kLocalBitBoardNum; i++){
-    const auto state_bit = local_bit_board_[i];
+  std::uint64_t guard_move_bit = 0;
+  const auto four_bit = SearchFour<P>(combined_stone_bit, combined_open_bit, &guard_move_bit);
 
-    const auto stone_bit = GetPlayerStoneBit<P>(state_bit);
-    const auto open_bit = GetOpenPositionBit(state_bit);
+  if(four_bit != 0){
+    std::vector<size_t> combined_shift_list;
+    GetBitIndexList(guard_move_bit, &combined_shift_list);
 
-    const auto four_bit = SearchFour<P>(stone_bit, open_bit, &(guard_move_bit[i]));
-
-    if(four_bit != 0){
-      std::vector<BoardPosition> guard_move_position;
-      GetBoardPositionList(guard_move_bit, &guard_move_position);
-
-      assert(!guard_move_position.empty());
-      *guard_move = GetBoardMove(guard_move_position[0]);
-
-      return true;
-    }
+    assert(!combined_shift_list.empty());
+    const auto guard_board_position = GetBoardPosition(combined_shift_list[0]);
+    *guard_move = GetBoardMove(guard_board_position);
+    
+    return true;
   }
 
   return false;
@@ -88,23 +79,18 @@ template<PlayerTurn P>
 const bool LineNeighborhood::IsDoubleFour() const
 {
   // 「五連にする位置」(= 四の防手位置)の数をカウントする
-  LocalBitBoard four_guard_bit{{0}};
+  const auto combined_stone_bit = GetPlayerStoneCombinedBit<P>();
+  const auto combined_open_bit = GetOpenPositionCombinedBit();
 
-  for(size_t i=0; i<kLocalBitBoardNum; i++){
-    const auto state_bit = local_bit_board_[i];
+  const auto open_four_bit = SearchOpenFour<P>(combined_stone_bit, combined_open_bit);
+  std::uint64_t make_five_move_bit = 0;
+  SearchFour<P>(combined_stone_bit, combined_open_bit, &make_five_move_bit);
+  
+  // 達四があると五連にする位置が2カ所あるので重複カウントしないように片方をオフにする
+  // @see doc/06_forbidden_check/forbidden_check.pptx, 「達四がある場合の四のマッチ方法」
+  make_five_move_bit ^= RightShift<1>(open_four_bit);
 
-    const auto stone_bit = GetPlayerStoneBit<P>(state_bit);
-    const auto open_bit = GetOpenPositionBit(state_bit);
-
-    const auto open_four_bit = SearchOpenFour<P>(stone_bit, open_bit);
-    SearchFour<P>(stone_bit, open_bit, &(four_guard_bit[i]));
-
-    // 達四があると五連にする位置が2カ所あるので重複カウントしないように片方をオフにする
-    // @see doc/06_forbidden_check/forbidden_check.pptx, 「達四がある場合の四のマッチ方法」
-    four_guard_bit[i] ^= RightShift<1>(open_four_bit);
-  }
-
-  if(IsMultipleBit(four_guard_bit[0], four_guard_bit[1])){
+  if(IsMultipleBit(make_five_move_bit)){
     return true;
   }
 
@@ -158,6 +144,23 @@ void LineNeighborhood::GetOpenState(const std::uint64_t combined_stone_bit, cons
       board_open_state->AddOpenState<Pattern>(pattern_index, pattern_position);
     }
   }
+}
+
+template<PlayerTurn P>
+inline std::uint64_t LineNeighborhood::GetPlayerStoneCombinedBit() const
+{
+  const auto bit_even = GetPlayerStoneBit<P>(local_bit_board_[0]);
+  const auto bit_odd = GetPlayerStoneBit<P>(local_bit_board_[1]);
+  
+  return GetCombinedBit(bit_even, bit_odd);
+}
+
+inline std::uint64_t LineNeighborhood::GetOpenPositionCombinedBit() const
+{
+  const auto bit_even = GetOpenPositionBit(local_bit_board_[0]);
+  const auto bit_odd = GetOpenPositionBit(local_bit_board_[1]);
+  
+  return GetCombinedBit(bit_even, bit_odd);
 }
 
 }   // namespace realcore

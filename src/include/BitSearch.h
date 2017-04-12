@@ -135,6 +135,11 @@ inline const size_t GetGreaterIndexOfTwo(const size_t index);
 //! @pre bitは0以外
 inline const bool IsSingleBit(const std::uint64_t bit);
 
+//! @brief ビットの数が2以上かどうかをチェックする(64bit変数版)
+//! @param bit チェック対象のbit
+//! @retval true ビットの数が2以上
+inline const bool IsMultipleBit(const std::uint64_t bit);
+
 //! @brief ビットの数が2以上かどうかをチェックする(64bit変数 * 2版)
 //! @param bit_i チェック対象のbit(i=1,2)
 //! @retval true ビットの数が2以上

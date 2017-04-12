@@ -74,7 +74,7 @@ private:
   //! @brief local_bit_board配列のindexとbit indexから対応する方向を求める
   const BoardDirection GetBoardDirection(const size_t index, const size_t bit_index) const;
 
-  //! 検索結果(combined bitのマッチ位置)からBoardPositionを求める
+  //! @brief 検索結果(combined bitのマッチ位置)からBoardPositionを求める
   const BoardPosition GetBoardPosition(const size_t combined_shift) const;
 
   //! @brief 直線近傍でOnBitとなっているBoardPositionの位置を求める
@@ -82,9 +82,16 @@ private:
   //! @param board_position_list BoardPositionの格納先
   void GetBoardPositionList(const LocalBitBoard &bit_list, std::vector<BoardPosition> * const board_position_list) const;
 
-  //! 指し手パターンの空点状態を取得する
+  //! @brief 指し手パターンの空点状態を取得する
   template<OpenStatePattern Pattern>
   void GetOpenState(const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, BoardOpenState * const board_open_state) const;
+
+  //! @brief 黒石/白石の結合ビット(combined bit)を取得する
+  template<PlayerTurn P>
+  std::uint64_t GetPlayerStoneCombinedBit() const;
+
+  //! @brief 空点の結合ビット(combined bit)を取得する
+  std::uint64_t GetOpenPositionCombinedBit() const;
 
   //! @brief 直線近傍の状態を保持する
   //! @note local_bit_board_[0]の下位32bit: 横方向(14-15bit目が中心)

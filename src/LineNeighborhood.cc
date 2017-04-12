@@ -48,61 +48,47 @@ LineNeighborhood::LineNeighborhood(const MovePosition move, const size_t distanc
 
 const ForbiddenCheckState LineNeighborhood::ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list) const
 {
-  assert(next_open_four_list != nullptr);
-  assert(next_open_four_list->empty());
-
-  LocalBitBoard local_black_bit{{0}};
-  LocalBitBoard local_open_bit{{0}};
-
-  for(size_t i=0; i<kLocalBitBoardNum; i++){
-    const auto state_bit = local_bit_board_[i];
-
-    local_black_bit[i] = GetBlackStoneBit(state_bit);
-    local_open_bit[i] = GetOpenPositionBit(state_bit);
-  }
+  const auto combined_black_bit = GetPlayerStoneCombinedBit<kBlackTurn>();
+  const auto combined_open_bit = GetOpenPositionCombinedBit();
 
   // 長連
-  for(const auto black_bit : local_black_bit){
-    if(IsOverline(black_bit)){
-      return kForbiddenMove;
-    }
+  if(IsOverline(combined_black_bit)){
+    return kForbiddenMove;
   }
 
   // 四々
-  LocalBitBoard four_guard_bit{{0}};
+  const auto open_four_bit = SearchOpenFour<kBlackTurn>(combined_black_bit, combined_open_bit);
+  std::uint64_t make_five_move_bit = 0;
+  SearchFour<kBlackTurn>(combined_black_bit, combined_open_bit, &make_five_move_bit);
+  
+  // 達四があると五連にする位置が2カ所あるので重複カウントしないように片方をオフにする
+  // @see doc/06_forbidden_check/forbidden_check.pptx, 「達四がある場合の四のマッチ方法」
+  make_five_move_bit ^= RightShift<1>(open_four_bit);
 
-  for(size_t i=0; i<kLocalBitBoardNum; i++){
-    const auto black_bit = local_black_bit[i];
-    const auto open_bit = local_open_bit[i];
-
-    const auto open_four_bit = SearchOpenFour<kBlackTurn>(black_bit, open_bit);
-    SearchFour<kBlackTurn>(black_bit, open_bit, &(four_guard_bit[i]));
-
-    // 達四があると四のパターンが2カ所マッチするので片方をオフにする
-    four_guard_bit[i] ^= RightShift<1>(open_four_bit);
-  }
-
-  if(IsMultipleBit(four_guard_bit[0], four_guard_bit[1])){
+  if(IsMultipleBit(make_five_move_bit)){
     return kForbiddenMove;
   }
 
   // 見かけの三々
-  LocalBitBoard semi_three_bit{{0}};
-  LocalBitBoard next_open_four_bit{{0}};
+  std::uint64_t next_open_four_bit = 0;
+  const auto semi_three_bit = SearchSemiThree<kBlackTurn>(combined_black_bit, combined_open_bit, &next_open_four_bit);
 
-  for(size_t i=0; i<kLocalBitBoardNum; i++){
-    const auto black_bit = local_black_bit[i];
-    const auto open_bit = local_open_bit[i];
-
-    semi_three_bit[i] = SearchSemiThree<kBlackTurn>(black_bit, open_bit, &(next_open_four_bit[i]));
-  }
-
-  if(!IsMultipleBit(semi_three_bit[0], semi_three_bit[1])){
+  if(!IsMultipleBit(semi_three_bit)){
     return kNonForbiddenMove;
   }
 
   // 見かけの三々が2つ以上存在する
-  GetBoardPositionList(next_open_four_bit, next_open_four_list);
+  assert(next_open_four_list != nullptr);
+  assert(next_open_four_list->empty());
+
+  std::vector<size_t> combined_shift_list;
+  GetBitIndexList(next_open_four_bit, &combined_shift_list);
+  next_open_four_list->reserve(combined_shift_list.size());
+
+  for(const auto combined_shift : combined_shift_list){
+    const auto guard_board_position = GetBoardPosition(combined_shift);
+    next_open_four_list->emplace_back(guard_board_position);
+  }
 
   return kPossibleForbiddenMove;
 }

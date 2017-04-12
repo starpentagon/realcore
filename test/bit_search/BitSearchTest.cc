@@ -397,7 +397,50 @@ TEST(BitSearchTest, IsSingleBit)
   }
 }
 
-TEST(BitSearchTest, IsMultipleBit)
+TEST(BitSearchTest, IsMultipleOneBitVar)
+{
+  constexpr size_t kMaxBitCount = 64; 
+  array<size_t, kMaxBitCount> shift_val_list;
+
+  iota(shift_val_list.begin(), shift_val_list.end(), 0);
+
+  constexpr size_t kRandomTestCount = 50000;   // テスト数
+  size_t test_count = 0;
+
+  random_device seed_generator;
+  size_t seed = seed_generator();
+  mt19937_64 random_generator(seed);
+
+  while(test_count < kRandomTestCount)
+  {
+    ++test_count;
+
+    uint64_t bit_count = random_generator() % 65ULL;
+
+    // ランダムデータをつくるためシフト量のリストをランダムシャッフルする
+    shuffle(shift_val_list.begin(), shift_val_list.end(), random_generator);
+
+    uint64_t random_bit = 0ULL;
+
+    for(size_t index=0; index<bit_count; ++index){
+      random_bit |= 1ULL << shift_val_list[index];
+    }
+
+    shuffle(shift_val_list.begin(), shift_val_list.end(), random_generator);
+    
+    const bool is_multiple_bit = IsMultipleBit(random_bit);
+    bool is_fail = (bit_count >= 2 && !is_multiple_bit);
+    is_fail |= (bit_count < 2 && is_multiple_bit);
+
+    if(is_fail){
+      cerr << "bit: " << random_bit << endl;
+    }
+
+    ASSERT_FALSE(is_fail);
+  }
+}
+
+TEST(BitSearchTest, IsMultipleTwoBitVars)
 {
   constexpr size_t kMaxBitCount = 64; 
   array<size_t, kMaxBitCount> shift_val_list;
