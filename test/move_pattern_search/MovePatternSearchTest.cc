@@ -135,7 +135,7 @@ TEST(MovePatternSearchTest, SearchOpenFourTest)
     const uint64_t open_bit = GetOpenPositionBit(test_bit);
     const uint64_t search_bit = SearchOpenFour<kBlackTurn>(black_bit, open_bit);
 
-    constexpr uint64_t expect_bit = 0b1 << 0;
+    constexpr uint64_t expect_bit = LeftShift<1>(0b1);
     EXPECT_EQ(expect_bit, search_bit);
   }
   {
@@ -146,7 +146,7 @@ TEST(MovePatternSearchTest, SearchOpenFourTest)
     const uint64_t open_bit = GetOpenPositionBit(test_bit);
     const uint64_t search_bit = SearchOpenFour<kBlackTurn>(black_bit, open_bit);
 
-    constexpr uint64_t expect_bit = 0b1 << 2;
+    constexpr uint64_t expect_bit = LeftShift<2>(0b1);
     EXPECT_EQ(expect_bit, search_bit);      
   }
   {
@@ -157,7 +157,7 @@ TEST(MovePatternSearchTest, SearchOpenFourTest)
     const uint64_t open_bit = GetOpenPositionBit(test_bit);
     const uint64_t search_bit = SearchOpenFour<kBlackTurn>(black_bit, open_bit);
 
-    constexpr uint64_t expect_bit = 0b1 << 0;
+    constexpr uint64_t expect_bit = LeftShift<1>(0b1);;
     EXPECT_EQ(expect_bit, search_bit);      
   }
   {
@@ -168,7 +168,7 @@ TEST(MovePatternSearchTest, SearchOpenFourTest)
     const uint64_t open_bit = GetOpenPositionBit(test_bit);
     const uint64_t search_bit = SearchOpenFour<kBlackTurn>(black_bit, open_bit);
 
-    constexpr uint64_t expect_bit = 0b1 << 4;
+    constexpr uint64_t expect_bit = LeftShift<3>(0b1);;
     EXPECT_EQ(expect_bit, search_bit);      
   }
   {
@@ -212,7 +212,7 @@ TEST(MovePatternSearchTest, SearchOpenFourTest)
     const uint64_t open_bit = GetOpenPositionBit(test_bit);
     const uint64_t search_bit = SearchOpenFour<kWhiteTurn>(white_bit, open_bit);
 
-    constexpr uint64_t expect_bit = 0b1 << 4;
+    constexpr uint64_t expect_bit = LeftShift<3>(0b1);;
     EXPECT_EQ(expect_bit, search_bit);      
   }
   {
@@ -223,7 +223,7 @@ TEST(MovePatternSearchTest, SearchOpenFourTest)
     const uint64_t open_bit = GetOpenPositionBit(test_bit);
     const uint64_t search_bit = SearchOpenFour<kWhiteTurn>(white_bit, open_bit);
 
-    constexpr uint64_t expect_bit = 0b1 << 4;
+    constexpr uint64_t expect_bit = LeftShift<3>(0b1);;
     EXPECT_EQ(expect_bit, search_bit);      
   }
   {
@@ -950,10 +950,10 @@ TEST(MovePatternSearchTest, SearchSemiThreeTest)
     uint64_t next_open_four_bit = 0;
     const uint64_t search_bit = SearchSemiThree<kBlackTurn>(black_bit, open_bit, &next_open_four_bit);
 
-    constexpr uint64_t expect_bit = (0b1 << 0) | (0b1 << 2);
+    constexpr uint64_t expect_bit = LeftShift<1>(0b1) | LeftShift<2>(0b1);
     EXPECT_EQ(expect_bit, search_bit);
 
-    constexpr uint64_t expect_open_four_bit = (0b1 << 2) | (0b1 << 10);
+    constexpr uint64_t expect_open_four_bit = LeftShift<1>(0b1) | LeftShift<5>(0b1);
     EXPECT_EQ(expect_open_four_bit, next_open_four_bit);
   }
   {
@@ -965,10 +965,10 @@ TEST(MovePatternSearchTest, SearchSemiThreeTest)
     uint64_t next_open_four_bit = 0;
     const uint64_t search_bit = SearchSemiThree<kBlackTurn>(black_bit, open_bit, &next_open_four_bit);
 
-    constexpr uint64_t expect_bit = (0b1 << 0);
+    constexpr uint64_t expect_bit = LeftShift<1>(0b1);
     EXPECT_EQ(expect_bit, search_bit);
 
-    constexpr uint64_t expect_open_four_bit = (0b1 << 4);
+    constexpr uint64_t expect_open_four_bit = LeftShift<2>(0b1);
     EXPECT_EQ(expect_open_four_bit, next_open_four_bit);
   }
   {
@@ -980,10 +980,10 @@ TEST(MovePatternSearchTest, SearchSemiThreeTest)
     uint64_t next_open_four_bit = 0;
     const uint64_t search_bit = SearchSemiThree<kBlackTurn>(black_bit, open_bit, &next_open_four_bit);
 
-    constexpr uint64_t expect_bit = (0b1 << 0);
+    constexpr uint64_t expect_bit = LeftShift<1>(0b1);
     EXPECT_EQ(expect_bit, search_bit);
 
-    constexpr uint64_t expect_open_four_bit = (0b1 << 6);
+    constexpr uint64_t expect_open_four_bit = LeftShift<3>(0b1);
     EXPECT_EQ(expect_open_four_bit, next_open_four_bit);
   }
   {
@@ -995,10 +995,10 @@ TEST(MovePatternSearchTest, SearchSemiThreeTest)
     uint64_t next_open_four_bit = 0;
     const uint64_t search_bit = SearchSemiThree<kBlackTurn>(black_bit, open_bit, &next_open_four_bit);
 
-    constexpr uint64_t expect_bit = (0b1 << 0);
+    constexpr uint64_t expect_bit = LeftShift<1>(0b1);
     EXPECT_EQ(expect_bit, search_bit);
 
-    constexpr uint64_t expect_open_four_bit = (0b1 << 8);
+    constexpr uint64_t expect_open_four_bit = LeftShift<4>(0b1);
     EXPECT_EQ(expect_open_four_bit, next_open_four_bit);
   }
   {
@@ -1010,10 +1010,10 @@ TEST(MovePatternSearchTest, SearchSemiThreeTest)
     uint64_t next_open_four_bit = 0;
     const uint64_t search_bit = SearchSemiThree<kBlackTurn>(black_bit, open_bit, &next_open_four_bit);
 
-    constexpr uint64_t expect_bit = (0b1 << 0);
+    constexpr uint64_t expect_bit = LeftShift<1>(0b1);
     EXPECT_EQ(expect_bit, search_bit);
 
-    constexpr uint64_t expect_open_four_bit = (0b1 << 2);
+    constexpr uint64_t expect_open_four_bit = LeftShift<1>(0b1);
     EXPECT_EQ(expect_open_four_bit, next_open_four_bit);
   }
   {
@@ -1025,10 +1025,10 @@ TEST(MovePatternSearchTest, SearchSemiThreeTest)
     uint64_t next_open_four_bit = 0;
     const uint64_t search_bit = SearchSemiThree<kBlackTurn>(black_bit, open_bit, &next_open_four_bit);
 
-    constexpr uint64_t expect_bit = (0b1 << 4);
+    constexpr uint64_t expect_bit = LeftShift<3>(0b1);
     EXPECT_EQ(expect_bit, search_bit);
 
-    constexpr uint64_t expect_open_four_bit = (0b1 << 12);
+    constexpr uint64_t expect_open_four_bit = LeftShift<6>(0b1);
     EXPECT_EQ(expect_open_four_bit, next_open_four_bit);
   }
   {
@@ -1085,10 +1085,10 @@ TEST(MovePatternSearchTest, SearchSemiThreeTest)
     uint64_t next_open_four_bit = 0;
     const uint64_t search_bit = SearchSemiThree<kWhiteTurn>(white_bit, open_bit, &next_open_four_bit);
 
-    constexpr uint64_t expect_bit = (0b1 << 0) | (0b1 << 2);
+    constexpr uint64_t expect_bit = LeftShift<1>(0b1) | LeftShift<2>(0b1);
     EXPECT_EQ(expect_bit, search_bit);
 
-    constexpr uint64_t expect_open_four_bit = (0b1 << 2) | (0b1 << 10);
+    constexpr uint64_t expect_open_four_bit = LeftShift<1>(0b1) | LeftShift<5>(0b1);
     EXPECT_EQ(expect_open_four_bit, next_open_four_bit);
   }
   {
@@ -1100,10 +1100,10 @@ TEST(MovePatternSearchTest, SearchSemiThreeTest)
     uint64_t next_open_four_bit = 0;
     const uint64_t search_bit = SearchSemiThree<kWhiteTurn>(white_bit, open_bit, &next_open_four_bit);
 
-    constexpr uint64_t expect_bit = (0b1 << 0);
+    constexpr uint64_t expect_bit = LeftShift<1>(0b1);
     EXPECT_EQ(expect_bit, search_bit);
 
-    constexpr uint64_t expect_open_four_bit = (0b1 << 4);
+    constexpr uint64_t expect_open_four_bit = LeftShift<2>(0b1);
     EXPECT_EQ(expect_open_four_bit, next_open_four_bit);
   }
   {
@@ -1115,10 +1115,10 @@ TEST(MovePatternSearchTest, SearchSemiThreeTest)
     uint64_t next_open_four_bit = 0;
     const uint64_t search_bit = SearchSemiThree<kWhiteTurn>(white_bit, open_bit, &next_open_four_bit);
 
-    constexpr uint64_t expect_bit = (0b1 << 0);
+    constexpr uint64_t expect_bit = LeftShift<1>(0b1);
     EXPECT_EQ(expect_bit, search_bit);
 
-    constexpr uint64_t expect_open_four_bit = (0b1 << 6);
+    constexpr uint64_t expect_open_four_bit = LeftShift<3>(0b1);
     EXPECT_EQ(expect_open_four_bit, next_open_four_bit);
   }
   {
@@ -1130,7 +1130,7 @@ TEST(MovePatternSearchTest, SearchSemiThreeTest)
     uint64_t next_open_four_bit = 0;
     const uint64_t search_bit = SearchSemiThree<kWhiteTurn>(white_bit, open_bit, &next_open_four_bit);
 
-    constexpr uint64_t expect_bit = (0b1 << 0);
+    constexpr uint64_t expect_bit = LeftShift<1>(0b1);
     EXPECT_EQ(expect_bit, search_bit);
 
     constexpr uint64_t expect_open_four_bit = (0b1 << 8);
@@ -1145,10 +1145,10 @@ TEST(MovePatternSearchTest, SearchSemiThreeTest)
     uint64_t next_open_four_bit = 0;
     const uint64_t search_bit = SearchSemiThree<kWhiteTurn>(white_bit, open_bit, &next_open_four_bit);
 
-    constexpr uint64_t expect_bit = (0b1 << 0);
+    constexpr uint64_t expect_bit = LeftShift<1>(0b1);
     EXPECT_EQ(expect_bit, search_bit);
 
-    constexpr uint64_t expect_open_four_bit = (0b1 << 8);
+    constexpr uint64_t expect_open_four_bit = LeftShift<4>(0b1);
     EXPECT_EQ(expect_open_four_bit, next_open_four_bit);
   }
   {
@@ -1160,10 +1160,10 @@ TEST(MovePatternSearchTest, SearchSemiThreeTest)
     uint64_t next_open_four_bit = 0;
     const uint64_t search_bit = SearchSemiThree<kWhiteTurn>(white_bit, open_bit, &next_open_four_bit);
 
-    constexpr uint64_t expect_bit = (0b1 << 2) | (0b1 << 4);
+    constexpr uint64_t expect_bit = LeftShift<2>(0b1) | LeftShift<3>(0b1);
     EXPECT_EQ(expect_bit, search_bit);
 
-    constexpr uint64_t expect_open_four_bit = (0b1 << 4) | (0b1 << 12);
+    constexpr uint64_t expect_open_four_bit = LeftShift<2>(0b1) | LeftShift<6>(0b1);
     EXPECT_EQ(expect_open_four_bit, next_open_four_bit);
   }
   {

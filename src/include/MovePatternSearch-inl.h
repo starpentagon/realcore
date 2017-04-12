@@ -101,20 +101,16 @@ inline void SearchNextOverline(const std::uint64_t stone_bit, const std::uint64_
 template<PlayerTurn P>
 inline const std::uint64_t SearchOpenFour(const std::uint64_t stone_bit, const std::uint64_t open_bit)
 {
-  std::uint64_t four_stone_bit = GetConsectiveStoneBit<kFourStonePattern>(stone_bit);  // 4個以上連続する石のフラグ
-
-  std::uint64_t open_four_bit = open_bit;      // O
-  open_four_bit &= RightShift<1>(four_stone_bit);  // BBBBO, WWWWO
-  open_four_bit &= RightShift<5>(open_bit);        // OBBBBO, OWWWWO
+  std::uint64_t open_four_bit = GetConsectiveStoneBit<kFourStonePattern>(stone_bit);  // 4個以上連続する石のフラグ
+  open_four_bit &= LeftShift<1>(open_bit);    // BBBBO, WWWWO
+  open_four_bit &= RightShift<4>(open_bit);        // OBBBBO, OWWWWO
 
   // 長連筋をマスクする(XOBBBBOX, X\ne B)
-  std::uint64_t overline_mask = ~(0ULL);
-  
   if(P == kBlackTurn){
-    overline_mask = ~LeftShift<1>(stone_bit) & ~RightShift<6>(stone_bit);
+    std::uint64_t overline_mask = ~(0ULL);
+    overline_mask = ~LeftShift<2>(stone_bit) & ~RightShift<5>(stone_bit);
+    open_four_bit &= overline_mask;
   }
-
-  open_four_bit &= overline_mask;
 
   return open_four_bit;
 }
@@ -212,28 +208,26 @@ inline const std::uint64_t SearchSemiThree(const std::uint64_t stone_bit, const 
   GetStoneWithOneOpenBit<kFourStonePattern>(stone_bit, open_bit, &pattern_bit_list);
 
   // O[(B|W|O|X)4]Oのマスク
-  const std::uint64_t open_mask = RightShift<5>(open_bit) & open_bit;
+  const std::uint64_t open_mask = RightShift<4>(open_bit) & LeftShift<1>(open_bit);
 
   // 長連筋をマスクする(XO[B3O1]OX, X\ne B)
   std::uint64_t overline_mask = ~(0ULL);
   
   if(P == kBlackTurn){
-    overline_mask = ~LeftShift<1>(stone_bit) & ~RightShift<6>(stone_bit);
+    overline_mask = ~LeftShift<2>(stone_bit) & ~RightShift<5>(stone_bit);
   }
 
   std::uint64_t three_bit = 0;
 
   for(size_t i=0; i<kFourStonePattern; i++){
-    auto three_pattern_bit = RightShift<1>(pattern_bit_list[i]);  // [B301][W3O1]
+    auto three_pattern_bit = pattern_bit_list[i];  // [B301][W3O1]
     three_pattern_bit &= open_mask;     // O[B3O1]O, O[W3O1]O
     three_pattern_bit &= overline_mask; // XO[B3O1]OX
 
     three_bit |= three_pattern_bit;
 
     // 達四をつくる位置を設定
-    // three_pattern_bitはO[(B|W)3O1]Oの右端のOに1が立ち、[(B|W)3O1]のOの位置は右からi番目
-    const size_t next_open_four_shift = (i + 1) * 2;
-    *next_open_four_bit |= three_pattern_bit << next_open_four_shift;
+    *next_open_four_bit |= GetOpenBitInPattern(i, three_pattern_bit);
   }
 
   return three_bit;
