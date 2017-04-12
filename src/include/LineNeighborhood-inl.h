@@ -100,7 +100,8 @@ const bool LineNeighborhood::IsDoubleFour() const
     SearchFour<P>(stone_bit, open_bit, &(four_guard_bit[i]));
 
     // 達四があると五連にする位置が2カ所あるので重複カウントしないように片方をオフにする
-    four_guard_bit[i] ^= open_four_bit;
+    // @see doc/06_forbidden_check/forbidden_check.pptx, 「達四がある場合の四のマッチ方法」
+    four_guard_bit[i] ^= RightShift<1>(open_four_bit);
   }
 
   if(IsMultipleBit(four_guard_bit[0], four_guard_bit[1])){

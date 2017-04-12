@@ -79,7 +79,7 @@ const ForbiddenCheckState LineNeighborhood::ForbiddenCheck(std::vector<BoardPosi
     SearchFour<kBlackTurn>(black_bit, open_bit, &(four_guard_bit[i]));
 
     // 達四があると四のパターンが2カ所マッチするので片方をオフにする
-    four_guard_bit[i] ^= open_four_bit;
+    four_guard_bit[i] ^= RightShift<1>(open_four_bit);
   }
 
   if(IsMultipleBit(four_guard_bit[0], four_guard_bit[1])){
