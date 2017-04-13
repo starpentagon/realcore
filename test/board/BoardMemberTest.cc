@@ -1,4 +1,6 @@
 // @brief メンバ関数のテスト
+#include <stack>
+
 #include "gtest/gtest.h"
 
 #include "Move.h"
@@ -43,6 +45,30 @@ public:
 
     EXPECT_TRUE(board.bit_board_ == board_expect.bit_board_);
     EXPECT_TRUE(board.move_list_ == board_expect.move_list_);
+  }
+
+  void BoardOpenStateUpdateTest(){
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . x . . x x x o . . . . . | B 
+  // C | . . o . o . . o x x . . . | C 
+  // D | . . * o . x . o o o x . . | D 
+  // E | . . . x o . o . x o . o . | E 
+  // F | . . . . . o x x . o o o x | F 
+  // G | . . . . x o x o x x x x o | G 
+  // H | . . . . o . x . . o o . . | H 
+  // I | . . . . . x o . . . x . . | I 
+  // J | . . x . . . . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhhijggggiigfgfhhfhedjidifgfgdkfjekdjcjdldfeeeedhgfcfbkekcichblfmgmfnfmekgdccblhlikhlgnggbib"));
+    auto board_open_state = board.board_open_state_list_.back();
+
+    ASSERT_EQ(2ULL, board_open_state.GetList(kNextFourBlack).size());
   }
 
   void IsNormalMoveTest(){
@@ -197,9 +223,9 @@ public:
 
     {
       // 初期化時は要素数1で初期状態のBoardOpenStateがtop
-      ASSERT_EQ(1, board.board_open_state_stack_.size());
+      ASSERT_EQ(1, board.board_open_state_list_.size());
       
-      const auto &board_open_state = board.board_open_state_stack_.top();
+      const auto &board_open_state = board.board_open_state_list_.back();
       BoardOpenState init_state;
       EXPECT_TRUE(board_open_state == init_state);
     }
@@ -207,7 +233,6 @@ public:
     {
       // MakeMove時に更新されているかチェック
       MoveList board_move_list("hhigff");
-      BoardOpenState update_state;
 
       stack<BoardOpenState> state_stack;
       state_stack.emplace();
@@ -216,12 +241,13 @@ public:
       PlayerTurn player_turn = kBlackTurn;
 
       for(const auto move : board_move_list){
+        const auto prev_board_open_state = board.board_open_state_list_.back();
         board.MakeMove(move);
 
         bit_board.SetState(move, GetPlayerStone(player_turn));
-        update_state.Update(player_turn == kBlackTurn, move, bit_board);
+        BoardOpenState update_state(prev_board_open_state, player_turn == kBlackTurn, move, bit_board);
 
-        const auto &board_open_state = board.board_open_state_stack_.top();
+        const auto &board_open_state = board.board_open_state_list_.back();
         EXPECT_TRUE(board_open_state == update_state);
 
         state_stack.emplace(update_state);
@@ -233,7 +259,7 @@ public:
         board.UndoMove();
         state_stack.pop();
 
-        EXPECT_TRUE(board.board_open_state_stack_.top() == state_stack.top());
+        EXPECT_TRUE(board.board_open_state_list_.back() == state_stack.top());
       }
     }
   }
@@ -460,4 +486,8 @@ TEST_F(BoardTest, BoardOpenStateStackTest)
   BoardOpenStateStackTest();
 }
 
+TEST_F(BoardTest, UpdateTest)
+{
+  BoardOpenStateUpdateTest();
+}
 }

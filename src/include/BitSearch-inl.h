@@ -86,6 +86,11 @@ inline void GetStoneWithOneOpenBit(const std::uint64_t stone_bit, const std::uin
   }
 }
 
+inline const BoardPosition GetOpenBoardPosition(const BoardPosition pattern_position, const size_t open_index)
+{
+  return pattern_position + open_index;
+}
+
 inline const size_t GetLessIndexOfTwo(const size_t index)
 {
   assert(index < kTwoOfFivePattern);
@@ -173,14 +178,24 @@ inline size_t GetNumberOfTrailingZeros(const std::uint64_t bit, const std::uint6
 inline void GetBitIndexList(std::uint64_t bit, std::vector<size_t> * const index_list)
 {
   assert(index_list != nullptr);
-  index_list->reserve(64);
+  
+  //! @note index_list->reserve(64)としてからemplace_backするより、いったんarrayに入れてからコピーした方が10%程度高速
+  std::array<std::uint64_t, 64> index_array;
+  size_t index_count = 0;
 
   while(bit != 0){
     const std::uint64_t rightmost_bit = GetRightmostBit(bit);
     const size_t rightmost_bit_index = GetNumberOfTrailingZeros(bit, rightmost_bit);
-    index_list->push_back(rightmost_bit_index);
+    index_array[index_count] = rightmost_bit_index;
+    ++index_count;
 
     bit ^= rightmost_bit;
+  }
+
+  index_list->reserve(index_count);
+
+  for(size_t i=0; i<index_count; i++){
+    index_list->emplace_back(index_array[i]);
   }
 }
 
@@ -199,6 +214,15 @@ inline const bool IsSingleBit(const std::uint64_t bit)
   // @see "Ten Ways to Check if an Integer Is a Power Of Two in C: 9. Decrement and Compare"
   // @see (http://www.exploringbinary.com/ten-ways-to-check-if-an-integer-is-a-power-of-two-in-c/)
   return !(bit & (bit - 1));
+}
+
+inline const bool IsMultipleBit(const std::uint64_t bit)
+{
+  if(bit == 0 || IsSingleBit(bit)){
+    return false;
+  }
+
+  return true;
 }
 
 inline const bool IsMultipleBit(const std::uint64_t bit_1, const std::uint64_t bit_2)
@@ -221,6 +245,11 @@ inline const bool IsMultipleBit(const std::uint64_t bit_1, const std::uint64_t b
 inline const std::uint64_t GetOpenBitInPattern(const size_t index, const std::uint64_t pattern_bit)
 {
   return pattern_bit << (2 * index);
+}
+
+inline constexpr std::uint64_t GetCombinedBit(std::uint64_t bit_even, std::uint64_t bit_odd)
+{
+  return bit_even | (bit_odd << 1);
 }
 
 }   // namespace realcore

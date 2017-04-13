@@ -5,7 +5,8 @@
 #ifndef OPEN_STATE_H
 #define OPEN_STATE_H
 
-#include <vector>
+#include <array>
+#include <bitset>
 
 #include "RealCore.h"
 
@@ -22,43 +23,51 @@ enum OpenStatePattern : std::uint8_t
   kNextSemiThreeWhite,    //!< 見かけの三ノビ点(白)
 };
 
+constexpr size_t kOpenStatePatternNum = 7;
+const std::array<OpenStatePattern, kOpenStatePatternNum>& GetAllOpenStatePattern();
+
+typedef std::bitset<kOpenStatePatternNum> UpdateOpenStateFlag;    // 更新を行う空点情報のフラグ
+
+constexpr UpdateOpenStateFlag kUpdateAllOpenState(0b1111111);    // すべての空点情報を更新する
+constexpr UpdateOpenStateFlag kUpdateForbiddenCheck(0b0101011);    // 禁手チェック用の空点情報を更新する
+
 //! @brief 指し手パターンが黒番, 白番どちらのパターンなのかを返す
 constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern);
 
+//! @brief 指し手パターンごとの防手対象位置リスト
+typedef std::array<BoardPosition, 3> GuardPositionList;
+
 // 前方宣言
-template<OpenStatePattern Pattern> class OpenState;
+class OpenState;
 class OpenStateTest;
 enum MovePosition : std::uint8_t;
 
 //! @brief 2つの空点状態を比較する
 //! @retval true 2つの空点状態が同一の内容を保持
-template<OpenStatePattern Pattern>
-bool IsEqual(const OpenState<Pattern> &open_state_1, const OpenState<Pattern> &open_state_2);
+bool IsEqual(const OpenState &lhs, const OpenState &rhs);
 
 //! @brief コピーを作成する
 //! @param bit_board_from コピー元
 //! @param bit_board_to コピー先
-template<OpenStatePattern Pattern>
-void Copy(const OpenState<Pattern> &open_state_from, OpenState<Pattern> * const open_state_to);
+void Copy(const OpenState &from, OpenState * const to);
 
 //! @brief 空点状態を管理するクラス
-template<OpenStatePattern Pattern>
 class OpenState{
   friend class OpenStateTest;
-  friend bool IsEqual<Pattern>(const OpenState<Pattern> &open_state_1, const OpenState<Pattern> &open_state_2);
-  friend void Copy<Pattern>(const OpenState<Pattern> &open_state_from, OpenState<Pattern> * const open_state_to);
+  friend bool IsEqual(const OpenState &lhs, const OpenState &rhs);
+  friend void Copy(const OpenState &from, OpenState * const to);
 
 public:
   //! @brief コンストラクタ
-  OpenState(const BoardPosition open_position, const BoardPosition pattern_position);
-  OpenState(const OpenState<Pattern> &open_state);
+  OpenState(const OpenStatePattern pattern, const BoardPosition open_position, const BoardPosition pattern_position);
+  OpenState(const OpenState &open_state);
 
   //! @brief 代入演算子
-  const OpenState<Pattern>& operator=(const OpenState<Pattern> &open_state);
+  const OpenState& operator=(const OpenState &open_state);
 
   //! @brief 比較演算子
-  const bool operator==(const OpenState<Pattern> &open_state) const;
-  const bool operator!=(const OpenState<Pattern> &open_state) const;
+  const bool operator==(const OpenState &open_state) const;
+  const bool operator!=(const OpenState &open_state) const;
 
   //! @brief 空点の盤面位置を返す
   const BoardPosition GetOpenPosition() const;
@@ -66,19 +75,19 @@ public:
   //! @brief パターンの開始位置を返す
   const BoardPosition GetPatternPosition() const;
 
-  //! @brief チェック対象位置のリストを取得する
-  const std::vector<BoardPosition>& GetCheckPositionList() const;
+  //! @brief チェック対象位置を返す
+  const BoardPosition GetCheckPosition() const;
   
-  //! @brief チェック対象位置リストを設定する
+  //! @brief チェック対象位置を設定する
   //! @param check_position_list 設定するチェック対象位置リスト
-  void SetCheckPositionList(const std::vector<BoardPosition> &check_position_list);
+  void SetCheckPosition(const BoardPosition check_position);
 
   //! @brief 防手位置のリストを取得する
-  const std::vector<BoardPosition>& GetGuardPositionList() const;
+  const GuardPositionList& GetGuardPositionList() const;
 
   //! @brief 防手位置のリストを設定する
   //! @param guard_position_list 設定する防手位置リスト
-  void SetGuardPositionList(const std::vector<BoardPosition> &guard_position_list);
+  void SetGuardPositionList(const GuardPositionList &guard_position_list);
 
   //! @brief 指定の指し手位置が影響領域かどうかを判定する
   //! @param P 指し手の手番
@@ -88,10 +97,11 @@ public:
   const bool IsInfluenceMove(const MovePosition move) const;
 
 private:
-  BoardPosition open_position_;                       //!< 空点位置
-  BoardPosition pattern_position_;                    //!< パターンの開始位置
-  std::vector<BoardPosition> check_position_list_;    //!< チェック対象位置（見かけの三の四連にする位置）
-  std::vector<BoardPosition> guard_position_list_;    //!< 防手位置
+  OpenStatePattern pattern_;              //!< 空点状態の対象となる指し手パターン(長連点, 達四点, etc)
+  BoardPosition open_position_;           //!< 空点位置
+  BoardPosition pattern_position_;        //!< パターンの開始位置
+  BoardPosition check_position_;          //!< チェック対象位置（見かけの三の四連にする位置）
+  GuardPositionList guard_position_list_; //!< 防手位置
 };
 }   // namespace realcore
 

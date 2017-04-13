@@ -495,4 +495,32 @@ TEST_F(BoardTest, IsDoubleThreeTest)
     EXPECT_TRUE(forbidden_move_set.none());
   }
 }
+
+TEST_F(BoardTest, EnumerateForbiddenTest1)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------x ----------+ A 
+  // B | . x . . x x x o . . . . . | B 
+  // C | . x o x o o . o x x . . . | C 
+  // D | . o o o x x . o o o x . . | D 
+  // E | . . . x o . o o x o x o . | E 
+  // F | . . . . . o x x . o o o x | F 
+  // G | . . . . x o x o x x x x o | G 
+  // H | . . . . o . x . x o o o x o H 
+  // I | . . . . . x o . o . x . . | I 
+  // J | . . x . o x . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  Board board(MoveList("hhhijggggiigfgfhhfhedjidifgfgdkfjekdjcjdldfeeeedhgfcfbkekcichblfmgmfnfmekgdccblhlikhlgnggbibccieiaohlemhnhddjhjifdgcgjfjeccd"));
+  MoveBitSet forbidden_move_set;
+
+  board.EnumerateForbiddenMoves(&forbidden_move_set);
+//  EXPECT_TRUE(forbidden_move_set.none());
+}
+
+
 }

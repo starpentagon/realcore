@@ -7,6 +7,7 @@
 #define MOVE_PATTERN_SEARCH_H
 
 #include "BitSearch.h"
+#include "OpenState.h"
 
 namespace realcore{
 
@@ -14,6 +15,19 @@ namespace realcore{
 //! @param black_bit 黒石フラグ
 //! @retval true 長連が生じている
 inline const bool IsOverline(const std::uint64_t black_bit);
+
+//! @brief 空点状態の指し手パターンのパターン検索数を返す
+//! @param pattern 空点状態の指し手パターン(長連点, 達四点, etc)
+//! @retval パターン検索数
+inline constexpr size_t GetOpenStatePatternNum(const OpenStatePattern pattern);
+
+//! @brief 空点状態パターンを検索する
+//! @param Pattern 検索するパターン
+//! @param stone_bit 黒石 or 白石フラグ
+//! @param open_bit 空点フラグ
+//! @param pattern_search_bit_list 検索結果の格納先
+template<OpenStatePattern Pattern>
+inline void SearchOpenStatePattern(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, GetOpenStatePatternNum(Pattern)> * const pattern_search_bit_list);
 
 //! @brief 長連点(B[B3O1]B)が生じているか判定する
 //! @param stone_bit 黒石フラグ
@@ -25,7 +39,7 @@ inline void SearchNextOverline(const std::uint64_t stone_bit, const std::uint64_
 //! @param P 手番
 //! @param stone_bit 黒石 or 白石フラグ
 //! @param open_bit 空点フラグ
-//! @retval XOBBBBOX(黒番), OWWWWO(白番)パターンのうち右端のOの位置に1を立てた値
+//! @retval XOBBBBOX(黒番), OWWWWO(白番)パターンのうちBBBB, WWWWの右端位置に1を立てた値
 template<PlayerTurn P>
 inline const std::uint64_t SearchOpenFour(const std::uint64_t stone_bit, const std::uint64_t open_bit);
 
@@ -62,7 +76,7 @@ inline void SearchNextFour(const std::uint64_t stone_bit, const std::uint64_t op
 //! @param stone_bit 黒石 or 白石フラグ
 //! @param open_bit 空点フラグ
 //! @param next_open_four_bit 達四になる位置のフラグ
-//! @retval XO[B3O1]OX(黒番), O[W3O1]O(白番)パターンのうち右端のOの位置に1を立てた値
+//! @retval XO[B3O1]OX(黒番), O[W3O1]O(白番)パターンのうち[(B|W)3O1]の右端の位置に1を立てた値
 template<PlayerTurn P>
 inline const std::uint64_t SearchSemiThree(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::uint64_t * const next_open_four_bit);
 
@@ -70,7 +84,7 @@ inline const std::uint64_t SearchSemiThree(const std::uint64_t stone_bit, const 
 //! @param P 手番
 //! @param stone_bit 黒石 or 白石フラグ
 //! @param open_bit 空点フラグ
-//! @param pattern_search_bit_list XO[B2O2]OX, O[W2O2]Oパターンの検索結果
+//! @param pattern_search_bit_list XO[B2O2]OX, O[W2O2]Oパターンのうち[(B|W)2O2]の右端の位置に1を立てた値
 template<PlayerTurn P>
 inline void SearchNextSemiThree(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, kTwoOfFourPattern> * const pattern_search_bit_list);
 

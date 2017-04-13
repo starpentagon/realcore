@@ -39,6 +39,12 @@ TEST_F(BitBoardTest, IsOverlineTest)
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhigihghjhhgmhhilhii"));
+    
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(1, move_bit_set.count());
+    EXPECT_TRUE(move_bit_set[kMoveKH]);
 
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
@@ -81,6 +87,12 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhignhghkhkilhoh"));
 
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(1, move_bit_set.count());
+    EXPECT_TRUE(move_bit_set[kMoveJH]);
+
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
         continue;
@@ -117,6 +129,12 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhhihbhahdgehfie"));
+
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(1, move_bit_set.count());
+    EXPECT_TRUE(move_bit_set[kMoveHE]);
 
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
@@ -155,6 +173,12 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhghnhohkhjgjhli"));
 
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(1, move_bit_set.count());
+    EXPECT_TRUE(move_bit_set[kMoveLH]);
+
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
         continue;
@@ -191,6 +215,12 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhgiigiioaggnbjhldhf"));
+
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(1, move_bit_set.count());
+    EXPECT_TRUE(move_bit_set[kMoveKE]);
 
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
@@ -229,6 +259,12 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhgiigiioaggnbjhkehf"));
 
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(1, move_bit_set.count());
+    EXPECT_TRUE(move_bit_set[kMoveLD]);
+
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
         continue;
@@ -265,6 +301,12 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhkkjjkiiiikddaabbbaccab"));
+
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(1, move_bit_set.count());
+    EXPECT_TRUE(move_bit_set[kMoveFF]);
 
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
@@ -309,6 +351,12 @@ TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhkkjjkiiikchfjcjdidielj"));
 
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(1, move_bit_set.count());
+    EXPECT_TRUE(move_bit_set[kMoveGG]);
+
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
         continue;
@@ -346,6 +394,12 @@ TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhkkiiddeglddgdlffllfgbg"));
   
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(1, move_bit_set.count());
+    EXPECT_TRUE(move_bit_set[kMoveGG]);
+
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
         continue;
@@ -382,7 +436,13 @@ TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhkkiiddeglddgdlffjjfgbg"));
-  
+
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(1, move_bit_set.count());
+    EXPECT_TRUE(move_bit_set[kMoveGG]);
+
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
         continue;
@@ -419,7 +479,12 @@ TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhldihddghdl"));
-  
+
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(0, move_bit_set.count());
+
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
         continue;
@@ -456,7 +521,13 @@ TEST_F(BitBoardTest, IsDoubleThreeTest)
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhhggiggjhghkifg"));
-  
+
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(1, move_bit_set.count());
+    EXPECT_TRUE(move_bit_set[kMoveIG]);
+
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
         continue;
@@ -492,7 +563,13 @@ TEST_F(BitBoardTest, IsDoubleThreeTest)
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O   
     BitBoard bit_board(MoveList("hhhdlfldjjddkgllghdljihl"));
-  
+
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(1, move_bit_set.count());
+    EXPECT_TRUE(move_bit_set[kMoveJH]);
+
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
         continue;
@@ -527,7 +604,20 @@ TEST_F(BitBoardTest, IsDoubleThreeTest)
     // O + ------o --o --------o ----o O 
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhoobjahciagemeodigochlofmccellcgkhcdjoa"));
-  
+
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(8, move_bit_set.count());
+    EXPECT_TRUE(move_bit_set[kMoveDH]);
+    EXPECT_TRUE(move_bit_set[kMoveCJ]);
+    EXPECT_TRUE(move_bit_set[kMoveEJ]);
+    EXPECT_TRUE(move_bit_set[kMoveCK]);
+    EXPECT_TRUE(move_bit_set[kMoveDK]);
+    EXPECT_TRUE(move_bit_set[kMoveEK]);
+    EXPECT_TRUE(move_bit_set[kMoveDL]);
+    EXPECT_TRUE(move_bit_set[kMoveFL]);
+
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
         continue;
@@ -571,7 +661,12 @@ TEST_F(BitBoardTest, IsDoubleThreeTest)
     // O o --o --o --o --o --o --o --+ O 
     //   A B C D E F G H I J K L M N O 
     BitBoard bit_board(MoveList("hhbdddamecbnfdhdeecojdoakdndleaolfeoghgoeiioejkochmo"));
-  
+
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(0, move_bit_set.count());
+
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
         continue;

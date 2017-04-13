@@ -82,6 +82,9 @@ static constexpr size_t kFourStonePattern = 4;   //<! 4個の石のパターン
 //! @retval 空点の位置に1を立てた値
 inline constexpr std::uint64_t GetOpenPositionBit(const StateBit state_bit);
 
+//! @brief 石フラグ(下位bitを利用)2つを結合(上位bitにも設定)したフラグを生成する
+inline constexpr std::uint64_t GetCombinedBit(std::uint64_t bit_even, std::uint64_t bit_odd);
+
 //! @brief 連続する同一N個の石フラグを返す
 //! @param N 連続する石数
 //! @param stone_bit 黒石 or 白石フラグ
@@ -103,6 +106,9 @@ inline void GetStoneWithOneOpenBit(const std::uint64_t stone_bit, const std::uin
 //! @param index 検索結果のindex
 //! @param pattern_bit 検索結果フラグ
 inline const std::uint64_t GetOpenBitInPattern(const size_t index, const std::uint64_t pattern_bit);
+
+//! @brief [BnOm][WnOm]のパターン位置(BoardPosition)と空点indexから空点のBoardPositionを返す
+inline const BoardPosition GetOpenBoardPosition(const BoardPosition pattern_position, const size_t open_index);
 
 static const size_t kTwoOfFourPattern = 6;   // = 4C2
 static const size_t kTwoOfFivePattern = 10;  // = 10C2
@@ -128,6 +134,11 @@ inline const size_t GetGreaterIndexOfTwo(const size_t index);
 //! @retval true ビットの数が1
 //! @pre bitは0以外
 inline const bool IsSingleBit(const std::uint64_t bit);
+
+//! @brief ビットの数が2以上かどうかをチェックする(64bit変数版)
+//! @param bit チェック対象のbit
+//! @retval true ビットの数が2以上
+inline const bool IsMultipleBit(const std::uint64_t bit);
 
 //! @brief ビットの数が2以上かどうかをチェックする(64bit変数 * 2版)
 //! @param bit_i チェック対象のbit(i=1,2)

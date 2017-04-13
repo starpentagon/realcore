@@ -7,7 +7,6 @@ project(${project_name} CXX)
 # Build Type(Release or Debug)
 #set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BUILD_TYPE Release)
-# message(STATUS "${CMAKE_CXX_FLAGS_RELEASE}")
 
 # ccache
 find_program(CCACHE_FOUND ccache)
@@ -31,6 +30,7 @@ add_executable(
     $ENV{REALCORE_DIR}/src/CSVReader.cc
     $ENV{REALCORE_DIR}/src/MoveList.cc
     $ENV{REALCORE_DIR}/src/LineNeighborhood.cc
+    $ENV{REALCORE_DIR}/src/OpenState.cc
     $ENV{REALCORE_DIR}/src/BoardOpenState.cc
     $ENV{REALCORE_DIR}/src/Board.cc
     $ENV{REALCORE_DIR}/src/BitBoard.cc

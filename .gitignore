@@ -40,6 +40,9 @@ database/*.csv
 # Visual Studio Code setting files
 .vscode
 
+# Callgrind output
+callgrind.out.*
+
 # log files
 *.log
 

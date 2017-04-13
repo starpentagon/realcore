@@ -8,8 +8,7 @@
 
 #include <cstdint>
 #include <array>
-#include <stack>
-#include <bitset>
+#include <vector>
 
 #include "RealCore.h"
 #include "BitBoard.h"
@@ -18,10 +17,6 @@
 
 namespace realcore
 {
-
-// 指し手のビットを管理するbitset
-typedef std::bitset<kMoveNum> MoveBitSet;
-
 // 前方宣言
 enum MovePosition : std::uint8_t;
 class BoardTest;
@@ -46,6 +41,7 @@ class Board
 
 public:
   Board();
+  Board(const UpdateOpenStateFlag &update_flag);
   Board(const Board &board);
   Board(const MoveList &move_list);
 
@@ -98,8 +94,8 @@ protected:
   //! @brief 盤面の指し手リスト
   MoveList move_list_;
 
-  //! @brief 盤面空点状態スタック
-  std::stack<BoardOpenState> board_open_state_stack_;
+  //! @brief 盤面空点状態リスト
+  std::vector<BoardOpenState> board_open_state_list_;
 };
 
 }   // namespace realcore

@@ -4,89 +4,59 @@
 #include <cassert>
 
 #include "Move.h"
-#include "BitBoard.h"
+#include "Conversion.h"
 #include "OpenState.h"
 
 namespace realcore
 {
 
-template<OpenStatePattern Pattern>
-OpenState<Pattern>::OpenState(const BoardPosition open_position, const BoardPosition pattern_position)
-: open_position_(open_position), pattern_position_(pattern_position)
+inline const std::array<OpenStatePattern, kOpenStatePatternNum>& GetAllOpenStatePattern()
 {
-  switch(Pattern)
-  {
-  case kNextOverline:
-  case kNextOpenFourBlack:
-  case kNextOpenFourWhite:
-    check_position_list_.reserve(0);
-    guard_position_list_.reserve(0);
-    break;
+  static const std::array<OpenStatePattern, kOpenStatePatternNum> all_open_state_pattern_list{{
+    kNextOverline,
+    kNextOpenFourBlack,
+    kNextOpenFourWhite,
+    kNextFourBlack,
+    kNextFourWhite,
+    kNextSemiThreeBlack,
+    kNextSemiThreeWhite,
+  }};
 
-  case kNextFourBlack:
-  case kNextFourWhite:
-    check_position_list_.reserve(0);
-    guard_position_list_.reserve(1);
-    break;
-
-  case kNextSemiThreeBlack:
-    check_position_list_.reserve(1);
-    guard_position_list_.reserve(3);
-    break;
-  case kNextSemiThreeWhite:
-    check_position_list_.reserve(0);
-    guard_position_list_.reserve(3);
-    break;
-  default:
-    assert(false);
-  }
+  return all_open_state_pattern_list;
 }
 
-template<OpenStatePattern Pattern>
-OpenState<Pattern>::OpenState(const OpenState<Pattern> &open_state)
-{
-  *this = open_state;
-}
-
-template<OpenStatePattern Pattern>
-inline const BoardPosition OpenState<Pattern>::GetOpenPosition() const
+inline const BoardPosition OpenState::GetOpenPosition() const
 {
   return open_position_;
 }
 
-template<OpenStatePattern Pattern>
-inline const BoardPosition OpenState<Pattern>::GetPatternPosition() const
+inline const BoardPosition OpenState::GetPatternPosition() const
 {
   return pattern_position_;
 }
 
-template<OpenStatePattern Pattern>
-inline const std::vector<BoardPosition>& OpenState<Pattern>::GetCheckPositionList() const
+inline const BoardPosition OpenState::GetCheckPosition() const
 {
-  return check_position_list_;
+  return check_position_;
 }
 
-template<OpenStatePattern Pattern>
-inline void OpenState<Pattern>::SetCheckPositionList(const std::vector<BoardPosition> &check_position_list)
+inline void OpenState::SetCheckPosition(const BoardPosition check_position)
 {
-  check_position_list_ = check_position_list;
+  check_position_ = check_position;
 }
 
-template<OpenStatePattern Pattern>
-inline const std::vector<BoardPosition>& OpenState<Pattern>::GetGuardPositionList() const
+inline const GuardPositionList& OpenState::GetGuardPositionList() const
 {
   return guard_position_list_;
 }
 
-template<OpenStatePattern Pattern>
-inline void OpenState<Pattern>::SetGuardPositionList(const std::vector<BoardPosition> &guard_position_list)
+inline void OpenState::SetGuardPositionList(const GuardPositionList &guard_position_list)
 {
   guard_position_list_ = guard_position_list;
 }
 
-template<OpenStatePattern Pattern>
 template<PlayerTurn P>
-inline const bool OpenState<Pattern>::IsInfluenceMove(const MovePosition move) const
+inline const bool OpenState::IsInfluenceMove(const MovePosition move) const
 {
   assert(IsInBoardMove(move));
 
@@ -97,7 +67,7 @@ inline const bool OpenState<Pattern>::IsInfluenceMove(const MovePosition move) c
   //! @see doc/05_move_pattern/move_pattern.pptx, 空点状態の影響領域
   const int difference = static_cast<int>(move_board_position) - static_cast<int>(pattern_position_);
 
-  switch(Pattern){
+  switch(pattern_){
   case kNextOverline:
     return (P == kBlackTurn) ? false : (0 <= difference && difference <= 3);
   case kNextOpenFourBlack:
@@ -118,51 +88,17 @@ inline const bool OpenState<Pattern>::IsInfluenceMove(const MovePosition move) c
   }
 }
 
-template<OpenStatePattern Pattern>
-bool IsEqual(const OpenState<Pattern> &open_state_1, const OpenState<Pattern> &open_state_2)
-{
-  if(open_state_1.open_position_ != open_state_2.open_position_){
-    return false;
-  }
-
-  if(open_state_1.pattern_position_ != open_state_2.pattern_position_){
-    return false;
-  }
-
-  if(open_state_1.check_position_list_ != open_state_2.check_position_list_){
-    return false;
-  }
-
-  if(open_state_1.guard_position_list_ != open_state_2.guard_position_list_){
-    return false;
-  }
-
-  return true;
-}
-
-template<OpenStatePattern Pattern>
-inline const bool OpenState<Pattern>::operator==(const OpenState<Pattern> &open_state) const
+inline const bool OpenState::operator==(const OpenState &open_state) const
 {
   return IsEqual(*this, open_state);
 }
 
-template<OpenStatePattern Pattern>
-inline const bool OpenState<Pattern>::operator!=(const OpenState<Pattern> &open_state) const
+inline const bool OpenState::operator!=(const OpenState &open_state) const
 {
   return !(*this == open_state);
 }
 
-template<OpenStatePattern Pattern>
-void Copy(const OpenState<Pattern> &open_state_from, OpenState<Pattern> * const open_state_to)
-{
-  open_state_to->open_position_ = open_state_from.open_position_;
-  open_state_to->pattern_position_ = open_state_from.pattern_position_;
-  open_state_to->check_position_list_ = open_state_from.check_position_list_;
-  open_state_to->guard_position_list_ = open_state_from.guard_position_list_;
-}
-
-template<OpenStatePattern Pattern>
-inline const OpenState<Pattern>& OpenState<Pattern>::operator=(const OpenState<Pattern> &open_state)
+inline const OpenState& OpenState::operator=(const OpenState &open_state)
 {
   if(this != &open_state){
     Copy(open_state, this);
@@ -175,7 +111,6 @@ inline constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern)
 {
   return ((pattern == kNextOpenFourWhite) || (pattern == kNextFourWhite) || (pattern == kNextSemiThreeWhite)) ? kWhiteTurn : kBlackTurn;
 }
-
 }   // namespace realcore
 
 #endif    // OPEN_STATE_INL_H

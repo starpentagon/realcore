@@ -2,96 +2,182 @@
 
 #include "OpenState.h"
 #include "LineNeighborhood.h"
+#include "BitBoard.h"
+#include "BoardOpenState.h"
 
 using namespace std;
 
 namespace realcore
 {
 
-template<>
-template<>
-void LineNeighborhood<kOpenStateNeighborhoodSize>::GetOpenState<kNextOverline, kBlackTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextOverline> > *open_state_list) const
+LineNeighborhood::LineNeighborhood(const MovePosition move, const size_t distance, const BitBoard &bit_board)
+: local_bit_board_{{0}}, move_(move), distance_(distance)
 {
-  assert(open_state_list != nullptr);
-  assert(open_state_list->empty());
+  std::array<StateBit, kBoardDirectionNum> line_neighborhood;
 
-  array<LocalBitBoard, kFourStonePattern> pattern_search_bit;
-  array<LocalBitBoard, kFourStonePattern> open_state_bit;
-
-  for(size_t i=0; i<kLocalBitBoardNum; i++){
-    array<uint64_t, kFourStonePattern> pattern_search_bit_list{{0}};
-    SearchNextOverline(stone_bit[i], open_bit[i], &pattern_search_bit_list);
-
-    for(size_t index=0; index<kFourStonePattern; index++){
-      pattern_search_bit[index][i] = pattern_search_bit_list[index];
-      open_state_bit[index][i] = GetOpenBitInPattern(index, pattern_search_bit_list[index]);
-    }
+  switch(distance){
+  case 1:
+    bit_board.GetLineNeighborhoodStateBit<1>(move, &line_neighborhood);
+    break;
+  case 2:
+    bit_board.GetLineNeighborhoodStateBit<2>(move, &line_neighborhood);
+    break;
+  case 3:
+    bit_board.GetLineNeighborhoodStateBit<3>(move, &line_neighborhood);
+    break;
+  case 4:
+    bit_board.GetLineNeighborhoodStateBit<4>(move, &line_neighborhood);
+    break;
+  case 5:
+    bit_board.GetLineNeighborhoodStateBit<5>(move, &line_neighborhood);
+    break;
+  case 6:
+    bit_board.GetLineNeighborhoodStateBit<6>(move, &line_neighborhood);
+    break;
+  case 7:
+    bit_board.GetLineNeighborhoodStateBit<7>(move, &line_neighborhood);
+    break;
+  default:
+    assert(false);
   }
 
-  constexpr size_t kPatternLength = 6;    //!< パターン長
-  constexpr size_t kOpenCount = 1;        //!< 設定する空点状態の数
-  constexpr size_t kMaxSearchBitCount = (2 * kOpenStateNeighborhoodSize + 1) - kPatternLength + 1;
-  constexpr size_t kListSize = 4 * kOpenCount * kMaxSearchBitCount;
-  open_state_list->reserve(kListSize);
+  local_bit_board_[0] |= line_neighborhood[kLateralDirection];
+  local_bit_board_[0] |= line_neighborhood[kVerticalDirection] << 32ULL;
+  local_bit_board_[1] |= line_neighborhood[kLeftDiagonalDirection];
+  local_bit_board_[1] |= line_neighborhood[kRightDiagonalDirection] << 32ULL;
+}
 
-  for(size_t index=0; index<kFourStonePattern; index++){
-    vector<BoardPosition> open_state_position_list, pattern_position_list;
+const ForbiddenCheckState LineNeighborhood::ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list) const
+{
+  const auto combined_black_bit = GetPlayerStoneCombinedBit<kBlackTurn>();
+  const auto combined_open_bit = GetOpenPositionCombinedBit();
 
-    GetBoardPositionList(pattern_search_bit[index], &pattern_position_list);
-    GetBoardPositionList(open_state_bit[index], &open_state_position_list);
+  // 長連
+  if(IsOverline(combined_black_bit)){
+    return kForbiddenMove;
+  }
 
-    assert(pattern_position_list.size() == open_state_position_list.size());
+  // 四々
+  const auto open_four_bit = SearchOpenFour<kBlackTurn>(combined_black_bit, combined_open_bit);
+  std::uint64_t make_five_move_bit = 0;
+  SearchFour<kBlackTurn>(combined_black_bit, combined_open_bit, &make_five_move_bit);
+  
+  // 達四があると五連にする位置が2カ所あるので重複カウントしないように片方をオフにする
+  // @see doc/06_forbidden_check/forbidden_check.pptx, 「達四がある場合の四のマッチ方法」
+  make_five_move_bit ^= RightShift<1>(open_four_bit);
 
-    for(size_t i=0, size=open_state_position_list.size(); i<size; i++){
-      const auto open_state_position = open_state_position_list[i];
-      const auto pattern_position = pattern_position_list[i];
+  if(IsMultipleBit(make_five_move_bit)){
+    return kForbiddenMove;
+  }
 
-      open_state_list->emplace_back(open_state_position, pattern_position);
+  // 見かけの三々
+  std::uint64_t next_open_four_bit = 0;
+  const auto semi_three_bit = SearchSemiThree<kBlackTurn>(combined_black_bit, combined_open_bit, &next_open_four_bit);
+
+  if(!IsMultipleBit(semi_three_bit)){
+    return kNonForbiddenMove;
+  }
+
+  // 見かけの三々が2つ以上存在する
+  assert(next_open_four_list != nullptr);
+  assert(next_open_four_list->empty());
+
+  std::vector<size_t> combined_shift_list;
+  GetBitIndexList(next_open_four_bit, &combined_shift_list);
+  next_open_four_list->reserve(combined_shift_list.size());
+
+  for(const auto combined_shift : combined_shift_list){
+    const auto guard_board_position = GetBoardPosition(combined_shift);
+    next_open_four_list->emplace_back(guard_board_position);
+  }
+
+  return kPossibleForbiddenMove;
+}
+
+void LineNeighborhood::GetBoardPositionList(const LocalBitBoard &bit_list, std::vector<BoardPosition> * const board_position_list) const
+{
+  assert(board_position_list != nullptr);
+  assert(board_position_list->empty());
+
+  if(bit_list[0] == 0 && bit_list[1] == 0){
+    return;
+  }
+
+  // 1方向(2N + 1)個 * 4方向 = 8N + 4個
+  board_position_list->reserve(8 * distance_ + 4);
+
+  constexpr size_t kMinUpperBitIndex = 32;
+  constexpr size_t kLowerCenter = 14;   // 下位32bitの中心位置
+  constexpr size_t kUpperCenter = 46;   // 上位32bitの中心位置
+
+  Cordinate x = 0, y = 0;
+  GetMoveCordinate(move_, &x, &y);
+
+  std::array<size_t, kBoardDirectionNum> index_list;
+  GetBitBoardIndexList(x, y, &index_list);
+
+  std::array<size_t, kBoardDirectionNum> shift_list;
+  GetBitBoardShiftList(x, y, &shift_list);
+  
+  for(size_t list_index=0; list_index<kLocalBitBoardNum; list_index++){
+    std::vector<size_t> bit_index_list;
+    GetBitIndexList(bit_list[list_index], &bit_index_list);
+
+    for(const auto bit_index : bit_index_list){
+      const auto direction = GetBoardDirection(list_index, bit_index);
+      const auto index = index_list[direction];
+      const auto shift = shift_list[direction];
+      
+      // BitBoard配列での位置に対応するシフト量を求める
+      const auto center_shift = bit_index < kMinUpperBitIndex ? kLowerCenter : kUpperCenter;
+      const auto open_four_shift = shift + GetIndexDifference(center_shift, bit_index);
+
+      const auto board_position = realcore::GetBoardPosition(index, open_four_shift);
+      board_position_list->push_back(board_position);
     }
   }
 }
 
 template<>
-template<>
-void LineNeighborhood<kOpenStateNeighborhoodSize>::GetOpenState<kNextOpenFourBlack, kBlackTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextOpenFourBlack> > *open_state_list) const
+void LineNeighborhood::AddOpenState<kBlackTurn>(const UpdateOpenStateFlag &update_flag, BoardOpenState * const board_open_state) const
 {
-  GetOpenStateOpenFour<kNextOpenFourBlack, kBlackTurn>(stone_bit, open_bit, open_state_list);
+  const auto combined_black_stone = GetBlackStoneBit(local_bit_board_[0]) | (GetBlackStoneBit(local_bit_board_[1]) << 1);
+  const auto combined_open_stone = GetOpenPositionBit(local_bit_board_[0]) | (GetOpenPositionBit(local_bit_board_[1]) << 1);
+
+  if(update_flag[kNextOverline]){
+    GetOpenState<kNextOverline>(combined_black_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextOpenFourBlack]){
+    GetOpenState<kNextOpenFourBlack>(combined_black_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextFourBlack]){
+    GetOpenState<kNextFourBlack>(combined_black_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextSemiThreeBlack]){
+    GetOpenState<kNextSemiThreeBlack>(combined_black_stone, combined_open_stone, board_open_state);
+  }
 }
 
 template<>
-template<>
-void LineNeighborhood<kOpenStateNeighborhoodSize>::GetOpenState<kNextOpenFourWhite, kWhiteTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextOpenFourWhite> > *open_state_list) const
+void LineNeighborhood::AddOpenState<kWhiteTurn>(const UpdateOpenStateFlag &update_flag, BoardOpenState * const board_open_state) const
 {
-  GetOpenStateOpenFour<kNextOpenFourWhite, kWhiteTurn>(stone_bit, open_bit, open_state_list);
-}
+  const auto combined_white_stone = GetWhiteStoneBit(local_bit_board_[0]) | (GetWhiteStoneBit(local_bit_board_[1]) << 1);
+  const auto combined_open_stone = GetOpenPositionBit(local_bit_board_[0]) | (GetOpenPositionBit(local_bit_board_[1]) << 1);
 
-template<>
-template<>
-void LineNeighborhood<kOpenStateNeighborhoodSize>::GetOpenState<kNextFourBlack, kBlackTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextFourBlack> > *open_state_list) const
-{
-  GetOpenStateFour<kNextFourBlack, kBlackTurn>(stone_bit, open_bit, open_state_list);
-}
+  if(update_flag[kNextOpenFourWhite]){
+    GetOpenState<kNextOpenFourWhite>(combined_white_stone, combined_open_stone, board_open_state);
+  }
+  
+  if(update_flag[kNextFourWhite]){
+    GetOpenState<kNextFourWhite>(combined_white_stone, combined_open_stone, board_open_state);
+  }
 
-template<>
-template<>
-void LineNeighborhood<kOpenStateNeighborhoodSize>::GetOpenState<kNextFourWhite, kWhiteTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextFourWhite> > *open_state_list) const
-{
-  GetOpenStateFour<kNextFourWhite, kWhiteTurn>(stone_bit, open_bit, open_state_list);
+  if(update_flag[kNextSemiThreeWhite]){
+    GetOpenState<kNextSemiThreeWhite>(combined_white_stone, combined_open_stone, board_open_state);
+  }
 }
-
-template<>
-template<>
-void LineNeighborhood<kOpenStateNeighborhoodSize>::GetOpenState<kNextSemiThreeBlack, kBlackTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextSemiThreeBlack> > *open_state_list) const
-{
-  GetOpenStateSemiThree<kNextSemiThreeBlack, kBlackTurn>(stone_bit, open_bit, open_state_list);
-}
-
-template<>
-template<>
-void LineNeighborhood<kOpenStateNeighborhoodSize>::GetOpenState<kNextSemiThreeWhite, kWhiteTurn>(const LocalBitBoard &stone_bit, const LocalBitBoard &open_bit, vector< OpenState<kNextSemiThreeWhite> > *open_state_list) const
-{
-  GetOpenStateSemiThree<kNextSemiThreeWhite, kWhiteTurn>(stone_bit, open_bit, open_state_list);
-}
-
 }   // namesapce realcore
 

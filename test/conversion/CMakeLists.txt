@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # プロジェクト名
-set(project_name move_test)
+set(project_name conversion_test)
 project(${project_name} CXX)
 
 # Build Type(Release or Debug)
@@ -27,8 +27,7 @@ link_directories($ENV{GTEST_DIR}/googlemock/gtest)
 # ソースファイル
 add_executable(
     ${project_name}
-    $ENV{REALCORE_DIR}/src/Move.cc
-    ../MoveTest.cc
+    ../ConversionTest.cc
 )
 
 # ライブラリ

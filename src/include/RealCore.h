@@ -16,7 +16,7 @@ namespace realcore
 typedef std::int8_t Cordinate;
 
 //! @brief 盤のサイズ
-constexpr size_t kBoardLineNum = 15;
+static constexpr size_t kBoardLineNum = 15;
 
 //! @brief 盤面方向の定義
 enum BoardDirection : std::uint8_t
@@ -28,7 +28,7 @@ enum BoardDirection : std::uint8_t
 };
 
 //! @brief 盤面の方向数
-constexpr size_t kBoardDirectionNum = 4;
+static constexpr size_t kBoardDirectionNum = 4;
 
 //! @brief 盤面方向のリストを返す
 //! @retval 盤面方向のリスト
@@ -48,7 +48,7 @@ enum BoardSymmetry : std::uint8_t
 };
 
 //! 対称性の数
-constexpr size_t kBoardSymmetryNum = 8;
+static constexpr size_t kBoardSymmetryNum = 8;
 
 //! @brief 対称性のリストを返す
 const std::array<BoardSymmetry,kBoardSymmetryNum>& GetBoardSymmetry();
@@ -78,6 +78,10 @@ constexpr PlayerTurn GetOpponentTurn(const PlayerTurn player);
 //! @brief 盤面位置
 //! @see doc/01_data_definition/data_definition.pptx and board_definition.xlsx
 typedef std::uint64_t BoardPosition;
+
+//! @brief 盤面位置の要素数
+static constexpr BoardPosition kBoardPositionNum = 1024;
+
 
 }   // namespace realcore
 

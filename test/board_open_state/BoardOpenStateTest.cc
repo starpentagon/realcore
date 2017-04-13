@@ -1,25 +1,56 @@
 #include "gtest/gtest.h"
 
+#include <vector>
+
 #include "MoveList.h"
+#include "BitBoard.h"
 #include "BoardOpenState.h"
+
+using namespace std;
 
 namespace realcore
 {
 
-TEST(BoardOpenStateTest, DefaultConstructor)
+class BoardOpenStateTest
+: public ::testing::Test
 {
-  BoardOpenState board_open_state;
+public:
+  void ClearInfluencedOpenStateTest(){
+    vector<OpenState> test_list;
 
-  EXPECT_TRUE(board_open_state.GetNextOverline().empty());
-  EXPECT_TRUE(board_open_state.GetNextOpenFourBlack().empty());
-  EXPECT_TRUE(board_open_state.GetNextOpenFourWhite().empty());
-  EXPECT_TRUE(board_open_state.GetNextFourBlack().empty());
-  EXPECT_TRUE(board_open_state.GetNextFourWhite().empty());
-  EXPECT_TRUE(board_open_state.GetNextSemiThreeBlack().empty());
-  EXPECT_TRUE(board_open_state.GetNextSemiThreeWhite().empty());
+    test_list.emplace_back(kNextFourBlack, 37, 37);
+    test_list.emplace_back(kNextFourBlack, 41, 37);
+    test_list.emplace_back(kNextFourBlack, 41, 38);
+    test_list.emplace_back(kNextFourBlack, 42, 38);
+    
+    BoardOpenState board_open_state;
+    vector<OpenState> cleared_list;
+    
+    board_open_state.ClearInfluencedOpenState<kWhiteTurn>(test_list, kMoveIB, &cleared_list);
+    EXPECT_TRUE(cleared_list.empty());
+  }
+
+  void DefaultConstructorTest(){
+    BoardOpenState board_open_state;
+
+    EXPECT_TRUE(board_open_state.GetList(kNextOverline).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextOpenFourBlack).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextOpenFourWhite).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextFourBlack).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextFourWhite).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextSemiThreeBlack).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextSemiThreeWhite).empty());
+
+    EXPECT_TRUE(board_open_state.update_flag_ == kUpdateAllOpenState);
+  }
+};
+
+TEST_F(BoardOpenStateTest, DefaultConstructor)
+{
+  DefaultConstructorTest();
 }
 
-TEST(BoardOpenStateTest, UpdateOverlineTest)
+TEST_F(BoardOpenStateTest, UpdateOverlineTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -44,26 +75,25 @@ TEST(BoardOpenStateTest, UpdateOverlineTest)
   MovePosition move = board_move_list.GetLastMove();
 
   // 増加分が反映されるか
-  BoardOpenState board_open_state;
-  board_open_state.Update<kBlackTurn>(move, bit_board);
+  BoardOpenState base, state_1(base, true, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextOverline();
+    const auto &open_state_list = state_1.GetList(kNextOverline);
     ASSERT_EQ(1, open_state_list.size());
   }
 
   // 減少分が反映されるか
   move = kMoveKH;
   bit_board.SetState<kWhiteStone>(move);
-  board_open_state.Update<kWhiteTurn>(move, bit_board);
+  BoardOpenState state_2(state_1, false, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextOverline();
+    const auto &open_state_list = state_2.GetList(kNextOverline);
     ASSERT_EQ(0, open_state_list.size());
   }
 }
 
-TEST(BoardOpenStateTest, UpdateOpenFourBlackTest)
+TEST_F(BoardOpenStateTest, UpdateOpenFourBlackTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -87,26 +117,25 @@ TEST(BoardOpenStateTest, UpdateOpenFourBlackTest)
   MovePosition move = board_move_list.GetLastMove();
 
   // 増加分が反映されるか
-  BoardOpenState board_open_state;
-  board_open_state.Update<kBlackTurn>(move, bit_board);
+  BoardOpenState base, state_1(base, true, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextOpenFourBlack();
+    const auto &open_state_list = state_1.GetList(kNextOpenFourBlack);
     ASSERT_EQ(2, open_state_list.size());
   }
 
   // 減少分が反映されるか
   move = kMoveKH;
   bit_board.SetState<kWhiteStone>(move);
-  board_open_state.Update<kWhiteTurn>(move, bit_board);
+  BoardOpenState state_2(state_1, false, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextOpenFourBlack();
+    const auto &open_state_list = state_2.GetList(kNextOpenFourBlack);
     ASSERT_EQ(0, open_state_list.size());    
   }
 }
 
-TEST(BoardOpenStateTest, UpdateOpenFourWhiteTest)
+TEST_F(BoardOpenStateTest, UpdateOpenFourWhiteTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -130,26 +159,25 @@ TEST(BoardOpenStateTest, UpdateOpenFourWhiteTest)
   MovePosition move = board_move_list.GetLastMove();
 
   // 増加分が反映されるか
-  BoardOpenState board_open_state;
-  board_open_state.Update<kWhiteTurn>(move, bit_board);
+  BoardOpenState base, state_1(base, false, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextOpenFourWhite();
+    const auto &open_state_list = state_1.GetList(kNextOpenFourWhite);
     ASSERT_EQ(2, open_state_list.size());
   }
 
   // 減少分が反映されるか
   move = kMoveKG;
   bit_board.SetState<kBlackStone>(move);
-  board_open_state.Update<kBlackTurn>(move, bit_board);
+  BoardOpenState state_2(state_1, true, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextOpenFourWhite();
+    const auto &open_state_list = state_2.GetList(kNextOpenFourWhite);
     ASSERT_EQ(0, open_state_list.size());    
   }
 }
 
-TEST(BoardOpenStateTest, UpdateFourBlackTest)
+TEST_F(BoardOpenStateTest, UpdateFourBlackTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -168,31 +196,30 @@ TEST(BoardOpenStateTest, UpdateFourBlackTest)
   // N | . . . . . . . . . . . . . | N 
   // O + --------------------------+ O 
   //   A B C D E F G H I J K L M N O 
-   MoveList board_move_list("hhighfkehd");
+  MoveList board_move_list("hhighfkehd");
   BitBoard bit_board(board_move_list);
   MovePosition move = board_move_list.GetLastMove();
 
   // 増加分が反映されるか
-  BoardOpenState board_open_state;
-  board_open_state.Update<kBlackTurn>(move, bit_board);
+  BoardOpenState base, state_1(base, true, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextFourBlack();
+    const auto &open_state_list = state_1.GetList(kNextFourBlack);
     ASSERT_EQ(2, open_state_list.size());
   }
 
   // 減少分が反映されるか
   move = kMoveHE;
   bit_board.SetState<kWhiteStone>(move);
-  board_open_state.Update<kWhiteTurn>(move, bit_board);
+  BoardOpenState state_2(state_1, false, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextFourBlack();
+    const auto &open_state_list = state_2.GetList(kNextFourBlack);
     ASSERT_EQ(0, open_state_list.size());    
   }
 }
 
-TEST(BoardOpenStateTest, UpdateFourWhiteTest)
+TEST_F(BoardOpenStateTest, UpdateFourWhiteTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -216,26 +243,25 @@ TEST(BoardOpenStateTest, UpdateFourWhiteTest)
   MovePosition move = board_move_list.GetLastMove();
 
   // 増加分が反映されるか
-  BoardOpenState board_open_state;
-  board_open_state.Update<kWhiteTurn>(move, bit_board);
+  BoardOpenState base, state_1(base, false, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextFourWhite();
+    const auto &open_state_list = state_1.GetList(kNextFourWhite);
     ASSERT_EQ(2, open_state_list.size());
   }
 
   // 減少分が反映されるか
   move = kMoveLD;
   bit_board.SetState<kBlackStone>(move);
-  board_open_state.Update<kBlackTurn>(move, bit_board);
+  BoardOpenState state_2(state_1, true, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextFourWhite();
+    const auto &open_state_list = state_2.GetList(kNextFourWhite);
     ASSERT_EQ(0, open_state_list.size());    
   }
 }
 
-TEST(BoardOpenStateTest, UpdateSemiThreeBlackTest)
+TEST_F(BoardOpenStateTest, UpdateSemiThreeBlackTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -259,26 +285,25 @@ TEST(BoardOpenStateTest, UpdateSemiThreeBlackTest)
   MovePosition move = board_move_list.GetLastMove();
 
   // 増加分が反映されるか
-  BoardOpenState board_open_state;
-  board_open_state.Update<kBlackTurn>(move, bit_board);
+  BoardOpenState base, state_1(base, true, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextSemiThreeBlack();
+    const auto &open_state_list = state_1.GetList(kNextSemiThreeBlack);
     ASSERT_EQ(4, open_state_list.size());
   }
 
   // 減少分が反映されるか
   move = kMoveEE;
   bit_board.SetState<kWhiteStone>(move);
-  board_open_state.Update<kWhiteTurn>(move, bit_board);
+  BoardOpenState state_2(state_1, false, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextSemiThreeBlack();
+    const auto &open_state_list = state_2.GetList(kNextSemiThreeBlack);
     ASSERT_EQ(0, open_state_list.size());    
   }
 }
 
-TEST(BoardOpenStateTest, UpdateSemiThreeWhiteTest)
+TEST_F(BoardOpenStateTest, UpdateSemiThreeWhiteTest)
 {
   //   A B C D E F G H I J K L M N O 
   // A + --------------------------+ A 
@@ -302,26 +327,25 @@ TEST(BoardOpenStateTest, UpdateSemiThreeWhiteTest)
   MovePosition move = board_move_list.GetLastMove();
 
   // 増加分が反映されるか
-  BoardOpenState board_open_state;
-  board_open_state.Update<kWhiteTurn>(move, bit_board);
+  BoardOpenState base, state_1(base, false, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextSemiThreeWhite();
+    const auto &open_state_list = state_1.GetList(kNextSemiThreeWhite);
     ASSERT_EQ(2, open_state_list.size());
   }
 
   // 減少分が反映されるか
   move = kMoveIC;
   bit_board.SetState<kBlackStone>(move);
-  board_open_state.Update<kBlackTurn>(move, bit_board);
+  BoardOpenState state_2(state_1, true, move, bit_board);
 
   {
-    const auto &open_state_list = board_open_state.GetNextSemiThreeWhite();
+    const auto &open_state_list = state_2.GetList(kNextSemiThreeWhite);
     ASSERT_EQ(0, open_state_list.size());    
   }
 }
 
-TEST(BoardOpenStateTest, IsEqualTest)
+TEST_F(BoardOpenStateTest, IsEqualTest)
 {
   BoardOpenState state_1, state_2;
 
@@ -330,19 +354,19 @@ TEST(BoardOpenStateTest, IsEqualTest)
   MoveList board_move_list("hhigff");
   BitBoard bit_board(board_move_list);
   MovePosition move = board_move_list.GetLastMove();
-  state_1.Update<kBlackTurn>(move, bit_board);
+  BoardOpenState state_3(state_1, true, move, bit_board);
 
-  EXPECT_FALSE(IsEqual(state_1, state_2));
+  EXPECT_FALSE(IsEqual(state_3, state_2));
 
   // 空間状態がすべて空になりstate_2と等しくなる
   move = kMoveEE;
   bit_board.SetState<kWhiteStone>(move);
-  state_1.Update<kWhiteTurn>(move, bit_board);
+  BoardOpenState state_4(state_3, false, move, bit_board);
 
-  EXPECT_TRUE(IsEqual(state_1, state_2));
+  EXPECT_TRUE(IsEqual(state_4, state_2));
 }
 
-TEST(BoardOpenStateTest, CompareOperTest)
+TEST_F(BoardOpenStateTest, CompareOperTest)
 {
   BoardOpenState state_1, state_2;
 
@@ -351,59 +375,77 @@ TEST(BoardOpenStateTest, CompareOperTest)
   MoveList board_move_list("hhigff");
   BitBoard bit_board(board_move_list);
   MovePosition move = board_move_list.GetLastMove();
-  state_1.Update<kBlackTurn>(move, bit_board);
+  BoardOpenState state_3(state_1, true, move, bit_board);
 
-  EXPECT_TRUE(state_1 != state_2);
+  EXPECT_TRUE(state_3 != state_2);
 
   // 空間状態がすべて空になりstate_2と等しくなる
   move = kMoveEE;
   bit_board.SetState<kWhiteStone>(move);
-  state_1.Update<kWhiteTurn>(move, bit_board);
+  BoardOpenState state_4(state_3, false, move, bit_board);
 
-  EXPECT_TRUE(state_1 == state_2);
+  EXPECT_TRUE(state_4 == state_2);
 }
 
-TEST(BoardOpenStateTest, CopyTest)
+TEST_F(BoardOpenStateTest, CopyTest)
 {
   BoardOpenState state_1, state_2;
 
   MoveList board_move_list("hhigff");
   BitBoard bit_board(board_move_list);
   MovePosition move = board_move_list.GetLastMove();
-  state_1.Update<kBlackTurn>(move, bit_board);
+  BoardOpenState state_3(state_1, true, move, bit_board);
 
-  EXPECT_FALSE(IsEqual(state_1, state_2));
+  EXPECT_FALSE(IsEqual(state_3, state_2));
 
-  Copy(state_1, &state_2);
-  EXPECT_TRUE(IsEqual(state_1, state_2));
+  Copy(state_3, &state_2);
+  EXPECT_TRUE(IsEqual(state_3, state_2));
 }
 
-TEST(BoardOpenStateTest, AssignOperTest)
+TEST_F(BoardOpenStateTest, AssignOperTest)
 {
   BoardOpenState state_1, state_2;
 
   MoveList board_move_list("hhigff");
   BitBoard bit_board(board_move_list);
   MovePosition move = board_move_list.GetLastMove();
-  state_1.Update<kBlackTurn>(move, bit_board);
+  BoardOpenState state_3(state_1, true, move, bit_board);
 
-  EXPECT_TRUE(state_1 != state_2);
+  EXPECT_TRUE(state_3 != state_2);
 
-  state_2 = state_1;
-  EXPECT_TRUE(state_1 == state_2);
+  state_2 = state_3;
+  EXPECT_TRUE(state_3 == state_2);
 }
 
-TEST(BoardOpenStateTest, CopyConstructerTest)
+TEST_F(BoardOpenStateTest, CopyConstructerTest)
 {
   BoardOpenState state_1;
 
   MoveList board_move_list("hhigff");
   BitBoard bit_board(board_move_list);
   MovePosition move = board_move_list.GetLastMove();
-  state_1.Update<kBlackTurn>(move, bit_board);
+  BoardOpenState state_3(state_1, true, move, bit_board);
 
-  BoardOpenState state_2(state_1);
-  EXPECT_TRUE(state_1 == state_2);
+  BoardOpenState state_2(state_3);
+  EXPECT_TRUE(state_3 == state_2);
+}
+
+TEST_F(BoardOpenStateTest, EmptyTest)
+{
+  BoardOpenState state_1;
+  EXPECT_TRUE(state_1.empty());
+
+  MoveList board_move_list("hhigff");
+  BitBoard bit_board(board_move_list);
+  MovePosition move = board_move_list.GetLastMove();
+  BoardOpenState state_3(state_1, true, move, bit_board);
+  
+  EXPECT_FALSE(state_3.empty());
+}
+
+TEST_F(BoardOpenStateTest, ClearInfluencedOpenStateTest)
+{
+  ClearInfluencedOpenStateTest();
 }
 
 }   // namespace realcore
