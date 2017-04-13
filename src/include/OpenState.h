@@ -6,6 +6,7 @@
 #define OPEN_STATE_H
 
 #include <array>
+#include <bitset>
 
 #include "RealCore.h"
 
@@ -24,6 +25,11 @@ enum OpenStatePattern : std::uint8_t
 
 constexpr size_t kOpenStatePatternNum = 7;
 const std::array<OpenStatePattern, kOpenStatePatternNum>& GetAllOpenStatePattern();
+
+typedef std::bitset<kOpenStatePatternNum> UpdateOpenStateFlag;    // 更新を行う空点情報のフラグ
+
+constexpr UpdateOpenStateFlag kUpdateAllOpenState(0b1111111);    // すべての空点情報を更新する
+constexpr UpdateOpenStateFlag kUpdateForbiddenCheck(0b0101011);    // 禁手チェック用の空点情報を更新する
 
 //! @brief 指し手パターンが黒番, 白番どちらのパターンなのかを返す
 constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern);

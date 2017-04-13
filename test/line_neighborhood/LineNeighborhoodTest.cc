@@ -232,7 +232,7 @@ TEST_F(LineNeighborhoodTest, AddOpenStateTest)
   BitBoard bit_board(MoveList("hhhijggggiigfgfhhfhedjidifgfgdkfjekdjcjdldfeeeedhgfcfbkekcichblfmgmfnfmekgdccblhlikhlgnggbib"));
   
   LineNeighborhood line_neighborhood(kMoveIB, kOpenStateNeighborhoodSize, bit_board);
-  line_neighborhood.AddOpenState<kWhiteTurn>(&board_open_state);
+  line_neighborhood.AddOpenState<kWhiteTurn>(kUpdateAllOpenState, &board_open_state);
 
   EXPECT_TRUE(board_open_state.GetList(kNextFourBlack).empty());
 }

@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 
   for(const auto& move_list : board_move_list){
     MoveList board_move;
-    Board board;
+    Board board(kUpdateForbiddenCheck);
     BitBoard bit_board;
     bool is_black_turn = true;
 

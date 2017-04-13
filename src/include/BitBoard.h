@@ -144,7 +144,7 @@ public:
 private:
   //! @brief 盤面の空点状態を取得する
   //! @param board_open_state 空点状態の格納先
-  void GetBoardOpenState(BoardOpenState * const board_open_state) const;
+  void GetBoardOpenState(const UpdateOpenStateFlag &update_flag, BoardOpenState * const board_open_state) const;
 
   //! 指し手パターンの空点状態を取得する
   template<OpenStatePattern Pattern>

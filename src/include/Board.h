@@ -41,6 +41,7 @@ class Board
 
 public:
   Board();
+  Board(const UpdateOpenStateFlag &update_flag);
   Board(const Board &board);
   Board(const MoveList &move_list);
 

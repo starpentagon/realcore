@@ -140,7 +140,7 @@ const bool BitBoard::IsForbiddenMove<kWhiteTurn>(const MovePosition move) const
   return false;
 }
 
-void BitBoard::GetBoardOpenState(BoardOpenState * const board_open_state) const
+void BitBoard::GetBoardOpenState(const UpdateOpenStateFlag &update_flag, BoardOpenState * const board_open_state) const
 {
   assert(board_open_state->empty());
 
@@ -162,16 +162,33 @@ void BitBoard::GetBoardOpenState(BoardOpenState * const board_open_state) const
     const auto open_bit_odd = GetOpenPositionBit(state_bit_odd);
     const auto combined_open_bit = GetCombinedBit(open_bit_even, open_bit_odd);
 
-    GetOpenState<kNextOverline>(index, combined_black_bit, combined_open_bit, board_open_state);
+    if(update_flag[kNextOverline]){
+      GetOpenState<kNextOverline>(index, combined_black_bit, combined_open_bit, board_open_state);
+    }
 
-    GetOpenState<kNextOpenFourBlack>(index, combined_black_bit, combined_open_bit, board_open_state);
-    GetOpenState<kNextOpenFourWhite>(index, combined_white_bit, combined_open_bit, board_open_state);
+    if(update_flag[kNextOpenFourBlack]){
+      GetOpenState<kNextOpenFourBlack>(index, combined_black_bit, combined_open_bit, board_open_state);
+    }
 
-    GetOpenState<kNextFourBlack>(index, combined_black_bit, combined_open_bit, board_open_state);
-    GetOpenState<kNextFourWhite>(index, combined_white_bit, combined_open_bit, board_open_state);
+    if(update_flag[kNextOpenFourWhite]){
+      GetOpenState<kNextOpenFourWhite>(index, combined_white_bit, combined_open_bit, board_open_state);
+    }
 
-    GetOpenState<kNextSemiThreeBlack>(index, combined_black_bit, combined_open_bit, board_open_state);
-    GetOpenState<kNextSemiThreeWhite>(index, combined_white_bit, combined_open_bit, board_open_state);
+    if(update_flag[kNextFourBlack]){
+      GetOpenState<kNextFourBlack>(index, combined_black_bit, combined_open_bit, board_open_state);
+    }
+
+    if(update_flag[kNextFourWhite]){
+      GetOpenState<kNextFourWhite>(index, combined_white_bit, combined_open_bit, board_open_state);
+    }
+
+    if(update_flag[kNextSemiThreeBlack]){
+      GetOpenState<kNextSemiThreeBlack>(index, combined_black_bit, combined_open_bit, board_open_state);
+    }
+
+    if(update_flag[kNextSemiThreeWhite]){
+      GetOpenState<kNextSemiThreeWhite>(index, combined_white_bit, combined_open_bit, board_open_state);
+    }
   }
 }
 

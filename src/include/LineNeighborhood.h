@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "BitSearch.h"
+#include "OpenState.h"
 
 namespace realcore
 {
@@ -68,7 +69,7 @@ public:
   //! @brief 空点状態を追加する
   //! @param board_open_state 空点状態の格納先
   template<PlayerTurn P>
-  void AddOpenState(BoardOpenState * const board_open_state) const;
+  void AddOpenState(const UpdateOpenStateFlag &update_flag, BoardOpenState * const board_open_state) const;
 
 private:
   //! @brief local_bit_board配列のindexとbit indexから対応する方向を求める

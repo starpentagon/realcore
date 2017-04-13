@@ -14,6 +14,7 @@ namespace realcore
 class BoardOpenStateTest
 : public ::testing::Test
 {
+public:
   void ClearInfluencedOpenStateTest(){
     vector<OpenState> test_list;
 
@@ -28,19 +29,25 @@ class BoardOpenStateTest
     board_open_state.ClearInfluencedOpenState<kWhiteTurn>(test_list, kMoveIB, &cleared_list);
     EXPECT_TRUE(cleared_list.empty());
   }
+
+  void DefaultConstructorTest(){
+    BoardOpenState board_open_state;
+
+    EXPECT_TRUE(board_open_state.GetList(kNextOverline).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextOpenFourBlack).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextOpenFourWhite).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextFourBlack).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextFourWhite).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextSemiThreeBlack).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextSemiThreeWhite).empty());
+
+    EXPECT_TRUE(board_open_state.update_flag_ == kUpdateAllOpenState);
+  }
 };
 
 TEST_F(BoardOpenStateTest, DefaultConstructor)
 {
-  BoardOpenState board_open_state;
-
-  EXPECT_TRUE(board_open_state.GetList(kNextOverline).empty());
-  EXPECT_TRUE(board_open_state.GetList(kNextOpenFourBlack).empty());
-  EXPECT_TRUE(board_open_state.GetList(kNextOpenFourWhite).empty());
-  EXPECT_TRUE(board_open_state.GetList(kNextFourBlack).empty());
-  EXPECT_TRUE(board_open_state.GetList(kNextFourWhite).empty());
-  EXPECT_TRUE(board_open_state.GetList(kNextSemiThreeBlack).empty());
-  EXPECT_TRUE(board_open_state.GetList(kNextSemiThreeWhite).empty());
+  DefaultConstructorTest();
 }
 
 TEST_F(BoardOpenStateTest, UpdateOverlineTest)
@@ -435,4 +442,10 @@ TEST_F(BoardOpenStateTest, EmptyTest)
   
   EXPECT_FALSE(state_3.empty());
 }
+
+TEST_F(BoardOpenStateTest, ClearInfluencedOpenStateTest)
+{
+  ClearInfluencedOpenStateTest();
+}
+
 }   // namespace realcore

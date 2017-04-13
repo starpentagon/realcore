@@ -8,6 +8,7 @@
 
 #include <array>
 #include <vector>
+
 #include "OpenState.h"
 
 namespace realcore
@@ -38,6 +39,7 @@ class BoardOpenState
 
 public:
   BoardOpenState();
+  BoardOpenState(const UpdateOpenStateFlag &update_flag);
   BoardOpenState(const BoardOpenState &board_open_state);
 
   //! @brief 着手による空点状態の変更を反映する
@@ -68,6 +70,9 @@ public:
 
   //! @brief すべての空点状態が空かどうかを判定する
   const bool empty() const;
+
+  //! @brief 空点状態の更新フラグを取得する
+  const UpdateOpenStateFlag& GetUpdateOpenStateFlag() const;
   
 private:
   //! @brief 着手の影響を受けるOpenState要素を削除したリストを生成する
@@ -80,6 +85,7 @@ private:
   void ClearInfluencedOpenState(const bool is_black_turn, const std::vector<OpenState> &open_state_list, const MovePosition move, std::vector<OpenState> * const cleared_open_state_list) const;
 
   std::array<OpenStateList, kOpenStatePatternNum> open_state_list_;    //! 指し手パターン(長連点, etc)ごとの空点状態リスト
+  UpdateOpenStateFlag update_flag_;
 };
 }   // namespace realcore 
 

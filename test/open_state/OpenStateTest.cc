@@ -328,4 +328,15 @@ TEST_F(OpenStateTest, GetPatternPlayerTurnTest)
   EXPECT_EQ(kWhiteTurn, GetPatternPlayerTurn(kNextSemiThreeWhite));
 }
 
+TEST_F(OpenStateTest, UpdateOpenStateFlagTest)
+{
+  ASSERT_TRUE(kUpdateForbiddenCheck[kNextOverline]);
+  ASSERT_TRUE(kUpdateForbiddenCheck[kNextOpenFourBlack]);
+  ASSERT_FALSE(kUpdateForbiddenCheck[kNextOpenFourWhite]);
+  ASSERT_TRUE(kUpdateForbiddenCheck[kNextFourBlack]);
+  ASSERT_FALSE(kUpdateForbiddenCheck[kNextFourWhite]);
+  ASSERT_TRUE(kUpdateForbiddenCheck[kNextSemiThreeBlack]);
+  ASSERT_FALSE(kUpdateForbiddenCheck[kNextSemiThreeWhite]);
+}
+
 }   // namespace realcore

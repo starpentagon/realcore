@@ -218,6 +218,11 @@ void BoardOpenState::ReserveList(const size_t list_size)
   open_state_list_[Pattern].reserve(list_size);
 }
 
+inline const UpdateOpenStateFlag& BoardOpenState::GetUpdateOpenStateFlag() const
+{
+  return update_flag_;
+}
+
 }   // namespace realcore
 
 #endif    // BOARD_OPEN_STATE_INL_H

@@ -302,7 +302,7 @@ void BitBoard::GetOpenState(const size_t index, const std::uint64_t combined_sto
 inline void BitBoard::EnumerateForbiddenMoves(MoveBitSet * const forbidden_move_set) const
 {
   BoardOpenState board_open_state;
-  GetBoardOpenState(&board_open_state);
+  GetBoardOpenState(kUpdateForbiddenCheck, &board_open_state);
   
   EnumerateForbiddenMoves(board_open_state, forbidden_move_set);
 }
