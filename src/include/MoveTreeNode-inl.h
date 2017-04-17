@@ -1,5 +1,5 @@
-#ifndef MOVE_TREE_DATA_INL_H
-#define MOVE_TREE_DATA_INL_H
+#ifndef MOVE_TREE_NODE_INL_H
+#define MOVE_TREE_NODE_INL_H
 
 #include "MoveTreeNode.h"
 
@@ -10,6 +10,20 @@ template<class T>
 inline MoveTreeNode<T>::MoveTreeNode(const MoveNodeIndex parent_index, const MovePosition move)
 : parent_index_(parent_index), next_sibling_index_(kNullNodeIndex), first_child_index_(kNullNodeIndex), move_(move)
 {
+}
+
+template<class T>
+inline const MoveTreeNode<T>& MoveTreeNode<T>::operator=(const MoveTreeNode<T> &rhs)
+{
+  if(this != &rhs){
+    parent_index_ = rhs.GetParentIndex();
+    next_sibling_index_ = rhs.GetNextSiblingIndex();
+    first_child_index_ = rhs.GetFirstChildIndex();
+    move_ = rhs.GetMove();
+    additional_data_ = rhs.GetAdditionalData();
+  }
+
+  return *this;
 }
 
 template<class T>
@@ -94,4 +108,4 @@ inline void MoveTreeNode<T>::SetAdditionalData(const T& additional_data)
 
 }   // realcore
 
-#endif    // MOVE_TREE_DATA_INL_H
+#endif    // MOVE_TREE_NODE_INL_H

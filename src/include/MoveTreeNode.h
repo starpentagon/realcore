@@ -3,8 +3,8 @@
 //! @author Koichi NABETANI
 //! @date 2017/04/16
 
-#ifndef MOVE_TREE_DATA_H
-#define MOVE_TREE_DATA_H
+#ifndef MOVE_TREE_NODE_H
+#define MOVE_TREE_NODE_H
 
 #include <cstdint>
 #include <limits>
@@ -76,4 +76,4 @@ private:
 
 #include "MoveTreeNode-inl.h"
 
-#endif    // MOVE_TREE_DATA_H
+#endif    // MOVE_TREE_NODE_H

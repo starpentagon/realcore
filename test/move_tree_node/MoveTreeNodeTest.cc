@@ -68,7 +68,7 @@ TEST_F(MoveTreeNodeTest, GetSetAdditionalData)
   EXPECT_EQ("test data", move_tree_node.GetAdditionalData());
 }
 
-TEST_F(MoveTreeNodeTest, CompareOper){
+TEST_F(MoveTreeNodeTest, CompareOperTest){
   {
     // equal
     MoveTreeNode<string> move_tree_node_1(kRootNodeIndex, kNullMove);
@@ -127,4 +127,17 @@ TEST_F(MoveTreeNodeTest, CompareOper){
     EXPECT_TRUE(move_tree_node_1 != move_tree_node_2);
   }
 }
+
+TEST_F(MoveTreeNodeTest, AssignOperTest){
+    MoveTreeNode<string> move_tree_node_1(kRootNodeIndex + 1, kMoveHH);
+    move_tree_node_1.SetNextSiblingIndex(2);
+    move_tree_node_1.SetFirstChildIndex(3);
+    move_tree_node_1.SetAdditionalData("test_data");
+
+    MoveTreeNode<string> move_tree_node_2(kRootNodeIndex, kNullMove);
+    move_tree_node_2 = move_tree_node_1;
+
+    EXPECT_TRUE(move_tree_node_1 == move_tree_node_2);  
+}
+
 }   // namespace realcore
