@@ -15,7 +15,7 @@ class MoveTreeNodeTest
 public:
 };
 
-TEST_F(MoveTreeNodeTest, DefaultConstructor)
+TEST_F(MoveTreeNodeTest, DefaultConstructorTest)
 {
   MoveTreeNode<string> move_tree_node(kRootNodeIndex, kNullMove);
 
@@ -26,15 +26,18 @@ TEST_F(MoveTreeNodeTest, DefaultConstructor)
   EXPECT_EQ("", move_tree_node.GetAdditionalData());
 }
 
-TEST_F(MoveTreeNodeTest, GetSetParentIndex)
+TEST_F(MoveTreeNodeTest, GetSetParentIndexTest)
 {
   constexpr MoveNodeIndex node_index = 1;
   MoveTreeNode<string> move_tree_node(node_index, kNullMove);
 
   EXPECT_EQ(node_index, move_tree_node.GetParentIndex());
+
+  move_tree_node.SetParentIndex(2);
+  EXPECT_EQ(2, move_tree_node.GetParentIndex());
 }
 
-TEST_F(MoveTreeNodeTest, GetSetNextSiblingIndex)
+TEST_F(MoveTreeNodeTest, GetSetNextSiblingIndexTest)
 {
   constexpr MoveNodeIndex node_index = 1;
   MoveTreeNode<string> move_tree_node(kRootNodeIndex, kNullMove);
@@ -43,7 +46,7 @@ TEST_F(MoveTreeNodeTest, GetSetNextSiblingIndex)
   EXPECT_EQ(node_index, move_tree_node.GetNextSiblingIndex());
 }
 
-TEST_F(MoveTreeNodeTest, GetSetFirstChildIndex)
+TEST_F(MoveTreeNodeTest, GetSetFirstChildIndexTest)
 {
   constexpr MoveNodeIndex node_index = 1;
   MoveTreeNode<string> move_tree_node(kRootNodeIndex, kNullMove);
@@ -52,7 +55,19 @@ TEST_F(MoveTreeNodeTest, GetSetFirstChildIndex)
   EXPECT_EQ(node_index, move_tree_node.GetFirstChildIndex());
 }
 
-TEST_F(MoveTreeNodeTest, GetMove)
+TEST_F(MoveTreeNodeTest, HasChildTest)
+{
+  MoveTreeNode<string> move_tree_node(kRootNodeIndex, kNullMove);
+  
+  EXPECT_FALSE(move_tree_node.HasChild());
+
+  constexpr MoveNodeIndex node_index = 1;
+  move_tree_node.SetFirstChildIndex(node_index);
+
+  EXPECT_TRUE(move_tree_node.HasChild());
+}
+
+TEST_F(MoveTreeNodeTest, GetMoveTest)
 {
   constexpr MovePosition move = kMoveHH;
   MoveTreeNode<string> move_tree_node(kRootNodeIndex, move);
@@ -60,7 +75,7 @@ TEST_F(MoveTreeNodeTest, GetMove)
   EXPECT_EQ(move, move_tree_node.GetMove());
 }
 
-TEST_F(MoveTreeNodeTest, GetSetAdditionalData)
+TEST_F(MoveTreeNodeTest, GetSetAdditionalDataTest)
 {
   MoveTreeNode<string> move_tree_node(kRootNodeIndex, kNullMove);
 

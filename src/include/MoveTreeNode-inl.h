@@ -65,6 +65,12 @@ inline MoveNodeIndex MoveTreeNode<T>::GetParentIndex() const
 }
 
 template<class T>
+inline void MoveTreeNode<T>::SetParentIndex(const MoveNodeIndex parent_index)
+{
+  parent_index_ = parent_index;
+}
+
+template<class T>
 inline MoveNodeIndex MoveTreeNode<T>::GetNextSiblingIndex() const
 {
   return next_sibling_index_;
@@ -86,6 +92,12 @@ template<class T>
 inline void MoveTreeNode<T>::SetFirstChildIndex(const MoveNodeIndex first_child_index)
 {
   first_child_index_ = first_child_index;
+}
+
+template<class T>
+inline const bool MoveTreeNode<T>::HasChild() const
+{
+  return first_child_index_ != kNullNodeIndex;
 }
 
 template<class T>

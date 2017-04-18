@@ -150,6 +150,28 @@ inline const MovePosition GetSymmetricMove(const MovePosition move, const BoardS
   return GetMove(symmetric_x + kCordinateCenter, symmetric_y + kCordinateCenter);
 }
 
+inline std::string MoveString(const MovePosition move)
+{
+  static const std::array<std::string, kBoardLineNum + 1> kCordinateStr{{
+    "", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"
+  }};
+
+  static const std::string kPassStr = "pp";
+  assert(IsValidMove(move));
+
+  if(!IsNullMove(move)){
+    Cordinate x = 0, y = 0;
+    GetMoveCordinate(move, &x, &y);
+
+    std::string move_str(kCordinateStr[x]);
+    move_str += kCordinateStr[y];
+
+    return move_str;
+  }else{
+    return kPassStr;
+  }
+}
+
 }   // realcore
 
 #endif    // MOVE_INL_H

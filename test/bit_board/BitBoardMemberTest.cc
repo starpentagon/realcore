@@ -79,7 +79,7 @@ public:
     BitBoard bit_board(MoveList("hhhgihghmhnhlhmgjh"));
 
     BoardOpenState board_open_state;
-    bit_board.GetBoardOpenState(&board_open_state);
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
 
     vector<OpenState> expect_list;
     const auto &open_state_list = board_open_state.GetList(kNextOverline);
@@ -116,7 +116,7 @@ public:
     constexpr OpenStatePattern kPattern = kNextOpenFourBlack;
     BitBoard bit_board(MoveList("hhhgihigjh"));
     BoardOpenState board_open_state;
-    bit_board.GetBoardOpenState(&board_open_state);
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
 
     vector<OpenState> expect_list;
     const auto &open_state_list = board_open_state.GetList(kNextOpenFourBlack);
@@ -159,7 +159,7 @@ public:
     constexpr OpenStatePattern kPattern = kNextOpenFourWhite;
     BitBoard bit_board(MoveList("hhhgihigjhjg"));
     BoardOpenState board_open_state;
-    bit_board.GetBoardOpenState(&board_open_state);
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
 
     vector<OpenState> expect_list;
     const auto &open_state_list = board_open_state.GetList(kNextOpenFourWhite);
@@ -202,7 +202,7 @@ public:
     constexpr OpenStatePattern kPattern = kNextFourBlack;
     BitBoard bit_board(MoveList("hhighfkehd"));
     BoardOpenState board_open_state;
-    bit_board.GetBoardOpenState(&board_open_state);
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
 
     vector<OpenState> expect_list;
     const auto &open_state_list = board_open_state.GetList(kNextFourBlack);
@@ -253,7 +253,7 @@ public:
     constexpr OpenStatePattern kPattern = kNextFourWhite;
     BitBoard bit_board(MoveList("hhighfkehdmc"));
     BoardOpenState board_open_state;
-    bit_board.GetBoardOpenState(&board_open_state);
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
 
     vector<OpenState> expect_list;
     const auto &open_state_list = board_open_state.GetList(kNextFourWhite);
@@ -304,7 +304,7 @@ public:
     constexpr OpenStatePattern kPattern = kNextSemiThreeBlack;
     BitBoard bit_board(MoveList("hhigff"));
     BoardOpenState board_open_state;
-    bit_board.GetBoardOpenState(&board_open_state);
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
 
     vector<OpenState> expect_list;
     const auto &open_state_list = board_open_state.GetList(kNextSemiThreeBlack);
@@ -396,7 +396,7 @@ public:
     constexpr OpenStatePattern kPattern = kNextSemiThreeWhite;
     BitBoard bit_board(MoveList("hhigffid"));
     BoardOpenState board_open_state;
-    bit_board.GetBoardOpenState(&board_open_state);
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
 
     vector<OpenState> expect_list;
     const auto &open_state_list = board_open_state.GetList(kNextSemiThreeWhite);

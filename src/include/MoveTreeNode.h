@@ -42,6 +42,7 @@ public:
 
   //! @brief 親のindexを返す
   MoveNodeIndex GetParentIndex() const;
+  void SetParentIndex(const MoveNodeIndex parent_index);
 
   //! @brief 次の兄弟のindexを返す
   MoveNodeIndex GetNextSiblingIndex() const;
@@ -51,6 +52,9 @@ public:
 
   //! @brief 最初の子のindexを返す
   MoveNodeIndex GetFirstChildIndex() const;
+
+  //! @brief 子ノードが存在するか返す
+  const bool HasChild() const;
 
   //! @brief 最初の子のindexを設定する
   void SetFirstChildIndex(const MoveNodeIndex first_child_index);
