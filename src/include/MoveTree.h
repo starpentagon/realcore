@@ -58,6 +58,7 @@ public:
   const std::vector< MoveTreeNode<T> >& GetMoveTreeNodeList() const;
 
   //! @brief root nodeの最初の子の指し手を返す
+  //! @note root nodeのみの場合はkInvlaidMoveを返す
   const MovePosition GetTopNodeMove() const;
 
 private:

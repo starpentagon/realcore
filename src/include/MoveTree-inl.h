@@ -236,7 +236,17 @@ inline const std::vector< MoveTreeNode<T> >& MoveTreeBase<T>::GetMoveTreeNodeLis
   return tree_;
 }
 
+template<class T>
+inline const MovePosition MoveTreeBase<T>::GetTopNodeMove() const
+{
+  const auto& root_node = tree_[kRootNodeIndex];
 
+  if(!root_node.HasChild())
+    return kInvalidMove;
+  
+  const auto& top_node = tree_[root_node.GetFirstChildIndex()];
+  return top_node.GetMove();
+}
 }   // namespace realcore
 
 #endif    // MOVE_TREE_INL_H

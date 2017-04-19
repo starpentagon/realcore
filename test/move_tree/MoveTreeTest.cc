@@ -289,4 +289,16 @@ TEST_F(MoveTreeBaseTest, AddSubtreeTest){
   AddSubtreeTest();
 }
 
+TEST_F(MoveTreeBaseTest, GetTopNodeMove){
+  MoveTree move_tree;
+
+  ASSERT_EQ(kInvalidMove, move_tree.GetTopNodeMove());
+  
+  move_tree.AddChild(kMoveHH);
+  move_tree.MoveChildNode(kMoveHH);
+  move_tree.AddChild(kMoveOO);
+
+  ASSERT_EQ(kMoveHH, move_tree.GetTopNodeMove());
+}
+
 }   // namespace realcore
