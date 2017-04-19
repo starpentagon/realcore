@@ -57,6 +57,9 @@ public:
   //! @brief 木構造のノードリストを返す
   const std::vector< MoveTreeNode<T> >& GetMoveTreeNodeList() const;
 
+  //! @brief root nodeの最初の子の指し手を返す
+  const MovePosition GetTopNodeMove() const;
+
 private:
   //! @brief カレントノードがroot nodeかどうか判定する
   const bool IsRootNode() const;
