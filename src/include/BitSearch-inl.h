@@ -16,15 +16,27 @@ constexpr std::uint64_t kUpperBitMask = 0b01010101010101010101010101010101010101
 template<size_t N>
 inline constexpr StateBit RightShift(const StateBit state_bit)
 {
-  static_assert(0 <= N && N <= 31, "N must be in [0, 31]");
+  static_assert(N <= 31, "N must be in [0, 31]");
   return state_bit >> (2 * N);
+}
+
+inline constexpr StateBit RightShift(const size_t shift_count, const StateBit state_bit)
+{
+  assert(shift_count <= 31);
+  return state_bit >> (2 * shift_count);
 }
 
 template<size_t N>
 inline constexpr StateBit LeftShift(const StateBit state_bit)
 {
-  static_assert(0 <= N && N <= 31, "N must be in [0, 31]");
+  static_assert(N <= 31, "N must be in [0, 31]");
   return state_bit << (2 * N);
+}
+
+inline constexpr StateBit LeftShift(const size_t shift_count, const StateBit state_bit)
+{
+  assert(shift_count <= 31);
+  return state_bit << (2 * shift_count);
 }
 
 inline const int GetIndexDifference(const size_t index_from, const size_t index_to)
@@ -62,7 +74,7 @@ const inline std::uint64_t GetConsectiveStoneBit(const std::uint64_t stone_bit)
   std::uint64_t consective_bit = stone_bit;
 
   for(size_t shift=1; shift<N; ++shift){
-    consective_bit &= stone_bit >> (2 * shift);
+    consective_bit &= RightShift(shift, stone_bit);
   }
 
   return consective_bit;
@@ -79,7 +91,7 @@ inline void GetStoneWithOneOpenBit(const std::uint64_t stone_bit, const std::uin
 
     for(size_t shift=1; shift<N; ++shift){
       const std::uint64_t check_bit = (shift == open_index) ? open_bit : stone_bit;
-      search_bit &= check_bit >> (2 * shift);
+      search_bit &= RightShift(shift, check_bit);
     }
 
     (*pattern_bit_list)[open_index] = search_bit;
@@ -137,7 +149,7 @@ inline void GetStoneWithTwoOpenBit(const std::uint64_t stone_bit, const std::uin
 
     for(size_t shift=1; shift<M; ++shift){
       const std::uint64_t check_bit = (shift == open_less_index || shift == open_greater_index) ? open_bit : stone_bit;
-      search_bit &= check_bit >> (2 * shift);
+      search_bit &= RightShift(shift, check_bit);
     }
 
     (*pattern_bit_list)[open_index] = search_bit;

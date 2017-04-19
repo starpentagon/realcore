@@ -51,6 +51,13 @@ TEST(BitSearchTest, RightShiftTest)
     EXPECT_EQ(shift_bit, expect_bit);
   }
   {
+    // シフト量: 0
+    const StateBit shift_bit = RightShift(0, state_bit);
+    const StateBit expect_bit = GetStateBit("BOWBXOWBXOWBXOWBXOWBXOWBXOWBXOWB");
+
+    EXPECT_EQ(shift_bit, expect_bit);
+  }
+  {
     // シフト量: 1
     const StateBit shift_bit = RightShift<1>(state_bit);
     const StateBit expect_bit = GetStateBit("BOWBXOWBXOWBXOWBXOWBXOWBXOWBXOW");
@@ -58,8 +65,22 @@ TEST(BitSearchTest, RightShiftTest)
     EXPECT_EQ(shift_bit, expect_bit);
   }
   {
+    // シフト量: 1
+    const StateBit shift_bit = RightShift(1, state_bit);
+    const StateBit expect_bit = GetStateBit("BOWBXOWBXOWBXOWBXOWBXOWBXOWBXOW");
+
+    EXPECT_EQ(shift_bit, expect_bit);
+  }
+  {
     // シフト量: 31(境界値)
     const StateBit shift_bit = RightShift<31>(state_bit);
+    const StateBit expect_bit = GetStateBit("B");
+
+    EXPECT_EQ(shift_bit, expect_bit);
+  }
+  {
+    // シフト量: 31(境界値)
+    const StateBit shift_bit = RightShift(31, state_bit);
     const StateBit expect_bit = GetStateBit("B");
 
     EXPECT_EQ(shift_bit, expect_bit);
@@ -78,6 +99,13 @@ TEST(BitSearchTest, LeftShiftTest)
     EXPECT_EQ(shift_bit, expect_bit);
   }
   {
+    // シフト量: 0
+    const StateBit shift_bit = LeftShift(0, state_bit);
+    const StateBit expect_bit = GetStateBit("BOWBXOWBXOWBXOWBXOWBXOWBXOWBXOWB");
+
+    EXPECT_EQ(shift_bit, expect_bit);
+  }
+  {
     // シフト量: 1
     const StateBit shift_bit = LeftShift<1>(state_bit);
     const StateBit expect_bit = GetStateBit("OWBXOWBXOWBXOWBXOWBXOWBXOWBXOWBX");
@@ -85,8 +113,22 @@ TEST(BitSearchTest, LeftShiftTest)
     EXPECT_EQ(shift_bit, expect_bit);
   }
   {
+    // シフト量: 1
+    const StateBit shift_bit = LeftShift(1, state_bit);
+    const StateBit expect_bit = GetStateBit("OWBXOWBXOWBXOWBXOWBXOWBXOWBXOWBX");
+
+    EXPECT_EQ(shift_bit, expect_bit);
+  }
+  {
     // シフト量: 31(境界値)
     const StateBit shift_bit = LeftShift<31>(state_bit);
+    const StateBit expect_bit = GetStateBit("BXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+
+    EXPECT_EQ(shift_bit, expect_bit);
+  }
+  {
+    // シフト量: 31(境界値)
+    const StateBit shift_bit = LeftShift(31, state_bit);
     const StateBit expect_bit = GetStateBit("BXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 
     EXPECT_EQ(shift_bit, expect_bit);
