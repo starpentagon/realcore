@@ -8,16 +8,12 @@
 
 #include <cstdint>
 #include <array>
-#include <bitset>
 
 #include "BitSearch.h"
 #include "BoardOpenState.h"
 
 namespace realcore
 {
-// 指し手のビットを管理するbitset
-typedef std::bitset<kMoveNum> MoveBitSet;
-
 //! @brief Bitboard(=StateBit配列)の要素数
 constexpr size_t kBitBoardElementNum = 32;
 
@@ -31,8 +27,7 @@ class BitBoard;
 class BitBoardTest;
 class MoveList;
 
-//! MoveBitSetから指し手リストを取得する
-void GetMoveList(const MoveBitSet &move_bit_set, MoveList *move_list);
+typedef std::bitset<kMoveNum> MoveBitSet;
 
 //! @brief 2つのBitBoardを比較する
 //! @param bit_board_1, 2: 比較対象

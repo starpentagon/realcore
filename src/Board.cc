@@ -83,7 +83,8 @@ const Board& Board::operator=(const Board &board)
 void Board::MakeMove(const MovePosition move)
 {
   const bool is_black_turn = move_list_.IsBlackTurn();
-
+  assert(IsNormalMove(is_black_turn, move));
+  
   if(is_black_turn){
     bit_board_.SetState<kBlackStone>(move);
   }else{
@@ -118,6 +119,34 @@ void Board::EnumerateForbiddenMoves(MoveBitSet * const forbidden_move_set) const
 
   const auto& board_open_state = board_open_state_list_.back();
   bit_board_.EnumerateForbiddenMoves(board_open_state, forbidden_move_set);
+}
+
+const bool IsNormalSequence(const MoveList &move_list){
+  Board board;
+  bool is_black_turn = true;
+
+  for(size_t i=0, size=move_list.size(); i<size; i++){
+    const auto move = move_list[i];
+
+    if(!board.IsNormalMove(is_black_turn, move)){
+      return false;
+    }
+
+    const bool is_terminate = board.IsTerminateMove(is_black_turn, move);
+
+    if(is_terminate){
+      if(i + 1 == size){
+        return true;
+      }else{
+        return false;
+      }
+    }
+
+    board.MakeMove(move);
+    is_black_turn = !is_black_turn;
+  }
+
+  return true;
 }
 
 }   // namespace realcore

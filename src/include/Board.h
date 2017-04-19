@@ -32,6 +32,9 @@ bool IsEqual(const Board &board_1, const Board &board_2);
 //! @param board_to コピー先
 void Copy(const Board &board_from, Board * const board_to);
 
+//! @brief 指し手リストが正規手順かどうかを判定する
+const bool IsNormalSequence(const MoveList &move_list);
+
 //! @brief 盤面管理クラス
 class Board
 {

@@ -7,11 +7,18 @@
 
 #include <vector>
 #include <string>
+#include <bitset>
+
+#include "Move.h"
 
 namespace realcore{
+
+// 指し手のビットを管理するbitset
+typedef std::bitset<kMoveNum> MoveBitSet;
+const MoveBitSet& GetInBoardMoveBitSet();
+
 class MoveList;
 class MoveListTest;
-enum MovePosition : std::uint8_t;
 enum BoardSymmetry : std::uint8_t;
 
 //! @brief [a-o][a-o]形式の文字列に対応する指し手リストを生成する
@@ -21,6 +28,9 @@ enum BoardSymmetry : std::uint8_t;
 //! @pre move_listは空であること
 //! @note 生成に失敗した場合はmove_listを初期化し空に戻す
 bool GetMoveList(const std::string &move_string, MoveList * const move_list);
+
+//! MoveBitSetから指し手リストを取得する
+void GetMoveList(const MoveBitSet &move_bit_set, MoveList * const move_list);
 
 //! @brief 対称変換した指し手リストを生成する
 //! @param move_list 変換対称の指し手リスト
@@ -99,6 +109,13 @@ public:
 
   //! @breif 範囲の終端イテレータを返す
   std::vector<MovePosition>::const_iterator end() const;
+
+  //! @brief MoveListの空点を返す
+  void GetOpenMove(MoveList * const open_move_list) const;
+
+  //! @brief 着手可能な指し手リストを返す
+  //! @note 空点 + Pass
+  void GetPossibleMove(MoveList * const possible_move_list) const;
 
 private:
   //! @brief 初期化時に確保する領域長さを算出する

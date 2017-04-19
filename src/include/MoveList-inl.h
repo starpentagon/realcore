@@ -2,6 +2,7 @@
 #define MOVE_LIST_INL_H
 
 #include <cassert>
+#include "BitSearch.h"
 #include "Move.h"
 #include "MoveList.h"
 
@@ -125,6 +126,40 @@ inline const size_t MoveList::CalcInitialReserveSize(const size_t initial_list_s
 
 inline const bool MoveList::IsBlackTurn() const{
   return move_list_.size() % 2 == 0;
+}
+
+inline void GetMoveList(const MoveBitSet &move_bit_set, MoveList *move_list)
+{
+  assert(move_list != nullptr);
+  constexpr MoveBitSet bit_mask(0xFFFFFFFFFFFFFFFF);
+
+  for(size_t i=0; i<4; i++){
+    const auto shift_num = 64 * i;
+    const auto value = ((move_bit_set >> shift_num) & bit_mask).to_ullong();
+    
+    if(value == 0){
+      continue;
+    }
+
+    std::vector<size_t> index_list;
+    GetBitIndexList(value, &index_list);
+
+    for(const auto index : index_list){
+      *move_list += static_cast<MovePosition>(index + shift_num);
+    }
+  }
+}
+
+inline const MoveBitSet& GetInBoardMoveBitSet(){
+  static MoveBitSet in_board_move_bit;
+  
+  if(in_board_move_bit.none()){
+    for(const auto move : GetAllInBoardMove()){
+      in_board_move_bit.set(move);
+    }
+  }
+
+  return in_board_move_bit;
 }
 
 }

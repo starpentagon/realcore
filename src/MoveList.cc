@@ -44,6 +44,29 @@ string MoveList::str() const
   return move_str;
 }
 
+void MoveList::GetOpenMove(MoveList * const open_move_list) const
+{
+  assert(open_move_list != nullptr);
+  assert(open_move_list->empty());
+
+  MoveBitSet move_bit;
+
+  for(const auto move : move_list_){
+    move_bit.set(move);
+  }
+
+  move_bit.flip();
+  move_bit &= GetInBoardMoveBitSet();
+  
+  GetMoveList(move_bit, open_move_list);
+}
+
+void MoveList::GetPossibleMove(MoveList * const possible_move_list) const
+{
+  GetOpenMove(possible_move_list);
+  (*possible_move_list) += kNullMove;
+}
+
 bool GetMoveList(const string &move_string, MoveList * const move_list)
 {
   assert(move_list != nullptr && move_list->empty());

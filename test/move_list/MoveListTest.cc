@@ -344,13 +344,90 @@ TEST_F(MoveListTest, GetSymmetricMoveListTest)
   }
 }
 
-TEST_F(MoveListTest, IsBlackTurn)
+TEST_F(MoveListTest, IsBlackTurnTest)
 {
   MoveList move_list;
   EXPECT_TRUE(move_list.IsBlackTurn());
 
   move_list += kMoveHH;
   EXPECT_FALSE(move_list.IsBlackTurn());
+}
+
+TEST_F(MoveListTest, GetMoveBitSetListTest)
+{
+  MoveBitSet move_bit_set;
+
+  move_bit_set.set(kMoveAA);
+  move_bit_set.set(kMoveHH);
+  move_bit_set.set(kMoveOO);
+  move_bit_set.set(kNullMove);
+
+  MoveList move_list;
+  GetMoveList(move_bit_set, &move_list);
+
+  ASSERT_EQ(4, move_list.size());
+  EXPECT_EQ(kNullMove, move_list[0]);
+  EXPECT_EQ(kMoveAA, move_list[1]);
+  EXPECT_EQ(kMoveHH, move_list[2]);
+  EXPECT_EQ(kMoveOO, move_list[3]);
+}
+
+TEST_F(MoveListTest, GetOpenMoveTest)
+{
+  MoveList move_list;
+  move_list += kMoveHH;
+
+  MoveList open_move_list;
+  move_list.GetOpenMove(&open_move_list);
+
+  ASSERT_EQ(kInBoardMoveNum - 1, open_move_list.size());
+
+  for(const auto move : GetAllInBoardMove()){
+    auto find_it = find(open_move_list.begin(), open_move_list.end(), move);
+
+    if(move == kMoveHH){
+      ASSERT_TRUE(find_it == open_move_list.end());
+    }else{
+      ASSERT_FALSE(find_it == open_move_list.end());
+    }
+  }
+}
+
+TEST_F(MoveListTest, GetPossibleMoveTest)
+{
+  MoveList move_list;
+  move_list += kMoveHH;
+
+  MoveList possible_move_list;
+  move_list.GetPossibleMove(&possible_move_list);
+
+  ASSERT_EQ(kInBoardMoveNum, possible_move_list.size());
+
+  for(const auto move : GetAllInBoardMove()){
+    auto find_it = find(possible_move_list.begin(), possible_move_list.end(), move);
+
+    if(move == kMoveHH){
+      ASSERT_TRUE(find_it == possible_move_list.end());
+    }else{
+      ASSERT_FALSE(find_it == possible_move_list.end());
+    }
+  }
+
+  auto find_it = find(possible_move_list.begin(), possible_move_list.end(), kNullMove);
+  ASSERT_FALSE(find_it == possible_move_list.end());
+}
+
+TEST_F(MoveListTest, GetInBoardMoveBitSetTest)
+{
+  const auto& move_bit_set = GetInBoardMoveBitSet();
+
+  for(const auto move : GetAllMove()){
+    if(IsInBoardMove(move)){
+      ASSERT_TRUE(move_bit_set[move]);
+    }else{
+      ASSERT_FALSE(move_bit_set[move]);
+    }
+  }
 }
 
 }   // namespace realcore
