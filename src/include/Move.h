@@ -86,6 +86,10 @@ const MovePosition GetMove(const Cordinate x, const Cordinate y);
 //! @retval 対称変換した位置
 const MovePosition GetSymmetricMove(const MovePosition move, const BoardSymmetry symmetry);
 
+//! @brief 指し手の文字列を返す
+//! @pre 指し手は有効な指し手であること
+std::string MoveString(const MovePosition move);
+
 }   // namespace　realcore
 
 #include "Move-inl.h"

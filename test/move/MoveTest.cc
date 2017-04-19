@@ -238,3 +238,10 @@ TEST(MoveTest, GetSymmetricMoveTest)
   }
 }
 
+TEST(MoveTest, MoveStringTest)
+{
+  ASSERT_EQ("pp", MoveString(kNullMove));
+  ASSERT_EQ("ao", MoveString(kMoveAO));
+  ASSERT_EQ("hh", MoveString(kMoveHH));
+  ASSERT_EQ("oa", MoveString(kMoveOA));
+}

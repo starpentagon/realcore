@@ -34,26 +34,11 @@ void MoveList::ReserveInitial(const size_t initial_list_size)
 
 string MoveList::str() const
 {
-  static const array<string, kBoardLineNum + 1> kCordinateStr{{
-    "", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"
-  }};
-
-  static const string kPassStr = "pp";
   string move_str;
 
   for(const auto move : move_list_)
   {
-    assert(IsValidMove(move));
-
-    if(!IsNullMove(move)){
-      Cordinate x = 0, y = 0;
-      GetMoveCordinate(move, &x, &y);
-
-      move_str += kCordinateStr[x];
-      move_str += kCordinateStr[y];
-    }else{
-      move_str += kPassStr;
-    }
+    move_str += MoveString(move);
   }
 
   return move_str;
