@@ -58,7 +58,9 @@ inline void OpenState::SetGuardPositionList(const GuardPositionList &guard_posit
 template<PlayerTurn P>
 inline const bool OpenState::IsInfluenceMove(const MovePosition move) const
 {
-  assert(IsInBoardMove(move));
+  if(!IsInBoardMove(move)){
+    return false;
+  }
 
   const BoardDirection direction = GetBoardDirection(pattern_position_);
   const BoardPosition move_board_position = GetBoardPosition(move, direction);
