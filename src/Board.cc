@@ -84,6 +84,7 @@ void Board::MakeMove(const MovePosition move)
 {
   const bool is_black_turn = move_list_.IsBlackTurn();
   assert(IsNormalMove(is_black_turn, move));
+  assert(!IsTerminateMove(is_black_turn, move));
   
   if(is_black_turn){
     bit_board_.SetState<kBlackStone>(move);
@@ -121,13 +122,93 @@ void Board::EnumerateForbiddenMoves(MoveBitSet * const forbidden_move_set) const
   bit_board_.EnumerateForbiddenMoves(board_open_state, forbidden_move_set);
 }
 
-const bool IsNormalSequence(const MoveList &move_list){
+const bool Board::IsOpponentFour(MovePosition * const guard_move) const
+{
+  if(move_list_.empty()){
+    return false;
+  }
+
+  const auto last_move = move_list_.GetLastMove();
+  const bool is_opponent_black = !move_list_.IsBlackTurn();
+
+  return bit_board_.IsFourMoveOnBoard(is_opponent_black, last_move, guard_move);
+}
+
+template<>
+const bool Board::TerminateCheck<kBlackTurn>(MovePosition * const terminating_move) const
+{
+  assert(terminating_move != nullptr);
+
+  MovePosition guard_move;
+  const bool is_opponent_four = IsOpponentFour(&guard_move);
+
+  if(is_opponent_four){
+    const bool is_terminate_move = IsTerminateMove<kBlackTurn>(guard_move);
+
+    // 四ノビ防手が禁手の場合は1手前で終端するのでここでは禁手チェックはしない
+    *terminating_move = guard_move;
+    return is_terminate_move;
+  }
+
+  // 禁手ではない達四がないかチェックする
+  const auto& board_open_state = board_open_state_list_.back();
+
+  MoveBitSet open_four_bit;
+  bit_board_.EnumerateOpenFourMoves<kBlackTurn>(board_open_state, &open_four_bit);
+
+  MoveBitSet forbidden_bit;
+  bit_board_.EnumerateForbiddenMoves(board_open_state, &forbidden_bit);
+
+  open_four_bit &= forbidden_bit.flip();
+
+  if(open_four_bit.any()){
+    MoveList move_list;
+    GetMoveList(open_four_bit, &move_list);
+    *terminating_move = move_list[0];
+
+    return true;
+  }
+
+  return false;
+}
+
+template<>
+const bool Board::TerminateCheck<kWhiteTurn>(MovePosition * const terminating_move) const
+{
+  assert(terminating_move != nullptr);
+
+  MovePosition guard_move;
+  const bool is_opponent_four = IsOpponentFour(&guard_move);
+
+  if(is_opponent_four){
+    const bool is_terminate_move = IsTerminateMove<kBlackTurn>(guard_move);
+
+    // 四ノビ防手が禁手の場合は1手前で終端するのでここでは禁手チェックはしない
+    *terminating_move = guard_move;
+    return is_terminate_move;
+  }
+
+  // 四ノビする手を列挙し、終端手かどうかチェックする
+  const auto& board_open_state = board_open_state_list_.back();
+
+  vector<MovePair> four_list;
+  bit_board_.EnumerateFourMoves<kWhiteTurn>(board_open_state, &four_list);
+
+  for(const auto &four_pair : four_list){
+    if(IsTerminateMove<kWhiteTurn>(four_pair)){
+      *terminating_move = four_pair.first;
+      return true;
+    }
+  }
+
+  return false;
+}
+
+const bool IsNormalNonTerminateSequence(const MoveList &move_list){
   Board board;
   bool is_black_turn = true;
 
-  for(size_t i=0, size=move_list.size(); i<size; i++){
-    const auto move = move_list[i];
-
+  for(const auto move : move_list){
     if(!board.IsNormalMove(is_black_turn, move)){
       return false;
     }
@@ -135,11 +216,7 @@ const bool IsNormalSequence(const MoveList &move_list){
     const bool is_terminate = board.IsTerminateMove(is_black_turn, move);
 
     if(is_terminate){
-      if(i + 1 == size){
-        return true;
-      }else{
-        return false;
-      }
+      return false;
     }
 
     board.MakeMove(move);

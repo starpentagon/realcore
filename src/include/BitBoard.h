@@ -20,6 +20,9 @@ constexpr size_t kBitBoardElementNum = 32;
 //! @brief Bitboard型
 typedef std::array<StateBit, kBitBoardElementNum> Bitboard;
 
+//! @brief MovePair型
+typedef std::pair<MovePosition, MovePosition> MovePair;
+
 // 前方宣言
 enum MovePosition : std::uint8_t;
 class BoardOpenState;
@@ -116,6 +119,7 @@ public:
   //! @pre moveは着手後であること
   template<PlayerTurn P>
   const bool IsFourMoveOnBoard(const MovePosition move, MovePosition * const guard_move) const;
+  const bool IsFourMoveOnBoard(const bool is_black_turn, const MovePosition move, MovePosition * const guard_move) const;
 
   //! @brief 指し手が四々かチェックする
   //! @param move 指し手位置
@@ -135,6 +139,17 @@ public:
   //! @param 禁点の格納先
   void EnumerateForbiddenMoves(const BoardOpenState &board_open_state, MoveBitSet * const forbidden_move_set) const;
   void EnumerateForbiddenMoves(MoveBitSet * const forbidden_move_set) const;
+
+  //! @brief 達四点を列挙する
+  template<PlayerTurn P>
+  void EnumerateOpenFourMoves(const BoardOpenState &board_open_state, MoveBitSet * const open_four_move_set) const;
+  
+  //! @brief 達四点を列挙する
+  template<PlayerTurn P>
+  void EnumerateFourMoves(const BoardOpenState &board_open_state, MoveBitSet * const four_move_set) const;
+
+  template<PlayerTurn P>
+  void EnumerateFourMoves(const BoardOpenState &board_open_state, std::vector<MovePair> * const four_move_list) const;
 
 private:
   //! @brief 盤面の空点状態を取得する

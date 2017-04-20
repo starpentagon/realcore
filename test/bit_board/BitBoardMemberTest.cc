@@ -136,6 +136,38 @@ public:
     EXPECT_TRUE(expect_2 == open_state_list[1]);
   }
 
+  void EnumerateOpenFourMovesBlackTest()
+  {
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . . o o . . . . . | G 
+    // H | . . . . . . x x x . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhhgihigjh"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet open_four_bit;
+    bit_board.EnumerateOpenFourMoves<kBlackTurn>(board_open_state, &open_four_bit);
+
+    ASSERT_EQ(2, open_four_bit.count());
+    ASSERT_TRUE(open_four_bit[kMoveGH]);
+    ASSERT_TRUE(open_four_bit[kMoveKH]);
+  }
+
+
   void GetOpenStateOpenFourWhiteTest()
   {
     // kNextOpenFourWhite
@@ -177,6 +209,38 @@ public:
     ASSERT_EQ(2, open_state_list.size());
     EXPECT_TRUE(expect_1 == open_state_list[0]);
     EXPECT_TRUE(expect_2 == open_state_list[1]);
+  }
+  
+  void EnumerateOpenFourMovesWhiteTest()
+  {
+    // kNextOpenFourWhite
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . . o o o . . . . | G 
+    // H | . . . . . . x x x . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhhgihigjhjg"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet open_four_bit;
+    bit_board.EnumerateOpenFourMoves<kWhiteTurn>(board_open_state, &open_four_bit);
+
+    ASSERT_EQ(2, open_four_bit.count());
+    ASSERT_TRUE(open_four_bit[kMoveGG]);
+    ASSERT_TRUE(open_four_bit[kMoveKG]);
   }
 
   void GetOpenStateFourBlackTest()
@@ -230,6 +294,53 @@ public:
     EXPECT_TRUE(expect_2 == open_state_list[1]);
   }
 
+  void EnumerateFourMovesBlackTest()
+  {
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . x . . . * . . | D 
+    // E | . . . . . . . . . o . . . | E 
+    // F | . . . . . . x . . . . . . | F 
+    // G | . . . . . . . o . . . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhighfkehd"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet four_bit;
+    bit_board.EnumerateFourMoves<kBlackTurn>(board_open_state, &four_bit);
+
+    ASSERT_EQ(2, four_bit.count());
+    ASSERT_TRUE(four_bit[kMoveHE]);
+    ASSERT_TRUE(four_bit[kMoveHG]);
+
+    vector<MovePair> four_pair_list;
+    bit_board.EnumerateFourMoves<kBlackTurn>(board_open_state, &four_pair_list);
+
+    ASSERT_EQ(2, four_pair_list.size());
+
+    {
+      auto &move_pair = four_pair_list[0];
+      const bool is_expected = (move_pair.first == kMoveHE && move_pair.second == kMoveHG) || (move_pair.first == kMoveHG && move_pair.second == kMoveHE);
+      ASSERT_TRUE(is_expected);
+    }
+    {
+      auto &move_pair = four_pair_list[1];
+      const bool is_expected = (move_pair.first == kMoveHE && move_pair.second == kMoveHG) || (move_pair.first == kMoveHG && move_pair.second == kMoveHE);
+      ASSERT_TRUE(is_expected);
+    }
+  }
+
   void GetOpenStateFourWhiteTest()
   {
     // kNextFourWhite
@@ -279,6 +390,53 @@ public:
     ASSERT_EQ(2, open_state_list.size());
     EXPECT_TRUE(expect_1 == open_state_list[0]);
     EXPECT_TRUE(expect_2 == open_state_list[1]);
+  }
+
+  void EnumerateFourMovesWhiteTest()
+  {
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . o . | C 
+    // D | . . * . . . x . . . * . . | D 
+    // E | . . . . . . . . . o . . . | E 
+    // F | . . . . . . x . . . . . . | F 
+    // G | . . . . . . . o . . . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhighfkehdmc"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet four_bit;
+    bit_board.EnumerateFourMoves<kWhiteTurn>(board_open_state, &four_bit);
+
+    ASSERT_EQ(2, four_bit.count());
+    ASSERT_TRUE(four_bit[kMoveLD]);
+    ASSERT_TRUE(four_bit[kMoveJF]);
+
+    vector<MovePair> four_pair_list;
+    bit_board.EnumerateFourMoves<kWhiteTurn>(board_open_state, &four_pair_list);
+
+    ASSERT_EQ(2, four_pair_list.size());
+
+    {
+      auto &move_pair = four_pair_list[0];
+      const bool is_expected = (move_pair.first == kMoveLD && move_pair.second == kMoveJF) || (move_pair.first == kMoveJF && move_pair.second == kMoveLD);
+      ASSERT_TRUE(is_expected);
+    }
+    {
+      auto &move_pair = four_pair_list[1];
+      const bool is_expected = (move_pair.first == kMoveLD && move_pair.second == kMoveJF) || (move_pair.first == kMoveJF && move_pair.second == kMoveLD);
+      ASSERT_TRUE(is_expected);
+    }
   }
 
   void GetOpenStateSemiThreeBlackTest()
@@ -824,5 +982,25 @@ TEST_F(BitBoardTest, GetOpenStateSemiThreeBlackTest)
 TEST_F(BitBoardTest, GetOpenStateSemiThreeWhiteTest)
 {
   GetOpenStateSemiThreeWhiteTest();
+}
+
+TEST_F(BitBoardTest, EnumerateOpenFourMovesBlackTest)
+{
+  EnumerateOpenFourMovesBlackTest();
+}
+
+TEST_F(BitBoardTest, EnumerateOpenFourMovesWhiteTest)
+{
+  EnumerateOpenFourMovesWhiteTest();
+}
+
+TEST_F(BitBoardTest, EnumerateFourMovesBlackTest)
+{
+  EnumerateFourMovesBlackTest();
+}
+
+TEST_F(BitBoardTest, EnumerateFourMovesWhiteTest)
+{
+  EnumerateFourMovesWhiteTest();
 }
 }

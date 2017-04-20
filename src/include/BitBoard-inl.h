@@ -237,6 +237,15 @@ const bool BitBoard::IsFourMoveOnBoard(const MovePosition move, MovePosition * c
   return line_neighbor.IsFour<P>(guard_move);
 }
 
+inline const bool BitBoard::IsFourMoveOnBoard(const bool is_black_turn, const MovePosition move, MovePosition * const guard_move) const
+{
+  if(is_black_turn){
+    return IsFourMoveOnBoard<kBlackTurn>(move, guard_move);
+  }else{
+    return IsFourMoveOnBoard<kWhiteTurn>(move, guard_move);
+  }
+}
+
 template<PlayerTurn P>
 const bool BitBoard::IsDoubleFourMove(const MovePosition move) const
 {

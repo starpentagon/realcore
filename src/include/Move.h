@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <array>
+#include <string>
 
 #include "RealCore.h"
 

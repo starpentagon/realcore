@@ -54,8 +54,12 @@ public:
     SearchManager search_manager(kNoInterruptionPoint);
     auto prev_time = search_manager.search_start_time_;
 
+    this_thread::sleep_for(chrono::milliseconds(10));
     search_manager.SearchStart();
-    ASSERT_NE(prev_time, search_manager.search_start_time_);
+
+    auto elapsed_time = search_manager.search_start_time_ - prev_time;
+    auto elapsed_time_ms = chrono::duration_cast<chrono::milliseconds>(elapsed_time).count();
+    ASSERT_NE(0, elapsed_time_ms);
   }
 };
 

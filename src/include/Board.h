@@ -32,8 +32,8 @@ bool IsEqual(const Board &board_1, const Board &board_2);
 //! @param board_to コピー先
 void Copy(const Board &board_from, Board * const board_to);
 
-//! @brief 指し手リストが正規手順かどうかを判定する
-const bool IsNormalSequence(const MoveList &move_list);
+//! @brief 指し手リストが終端ではない正規手順かどうかを判定する
+const bool IsNormalNonTerminateSequence(const MoveList &move_list);
 
 //! @brief 盤面管理クラス
 class Board
@@ -57,6 +57,7 @@ public:
 
   //! @brief 指し手を設定する
   //! @param move 指し手位置
+  //! @pre 指し手は正規手かつ終端手ではないこと
   void MakeMove(const MovePosition move);
 
   //! @brief 指し手を１手戻す
@@ -80,11 +81,27 @@ public:
   //! @note 終端手 = 達四ができる or (白番のみ: 四々 or 四ノビで極めること)
   //! @pre moveは着手前であること
   //! @pre moveは正規手であること
+  //! @note 禁手チェックは行わない
   //! @see doc/02_terminate_definition/normality.pptx
   template<PlayerTurn P>
   const bool IsTerminateMove(const MovePosition move) const;
-  
   const bool IsTerminateMove(const bool black_turn, const MovePosition move) const;
+
+  //! @brief 指し手が終端手かどうかをチェックする(四ノビ、四ノビ防手ペア版)
+  template<PlayerTurn P>
+  const bool IsTerminateMove(const MovePair &four_pair) const;
+
+  //! @brief 終端手が存在するかチェックする
+  //! @param terminating_move 終端手の格納先
+  //! @retval true 終端手が存在する
+  //! @note 禁手チェックを行う
+  template<PlayerTurn P>
+  const bool TerminateCheck(MovePosition * const terminating_move) const;
+
+  //! @brief 相手に四が生じているか判定する
+  //! @param 四の防手の格納先
+  //! @retval true 相手に四が生じている
+  const bool IsOpponentFour(MovePosition * const guard_move) const;
 
   //! @brief 禁点を列挙する
   //! @param 禁点の格納先

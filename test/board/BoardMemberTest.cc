@@ -490,4 +490,139 @@ TEST_F(BoardTest, UpdateTest)
 {
   BoardOpenStateUpdateTest();
 }
+
+TEST_F(BoardTest, IsOpponentFour)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------o A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . x . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . . . . . . . . . . | E 
+  // F | . . . . x . . . . . . . . | F 
+  // G | . . . . . x . o . . . . . | G 
+  // H | . . . . . . x . . . . . . o H 
+  // I | . . . . . x . o . . . . . | I 
+  // J | . . . . x o . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . x . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------o O 
+  //   A B C D E F G H I J K L M N O 
+  Board board(MoveList("hhiggiiifjooggoaccohffgjdl"));
+  MovePosition guard_move;
+  const bool is_opponent_four = board.IsOpponentFour(&guard_move);
+
+  ASSERT_TRUE(is_opponent_four);
+  ASSERT_EQ(kMoveEK, guard_move);
+}
+
+TEST_F(BoardTest, TerminateCheckTest)
+{
+  {
+    // 達四(黒番)ができるケース
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . . o o o . . . . | G 
+    // H | . . . . . . x x x . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhhgihigjhjg"));
+    MovePosition terminating_move;
+    const bool is_terminate = board.TerminateCheck<kBlackTurn>(&terminating_move);
+    
+    ASSERT_TRUE(is_terminate);
+    ASSERT_TRUE(terminating_move == kMoveGH || terminating_move == kMoveKH);
+  }
+  {
+    // 四ノビで極める
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . x . . . . . * . . | D 
+    // E | . . . o . o . . . . . . . | E 
+    // F | . . . . . . o . x . . . . | F 
+    // G | . . . . . . . o x . . . . | G 
+    // H | . . . . . . x x . . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhigihhfjfgefdeejg"));
+    MovePosition terminating_move;
+    const bool is_terminate = board.TerminateCheck<kWhiteTurn>(&terminating_move);
+    
+    ASSERT_TRUE(is_terminate);
+    ASSERT_TRUE(terminating_move == kMoveKI);
+  }
+  {
+    // 相手に四ノビがあり終端しない
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . x o o o o . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . x . x . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhhgggiggijgiikg"));
+    MovePosition terminating_move;
+    const bool is_terminate = board.TerminateCheck<kBlackTurn>(&terminating_move);
+    
+    ASSERT_FALSE(is_terminate);
+  }
+  {
+    // 相手の四ノビをノリ返して終端する場合
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . x . . . . | F 
+    // G | . . . x o o o . o . . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . x . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhhgjfggegfggijg"));
+    MovePosition terminating_move;
+    const bool is_terminate = board.TerminateCheck<kBlackTurn>(&terminating_move);
+    
+    ASSERT_TRUE(is_terminate);
+    ASSERT_TRUE(terminating_move == kMoveIG);
+  }
+}
+
 }

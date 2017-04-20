@@ -89,6 +89,33 @@ const bool Board::IsTerminateMove(const MovePosition move) const
   return false;
 }
 
+template<PlayerTurn P>
+const bool Board::IsTerminateMove(const MovePair &four_pair) const
+{
+  assert(IsNormalMove<P>(four_pair.first));
+
+  if(bit_board_.IsOpenFourMove<P>(four_pair.first)){
+    // 達四が作れる
+    return true;
+  }
+
+  if(P == kWhiteTurn){
+    // 四々がつくれる
+    if(bit_board_.IsDoubleFourMove<kWhiteTurn>(four_pair.first)){
+      return true;
+    }
+
+    BitBoard bit_board(bit_board_);
+    bit_board.SetState<kWhiteStone>(four_pair.first);
+
+    if(bit_board.IsForbiddenMove<kBlackTurn>(four_pair.second)){
+      return true;
+    }
+  }
+
+  return false;
+}
+
 inline const bool Board::IsTerminateMove(const bool black_turn, const MovePosition move) const
 {
   if(black_turn){

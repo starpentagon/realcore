@@ -38,6 +38,11 @@ target_link_libraries(${project_name} gtest_main)
 # Ubuntuでgoogle testをビルドするためにはpthreadが必要
 target_link_libraries(${project_name} pthread)
 
-target_link_libraries(${project_name} boost_system)
-target_link_libraries(${project_name} boost_thread)
+if(APPLE OR WIN32)
+  target_link_libraries(${project_name} boost_system-mt)
+  target_link_libraries(${project_name} boost_thread-mt)
+else()
+  target_link_libraries(${project_name} boost_system)
+  target_link_libraries(${project_name} boost_thread)
+endif()
 

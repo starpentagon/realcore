@@ -194,6 +194,10 @@ void BitBoard::GetBoardOpenState(const UpdateOpenStateFlag &update_flag, BoardOp
 
 void BitBoard::EnumerateForbiddenMoves(const BoardOpenState &board_open_state, MoveBitSet * const forbidden_move_set) const
 {
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kNextOverline));
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kNextOpenFourBlack));
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kNextFourBlack));
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kNextSemiThreeBlack));
   assert(forbidden_move_set != nullptr);
   assert(forbidden_move_set->none());
 
@@ -328,6 +332,114 @@ void BitBoard::EnumerateForbiddenMoves(const BoardOpenState &board_open_state, M
     if(move_direction_three[move].count() >= 2){
       forbidden_move_set->set(move);
     }
+  }
+}
+
+template<>
+void BitBoard::EnumerateOpenFourMoves<kBlackTurn>(const BoardOpenState &board_open_state, MoveBitSet * const open_four_move_set) const
+{
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kNextOpenFourBlack));
+  assert(open_four_move_set != nullptr);
+  assert(open_four_move_set->none());
+
+  const auto& next_open_four_list = board_open_state.GetList(kNextOpenFourBlack);
+
+  for(const auto &open_state : next_open_four_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    open_four_move_set->set(move);
+  }
+}
+
+template<>
+void BitBoard::EnumerateOpenFourMoves<kWhiteTurn>(const BoardOpenState &board_open_state, MoveBitSet * const open_four_move_set) const
+{
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kNextOpenFourWhite));
+  assert(open_four_move_set != nullptr);
+  assert(open_four_move_set->none());
+
+  const auto& next_open_four_list = board_open_state.GetList(kNextOpenFourWhite);
+
+  for(const auto &open_state : next_open_four_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    open_four_move_set->set(move);
+  }
+}
+
+template<>
+void BitBoard::EnumerateFourMoves<kBlackTurn>(const BoardOpenState &board_open_state, MoveBitSet * const four_move_set) const
+{
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kNextFourBlack));
+  assert(four_move_set != nullptr);
+  assert(four_move_set->none());
+
+  const auto& next_four_list = board_open_state.GetList(kNextFourBlack);
+
+  for(const auto &open_state : next_four_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    four_move_set->set(move);
+  }
+}
+
+template<>
+void BitBoard::EnumerateFourMoves<kBlackTurn>(const BoardOpenState &board_open_state, vector<MovePair> * const four_move_list) const
+{
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kNextFourBlack));
+  assert(four_move_list != nullptr);
+  assert(four_move_list->empty());
+
+  const auto& next_four_list = board_open_state.GetList(kNextFourBlack);
+  four_move_list->reserve(next_four_list.size());
+
+  for(const auto &open_state : next_four_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    const auto guard_position = open_state.GetGuardPositionList()[0];
+    const auto guard_move = GetBoardMove(guard_position);
+    four_move_list->emplace_back(move, guard_move);
+  }
+}
+
+template<>
+void BitBoard::EnumerateFourMoves<kWhiteTurn>(const BoardOpenState &board_open_state, MoveBitSet * const four_move_set) const
+{
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kNextFourWhite));
+  assert(four_move_set != nullptr);
+  assert(four_move_set->none());
+
+  const auto& next_four_list = board_open_state.GetList(kNextFourWhite);
+
+  for(const auto &open_state : next_four_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    four_move_set->set(move);
+  }
+}
+
+template<>
+void BitBoard::EnumerateFourMoves<kWhiteTurn>(const BoardOpenState &board_open_state, vector<MovePair> * const four_move_list) const
+{
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kNextFourWhite));
+  assert(four_move_list != nullptr);
+  assert(four_move_list->empty());
+
+  const auto& next_four_list = board_open_state.GetList(kNextFourWhite);
+  four_move_list->reserve(next_four_list.size());
+
+  for(const auto &open_state : next_four_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    const auto guard_position = open_state.GetGuardPositionList()[0];
+    const auto guard_move = GetBoardMove(guard_position);
+    four_move_list->emplace_back(move, guard_move);
   }
 }
 
