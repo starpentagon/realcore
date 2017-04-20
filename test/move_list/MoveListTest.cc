@@ -393,6 +393,30 @@ TEST_F(MoveListTest, GetOpenMoveTest)
   }
 }
 
+TEST_F(MoveListTest, GetOpenMoveForbiddenTest)
+{
+  MoveList move_list;
+  move_list += kMoveHH;
+
+  MoveList open_move_list;
+  MoveBitSet forbidden_bit;
+  forbidden_bit.set(kMoveHG);
+
+  move_list.GetOpenMove(forbidden_bit, &open_move_list);
+
+  ASSERT_EQ(kInBoardMoveNum - 2, open_move_list.size());
+
+  for(const auto move : GetAllInBoardMove()){
+    auto find_it = find(open_move_list.begin(), open_move_list.end(), move);
+
+    if(move == kMoveHH || move == kMoveHG){
+      ASSERT_TRUE(find_it == open_move_list.end());
+    }else{
+      ASSERT_FALSE(find_it == open_move_list.end());
+    }
+  }
+}
+
 TEST_F(MoveListTest, GetPossibleMoveTest)
 {
   MoveList move_list;
@@ -407,6 +431,33 @@ TEST_F(MoveListTest, GetPossibleMoveTest)
     auto find_it = find(possible_move_list.begin(), possible_move_list.end(), move);
 
     if(move == kMoveHH){
+      ASSERT_TRUE(find_it == possible_move_list.end());
+    }else{
+      ASSERT_FALSE(find_it == possible_move_list.end());
+    }
+  }
+
+  auto find_it = find(possible_move_list.begin(), possible_move_list.end(), kNullMove);
+  ASSERT_FALSE(find_it == possible_move_list.end());
+}
+
+TEST_F(MoveListTest, GetPossibleMoveForbiddenTest)
+{
+  MoveList move_list;
+  move_list += kMoveHH;
+
+  MoveList possible_move_list;
+  MoveBitSet forbidden_bit;
+  forbidden_bit.set(kMoveHG);
+
+  move_list.GetPossibleMove(forbidden_bit, &possible_move_list);
+
+  ASSERT_EQ(kInBoardMoveNum - 1, possible_move_list.size());
+
+  for(const auto move : GetAllInBoardMove()){
+    auto find_it = find(possible_move_list.begin(), possible_move_list.end(), move);
+
+    if(move == kMoveHH || move == kMoveHG){
       ASSERT_TRUE(find_it == possible_move_list.end());
     }else{
       ASSERT_FALSE(find_it == possible_move_list.end());

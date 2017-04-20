@@ -61,9 +61,33 @@ void MoveList::GetOpenMove(MoveList * const open_move_list) const
   GetMoveList(move_bit, open_move_list);
 }
 
+void MoveList::GetOpenMove(const MoveBitSet &forbidden_bit, MoveList * const open_move_list) const
+{
+  assert(open_move_list != nullptr);
+  assert(open_move_list->empty());
+
+  MoveBitSet move_bit;
+
+  for(const auto move : move_list_){
+    move_bit.set(move);
+  }
+
+  move_bit.flip();
+  move_bit &= GetInBoardMoveBitSet();
+  move_bit &= ~forbidden_bit;
+
+  GetMoveList(move_bit, open_move_list);
+}
+
 void MoveList::GetPossibleMove(MoveList * const possible_move_list) const
 {
   GetOpenMove(possible_move_list);
+  (*possible_move_list) += kNullMove;
+}
+
+void MoveList::GetPossibleMove(const MoveBitSet &forbidden_bit, MoveList * const possible_move_list) const
+{
+  GetOpenMove(forbidden_bit, possible_move_list);
   (*possible_move_list) += kNullMove;
 }
 

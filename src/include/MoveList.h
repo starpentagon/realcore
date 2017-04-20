@@ -113,9 +113,15 @@ public:
   //! @brief MoveListの空点を返す
   void GetOpenMove(MoveList * const open_move_list) const;
 
+  //! @brief MoveListの空点を返す(禁手除外版)
+  void GetOpenMove(const MoveBitSet &forbidden_bit, MoveList * const open_move_list) const;
+
   //! @brief 着手可能な指し手リストを返す
   //! @note 空点 + Pass
   void GetPossibleMove(MoveList * const possible_move_list) const;
+
+  //! @brief 着手可能な指し手リストを返す(禁手除外版)
+  void GetPossibleMove(const MoveBitSet &forbidden_bit, MoveList * const possible_move_list) const;
 
 private:
   //! @brief 初期化時に確保する領域長さを算出する
