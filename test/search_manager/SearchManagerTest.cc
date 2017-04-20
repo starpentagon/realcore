@@ -145,4 +145,14 @@ TEST_F(SearchManagerTest, IsTerminateInterruptionTest)
   thread_interrupt_wait.interrupt();
   thread_interrupt_wait.join();
 }
+
+TEST_F(SearchManagerTest, GetSearchTimeTest)
+{
+  SearchManager search_manager(kNoInterruptionPoint);
+  this_thread::sleep_for(chrono::milliseconds(10));
+  
+  const auto ms_time = search_manager.GetSearchTime();
+  ASSERT_NEAR(10, ms_time, 3);
+}
+
 }   // namespace realcore

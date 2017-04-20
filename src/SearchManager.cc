@@ -12,8 +12,7 @@ const bool SearchManager::IsTerminate()
   }
 
   if(elapsed_time_limit_ != 0){
-    auto elapsed_time = chrono::system_clock::now() - search_start_time_;
-    auto elapsed_time_ms = chrono::duration_cast<chrono::milliseconds>(elapsed_time).count();
+    auto elapsed_time_ms = GetSearchTime();
 
     if(elapsed_time_ms > elapsed_time_limit_){
       return true;
@@ -34,4 +33,12 @@ const bool SearchManager::IsTerminate()
   }
 
   return false;
+}
+
+SearchCounter SearchManager::GetSearchTime() const
+{
+  auto elapsed_time = chrono::system_clock::now() - search_start_time_;
+  auto elapsed_time_ms = chrono::duration_cast<chrono::milliseconds>(elapsed_time).count();
+  
+  return elapsed_time_ms;
 }

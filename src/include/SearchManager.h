@@ -41,6 +41,9 @@ public:
   //! @brief 探索時間の計測を開始する
   void SearchStart();
 
+  //! @brief 探索時間(ms)を取得する
+  SearchCounter GetSearchTime() const;
+
   //! @brief 探索終了条件が成立しているか返す
   const bool IsTerminate();
 
