@@ -493,29 +493,56 @@ TEST_F(BoardTest, UpdateTest)
 
 TEST_F(BoardTest, IsOpponentFour)
 {
-  //   A B C D E F G H I J K L M N O 
-  // A + --------------------------o A 
-  // B | . . . . . . . . . . . . . | B 
-  // C | . x . . . . . . . . . . . | C 
-  // D | . . * . . . . . . . * . . | D 
-  // E | . . . . . . . . . . . . . | E 
-  // F | . . . . x . . . . . . . . | F 
-  // G | . . . . . x . o . . . . . | G 
-  // H | . . . . . . x . . . . . . o H 
-  // I | . . . . . x . o . . . . . | I 
-  // J | . . . . x o . . . . . . . | J 
-  // K | . . . . . . . . . . . . . | K 
-  // L | . . x . . . . . . . * . . | L 
-  // M | . . . . . . . . . . . . . | M 
-  // N | . . . . . . . . . . . . . | N 
-  // O + --------------------------o O 
-  //   A B C D E F G H I J K L M N O 
-  Board board(MoveList("hhiggiiifjooggoaccohffgjdl"));
-  MovePosition guard_move;
-  const bool is_opponent_four = board.IsOpponentFour(&guard_move);
+  {
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------o A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . x . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . x . . . . . . . . | F 
+    // G | . . . . . x . o . . . . . | G 
+    // H | . . . . . . x . . . . . . o H 
+    // I | . . . . . x . o . . . . . | I 
+    // J | . . . . x o . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . x . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------o O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhiggiiifjooggoaccohffgjdl"));
+    MovePosition guard_move;
+    const bool is_opponent_four = board.IsOpponentFour(&guard_move);
 
-  ASSERT_TRUE(is_opponent_four);
-  ASSERT_EQ(kMoveEK, guard_move);
+    ASSERT_TRUE(is_opponent_four);
+    ASSERT_EQ(kMoveEK, guard_move);
+  }
+  {
+    // 最終手がPassの場合
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------o A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . x . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . x . . . . . . . . | F 
+    // G | . . . . . x . o . . . . . | G 
+    // H | . . . . . . x . . . . . . o H 
+    // I | . . . . . x . o . . . . . | I 
+    // J | . . . . x o . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------o O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhiggiiifjooggoaccohffgjpp"));
+    MovePosition guard_move;
+    const bool is_opponent_four = board.IsOpponentFour(&guard_move);
+    
+    ASSERT_FALSE(is_opponent_four);
+  }
 }
 
 TEST_F(BoardTest, TerminateCheckTest)
@@ -623,6 +650,15 @@ TEST_F(BoardTest, TerminateCheckTest)
     ASSERT_TRUE(is_terminate);
     ASSERT_TRUE(terminating_move == kMoveIG);
   }
+}
+
+TEST_F(BoardTest, TerminateCheckDebug)
+{
+  Board board(MoveList("hhgihgfiigeggfgkijhejjkfeikgjklekilldfjmidmjmdgddcjged"));
+  MovePosition terminating_move;
+  const bool is_terminate = board.TerminateCheck<kWhiteTurn>(&terminating_move);
+  
+  ASSERT_FALSE(is_terminate);
 }
 
 }

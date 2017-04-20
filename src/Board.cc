@@ -183,7 +183,7 @@ const bool Board::TerminateCheck<kWhiteTurn>(MovePosition * const terminating_mo
   const bool is_opponent_four = IsOpponentFour(&guard_move);
 
   if(is_opponent_four){
-    const bool is_terminate_move = IsTerminateMove<kBlackTurn>(guard_move);
+    const bool is_terminate_move = IsTerminateMove<kWhiteTurn>(guard_move);
 
     // 四ノビ防手が禁手の場合は1手前で終端するのでここでは禁手チェックはしない
     *terminating_move = guard_move;

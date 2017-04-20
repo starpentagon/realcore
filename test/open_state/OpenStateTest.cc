@@ -168,6 +168,17 @@ TEST_F(OpenStateTest, IsInfluenceMove)
       ASSERT_EQ(expect_white_result, is_influence_white);
     }
   }
+  {
+    // move = kNullMove
+    constexpr BoardPosition board_position = 18;    // x = 2, y = 1
+    OpenState open_state(kNextOverline, open_position, board_position);
+
+    const bool is_influence_black = open_state.IsInfluenceMove<kBlackTurn>(kNullMove);
+    ASSERT_FALSE(is_influence_black);
+
+    const bool is_influence_white = open_state.IsInfluenceMove<kWhiteTurn>(kNullMove);
+    ASSERT_FALSE(is_influence_white);
+  }
 }
 
 TEST_F(OpenStateTest, GetOpenPositionTest)
