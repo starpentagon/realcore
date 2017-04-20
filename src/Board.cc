@@ -156,17 +156,19 @@ const bool Board::TerminateCheck<kBlackTurn>(MovePosition * const terminating_mo
   MoveBitSet open_four_bit;
   bit_board_.EnumerateOpenFourMoves<kBlackTurn>(board_open_state, &open_four_bit);
 
-  MoveBitSet forbidden_bit;
-  bit_board_.EnumerateForbiddenMoves(board_open_state, &forbidden_bit);
+  if(open_four_bit.none()){
+    return false;
+  }
 
-  open_four_bit &= forbidden_bit.flip();
+  // 達四点が存在する場合は禁手かどうかチェックする
+  MoveList open_four_move_list;
+  GetMoveList(open_four_bit, &open_four_move_list);
 
-  if(open_four_bit.any()){
-    MoveList move_list;
-    GetMoveList(open_four_bit, &move_list);
-    *terminating_move = move_list[0];
-
-    return true;
+  for(const auto move : open_four_move_list){
+    if(!bit_board_.IsForbiddenMove<kBlackTurn>(move)){
+      *terminating_move = move;
+      return true;
+    }
   }
 
   return false;
