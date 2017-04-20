@@ -396,12 +396,25 @@ void BitBoard::EnumerateFourMoves<kBlackTurn>(const BoardOpenState &board_open_s
   const auto& next_four_list = board_open_state.GetList(kNextFourBlack);
   four_move_list->reserve(next_four_list.size());
 
+  // 四ノビ位置と防手位置が同じペアが生成されるのを防ぐため生成した位置を記録しておく
+  vector<int> attack_guard_key_list;
+  attack_guard_key_list.reserve(next_four_list.size());
+
   for(const auto &open_state : next_four_list){
     const auto open_position = open_state.GetOpenPosition();
     const auto move = GetBoardMove(open_position);
 
     const auto guard_position = open_state.GetGuardPositionList()[0];
     const auto guard_move = GetBoardMove(guard_position);
+
+    const int attack_guard_key = (move << 16) | guard_move;
+    const auto find_it = find(attack_guard_key_list.begin(), attack_guard_key_list.end(), attack_guard_key);
+
+    if(find_it != attack_guard_key_list.end()){
+      continue;
+    }
+
+    attack_guard_key_list.emplace_back(attack_guard_key);
     four_move_list->emplace_back(move, guard_move);
   }
 }
@@ -433,12 +446,25 @@ void BitBoard::EnumerateFourMoves<kWhiteTurn>(const BoardOpenState &board_open_s
   const auto& next_four_list = board_open_state.GetList(kNextFourWhite);
   four_move_list->reserve(next_four_list.size());
 
+  // 四ノビ位置と防手位置が同じペアが生成されるのを防ぐため生成した位置を記録しておく
+  vector<int> attack_guard_key_list;
+  attack_guard_key_list.reserve(next_four_list.size());
+
   for(const auto &open_state : next_four_list){
     const auto open_position = open_state.GetOpenPosition();
     const auto move = GetBoardMove(open_position);
 
     const auto guard_position = open_state.GetGuardPositionList()[0];
     const auto guard_move = GetBoardMove(guard_position);
+
+    const int attack_guard_key = (move << 16) | guard_move;
+    const auto find_it = find(attack_guard_key_list.begin(), attack_guard_key_list.end(), attack_guard_key);
+
+    if(find_it != attack_guard_key_list.end()){
+      continue;
+    }
+
+    attack_guard_key_list.emplace_back(attack_guard_key);
     four_move_list->emplace_back(move, guard_move);
   }
 }

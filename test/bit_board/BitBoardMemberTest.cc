@@ -392,7 +392,7 @@ public:
     EXPECT_TRUE(expect_2 == open_state_list[1]);
   }
 
-  void EnumerateFourMovesWhiteTest()
+  void EnumerateFourMovesWhiteTest1()
   {
     //   A B C D E F G H I J K L M N O 
     // A + --------------------------+ A 
@@ -435,6 +435,53 @@ public:
     {
       auto &move_pair = four_pair_list[1];
       const bool is_expected = (move_pair.first == kMoveLD && move_pair.second == kMoveJF) || (move_pair.first == kMoveJF && move_pair.second == kMoveLD);
+      ASSERT_TRUE(is_expected);
+    }
+  }
+
+  void EnumerateFourMovesWhiteTest2()
+  {
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . x x . . . . . | F 
+    // G | . . . . . x o o . o . o . x G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhhgggigifkgogmghf"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet four_bit;
+    bit_board.EnumerateFourMoves<kWhiteTurn>(board_open_state, &four_bit);
+
+    ASSERT_EQ(2, four_bit.count());
+    ASSERT_TRUE(four_bit[kMoveJG]);
+    ASSERT_TRUE(four_bit[kMoveLG]);
+
+    vector<MovePair> four_pair_list;
+    bit_board.EnumerateFourMoves<kWhiteTurn>(board_open_state, &four_pair_list);
+
+    ASSERT_EQ(2, four_pair_list.size());
+
+    {
+      auto &move_pair = four_pair_list[0];
+      const bool is_expected = (move_pair.first == kMoveJG && move_pair.second == kMoveLG) || (move_pair.first == kMoveLG && move_pair.second == kMoveJG);
+      ASSERT_TRUE(is_expected);
+    }
+    {
+      auto &move_pair = four_pair_list[1];
+      const bool is_expected = (move_pair.first == kMoveJG && move_pair.second == kMoveLG) || (move_pair.first == kMoveLG && move_pair.second == kMoveJG);
       ASSERT_TRUE(is_expected);
     }
   }
@@ -999,8 +1046,12 @@ TEST_F(BitBoardTest, EnumerateFourMovesBlackTest)
   EnumerateFourMovesBlackTest();
 }
 
-TEST_F(BitBoardTest, EnumerateFourMovesWhiteTest)
+TEST_F(BitBoardTest, EnumerateFourMovesWhiteTest1)
 {
-  EnumerateFourMovesWhiteTest();
+  EnumerateFourMovesWhiteTest1();
+}
+TEST_F(BitBoardTest, EnumerateFourMovesWhiteTest2)
+{
+  EnumerateFourMovesWhiteTest2();
 }
 }
