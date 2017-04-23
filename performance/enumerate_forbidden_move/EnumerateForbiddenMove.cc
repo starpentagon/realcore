@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
 
   for(const auto board_str : board_str_list){
     auto move_list = make_shared<MoveList>(board_str);
-    board_move_list.push_back(move_list);
+    board_move_list.emplace_back(move_list);
   }
 
   cerr << "Game count: " << board_str_list.size() << endl;;
@@ -107,8 +107,8 @@ int main(int argc, char* argv[])
         auto forbidden_board = make_shared<MoveList>(board_move);
         auto forbidden = make_shared<MoveList>(forbidden_move);
 
-        forbidden_board_list.push_back(forbidden_board);
-        forbidden_move_list.push_back(forbidden);
+        forbidden_board_list.emplace_back(forbidden_board);
+        forbidden_move_list.emplace_back(forbidden);
       }
 
       board_count++;

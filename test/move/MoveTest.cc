@@ -2,6 +2,7 @@
 
 #include "Move.h"
 
+using namespace std;
 using namespace realcore;
 
 TEST(MoveTest, GetAllMoveTest)
@@ -244,4 +245,60 @@ TEST(MoveTest, MoveStringTest)
   ASSERT_EQ("ao", MoveString(kMoveAO));
   ASSERT_EQ("hh", MoveString(kMoveHH));
   ASSERT_EQ("oa", MoveString(kMoveOA));
+}
+
+TEST(MoveTest, CalcBoardDistanceTest)
+{
+  ASSERT_EQ(0, CalcBoardDistance(kMoveHH, kMoveHH));
+  ASSERT_EQ(1, CalcBoardDistance(kMoveHH, kMoveHG));
+  ASSERT_EQ(14, CalcBoardDistance(kMoveOO, kMoveAA));
+  ASSERT_EQ(17, CalcBoardDistance(kMoveHH, kMoveFI));
+  ASSERT_EQ(119, CalcBoardDistance(kMoveHA, kMoveOO));
+  ASSERT_EQ(225, CalcBoardDistance(kMoveHH, kNullMove));
+}
+
+TEST(MoveTest, AscendingSortTest)
+{
+  vector<MoveValue> move_value_list;
+
+  move_value_list.emplace_back(kMoveHH, 1);
+  move_value_list.emplace_back(kMoveHI, 3);
+  move_value_list.emplace_back(kMoveHJ, 2);
+  move_value_list.emplace_back(kMoveHK, 2);
+  move_value_list.emplace_back(kMoveHL, 2);
+  move_value_list.emplace_back(kMoveHM, 2);
+  move_value_list.emplace_back(kMoveHN, 3);
+
+  AscendingSort(&move_value_list);
+
+  ASSERT_EQ(move_value_list[0].first, kMoveHH);
+  ASSERT_EQ(move_value_list[1].first, kMoveHJ);
+  ASSERT_EQ(move_value_list[2].first, kMoveHK);
+  ASSERT_EQ(move_value_list[3].first, kMoveHL);
+  ASSERT_EQ(move_value_list[4].first, kMoveHM);
+  ASSERT_EQ(move_value_list[5].first, kMoveHI);
+  ASSERT_EQ(move_value_list[6].first, kMoveHN);
+}
+
+TEST(MoveTest, DescendingSortTest)
+{
+  vector<MoveValue> move_value_list;
+
+  move_value_list.emplace_back(kMoveHH, 1);
+  move_value_list.emplace_back(kMoveHI, 3);
+  move_value_list.emplace_back(kMoveHJ, 2);
+  move_value_list.emplace_back(kMoveHK, 2);
+  move_value_list.emplace_back(kMoveHL, 2);
+  move_value_list.emplace_back(kMoveHM, 2);
+  move_value_list.emplace_back(kMoveHN, 3);
+
+  DescendingSort(&move_value_list);
+
+  ASSERT_EQ(move_value_list[0].first, kMoveHI);
+  ASSERT_EQ(move_value_list[1].first, kMoveHN);
+  ASSERT_EQ(move_value_list[2].first, kMoveHJ);
+  ASSERT_EQ(move_value_list[3].first, kMoveHK);
+  ASSERT_EQ(move_value_list[4].first, kMoveHL);
+  ASSERT_EQ(move_value_list[5].first, kMoveHM);
+  ASSERT_EQ(move_value_list[6].first, kMoveHH);
 }

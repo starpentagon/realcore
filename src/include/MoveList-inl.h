@@ -40,7 +40,7 @@ inline const MoveList& MoveList::operator+=(const MoveList &move_list)
 
 inline const MoveList& MoveList::operator+=(const MovePosition move)
 {
-  move_list_.push_back(move);
+  move_list_.emplace_back(move);
   return *this;
 }
 

@@ -172,6 +172,19 @@ inline std::string MoveString(const MovePosition move)
   }
 }
 
+inline void AscendingSort(std::vector<MoveValue> * const move_value_list)
+{
+  assert(move_value_list != nullptr);
+  stable_sort(move_value_list->begin(), move_value_list->end(), 
+    [](const MoveValue &data1, const MoveValue &data2){return data1.second < data2.second;});
+}
+
+inline void DescendingSort(std::vector<MoveValue> * const move_value_list)
+{
+  assert(move_value_list != nullptr);
+  stable_sort(move_value_list->begin(), move_value_list->end(), 
+    [](const MoveValue &data1, const MoveValue &data2){return data1.second > data2.second;});
+}
 }   // realcore
 
 #endif    // MOVE_INL_H

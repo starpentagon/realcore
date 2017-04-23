@@ -150,4 +150,24 @@ void GetSymmetricMoveList(const MoveList &move_list, const BoardSymmetry symmetr
   }
 }
 
+void SortByNearMove(const MovePosition move, MoveList * const move_list)
+{
+  assert(move_list != nullptr);
+  vector<MoveValue> move_distance_list;
+  move_distance_list.reserve(move_list->size());
+
+  for(const auto move_to : *move_list){
+    const auto distance = CalcBoardDistance(move, move_to);
+    move_distance_list.emplace_back(move_to, distance);
+  }
+
+  AscendingSort(&move_distance_list);
+
+  move_list->clear();
+  
+  for(const auto &near_move : move_distance_list){
+    *move_list += near_move.first;
+  }
+}
+
 }   // namespace realcore

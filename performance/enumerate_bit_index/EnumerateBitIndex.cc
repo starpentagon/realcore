@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
       }
 
       auto elapsed_time = chrono::system_clock::now() - start_time;
-      time_scan.push_back(chrono::duration_cast<chrono::milliseconds>(elapsed_time).count());
+      time_scan.emplace_back(chrono::duration_cast<chrono::milliseconds>(elapsed_time).count());
     }
 
     cout << "ScanBitSequence index sum: " << index_sum << endl;
@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
       }
   
       auto elapsed_time = chrono::system_clock::now() - start_time;
-      time_shift_map.push_back(chrono::duration_cast<chrono::milliseconds>(elapsed_time).count());
+      time_shift_map.emplace_back(chrono::duration_cast<chrono::milliseconds>(elapsed_time).count());
     }
 
     cout << "TableLookup index sum: " << index_sum << endl;
@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
       }
   
       auto elapsed_time = chrono::system_clock::now() - start_time;
-      time_rightmost.push_back(chrono::duration_cast<chrono::milliseconds>(elapsed_time).count());
+      time_rightmost.emplace_back(chrono::duration_cast<chrono::milliseconds>(elapsed_time).count());
     }
 
     cout << "EnumerateRightmostBit index sum: " << index_sum << endl;

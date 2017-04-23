@@ -125,6 +125,38 @@ inline const bool Board::IsTerminateMove(const bool black_turn, const MovePositi
   }
 }
 
+template<PlayerTurn P>
+inline void Board::EnumerateFourMoves(MoveBitSet * const four_move_set) const
+{
+  const auto &board_open_state = board_open_state_list_.back();
+  bit_board_.EnumerateFourMoves<P>(board_open_state, four_move_set);
+}
+
+inline void Board::EnumerateFourMoves(const bool is_black_turn, MoveBitSet * const four_move_set) const
+{
+  if(is_black_turn){
+    EnumerateFourMoves<kBlackTurn>(four_move_set);
+  }else{
+    EnumerateFourMoves<kWhiteTurn>(four_move_set);
+  }
+}
+
+template<PlayerTurn P>
+inline void Board::EnumerateFourMoves(std::vector<MovePair> * const four_move_list) const
+{
+  const auto &board_open_state = board_open_state_list_.back();
+  bit_board_.EnumerateFourMoves<P>(board_open_state, four_move_list);
+}
+
+inline void Board::EnumerateFourMoves(const bool is_black_turn, std::vector<MovePair> * const four_move_list) const
+{
+  if(is_black_turn){
+    EnumerateFourMoves<kBlackTurn>(four_move_list);
+  }else{
+    EnumerateFourMoves<kWhiteTurn>(four_move_list);
+  }
+}
+
 }   // namespace realcore
 
 #endif    // BOARD_INL_H

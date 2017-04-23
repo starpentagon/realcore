@@ -38,6 +38,9 @@ void GetMoveList(const MoveBitSet &move_bit_set, MoveList * const move_list);
 //! @param symmetric_move_list 対称変換した指し手リストの格納先
 void GetSymmetricMoveList(const MoveList &move_list, const BoardSymmetry symmetry, MoveList * const symmetric_move_list);
 
+//! @brief 指定の指し手とのBoardDistanceが昇順になるようにソートする
+void SortByNearMove(const MovePosition move, MoveList * const move_list);
+
 //! @brief 指し手リストの管理クラス
 //! @detail 以下の機能を提供する
 //! - 指し手のリスト管理

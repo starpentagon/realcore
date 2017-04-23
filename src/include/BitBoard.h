@@ -144,7 +144,7 @@ public:
   template<PlayerTurn P>
   void EnumerateOpenFourMoves(const BoardOpenState &board_open_state, MoveBitSet * const open_four_move_set) const;
   
-  //! @brief 達四点を列挙する
+  //! @brief 四ノビ点を列挙する
   template<PlayerTurn P>
   void EnumerateFourMoves(const BoardOpenState &board_open_state, MoveBitSet * const four_move_set) const;
 

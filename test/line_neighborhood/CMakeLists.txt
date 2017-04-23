@@ -28,6 +28,7 @@ link_directories($ENV{GTEST_DIR}/googlemock/gtest)
 add_executable(
     ${project_name}
     $ENV{REALCORE_DIR}/src/BitSearch.cc
+    $ENV{REALCORE_DIR}/src/Move.cc
     $ENV{REALCORE_DIR}/src/MoveList.cc
     $ENV{REALCORE_DIR}/src/BitBoard.cc
     $ENV{REALCORE_DIR}/src/LineNeighborhood.cc

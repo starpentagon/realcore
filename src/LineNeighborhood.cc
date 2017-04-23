@@ -133,7 +133,7 @@ void LineNeighborhood::GetBoardPositionList(const LocalBitBoard &bit_list, std::
       const auto open_four_shift = shift + GetIndexDifference(center_shift, bit_index);
 
       const auto board_position = realcore::GetBoardPosition(index, open_four_shift);
-      board_position_list->push_back(board_position);
+      board_position_list->emplace_back(board_position);
     }
   }
 }

@@ -481,6 +481,20 @@ TEST_F(MoveListTest, GetInBoardMoveBitSetTest)
   }
 }
 
+TEST_F(MoveListTest, SortByNearMoveTest)
+{
+  MoveList test_list;
+  
+  test_list += kMoveHH;
+  test_list += kMoveAA;
+  test_list += kMoveOO;
+
+  SortByNearMove(kMoveBB, &test_list);
+
+  ASSERT_EQ(kMoveAA, test_list[0]);
+  ASSERT_EQ(kMoveHH, test_list[1]);
+  ASSERT_EQ(kMoveOO, test_list[2]);
+}
 }   // namespace realcore
 
 

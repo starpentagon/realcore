@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <array>
 #include <vector>
+#include <set>
 
 #include "RealCore.h"
 #include "BitBoard.h"
@@ -33,7 +34,19 @@ bool IsEqual(const Board &board_1, const Board &board_2);
 void Copy(const Board &board_from, Board * const board_to);
 
 //! @brief 指し手リストが終端ではない正規手順かどうかを判定する
-const bool IsNormalNonTerminateSequence(const MoveList &move_list);
+const bool IsNonTerminateNormalSequence(const MoveList &move_list);
+
+//! @brief 指し手リストを終端ではない正規手順に修正する
+//! @pre 黒白同数 or 黒石数 = 白石数 + 1であること
+const bool MakeNonTerminateNormalSequence(const MoveList &original_move_list, MoveList * const modified_move_list);
+
+//! @param black_remain 未決定の黒石bit
+//! @param white_remain 未決定の白石bit
+//! @param on_overline_black 長連筋の両端の黒石bit
+//! @param on_overline_black 長連筋内の白石bit
+//! @param transposition_set 置換表
+//! @param modified_move_list 決定済の指し手リスト
+const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const MoveBitSet &white_remain, const MoveBitSet &on_overline_black, const MoveBitSet &on_overline_white, std::set<std::string> * const transposition_set, MoveList * const modified_move_list);
 
 //! @brief 盤面管理クラス
 class Board
@@ -106,6 +119,15 @@ public:
   //! @brief 禁点を列挙する
   //! @param 禁点の格納先
   void EnumerateForbiddenMoves(MoveBitSet * const forbidden_move_set) const;
+
+  //! @brief 四ノビ点を列挙する
+  template<PlayerTurn P>
+  void EnumerateFourMoves(MoveBitSet * const four_move_set) const;
+  void EnumerateFourMoves(const bool is_black_turn, MoveBitSet * const four_move_set) const;
+
+  template<PlayerTurn P>
+  void EnumerateFourMoves(std::vector<MovePair> * const four_move_list) const;
+  void EnumerateFourMoves(const bool is_black_turn, std::vector<MovePair> * const four_move_list) const;
 
 protected:
   //! @brief 盤面状態を保持するBitBoard
