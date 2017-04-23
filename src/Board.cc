@@ -233,15 +233,12 @@ const bool MakeNonTerminateNormalSequence(const MoveList &original_move_list, Mo
   assert(modified_move_list != nullptr);
   bool is_black_turn = true;
   MoveBitSet black_remain, white_remain;
-  MoveList black_move_list, white_move_list;
 
   for(const auto move : original_move_list){
     if(is_black_turn){
       black_remain.set(move);
-      black_move_list += move;
     }else{
       white_remain.set(move);
-      white_move_list += move;
     }
 
     is_black_turn = !is_black_turn;
@@ -255,75 +252,16 @@ const bool MakeNonTerminateNormalSequence(const MoveList &original_move_list, Mo
     return false;
   }
 
-  // 長連筋の両端にあたる黒石は優先的に打ち、長連筋間の白石は優先度を下げるため、その位置を求める
-  MoveBitSet on_overline_black, on_overline_white;
-
-  for(const auto move_from : black_move_list){
-    if(on_overline_black[move_from]){
-      continue;
-    }
-
-    for(const auto move_to : black_move_list){
-      // 長連筋かチェック
-      const auto board_distance = CalcBoardDistance(move_from, move_to);
-
-      if(board_distance != 5){
-        continue;
-      }
-
-      int black_stone_count = 0;
-
-      for(const auto black_move : black_move_list){
-        const auto distance_move_from = CalcBoardDistance(black_move, move_from);
-        const auto distance_move_to = CalcBoardDistance(black_move, move_to);
-
-        const bool is_in_overline = (distance_move_from <= 4) && (distance_move_to <= 4);
-        black_stone_count += is_in_overline;
-      }
-
-      if(black_stone_count != 3){
-        continue;
-      }
-
-      // move_from, move_toは長連筋の両端
-      on_overline_black.set(move_from);
-      on_overline_black.set(move_to);
-
-      // move_from <-> move_to間の白石は優先度を下げる
-      for(const auto white_move : white_move_list){
-        const auto distance_move_from = CalcBoardDistance(white_move, move_from);
-        const auto distance_move_to = CalcBoardDistance(white_move, move_to);
-
-        const bool is_in_overline = (distance_move_from <= 4) && (distance_move_to <= 4);
-
-        if(!is_in_overline){
-          continue;
-        }
-
-        on_overline_white.set(white_move);
-      }
-    }
-  }
-
-  set<string> transposition_set;
-  const bool is_modified = MakeNonTerminateNormalSequence(black_remain, white_remain, on_overline_black, on_overline_white, &transposition_set, modified_move_list);
-
+  const bool is_modified = MakeNonTerminateNormalSequence(black_remain, white_remain, modified_move_list);
   return is_modified;
 }
 
-const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const MoveBitSet &white_remain, const MoveBitSet &on_overline_black, const MoveBitSet &on_overline_white, set<string> * const transposition_set, MoveList * const modified_move_list)
+const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const MoveBitSet &white_remain, MoveList * const modified_move_list)
 {
   assert(modified_move_list != nullptr);
-  assert(transposition_set != nullptr);
 
   if(black_remain.none() && white_remain.none()){
     return true;
-  }
-
-  const auto remain_bit = black_remain | white_remain;
-  
-  if(transposition_set->find(remain_bit.to_string()) != transposition_set->end()){
-    return false;
   }
 
   Board board(*modified_move_list);
@@ -350,49 +288,6 @@ const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const 
   const MovePosition last_move = modified_move_list->empty() ? kMoveHH : modified_move_list->GetLastMove();
   SortByNearMove(last_move, &candidate_move_list);
 
-  // 四ノビの発生を抑制するために長連筋にある石の優先度を変更する
-  const MoveBitSet &on_overline = is_black_turn ? on_overline_black : on_overline_white;
-
-  MoveBitSet four_move_bit;
-  board.EnumerateFourMoves(is_black_turn, &four_move_bit);
-
-  vector<MoveValue> move_priority_list;
-  move_priority_list.reserve(candidate_move_list.size());
-
-  for(size_t i=0, size=candidate_move_list.size(); i<size; i++){
-    const auto move = candidate_move_list[i];
-    int64_t move_priority = i;
-
-    if(move == kMoveHH){
-      // 天元は最優先
-      move_priority -= kInBoardMoveNum * kInBoardMoveNum;
-    }
-
-    if(on_overline[move]){
-      if(is_black_turn){
-        // 長連筋の両端を優先的に着手し、四ノビの発生を抑える
-        move_priority -= kInBoardMoveNum;
-      }else{
-        // 長連筋に割り込む手の優先度を下げ、四ノビの発生を抑える
-        move_priority += kInBoardMoveNum;
-      }
-    }
-
-    if(four_move_bit[move]){
-      // 四ノビの優先度を最大限下げる
-      move_priority += kInBoardMoveNum * kInBoardMoveNum;
-    }
-
-    move_priority_list.emplace_back(move, move_priority);
-  }
-
-  AscendingSort(&move_priority_list);
-  candidate_move_list.clear();
-
-  for(const auto move_value : move_priority_list){
-    candidate_move_list += move_value.first;
-  }
-
   for(const auto move : candidate_move_list)
   {
     if(!board.IsNormalMove(is_black_turn, move)){
@@ -413,7 +308,7 @@ const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const 
 
     *modified_move_list += move;
 
-    const auto is_modified = MakeNonTerminateNormalSequence(child_black_remain, child_white_remain, on_overline_black, on_overline_white, transposition_set, modified_move_list);
+    const auto is_modified = MakeNonTerminateNormalSequence(child_black_remain, child_white_remain, modified_move_list);
 
     if(is_modified){
       return true;
@@ -422,8 +317,6 @@ const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const 
     --(*modified_move_list);
   }
 
-  cout << modified_move_list->str() << endl;
-  transposition_set->insert(remain_bit.to_string());
   return false;
 }
 

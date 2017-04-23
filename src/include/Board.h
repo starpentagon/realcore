@@ -9,7 +9,6 @@
 #include <cstdint>
 #include <array>
 #include <vector>
-#include <set>
 
 #include "RealCore.h"
 #include "BitBoard.h"
@@ -46,7 +45,7 @@ const bool MakeNonTerminateNormalSequence(const MoveList &original_move_list, Mo
 //! @param on_overline_black 長連筋内の白石bit
 //! @param transposition_set 置換表
 //! @param modified_move_list 決定済の指し手リスト
-const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const MoveBitSet &white_remain, const MoveBitSet &on_overline_black, const MoveBitSet &on_overline_white, std::set<std::string> * const transposition_set, MoveList * const modified_move_list);
+const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const MoveBitSet &white_remain, MoveList * const modified_move_list);
 
 //! @brief 盤面管理クラス
 class Board
