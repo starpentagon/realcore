@@ -1,6 +1,7 @@
 #ifndef HASH_TABLE_INL_H
 #define HASH_TABLE_INL_H
-#include <iostream>
+
+#include "MoveList.h"
 #include "HashTable.h"
 
 namespace realcore{
@@ -142,6 +143,46 @@ inline constexpr size_t HashTable<T>::CalcHashTableSize(const size_t table_space
   }
 
   return table_size[kTableSize-1];
+}
+
+inline const HashValue CalcHashValue(const bool is_black_turn, const MovePosition move, const HashValue current_value)
+{
+  static const std::array<HashValue, kMoveNum> kBlackHashValue{{
+    #include "def/HashValueBlack.h"
+  }};
+
+  static const std::array<HashValue, kMoveNum> kWhiteHashValue{{
+    #include "def/HashValueWhite.h"
+  }};
+
+  if(is_black_turn){
+    return current_value ^ kBlackHashValue[move];
+  }else{
+    return current_value ^ kWhiteHashValue[move];
+  }
+}
+
+inline const HashValue CalcHashValue(const MoveList &board_move_sequence)
+{
+  size_t black_pass_count = 0, white_pass_count = 0;
+  HashValue hash_value = 0;
+  bool is_black_turn = true;
+
+  for(const auto move : board_move_sequence){
+    if(move != kNullMove){
+      hash_value = CalcHashValue(is_black_turn, move, hash_value);
+    }else{
+      auto &pass_count = is_black_turn ? black_pass_count : white_pass_count;
+      const auto pass_move = static_cast<MovePosition>(move + 16 * pass_count);
+
+      hash_value = CalcHashValue(is_black_turn, pass_move, hash_value);
+      pass_count++;
+    }
+
+    is_black_turn = !is_black_turn;
+  }
+
+  return hash_value;
 }
 
 }

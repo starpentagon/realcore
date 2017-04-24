@@ -1,6 +1,7 @@
 #include <random>
 #include "gtest/gtest.h"
 
+#include "MoveList.h"
 #include "HashTable.h"
 
 static constexpr size_t test_table_space = 1;   // 1MB分確保する
@@ -245,4 +246,37 @@ TEST_F(HashTableTest, GetTableIndexTest)
   GetTableIndexTest();
 }
 
+TEST_F(HashTableTest, CalcHashValueTest)
+{
+  MoveList move_list("hhppaappbbccpp");
+  const auto hash_value = CalcHashValue(move_list);
+
+  HashValue expected = 0;
+  
+  expected = CalcHashValue(true, kMoveHH, expected);
+  expected = CalcHashValue(false, kNullMove, expected);
+  expected = CalcHashValue(true, kMoveAA, expected);
+  expected = CalcHashValue(false, static_cast<MovePosition>(kNullMove + 16), expected);
+  expected = CalcHashValue(true, kMoveBB, expected);
+  expected = CalcHashValue(false, kMoveCC, expected);
+  expected = CalcHashValue(true, kNullMove, expected);
+
+  EXPECT_EQ(expected, hash_value);
+}
+
+TEST_F(HashTableTest, CalcHashValueDiffTest)
+{
+  HashValue hash_value = 0ULL;
+
+  for(const auto move : GetAllMove()){
+    const auto val_black = CalcHashValue(true, move, hash_value);
+    const auto val_white = CalcHashValue(false, move, hash_value);
+
+    if(IsInBoardMove(move)){
+      ASSERT_NE(val_black, val_white);
+    }else{
+      ASSERT_EQ(val_black, val_white);
+    }
+  }
+}
 }   // namespace realcore
