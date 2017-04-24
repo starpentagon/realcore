@@ -32,7 +32,7 @@ public:
     ASSERT_EQ(kLockFree, hash_table.lock_control_);
     ASSERT_FALSE(hash_table.mutex_list_.empty());
     ASSERT_EQ(nullptr, hash_table.mutex_list_[0]);
-    ASSERT_EQ(0, hash_table.logic_counter_);
+    ASSERT_EQ(1, hash_table.logic_counter_);
   }
 
   void LockConstructorTest(){
@@ -42,14 +42,14 @@ public:
     ASSERT_EQ(kLockTable, hash_table.lock_control_);
     ASSERT_FALSE(hash_table.mutex_list_.empty());
     ASSERT_NE(nullptr, hash_table.mutex_list_[0]);
-    ASSERT_EQ(0, hash_table.logic_counter_);
+    ASSERT_EQ(1, hash_table.logic_counter_);
   }
 
   void FindTest(){
     HashTable<TestData> hash_table(test_table_space, kLockTable);
 
     // find
-    constexpr HashValue hash_value = 1;
+    constexpr HashValue hash_value = 0;
     TestData data;
     bool is_find = hash_table.find(hash_value, &data);
     ASSERT_FALSE(is_find);
@@ -67,7 +67,7 @@ public:
 
   void UpsertTest(){
     HashTable<TestData> hash_table(test_table_space, kLockTable);
-    constexpr HashValue hash_value = 1;
+    constexpr HashValue hash_value = 0;
     
     // insert
     {
@@ -156,14 +156,14 @@ public:
     
     // todo upsertをしてtable要素数も試験する
 
-    for(size_t i=1; i<=kMaxCounter; i++){
+    for(size_t i=2; i<=kMaxCounter; i++){
       hash_table.LogicalInitialize();
       ASSERT_EQ(i, hash_table.logic_counter_);
     }
 
-    // kMaxCounterを超えると物理クリアされてカウンタは0に戻る
+    // kMaxCounterを超えると物理クリアされてカウンタは1に戻る
     hash_table.LogicalInitialize();
-    ASSERT_EQ(0, hash_table.logic_counter_);
+    ASSERT_EQ(1, hash_table.logic_counter_);
   }
 
   void CalcHashTableSizeTest(){

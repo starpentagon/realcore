@@ -7,7 +7,7 @@ namespace realcore{
 
 template<class T>
 HashTable<T>::HashTable(const size_t table_space, const bool lock_control)
-: lock_control_(lock_control), logic_counter_(0)
+: lock_control_(lock_control), logic_counter_(1)
 {
   const size_t table_size = CalcHashTableSize(table_space);
   hash_table_.reserve(table_size);
@@ -65,6 +65,7 @@ void HashTable<T>::Upsert(const HashValue hash_value, const T &element)
 {
   const auto index = GetTableIndex(hash_value);
   hash_table_[index] = element;
+  hash_table_[index].logic_counter = logic_counter_;
 }
 
 template<class T>
@@ -93,7 +94,7 @@ void HashTable<T>::clear()
     hash_table_.emplace_back();
   }
 
-  logic_counter_ = 0;
+  logic_counter_ = 1;
 }
 
 template<class T>

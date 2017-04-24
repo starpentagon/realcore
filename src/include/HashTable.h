@@ -72,7 +72,7 @@ private:
 
   bool lock_control_;           //!< Hash tableのlockフラグ
   std::vector<boost::mutex*> mutex_list_;   //!< Lock用mutexのリスト
-  TableLogicCounter logic_counter_;   //!< 論理カウンタ
+  TableLogicCounter logic_counter_;   //!< 論理カウンタ(T要素の初期値が0のためHashTableでは1から開始する)
 };
 
 }   // namespace realcore
