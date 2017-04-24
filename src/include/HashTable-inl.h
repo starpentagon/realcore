@@ -47,7 +47,10 @@ template<class T>
 const bool HashTable<T>::find(const HashValue hash_value, T * const element) const
 {
   const auto index = GetTableIndex(hash_value);
+
+  Lock lock(mutex_list_[index], lock_control_);
   const T& hash_data = hash_table_[index];
+  lock.Unlock();
 
   if(hash_data.hash_value != hash_value || hash_data.logic_counter != logic_counter_){
     return false;
@@ -64,6 +67,8 @@ template<class T>
 void HashTable<T>::Upsert(const HashValue hash_value, const T &element)
 {
   const auto index = GetTableIndex(hash_value);
+
+  Lock lock(mutex_list_[index], lock_control_);
   hash_table_[index] = element;
   hash_table_[index].logic_counter = logic_counter_;
 }
