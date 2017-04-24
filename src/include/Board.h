@@ -133,7 +133,7 @@ protected:
   BitBoard bit_board_;
 
   //! @brief 盤面の指し手リスト
-  MoveList move_list_;
+  MoveList board_move_sequence_;
 
   //! @brief 盤面空点状態リスト
   std::vector<BoardOpenState> board_open_state_list_;

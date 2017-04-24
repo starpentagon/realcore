@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <array>
+#include <algorithm>
 
 #include "Move.h"
 

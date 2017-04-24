@@ -23,7 +23,7 @@ public:
     const MoveList move_list;
 
     EXPECT_TRUE(board.bit_board_ == bit_board);
-    EXPECT_TRUE(board.move_list_ == move_list);
+    EXPECT_TRUE(board.board_move_sequence_ == move_list);
   }
 
   void CopyConstructorTest(){
@@ -32,7 +32,7 @@ public:
 
     const Board board_2(board_1);
     EXPECT_TRUE(board_1.bit_board_ == board_2.bit_board_);
-    EXPECT_TRUE(board_1.move_list_ == board_2.move_list_);
+    EXPECT_TRUE(board_1.board_move_sequence_ == board_2.board_move_sequence_);
   }
 
   void MoveListConstructorTest(){
@@ -44,7 +44,7 @@ public:
     board_expect.MakeMove(kMoveHG);
 
     EXPECT_TRUE(board.bit_board_ == board_expect.bit_board_);
-    EXPECT_TRUE(board.move_list_ == board_expect.move_list_);
+    EXPECT_TRUE(board.board_move_sequence_ == board_expect.board_move_sequence_);
   }
 
   void BoardOpenStateUpdateTest(){
@@ -191,31 +191,31 @@ public:
     Board board;
     MoveList move_list;
 
-    ASSERT_TRUE(board.move_list_ == move_list);
+    ASSERT_TRUE(board.board_move_sequence_ == move_list);
 
     // 黒の着手
     board.MakeMove(kMoveHH);
     move_list += kMoveHH;
 
-    ASSERT_TRUE(board.move_list_ == move_list);
+    ASSERT_TRUE(board.board_move_sequence_ == move_list);
 
     // 白の着手
     board.MakeMove(kMoveHG);
     move_list += kMoveHG;
 
-    ASSERT_TRUE(board.move_list_ == move_list);
+    ASSERT_TRUE(board.board_move_sequence_ == move_list);
 
     // 1手戻す
     board.UndoMove();
     --move_list;
 
-    ASSERT_TRUE(board.move_list_ == move_list);
+    ASSERT_TRUE(board.board_move_sequence_ == move_list);
     
     // 1手戻す
     board.UndoMove();
     --move_list;
 
-    ASSERT_TRUE(board.move_list_ == move_list);
+    ASSERT_TRUE(board.board_move_sequence_ == move_list);
   }
 
   void BoardOpenStateStackTest(){

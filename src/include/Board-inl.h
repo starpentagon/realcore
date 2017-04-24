@@ -19,8 +19,8 @@ const bool Board::IsNormalMove(const MovePosition move) const
   }
 
   // 相手に四があるかチェック
-  if(!move_list_.empty()){
-    const auto last_move = move_list_.GetLastMove();
+  if(!board_move_sequence_.empty()){
+    const auto last_move = board_move_sequence_.GetLastMove();
 
     constexpr PlayerTurn Q = GetOpponentTurn(P);
     MovePosition guard_move;
