@@ -30,16 +30,12 @@ public:
     } 
   }
 
-  void Unlock(){
+  ~Lock()
+  {
     if(lock_control_){
       assert(mutex_ != nullptr);
       mutex_->unlock();
     }
-  }
-
-  ~Lock()
-  {
-    Unlock();
   }
 
 private:

@@ -248,20 +248,46 @@ TEST_F(HashTableTest, GetTableIndexTest)
 
 TEST_F(HashTableTest, CalcHashValueTest)
 {
-  MoveList move_list("hhppaappbbccpp");
-  const auto hash_value = CalcHashValue(move_list);
+  {
+    // 黒白互いに同じ回数Passをする場合
+    MoveList move_list("hhppaabbpp");
+    const auto hash_value = CalcHashValue(move_list);
 
-  HashValue expected = 0;
-  
-  expected = CalcHashValue(true, kMoveHH, expected);
-  expected = CalcHashValue(false, kNullMove, expected);
-  expected = CalcHashValue(true, kMoveAA, expected);
-  expected = CalcHashValue(false, static_cast<MovePosition>(kNullMove + 16), expected);
-  expected = CalcHashValue(true, kMoveBB, expected);
-  expected = CalcHashValue(false, kMoveCC, expected);
-  expected = CalcHashValue(true, kNullMove, expected);
+    HashValue expected = 0;
+    
+    expected = CalcHashValue(true, kMoveHH, expected);
+    expected = CalcHashValue(true, kMoveAA, expected);
+    expected = CalcHashValue(false, kMoveBB, expected);
 
-  EXPECT_EQ(expected, hash_value);
+    EXPECT_EQ(expected, hash_value);
+  }
+  {
+    // Passを複数含む手順
+    MoveList move_list("hhppaappbbccpp");
+    const auto hash_value = CalcHashValue(move_list);
+
+    HashValue expected = 0;
+    
+    expected = CalcHashValue(true, kMoveHH, expected);
+    expected = CalcHashValue(false, kNullMove, expected);
+    expected = CalcHashValue(true, kMoveAA, expected);
+    expected = CalcHashValue(false, static_cast<MovePosition>(kNullMove + 16), expected);
+    expected = CalcHashValue(true, kMoveBB, expected);
+    expected = CalcHashValue(false, kMoveCC, expected);
+    expected = CalcHashValue(true, kNullMove, expected);
+
+    EXPECT_EQ(expected, hash_value);
+
+    HashValue expected_clear_pass = 0;
+
+    expected_clear_pass = CalcHashValue(true, kMoveHH, expected_clear_pass);
+    expected_clear_pass = CalcHashValue(true, kMoveAA, expected_clear_pass);
+    expected_clear_pass = CalcHashValue(false, static_cast<MovePosition>(kNullMove + 16), expected_clear_pass);
+    expected_clear_pass = CalcHashValue(true, kMoveBB, expected_clear_pass);
+    expected_clear_pass = CalcHashValue(false, kMoveCC, expected_clear_pass);
+
+    EXPECT_EQ(expected_clear_pass, hash_value);
+  }
 }
 
 TEST_F(HashTableTest, CalcHashValueDiffTest)

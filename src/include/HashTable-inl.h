@@ -49,18 +49,20 @@ const bool HashTable<T>::find(const HashValue hash_value, T * const element) con
 {
   const auto index = GetTableIndex(hash_value);
 
-  Lock lock(mutex_list_[index], lock_control_);
-  const T& hash_data = hash_table_[index];
-  lock.Unlock();
+  {
+    Lock lock(mutex_list_[index], lock_control_);
+    const T& hash_data = hash_table_[index];
 
-  if(hash_data.hash_value != hash_value || hash_data.logic_counter != logic_counter_){
-    return false;
-  }
+    if(hash_data.hash_value != hash_value || hash_data.logic_counter != logic_counter_){
+      return false;
+    }
 
-  // Hash値が一致するデータがある
-  assert(element != nullptr);
+    // Hash値が一致するデータがある
+    assert(element != nullptr);
 
-  *element = hash_data;
+    *element = hash_data;
+  }  
+
   return true;
 }
 
@@ -69,9 +71,11 @@ void HashTable<T>::Upsert(const HashValue hash_value, const T &element)
 {
   const auto index = GetTableIndex(hash_value);
 
-  Lock lock(mutex_list_[index], lock_control_);
-  hash_table_[index] = element;
-  hash_table_[index].logic_counter = logic_counter_;
+  {
+    Lock lock(mutex_list_[index], lock_control_);
+    hash_table_[index] = element;
+    hash_table_[index].logic_counter = logic_counter_;
+  }
 }
 
 template<class T>
