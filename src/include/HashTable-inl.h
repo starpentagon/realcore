@@ -79,6 +79,12 @@ void HashTable<T>::Upsert(const HashValue hash_value, const T &element)
 }
 
 template<class T>
+void HashTable<T>::Initialize()
+{
+  LogicalInitialize();
+}
+
+template<class T>
 void HashTable<T>::LogicalInitialize()
 {
   constexpr TableLogicCounter kMaxCounter = std::numeric_limits<TableLogicCounter>::max();
