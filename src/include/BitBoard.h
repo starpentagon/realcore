@@ -151,6 +151,10 @@ public:
   template<PlayerTurn P>
   void EnumerateFourMoves(const BoardOpenState &board_open_state, std::vector<MovePair> * const four_move_list) const;
 
+  //! @brief 盤面情報を取得する
+  //! @note bit_boardの横方向のStateBitを返す
+  void GetBoardStateBit(std::array<StateBit, 8> * const board_info) const;
+
 private:
   //! @brief 盤面の空点状態を取得する
   //! @param board_open_state 空点状態の格納先

@@ -316,6 +316,15 @@ inline void BitBoard::EnumerateForbiddenMoves(MoveBitSet * const forbidden_move_
   EnumerateForbiddenMoves(board_open_state, forbidden_move_set);
 }
 
+inline void BitBoard::GetBoardStateBit(std::array<StateBit, 8> * const board_info) const
+{
+  assert(board_info != nullptr);
+  
+  for(size_t i=0; i<8; i++){
+    (*board_info)[i] = bit_board_[i];
+  }
+}
+
 }
 
 #endif    // BIT_BOARD_INL_H

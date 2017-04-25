@@ -634,6 +634,20 @@ public:
     EXPECT_TRUE(expect_1 == open_state_list[0]);
     EXPECT_TRUE(expect_2 == open_state_list[1]);
   }
+
+  void GetBoardStateBitTest(){
+    BitBoard bit_board;
+
+    bit_board.SetState<kBlackStone>(kMoveHH);
+    bit_board.SetState<kWhiteStone>(kMoveHG);
+
+    array<StateBit, 8> board_info;
+    bit_board.GetBoardStateBit(&board_info);
+
+    for(size_t i=0; i<8; i++){
+      ASSERT_EQ(bit_board.bit_board_[i], board_info[i]);
+    }
+  }
 };
 
 TEST_F(BitBoardTest, DefaultConstructorTest){
@@ -1050,8 +1064,15 @@ TEST_F(BitBoardTest, EnumerateFourMovesWhiteTest1)
 {
   EnumerateFourMovesWhiteTest1();
 }
+
 TEST_F(BitBoardTest, EnumerateFourMovesWhiteTest2)
 {
   EnumerateFourMovesWhiteTest2();
 }
+
+TEST_F(BitBoardTest, GetBoardStateBitTest)
+{
+  GetBoardStateBitTest();
+}
+
 }
