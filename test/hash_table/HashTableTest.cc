@@ -174,32 +174,32 @@ public:
       ASSERT_EQ(1531, table_size);
     }
     {
-      // 1MB -> 98,299要素
+      // 1MB -> 49,139要素
       constexpr size_t table_size = HashTable<uint64_t>::CalcHashTableSize(test_table_space);
       ASSERT_EQ(49139, table_size);
     }
     {
-      // 10MB -> 786,431要素
+      // 10MB -> 393,209要素
       constexpr size_t table_size = HashTable<uint64_t>::CalcHashTableSize(10 * test_table_space);
       ASSERT_EQ(393209, table_size);
     }
     {
-      // 100MB -> 12,582,893要素
+      // 100MB -> 6,291,449要素
       constexpr size_t table_size = HashTable<uint64_t>::CalcHashTableSize(100 * test_table_space);
       ASSERT_EQ(6291449, table_size);
     }
     {
-      // 1000MB -> 100,663,291要素
+      // 1000MB -> 50,331,599要素
       constexpr size_t table_size = HashTable<uint64_t>::CalcHashTableSize(1000 * test_table_space);
       ASSERT_EQ(50331599, table_size);
     }
     {
-      // 10000MB -> 805,306,357要素
+      // 10000MB -> 402,653,117要素
       constexpr size_t table_size = HashTable<uint64_t>::CalcHashTableSize(10000 * test_table_space);
       ASSERT_EQ(402653117, table_size);
     }
     {
-      // 100000MB -> 1610612711要素(上限)
+      // 100000MB -> 1,610,612,711要素(上限)
       constexpr size_t table_size = HashTable<uint64_t>::CalcHashTableSize(100000 * test_table_space);
       ASSERT_EQ(1610612711, table_size);
     }
@@ -304,5 +304,21 @@ TEST_F(HashTableTest, CalcHashValueDiffTest)
       ASSERT_EQ(val_black, val_white);
     }
   }
+}
+
+TEST_F(HashTableTest, sizeTest)
+{
+  HashTable<TestData> hash_table(test_table_space, kLockTable);
+  ASSERT_EQ(24571, hash_table.size());
+}
+
+TEST_F(HashTableTest, spaceTest)
+{
+  HashTable<TestData> hash_table(test_table_space, kLockTable);
+
+  const auto space = hash_table.space();
+  const auto expect_space = 1.0 * (sizeof(TestData) + sizeof(boost::mutex*)) * hash_table.size() / (1024 * 1024);
+
+  ASSERT_DOUBLE_EQ(expect_space, space);
 }
 }   // namespace realcore

@@ -52,6 +52,12 @@ public:
   //! @brief Hash tableの検索を行う
   const bool find(const HashValue hash_value, T * const element) const;
 
+  //! @brief Hash tableの要素数を返す
+  const size_t size() const;
+
+  //! @brief Hash tableの確保したメモリ量(MB)を返す
+  const double space() const;
+
 private:
   //! @brief Hash値に対応するHash tableのindexを取得する
   const size_t GetTableIndex(const HashValue hash_value) const;

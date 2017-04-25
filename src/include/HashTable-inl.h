@@ -108,6 +108,21 @@ void HashTable<T>::clear()
 }
 
 template<class T>
+inline const size_t HashTable<T>::size() const
+{
+  return hash_table_.size();
+}
+
+template<class T>
+const double HashTable<T>::space() const
+{
+  constexpr size_t kMegaBytes = 1024 * 1024;
+  constexpr size_t element_size = sizeof(T) + sizeof(boost::mutex*);
+
+  return 1.0 * element_size * size() / kMegaBytes;
+}
+
+template<class T>
 inline constexpr size_t HashTable<T>::CalcHashTableSize(const size_t table_space){
   constexpr size_t kMegaBytes = 1024 * 1024;
   const size_t max_element_count = table_space * kMegaBytes / (sizeof(T) + sizeof(boost::mutex*));
