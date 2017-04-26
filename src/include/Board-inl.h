@@ -167,9 +167,9 @@ inline void Board::EnumerateSemiThreeMoves(MoveBitSet * const semi_three_move_se
 inline void Board::EnumerateSemiThreeMoves(const bool is_black_turn, MoveBitSet * const semi_three_move_set) const
 {
   if(is_black_turn){
-    EnumerateSemiThreeMoves<kBlackTurn>(four_move_list);
+    EnumerateSemiThreeMoves<kBlackTurn>(semi_three_move_set);
   }else{
-    EnumerateSemiThreeMoves<kWhiteTurn>(four_move_list);
+    EnumerateSemiThreeMoves<kWhiteTurn>(semi_three_move_set);
   }
 }
 
