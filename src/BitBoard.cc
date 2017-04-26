@@ -469,6 +469,42 @@ void BitBoard::EnumerateFourMoves<kWhiteTurn>(const BoardOpenState &board_open_s
   }
 }
 
+template<>
+void BitBoard::EnumerateSemiThreeMoves<kBlackTurn>(const BoardOpenState &board_open_state, MoveBitSet * const semi_three_move_set) const
+{
+  constexpr auto kPattern = kNextSemiThreeBlack;
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kPattern));
+  assert(semi_three_move_set != nullptr);
+  assert(semi_three_move_set->none());
+
+  const auto& open_state_list = board_open_state.GetList(kPattern);
+
+  for(const auto &open_state : open_state_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    semi_three_move_set->set(move);
+  }
+}
+
+template<>
+void BitBoard::EnumerateSemiThreeMoves<kWhiteTurn>(const BoardOpenState &board_open_state, MoveBitSet * const semi_three_move_set) const
+{
+  constexpr auto kPattern = kNextSemiThreeWhite;
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kPattern));
+  assert(semi_three_move_set != nullptr);
+  assert(semi_three_move_set->none());
+
+  const auto& open_state_list = board_open_state.GetList(kPattern);
+
+  for(const auto &open_state : open_state_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    semi_three_move_set->set(move);
+  }
+}
+
 const string BitBoard::str() const
 {
   static array<string, kBoardLineNum + 1> cordinate_str{{

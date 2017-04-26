@@ -128,6 +128,11 @@ public:
   void EnumerateFourMoves(std::vector<MovePair> * const four_move_list) const;
   void EnumerateFourMoves(const bool is_black_turn, std::vector<MovePair> * const four_move_list) const;
 
+  //! @brief 見かけの三ノビ点を列挙する
+  template<PlayerTurn P>
+  void EnumerateSemiThreeMoves(MoveBitSet * const semi_three_move_set) const;
+  void EnumerateSemiThreeMoves(const bool is_black_turn, MoveBitSet * const semi_three_move_set) const;
+
 protected:
   //! @brief 盤面状態を保持するBitBoard
   BitBoard bit_board_;

@@ -579,6 +579,39 @@ public:
     EXPECT_TRUE(expect_4 == open_state_list[3]);
   }
 
+  void EnumerateSemiThreeBlackTest()
+  {
+    // kNextSemiThreeBlack
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . x . . . . . . . . | F 
+    // G | . . . . . . . o . . . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhigff"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet semi_three_bit;
+    bit_board.EnumerateSemiThreeMoves<kBlackTurn>(board_open_state, &semi_three_bit);
+
+    ASSERT_EQ(3, semi_three_bit.count());
+    EXPECT_TRUE(semi_three_bit[kMoveEE]);
+    EXPECT_TRUE(semi_three_bit[kMoveGG]);
+    EXPECT_TRUE(semi_three_bit[kMoveII]);
+  }
+
   void GetOpenStateSemiThreeWhiteTest(){
     // kNextSemiThreeWhite
     //   A B C D E F G H I J K L M N O 
@@ -633,6 +666,38 @@ public:
     ASSERT_EQ(2, open_state_list.size());
     EXPECT_TRUE(expect_1 == open_state_list[0]);
     EXPECT_TRUE(expect_2 == open_state_list[1]);
+  }
+
+  void EnumerateSemiThreeWhiteTest()
+  {
+    // kNextSemiThreeWhite
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . o . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . x . . . . . . . . | F 
+    // G | . . . . . . . o . . . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhigffid"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet semi_three_bit;
+    bit_board.EnumerateSemiThreeMoves<kWhiteTurn>(board_open_state, &semi_three_bit);
+
+    ASSERT_EQ(2, semi_three_bit.count());
+    EXPECT_TRUE(semi_three_bit[kMoveIE]);
+    EXPECT_TRUE(semi_three_bit[kMoveIF]);
   }
 
   void GetBoardStateBitTest(){
@@ -1068,6 +1133,16 @@ TEST_F(BitBoardTest, EnumerateFourMovesWhiteTest1)
 TEST_F(BitBoardTest, EnumerateFourMovesWhiteTest2)
 {
   EnumerateFourMovesWhiteTest2();
+}
+
+TEST_F(BitBoardTest, EnumerateSemiThreeBlackTest)
+{
+  EnumerateSemiThreeBlackTest();
+}
+
+TEST_F(BitBoardTest, EnumerateSemiThreeWhiteTest)
+{
+  EnumerateSemiThreeWhiteTest();
 }
 
 TEST_F(BitBoardTest, GetBoardStateBitTest)

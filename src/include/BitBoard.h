@@ -151,6 +151,10 @@ public:
   template<PlayerTurn P>
   void EnumerateFourMoves(const BoardOpenState &board_open_state, std::vector<MovePair> * const four_move_list) const;
 
+  //! @brief 見かけの三ノビ点を列挙する
+  template<PlayerTurn P>
+  void EnumerateSemiThreeMoves(const BoardOpenState &board_open_state, MoveBitSet * const semi_three_move_set) const;
+
   //! @brief 盤面情報を取得する
   //! @note bit_boardの横方向のStateBitを返す
   void GetBoardStateBit(std::array<StateBit, 8> * const board_info) const;
