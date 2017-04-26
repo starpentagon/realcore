@@ -29,6 +29,17 @@ inline const MoveList& MoveList::operator=(const MovePosition move)
   return *this;
 }
 
+inline const MoveList& MoveList::operator=(const std::vector<MoveValue> &move_value_list){
+  move_list_.clear();
+  ReserveInitial(move_value_list.size());
+
+  for(const auto &move_value : move_value_list){
+    *this += move_value.first;
+  }
+
+  return *this;
+}
+
 inline const MoveList& MoveList::operator+=(const MoveList &move_list)
 {
   for(const auto move : move_list){

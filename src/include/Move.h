@@ -92,6 +92,9 @@ const MovePosition GetMove(const Cordinate x, const Cordinate y);
 //! @retval 対称変換した位置
 const MovePosition GetSymmetricMove(const MovePosition move, const BoardSymmetry symmetry);
 
+static constexpr size_t kMaxBoardDistance = 225;    // BoardDistanceの最大値
+static constexpr size_t kMaxInBoardDistance = 119;  // 盤内の手間の最大値
+
 //! @brief 盤面距離を求める
 //! @note from, toのいずれかが盤外の場合は225を返す
 const size_t CalcBoardDistance(const MovePosition from, const MovePosition to);

@@ -128,6 +128,20 @@ TEST_F(MoveListTest, AssignOperTest)
   list_3 = kMoveAA;
 
   EXPECT_TRUE(list_1 == list_3);
+
+  // MoveValue版
+  std::vector<MoveValue> move_value_list;
+  move_value_list.emplace_back(kMoveHH, 0);
+  move_value_list.emplace_back(kMoveHI, 1);
+  move_value_list.emplace_back(kMoveHJ, 2);
+
+  MoveList list_4;
+  list_4 = move_value_list;
+
+  ASSERT_EQ(3, list_4.size());
+  ASSERT_EQ(kMoveHH, list_4[0]);
+  ASSERT_EQ(kMoveHI, list_4[1]);
+  ASSERT_EQ(kMoveHJ, list_4[2]);  
 }
 
 TEST_F(MoveListTest, CompareOperTest)

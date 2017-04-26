@@ -88,6 +88,7 @@ public:
 
   //! @brief 代入演算子
   const MoveList& operator=(const MoveList &move_list);
+  const MoveList& operator=(const std::vector<MoveValue> &move_value);
   const MoveList& operator=(const MovePosition move);
 
   //! @brief 連結演算子
