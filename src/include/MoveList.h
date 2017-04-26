@@ -41,6 +41,10 @@ void GetSymmetricMoveList(const MoveList &move_list, const BoardSymmetry symmetr
 //! @brief 指定の指し手とのBoardDistanceが昇順になるようにソートする
 void SortByNearMove(const MovePosition move, MoveList * const move_list);
 
+//! @brief 盤面距離を求める
+//! @note from, toのいずれかが盤外の場合は225を返す
+const size_t CalcBoardDistance(const MovePosition from, const MoveList &move_list);
+
 //! @brief 指し手リストの管理クラス
 //! @detail 以下の機能を提供する
 //! - 指し手のリスト管理

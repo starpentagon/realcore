@@ -509,6 +509,26 @@ TEST_F(MoveListTest, SortByNearMoveTest)
   ASSERT_EQ(kMoveHH, test_list[1]);
   ASSERT_EQ(kMoveOO, test_list[2]);
 }
+
+TEST_F(MoveListTest, CalcBoardDistanceTest)
+{
+  constexpr MovePosition from_move = kMoveHH;
+  MoveList move_list;
+
+  move_list += kMoveBG;
+  move_list += kMoveLO;
+  move_list += kMoveEF;
+
+  size_t expect_distance = kMaxBoardDistance;
+
+  for(const auto move : move_list){
+    expect_distance = min(expect_distance, CalcBoardDistance(from_move, move));
+  }
+
+  const auto distance = CalcBoardDistance(from_move, move_list);
+  ASSERT_EQ(expect_distance, distance);
+}
+
 }   // namespace realcore
 
 

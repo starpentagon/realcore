@@ -173,6 +173,17 @@ inline const MoveBitSet& GetInBoardMoveBitSet(){
   return in_board_move_bit;
 }
 
+inline const size_t CalcBoardDistance(const MovePosition from, const MoveList &move_list)
+{
+  auto distance = kMaxBoardDistance;
+
+  for(const auto move : move_list){
+    distance = std::min(distance, CalcBoardDistance(from, move));
+  }
+
+  return distance;
+}
+
 }
 
 #endif  // MOVE_LIST_INL_H
