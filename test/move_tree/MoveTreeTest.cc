@@ -301,4 +301,23 @@ TEST_F(MoveTreeBaseTest, GetTopNodeMove){
   ASSERT_EQ(kMoveHH, move_tree.GetTopNodeMove());
 }
 
+TEST_F(MoveTreeBaseTest, emptyTest){
+  MoveTree move_tree;
+  ASSERT_TRUE(move_tree.empty());
+
+  move_tree.AddChild(kMoveHH);
+  ASSERT_FALSE(move_tree.empty());  
+}
+
+TEST_F(MoveTreeBaseTest, clearTest){
+  MoveTree move_tree;
+  ASSERT_TRUE(move_tree.empty());
+
+  move_tree.AddChild(kMoveHH);
+  ASSERT_FALSE(move_tree.empty());  
+
+  move_tree.clear();
+  ASSERT_TRUE(move_tree.empty());
+}
+
 }   // namespace realcore

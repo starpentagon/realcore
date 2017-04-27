@@ -11,9 +11,7 @@ namespace realcore
 template<class T>
 inline MoveTreeBase<T>::MoveTreeBase()
 {
-  // root nodeを設定
-  tree_.emplace_back(kNullNodeIndex, kInvalidMove);
-  current_node_index_ = kRootNodeIndex;
+  clear();
 }
 
 template<class T>
@@ -247,6 +245,23 @@ inline const MovePosition MoveTreeBase<T>::GetTopNodeMove() const
   const auto& top_node = tree_[root_node.GetFirstChildIndex()];
   return top_node.GetMove();
 }
+
+template<class T>
+inline const bool MoveTreeBase<T>::empty() const
+{
+  return size() == 0;
+}
+
+template<class T>
+inline const void MoveTreeBase<T>::clear()
+{
+  tree_.clear();
+  
+  // root nodeを設定
+  tree_.emplace_back(kNullNodeIndex, kInvalidMove);
+  current_node_index_ = kRootNodeIndex;
+}
+
 }   // namespace realcore
 
 #endif    // MOVE_TREE_INL_H

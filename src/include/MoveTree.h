@@ -61,6 +61,12 @@ public:
   //! @note root nodeのみの場合はkInvlaidMoveを返す
   const MovePosition GetTopNodeMove() const;
 
+  //! @brief 探索木が空かどうかを返す
+  const bool empty() const;
+
+  //! @brief 探索木を初期化する
+  const void clear();
+
 private:
   //! @brief カレントノードがroot nodeかどうか判定する
   const bool IsRootNode() const;
