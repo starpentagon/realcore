@@ -100,7 +100,7 @@ static constexpr size_t kMaxInBoardDistance = 119;  // 盤内の手間の最大�
 const size_t CalcBoardDistance(const MovePosition from, const MovePosition to);
 
 //! @brief 指し手の文字列を返す
-//! @pre 指し手は有効な指し手であること
+//! @note kNullMoveは"pp", 無効な手や未定義の指し手は"--"を返す
 std::string MoveString(const MovePosition move);
 
 //! @brief MoveValue型のリストを昇順ソートする

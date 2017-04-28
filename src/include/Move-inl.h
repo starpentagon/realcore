@@ -158,7 +158,10 @@ inline std::string MoveString(const MovePosition move)
   }};
 
   static const std::string kPassStr = "pp";
-  assert(IsValidMove(move));
+
+  if(!IsValidMove(move)){
+    return "--";
+  }
 
   if(!IsNullMove(move)){
     Cordinate x = 0, y = 0;

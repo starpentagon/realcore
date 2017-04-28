@@ -241,6 +241,8 @@ TEST(MoveTest, GetSymmetricMoveTest)
 
 TEST(MoveTest, MoveStringTest)
 {
+  ASSERT_EQ("--", MoveString(kInvalidMove));
+  ASSERT_EQ("--", MoveString(kUndefinedMove01));
   ASSERT_EQ("pp", MoveString(kNullMove));
   ASSERT_EQ("ao", MoveString(kMoveAO));
   ASSERT_EQ("hh", MoveString(kMoveHH));
