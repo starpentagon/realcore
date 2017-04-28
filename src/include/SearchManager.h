@@ -32,6 +32,26 @@ public:
   //! @brief 探索ノードを取得する
   SearchCounter GetNode() const;
 
+  //! @brief 証明木の取得結果を追加する
+  //! @param is_generated 証明木の取得が成功したかどうかのフラグ
+  void AddGetProofTreeResult(const bool is_generated);
+
+  //! @brief 証明木の取得回数を返す
+  SearchCounter GetProofTreeCount() const;
+
+  //! @brief 証明木の取得成功回数を返す
+  SearchCounter GetProofTreeSuccessCount() const;
+
+  //! @brief Simulation結果を追加する
+  //! @param is_generated 証明木の取得が成功したかどうかのフラグ
+  void AddSimulationResult(const bool is_simulation_success);
+
+  //! @brief Simulation回数を返す
+  SearchCounter GetSimulationCount() const;
+
+  //! @brief Simulation成功回数を返す
+  SearchCounter GetSimulationSuccessCount() const;
+
   //! @brief 探索ノード上限を設定する
   void SetNodeLimit(const SearchCounter node_limit);
 
@@ -53,6 +73,12 @@ private:
 
   std::chrono::system_clock::time_point search_start_time_;   //!< 探索開始時間
   SearchCounter elapsed_time_limit_;  //!< 探索時間の上限
+
+  SearchCounter get_proof_tree_;            //! 証明木の取得回数
+  SearchCounter get_proof_tree_success_;    //! 証明木の取得成功回数
+  
+  SearchCounter simulation_;            //! Simulationの実行回数
+  SearchCounter simulation_success_;    //! Simulationの成功回数
 
   bool catch_interrupt_exception_;    //!< Interrupt Exceptionをcatchするかどうかのフラグ
   bool interruption_;   //!< interruption exceptionが生じたかどうかのフラグ

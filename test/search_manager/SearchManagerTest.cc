@@ -77,6 +77,42 @@ TEST_F(SearchManagerTest, AddGetNodeTest)
   ASSERT_EQ(1, search_manager.GetNode());
 }
 
+TEST_F(SearchManagerTest, AddGetProofTreeTest)
+{
+  SearchManager search_manager(kNoInterruptionPoint);
+
+  ASSERT_EQ(0, search_manager.GetProofTreeCount());
+  ASSERT_EQ(0, search_manager.GetProofTreeSuccessCount());
+  
+  search_manager.AddGetProofTreeResult(true);
+
+  ASSERT_EQ(1, search_manager.GetProofTreeCount());
+  ASSERT_EQ(1, search_manager.GetProofTreeSuccessCount());
+
+  search_manager.AddGetProofTreeResult(false);
+
+  ASSERT_EQ(2, search_manager.GetProofTreeCount());
+  ASSERT_EQ(1, search_manager.GetProofTreeSuccessCount());
+}
+
+TEST_F(SearchManagerTest, AddGetSimulationTest)
+{
+  SearchManager search_manager(kNoInterruptionPoint);
+
+  ASSERT_EQ(0, search_manager.GetSimulationCount());
+  ASSERT_EQ(0, search_manager.GetSimulationSuccessCount());
+
+  search_manager.AddSimulationResult(true);
+
+  ASSERT_EQ(1, search_manager.GetSimulationCount());
+  ASSERT_EQ(1, search_manager.GetSimulationSuccessCount());
+
+  search_manager.AddSimulationResult(false);
+
+  ASSERT_EQ(2, search_manager.GetSimulationCount());
+  ASSERT_EQ(1, search_manager.GetSimulationSuccessCount());
+}
+
 TEST_F(SearchManagerTest, SetNodeLimitTest)
 {
   SetNodeLimitTest();
