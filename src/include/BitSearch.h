@@ -19,9 +19,9 @@ typedef std::uint64_t StateBit;
 //! @brief 禁手チェックの状態定義
 enum ForbiddenCheckState : std::uint8_t
 {
-  kForbiddenMove,         //! 禁手
-  kPossibleForbiddenMove, //! 見かけの三々があり禁手の可能性あり
-  kNonForbiddenMove       //! 否禁
+  kForbiddenMove,         //!< 禁手
+  kPossibleForbiddenMove, //!< 見かけの三々があり禁手の可能性あり
+  kNonForbiddenMove       //!< 否禁
 };
 
 //! @brief 状態を右シフトする

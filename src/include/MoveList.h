@@ -7,14 +7,11 @@
 
 #include <vector>
 #include <string>
-#include <bitset>
 
 #include "Move.h"
 
 namespace realcore{
 
-// 指し手のビットを管理するbitset
-typedef std::bitset<kMoveNum> MoveBitSet;
 const MoveBitSet& GetInBoardMoveBitSet();
 
 class MoveList;

@@ -9,6 +9,7 @@
 #include <array>
 #include <vector>
 
+#include "Move.h"
 #include "BitSearch.h"
 #include "OpenState.h"
 
@@ -23,10 +24,10 @@ typedef std::array<StateBit, kLocalBitBoardNum> LocalBitBoard;
 static constexpr size_t kOpenStateNeighborhoodSize = 5;
 
 // 前方宣言
-enum MovePosition : std::uint8_t;
 enum OpenStatePattern : std::uint8_t;
 class OpenState;
 class BoardOpenState;
+class MoveList;
 class BitBoard;
 
 //! @brief moveを中心としたN路の直線近傍を管理するクラス
@@ -59,12 +60,24 @@ public:
   template<PlayerTurn P>
   const bool IsDoubleFour() const;
 
+  //! @brief moveが四々を作る手かチェックする
+  //! @param influence_area 影響領域
+  template<PlayerTurn P>
+  const bool IsDoubleFour(MoveBitSet * const influence_area) const;
+
   //! @brief moveが禁手かチェックする
   //! @param next_open_four_list 見かけの三に対する達四を作るBoardPositionのリスト
   //! @retval kForbiddenMove 禁手
   //! @retval kPossibleForbiddenMove 見かけの三々があり禁手の可能性あり
   //! @retval kNonForbiddenMove 否禁
   const ForbiddenCheckState ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list) const;
+
+  //! @brief moveが禁手かチェックする
+  //! @param influence_area 戻り値の影響領域
+  const ForbiddenCheckState ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list, MoveBitSet * const influence_area) const;
+
+  //! @brief 空点位置を取得する
+  void GetOpenMovePosition(MoveList * const move_list) const;
 
   //! @brief 空点状態を追加する
   //! @param board_open_state 空点状態の格納先
@@ -86,6 +99,25 @@ private:
   //! @brief 指し手パターンの空点状態を取得する
   template<OpenStatePattern Pattern>
   void GetOpenState(const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, BoardOpenState * const board_open_state) const;
+
+  //! @brief 「長連でない」状態の影響領域を求める
+  void GetNonOverlineInfluenceArea(const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, MoveBitSet * const influence_area) const;
+
+  //! @brief 四々の影響領域を求める
+  //! @pre 四々が成立していること
+  template<PlayerTurn P>
+  void GetDoubleFourInfluenceArea(const std::uint64_t four_bit, const std::uint64_t combined_open_bit, const std::uint64_t make_five_move_bit, MoveBitSet * const influence_area) const;
+
+  //! @brief 「四々でない」状態の影響領域を求める
+  void GetNonDoubleFourInfluenceArea(const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, MoveBitSet * const influence_area) const;
+
+  //! @brief 見かけの三々の影響領域を求める
+  //! @pre 見かけの三々が成立していること
+  template<PlayerTurn P>
+  void GetDoubleSemiThreeInfluenceArea(const std::uint64_t semi_three_bit, const std::uint64_t combined_open_bit, const std::uint64_t next_open_four_bit, MoveBitSet * const influence_area) const;
+
+  //! @brief 「見かけの三々でない」状態の影響領域を求める
+  void GetNonDoubleSemiThreeInfluenceArea(const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, MoveBitSet * const influence_area) const;
 
   //! @brief 黒石/白石の結合ビット(combined bit)を取得する
   template<PlayerTurn P>

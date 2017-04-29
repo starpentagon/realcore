@@ -11,6 +11,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <bitset>
 
 #include "RealCore.h"
 
@@ -32,6 +33,9 @@ constexpr size_t kInBoardMoveNum = kBoardLineNum * kBoardLineNum;
 
 //! @brief 有効な指し手(盤内 or Pass)の数
 constexpr size_t kValidMoveNum = (kInBoardMoveNum + 1);
+
+// 指し手のビットを管理するbitset
+typedef std::bitset<kMoveNum> MoveBitSet;
 
 //! (MovePosition, value)型
 typedef std::pair<MovePosition, std::int64_t> MoveValue;

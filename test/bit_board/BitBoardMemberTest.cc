@@ -713,6 +713,76 @@ public:
       ASSERT_EQ(bit_board.bit_board_[i], board_info[i]);
     }
   }
+  
+  void IsOneMoveTerminateBlackOpenFourTest(){
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . . o o . . . . . | G 
+    // H | . . . . . . x x x . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhhgihigjh"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet guard_move_bit;
+    const auto is_threat = bit_board.IsOneMoveTerminate<kBlackTurn>(board_open_state, &guard_move_bit);
+
+    ASSERT_TRUE(is_threat);
+    ASSERT_EQ(2, guard_move_bit.count());
+    ASSERT_TRUE(guard_move_bit[kMoveGH]);
+    ASSERT_TRUE(guard_move_bit[kMoveKH]);
+  }
+
+  void IsOneMoveTerminateWhiteOpenFourTest(){
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . . o o o . . . . | G 
+    // H | . . . . . . x x x . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhhgihigjhjg"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet guard_move_bit;
+    const auto is_threat = bit_board.IsOneMoveTerminate<kWhiteTurn>(board_open_state, &guard_move_bit);
+
+    ASSERT_TRUE(is_threat);
+    ASSERT_EQ(6, guard_move_bit.count());
+    ASSERT_TRUE(guard_move_bit[kMoveGG]);
+    ASSERT_TRUE(guard_move_bit[kMoveKG]);
+    ASSERT_TRUE(guard_move_bit[kMoveFH]);
+    ASSERT_TRUE(guard_move_bit[kMoveGH]);
+    ASSERT_TRUE(guard_move_bit[kMoveKH]);
+    ASSERT_TRUE(guard_move_bit[kMoveLH]);
+  }
+
+  void IsOneMoveTerminateWhiteMakeForbiddenTest(){
+    ASSERT_TRUE(false);
+  }
 };
 
 TEST_F(BitBoardTest, DefaultConstructorTest){
@@ -1150,4 +1220,20 @@ TEST_F(BitBoardTest, GetBoardStateBitTest)
   GetBoardStateBitTest();
 }
 
+TEST_F(BitBoardTest, IsOneMoveTerminateBlackOpenFourTest)
+{
+  IsOneMoveTerminateBlackOpenFourTest();
+}
+
+TEST_F(BitBoardTest, IsOneMoveTerminateWhiteOpenFourTest)
+{
+  IsOneMoveTerminateWhiteOpenFourTest();
+}
+
+// IsOneMoveTerminateDoubleFourはIsDoubleFourMoveでテストする
+
+TEST_F(BitBoardTest, IsOneMoveTerminateWhiteMakeForbiddenTest)
+{
+  IsOneMoveTerminateWhiteMakeForbiddenTest();
+}
 }

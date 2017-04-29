@@ -135,7 +135,7 @@ inline void SearchNextOpenFour(const std::uint64_t stone_bit, const std::uint64_
   for(size_t i=0; i<kFourStonePattern; i++){
     (*pattern_search_bit_list)[i] &= LeftShift<1>(open_bit);     // [B3O1]O, [W3O1]O
     (*pattern_search_bit_list)[i] &= RightShift<4>(open_bit);    // O[B3O1]O, O[W3O1]O
-    (*pattern_search_bit_list)[i] &= overline_mask;              // XO[B3O1]O, O[W3O1]O
+    (*pattern_search_bit_list)[i] &= overline_mask;              // XO[B3O1]OX, O[W3O1]O
   }
 }
 

@@ -264,10 +264,18 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveJG;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveIG]);
+        ASSERT_TRUE(influence_area[kMoveJG]);
+        ASSERT_TRUE(influence_area[kMoveMG]);
+      }
     }
   }
   {
@@ -296,10 +304,18 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveHD;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveHB]);
+        ASSERT_TRUE(influence_area[kMoveHD]);
+        ASSERT_TRUE(influence_area[kMoveHF]);
+      }
     }
   }
   {
@@ -328,10 +344,18 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveMH;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveJH]);
+        ASSERT_TRUE(influence_area[kMoveMH]);
+        ASSERT_TRUE(influence_area[kMoveNH]);
+      }
     }
   }
   {
@@ -360,10 +384,18 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveJE;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveLC]);
+        ASSERT_TRUE(influence_area[kMoveJE]);
+        ASSERT_TRUE(influence_area[kMoveIF]);
+      }
     }
   }
   {
@@ -392,10 +424,18 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveKD;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveLC]);
+        ASSERT_TRUE(influence_area[kMoveKD]);
+        ASSERT_TRUE(influence_area[kMoveIF]);
+      }
     }
   }
   {
@@ -424,10 +464,18 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveJG;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveIG]);
+        ASSERT_TRUE(influence_area[kMoveJG]);
+        ASSERT_TRUE(influence_area[kMoveKG]);
+      }
     }
   }
   {
@@ -456,10 +504,18 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveIG;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveIF]);
+        ASSERT_TRUE(influence_area[kMoveIG]);
+        ASSERT_TRUE(influence_area[kMoveJG]);
+      }
     }
   }
   {

@@ -209,6 +209,36 @@ public:
   }
 };
 
+TEST_F(LineNeighborhoodTest, ForbiddenCheckTest)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . . . . . . . . . . | E 
+  // F | . . . . x . . . . . . . . | F 
+  // G | . . . . . . . . . . . . . | G 
+  // H | . . . . . . x . . . . . . | H 
+  // I | . . . . . . o . . . . . . | I 
+  // J | . . . . . . o . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  constexpr size_t kForbiddenCheckSize = 5;
+  BitBoard bit_board(MoveList("hhhiffhj"));
+  LineNeighborhood line_neighborhood(kMoveGG, kForbiddenCheckSize, bit_board);
+  line_neighborhood.SetCenterState<kBlackStone>();
+
+  vector<BoardPosition> list;
+  const auto result = line_neighborhood.ForbiddenCheck(&list);
+
+  ASSERT_EQ(kNonForbiddenMove, result);
+}
+
 TEST_F(LineNeighborhoodTest, AddOpenStateTest)
 {
   //   A B C D E F G H I J K L M N O 
@@ -235,6 +265,48 @@ TEST_F(LineNeighborhoodTest, AddOpenStateTest)
   line_neighborhood.AddOpenState<kWhiteTurn>(kUpdateAllOpenState, &board_open_state);
 
   EXPECT_TRUE(board_open_state.GetList(kNextFourBlack).empty());
+}
+
+TEST_F(LineNeighborhoodTest, GetOpenMovePositionTest)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . o . . . . . . . o . . | D 
+  // E | . . . . . . . . . . . . . | E 
+  // F | . . . . x . . . . . . . . | F 
+  // G | o . x x x . . . . . . . . | G 
+  // H | . . . . . . x . . . . . . | H 
+  // I | . . . . . . . x . . . . . | I 
+  // J | . . . . . . . . o . . . . | J 
+  // K | . . . . . . . . . o . . . | K 
+  // L | . . o . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  constexpr size_t kSize = 2;
+  BitBoard bit_board(MoveList("hhkkiiddeglddgdlffjjfgbg"));
+
+  LineNeighborhood line_neighborhood(kMoveGG, kSize, bit_board);
+  MoveList move_list;
+
+  line_neighborhood.GetOpenMovePosition(&move_list);
+
+  ASSERT_EQ(12, move_list.size());
+  ASSERT_TRUE(find(move_list.begin(), move_list.end(), kMoveHG) != move_list.end());
+  ASSERT_TRUE(find(move_list.begin(), move_list.end(), kMoveIG) != move_list.end());
+  ASSERT_TRUE(find(move_list.begin(), move_list.end(), kMoveGE) != move_list.end());
+  ASSERT_TRUE(find(move_list.begin(), move_list.end(), kMoveGF) != move_list.end());
+  ASSERT_TRUE(find(move_list.begin(), move_list.end(), kMoveGH) != move_list.end());
+  ASSERT_TRUE(find(move_list.begin(), move_list.end(), kMoveGI) != move_list.end());
+  ASSERT_TRUE(find(move_list.begin(), move_list.end(), kMoveEE) != move_list.end());
+  ASSERT_TRUE(find(move_list.begin(), move_list.end(), kMoveIE) != move_list.end());
+  ASSERT_TRUE(find(move_list.begin(), move_list.end(), kMoveHF) != move_list.end());
+  ASSERT_TRUE(find(move_list.begin(), move_list.end(), kMoveFH) != move_list.end());
+  ASSERT_TRUE(find(move_list.begin(), move_list.end(), kMoveEI) != move_list.end());
+  ASSERT_TRUE(find(move_list.begin(), move_list.end(), kMoveGG) != move_list.end());
 }
 
 TEST_F(LineNeighborhoodTest, DefaultConstructorTest)

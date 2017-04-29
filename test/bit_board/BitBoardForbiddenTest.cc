@@ -75,8 +75,8 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // D | . . * . . . . . . . * . . | D 
     // E | . . . . . . . . . . . . . | E 
     // F | . . . . . . . . . . . . . | F 
-    // G | . . . . . . . o . . . . . | G 
-    // H | . . . . . o x . . x x . x o H 
+    // G | . . . . . o . o . . . . . o G 
+    // H | . . . . . . x . . x x . x | H 
     // I | . . . . . . . . . o . . . | I 
     // J | . . . . . . . . . . . . . | J 
     // K | . . . . . . . . . . . . . | K 
@@ -85,7 +85,7 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhignhghkhkilhoh"));
+    BitBoard bit_board(MoveList("hhignhggkhkilhog"));
 
     MoveBitSet move_bit_set;
     bit_board.EnumerateForbiddenMoves(&move_bit_set);
@@ -100,7 +100,16 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
       
       if(move == kMoveJH){
         EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
+
+        MoveBitSet influence_area;
+        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move, &influence_area));
+
+        ASSERT_EQ(5, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveGH]);
+        ASSERT_TRUE(influence_area[kMoveIH]);
+        ASSERT_TRUE(influence_area[kMoveJH]);
+        ASSERT_TRUE(influence_area[kMoveMH]);
+        ASSERT_TRUE(influence_area[kMoveOH]);
       }else{
         EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
@@ -112,15 +121,15 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
   {
     // 両頭の四々_2
     //   A B C D E F G H I J K L M N O 
-    // A + ------------o ------------+ A 
+    // A + --------------------------+ A 
     // B | . . . . . . x . . . . . . | B 
     // C | . . . . . . . . . . . . . | C 
     // D | . . * . . . x . . . * . . | D 
     // E | . . . . . o . o . . . . . | E 
     // F | . . . . . . x . . . . . . | F 
-    // G | . . . . . . . . . . . . . | G 
+    // G | . . . . . o . o . . . . . | G 
     // H | . . . . . . x . . . . . . | H 
-    // I | . . . . . . o . . . . . . | I 
+    // I | . . . . . . . . . . . . . | I 
     // J | . . . . . . . . . . . . . | J 
     // K | . . . . . . . . . . . . . | K 
     // L | . . * . . . . . . . * . . | L 
@@ -128,7 +137,7 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhhihbhahdgehfie"));
+    BitBoard bit_board(MoveList("hhighfgghbgehdie"));
 
     MoveBitSet move_bit_set;
     bit_board.EnumerateForbiddenMoves(&move_bit_set);
@@ -143,7 +152,16 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
       
       if(move == kMoveHE){
         EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
+
+        MoveBitSet influence_area;
+        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move, &influence_area));
+
+        ASSERT_EQ(5, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveHA]);
+        ASSERT_TRUE(influence_area[kMoveHC]);
+        ASSERT_TRUE(influence_area[kMoveHE]);
+        ASSERT_TRUE(influence_area[kMoveHG]);
+        ASSERT_TRUE(influence_area[kMoveHI]);
       }else{
         EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
@@ -161,9 +179,9 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // D | . . * . . . . . . . * . . | D 
     // E | . . . . . . . . . . . . . | E 
     // F | . . . . . . . . . . . . . | F 
-    // G | . . . . . . . . o . . . . | G 
-    // H | . . . . . o x . x x . . x o H 
-    // I | . . . . . . . . . . o . . | I 
+    // G | . . . . . . . o . . . o . | G 
+    // H | . . . . . . x . x x . . x | H 
+    // I | . . . . . . . o . . o . . | I 
     // J | . . . . . . . . . . . . . | J 
     // K | . . . . . . . . . . . . . | K 
     // L | . . * . . . . . . . * . . | L 
@@ -171,7 +189,7 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhghnhohkhjgjhli"));
+    BitBoard bit_board(MoveList("hhigjhiinhmgkhli"));
 
     MoveBitSet move_bit_set;
     bit_board.EnumerateForbiddenMoves(&move_bit_set);
@@ -186,7 +204,16 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
       
       if(move == kMoveLH){
         EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
+
+        MoveBitSet influence_area;
+        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move, &influence_area));
+
+        ASSERT_EQ(5, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveGH]);
+        ASSERT_TRUE(influence_area[kMoveIH]);
+        ASSERT_TRUE(influence_area[kMoveLH]);
+        ASSERT_TRUE(influence_area[kMoveMH]);
+        ASSERT_TRUE(influence_area[kMoveOH]);
       }else{
         EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
@@ -198,38 +225,47 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
   {
     // 長蛇の四々_1
     //   A B C D E F G H I J K L M N O 
-    // A + --------------------------x A 
+    // A + --------------------------+ A 
     // B | . . . . . . . . . . . . x | B 
-    // C | . . . . . . . . . . . . . | C 
-    // D | . . * . . . . . . . x . . | D 
-    // E | . . . . . . . . . . . . . | E 
-    // F | . . . . . . o . . . . . . | F 
-    // G | . . . . . o . x . . . . . | G 
-    // H | . . . . . . x . o . . . . | H 
-    // I | . . . . . o . o . . . . . | I 
-    // J | . . . . . . . . . . . . . | J 
+    // C | . . . . . . . . . . . x . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . x . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . o . . . . . . . | G 
+    // H | . . . . o . x . . . . . . | H 
+    // I | . . . . . x . o . . . . . | I 
+    // J | . . . . . . o . . . . . . | J 
     // K | . . . . . . . . . . . . . | K 
-    // L | . . * . . . . . . . * . . | L 
+    // L | . . o . . . . . . . * . . | L 
     // M | . . . . . . . . . . . . . | M 
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhgiigiioaggnbjhldhf"));
+    BitBoard bit_board(MoveList("hhgggiiikehjmcfhnbdl"));
 
     MoveBitSet move_bit_set;
     bit_board.EnumerateForbiddenMoves(&move_bit_set);
 
     ASSERT_EQ(1, move_bit_set.count());
-    EXPECT_TRUE(move_bit_set[kMoveKE]);
+    EXPECT_TRUE(move_bit_set[kMoveJF]);
 
     for(const auto move : in_board_move_list){
       if(bit_board.GetState(move) != kOpenPosition){
         continue;
       }
       
-      if(move == kMoveKE){
+      if(move == kMoveJF){
         EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
+
+        MoveBitSet influence_area;
+        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move, &influence_area));
+
+        ASSERT_EQ(5, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveOA]);
+        ASSERT_TRUE(influence_area[kMoveLD]);
+        ASSERT_TRUE(influence_area[kMoveJF]);
+        ASSERT_TRUE(influence_area[kMoveIG]);
+        ASSERT_TRUE(influence_area[kMoveFJ]);
       }else{
         EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
@@ -272,7 +308,14 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
       
       if(move == kMoveLD){
         EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
+
+        MoveBitSet influence_area;
+        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move, &influence_area));
+
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveMC]);
+        ASSERT_TRUE(influence_area[kMoveLD]);
+        ASSERT_TRUE(influence_area[kMoveJF]);
       }else{
         EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
@@ -315,7 +358,14 @@ TEST_F(BitBoardTest, IsOneLineDoubleFourTest)
       
       if(move == kMoveFF){
         EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
+
+        MoveBitSet influence_area;
+        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move, &influence_area));
+
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveEE]);
+        ASSERT_TRUE(influence_area[kMoveFF]);
+        ASSERT_TRUE(influence_area[kMoveGG]);
       }else{
         EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
@@ -364,7 +414,16 @@ TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
       
       if(move == kMoveGG){
         EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
+
+        MoveBitSet influence_area;
+        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move, &influence_area));
+
+        ASSERT_EQ(5, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveEE]);
+        ASSERT_TRUE(influence_area[kMoveFF]);
+        ASSERT_TRUE(influence_area[kMoveGG]);
+        ASSERT_TRUE(influence_area[kMoveFH]);
+        ASSERT_TRUE(influence_area[kMoveEI]);
       }else{
         EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
@@ -381,8 +440,8 @@ TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
     // C | . . . . . . . . . . . . . | C 
     // D | . . o . . . . . . . o . . | D 
     // E | . . . . . . . . . . . . . | E 
-    // F | . . . . x . . . . . . . . | F 
-    // G | o . x x x . . . . . . . . | G 
+    // F | o . . . x . . . . . . . . | F 
+    // G | . . x x x . . . . . . . . | G 
     // H | . . . . . . x . . . . . . | H 
     // I | . . . . . . . x . . . . . | I 
     // J | . . . . . . . . . . . . . | J 
@@ -392,7 +451,7 @@ TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
     // N | . . . . . . . . . . . . . | N 
     // O + --------------------------+ O 
     //   A B C D E F G H I J K L M N O 
-    BitBoard bit_board(MoveList("hhkkiiddeglddgdlffllfgbg"));
+    BitBoard bit_board(MoveList("hhkkiiddeglddgdlffllfgbf"));
   
     MoveBitSet move_bit_set;
     bit_board.EnumerateForbiddenMoves(&move_bit_set);
@@ -407,7 +466,18 @@ TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
       
       if(move == kMoveGG){
         EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
+
+        MoveBitSet influence_area;
+        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move, &influence_area));
+
+        ASSERT_EQ(7, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveEE]);
+        ASSERT_TRUE(influence_area[kMoveGG]);
+        ASSERT_TRUE(influence_area[kMoveJJ]);
+        ASSERT_TRUE(influence_area[kMoveBG]);
+        ASSERT_TRUE(influence_area[kMoveCG]);
+        ASSERT_TRUE(influence_area[kMoveHG]);
+        ASSERT_TRUE(influence_area[kMoveIG]);
       }else{
         EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
@@ -450,7 +520,16 @@ TEST_F(BitBoardTest, IsTwoLineDoubleFourTest)
       
       if(move == kMoveGG){
         EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(move));
-        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move));
+
+        MoveBitSet influence_area;
+        EXPECT_TRUE(bit_board.IsDoubleFourMove<kBlackTurn>(move, &influence_area));
+
+        ASSERT_EQ(5, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveEE]);
+        ASSERT_TRUE(influence_area[kMoveGG]);
+        ASSERT_TRUE(influence_area[kMoveCG]);
+        ASSERT_TRUE(influence_area[kMoveHG]);
+        ASSERT_TRUE(influence_area[kMoveIG]);
       }else{
         EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(move));
         EXPECT_FALSE(bit_board.IsDoubleFourMove<kBlackTurn>(move));

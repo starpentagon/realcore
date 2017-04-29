@@ -76,7 +76,43 @@ const bool LineNeighborhood::IsFour(MovePosition * const guard_move) const
 }
 
 template<PlayerTurn P>
-const bool LineNeighborhood::IsDoubleFour() const
+void LineNeighborhood::GetDoubleFourInfluenceArea(const std::uint64_t four_bit, const std::uint64_t combined_open_bit, const std::uint64_t make_five_move_bit, MoveBitSet * const influence_area) const
+{
+  if(influence_area == nullptr){
+    return;
+  }
+
+  // 影響領域を求める
+  influence_area->set(move_);   // 着手点
+
+  // 五連を作る位置
+  std::vector<size_t> combined_shift_list;
+  GetBitIndexList(make_five_move_bit, &combined_shift_list);
+
+  for(const auto combined_shift : combined_shift_list){
+    const auto board_position = GetBoardPosition(combined_shift);
+    const auto move = GetBoardMove(board_position);
+
+    influence_area->set(move);
+  }
+
+  // 黒番の場合は長連筋の位置(X[B4O1]X)
+  if(P == kBlackTurn){
+    const auto overline_bit = (combined_open_bit & RightShift<1>(four_bit)) | (combined_open_bit & LeftShift<5>(four_bit));
+    std::vector<size_t> combined_shift_list;
+    GetBitIndexList(overline_bit, &combined_shift_list);
+
+    for(const auto combined_shift : combined_shift_list){
+      const auto board_position = GetBoardPosition(combined_shift);
+      const auto move = GetBoardMove(board_position);
+
+      influence_area->set(move);
+    }
+  }
+}
+
+template<PlayerTurn P>
+const bool LineNeighborhood::IsDoubleFour(MoveBitSet * const influence_area) const
 {
   // 「五連にする位置」(= 四の防手位置)の数をカウントする
   const auto combined_stone_bit = GetPlayerStoneCombinedBit<P>();
@@ -84,17 +120,64 @@ const bool LineNeighborhood::IsDoubleFour() const
 
   const auto open_four_bit = SearchOpenFour<P>(combined_stone_bit, combined_open_bit);
   std::uint64_t make_five_move_bit = 0;
-  SearchFour<P>(combined_stone_bit, combined_open_bit, &make_five_move_bit);
+  const auto four_bit = SearchFour<P>(combined_stone_bit, combined_open_bit, &make_five_move_bit);
   
   // 達四があると五連にする位置が2カ所あるので重複カウントしないように片方をオフにする
   // @see doc/06_forbidden_check/forbidden_check.pptx, 「達四がある場合の四のマッチ方法」
   make_five_move_bit ^= RightShift<1>(open_four_bit);
 
   if(IsMultipleBit(make_five_move_bit)){
+    GetDoubleFourInfluenceArea<P>(four_bit, combined_open_bit, make_five_move_bit, influence_area);
     return true;
   }
 
   return false;
+}
+
+template<PlayerTurn P>
+inline const bool LineNeighborhood::IsDoubleFour() const
+{
+  return IsDoubleFour<P>(nullptr);
+}
+
+template<PlayerTurn P>
+void LineNeighborhood::GetDoubleSemiThreeInfluenceArea(const std::uint64_t semi_three_bit, const std::uint64_t combined_open_bit, const std::uint64_t next_open_four_bit, MoveBitSet * const influence_area) const
+{
+  if(influence_area == nullptr){
+    return;
+  }
+
+  // 影響領域を求める
+  influence_area->set(move_);   // 着手点
+
+  // O[B3O1]O, O[W3O1]Oの空点位置
+  auto open_bit = next_open_four_bit;
+  open_bit |= RightShift<1>(semi_three_bit);
+  open_bit |= LeftShift<4>(semi_three_bit);
+
+  std::vector<size_t> combined_shift_list;
+  GetBitIndexList(open_bit, &combined_shift_list);
+
+  for(const auto combined_shift : combined_shift_list){
+    const auto board_position = GetBoardPosition(combined_shift);
+    const auto move = GetBoardMove(board_position);
+
+    influence_area->set(move);
+  }
+
+  // 黒番の場合は長連筋XO[B3O1]OXの位置
+  if(P == kBlackTurn){
+    const auto overline_bit = (combined_open_bit & RightShift<2>(semi_three_bit)) | (combined_open_bit & LeftShift<5>(semi_three_bit));
+    std::vector<size_t> combined_shift_list;
+    GetBitIndexList(overline_bit, &combined_shift_list);
+
+    for(const auto combined_shift : combined_shift_list){
+      const auto board_position = GetBoardPosition(combined_shift);
+      const auto move = GetBoardMove(board_position);
+
+      influence_area->set(move);
+    }
+  }
 }
 
 inline const BoardPosition LineNeighborhood::GetBoardPosition(const size_t combined_shift) const

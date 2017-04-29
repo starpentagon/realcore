@@ -128,12 +128,18 @@ public:
   template<PlayerTurn P>
   const bool IsDoubleFourMove(const MovePosition move) const;
 
+  template<PlayerTurn P>
+  const bool IsDoubleFourMove(const MovePosition move, MoveBitSet * const influence_area) const;
+
   //! @brief 指し手が禁手かチェックする
   //! @param move 指し手位置
   //! @retval true 指し手が禁手
   //! @pre moveは着手前であること
   template<PlayerTurn P>
   const bool IsForbiddenMove(const MovePosition move) const;
+
+  template<PlayerTurn P>
+  const bool IsForbiddenMove(const MovePosition move, MoveBitSet * const influence_area) const;
 
   //! @brief 禁点を列挙する
   //! @param 禁点の格納先
@@ -155,7 +161,16 @@ public:
   template<PlayerTurn P>
   void EnumerateSemiThreeMoves(const BoardOpenState &board_open_state, MoveBitSet * const semi_three_move_set) const;
 
-  //! @brief 盤面情報を取得する
+  //! @brief 1手勝ちが生じているかチェックし、その防手を生成する
+  //! @param P チェックする手番
+  //! @note 黒番の１手勝ち = 達四を作る
+  //! @note 白番の１手勝ち = 達四/四々を作る or 四ノビで極める
+  //! @note 四ノビ防手も生成する
+  //! @note 禁手チェックは行わない
+  template<PlayerTurn P>
+  const bool IsOneMoveTerminate(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const;
+
+  //! @brief 置換表用の盤面情報を取得する
   //! @note bit_boardの横方向のStateBitを返す
   void GetBoardStateBit(std::array<StateBit, 8> * const board_info) const;
 
@@ -174,6 +189,29 @@ private:
   //! @param board_open_state 空点状態の格納先
   template<OpenStatePattern Pattern>
   void AddOpenState(const size_t pattern_search_index, const BoardPosition pattern_position, BoardOpenState * const board_open_state) const;
+
+  //! @brief 四々点を列挙する
+  template<PlayerTurn P>
+  void EnumerateDoubleFourMoves(const BoardOpenState &board_open_state, MoveBitSet * const double_four_move_set) const;
+
+  //! @brief 見かけの三々点を列挙する
+  template<PlayerTurn P>
+  void EnumerateDoubleSemiThreeMoves(const BoardOpenState &board_open_state, MoveBitSet * const double_semi_three_move_set) const;
+
+  //! @brief 1手勝ち(達四)が生じているかチェックし、その防手を生成する
+  //! @param P チェックする手番
+  //! @note 四ノビ防手は生成しない
+  //! @note 禁手チェックは行わない
+  template<PlayerTurn P>
+  const bool IsOneMoveTerminateOpenFour(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const;
+
+  //! @brief 1手勝ち(四々)が生じているかチェックし、その防手を生成する
+  //! @note 四ノビ防手は生成しない
+  const bool IsOneMoveTerminateDoubleFour(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const;
+
+  //! @brief 1手勝ち(極め手)が生じているかチェックし、その防手を生成する
+  //! @note 四ノビ防手は生成しない
+  const bool IsOneMoveTerminateMakeForbidden(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const;
 
   Bitboard bit_board_;    //!< 盤面状態を保持するBit board
 };    // class BitBoard
