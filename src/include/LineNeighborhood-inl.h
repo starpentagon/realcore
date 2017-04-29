@@ -85,30 +85,17 @@ void LineNeighborhood::GetDoubleFourInfluenceArea(const std::uint64_t four_bit, 
   // 影響領域を求める
   influence_area->set(move_);   // 着手点
 
-  // 五連を作る位置
-  std::vector<size_t> combined_shift_list;
-  GetBitIndexList(make_five_move_bit, &combined_shift_list);
+  // 四が成立しなくなる位置
+  // (i)出来た四の五連を作る位置
+  // (ii)黒番の場合は長連筋の位置(X[B4O1]X)
+  auto influence_bit = make_five_move_bit;
 
-  for(const auto combined_shift : combined_shift_list){
-    const auto board_position = GetBoardPosition(combined_shift);
-    const auto move = GetBoardMove(board_position);
-
-    influence_area->set(move);
-  }
-
-  // 黒番の場合は長連筋の位置(X[B4O1]X)
   if(P == kBlackTurn){
-    const auto overline_bit = (combined_open_bit & RightShift<1>(four_bit)) | (combined_open_bit & LeftShift<5>(four_bit));
-    std::vector<size_t> combined_shift_list;
-    GetBitIndexList(overline_bit, &combined_shift_list);
-
-    for(const auto combined_shift : combined_shift_list){
-      const auto board_position = GetBoardPosition(combined_shift);
-      const auto move = GetBoardMove(board_position);
-
-      influence_area->set(move);
-    }
+    const auto overline_bit = RightShift<1>(four_bit) | LeftShift<5>(four_bit);
+    influence_bit |= combined_open_bit & overline_bit;
   }
+
+  SetMoveBitSet(influence_bit, influence_area);
 }
 
 template<PlayerTurn P>
@@ -150,34 +137,20 @@ void LineNeighborhood::GetDoubleSemiThreeInfluenceArea(const std::uint64_t semi_
   // 影響領域を求める
   influence_area->set(move_);   // 着手点
 
-  // O[B3O1]O, O[W3O1]Oの空点位置
-  auto open_bit = next_open_four_bit;
-  open_bit |= RightShift<1>(semi_three_bit);
-  open_bit |= LeftShift<4>(semi_three_bit);
-
-  std::vector<size_t> combined_shift_list;
-  GetBitIndexList(open_bit, &combined_shift_list);
-
-  for(const auto combined_shift : combined_shift_list){
-    const auto board_position = GetBoardPosition(combined_shift);
-    const auto move = GetBoardMove(board_position);
-
-    influence_area->set(move);
-  }
+  // 三が成立しなくなる位置
+  // (i)O[B3O1]O, O[W3O1]Oの空点位置
+  // (ii)黒番の場合は長連筋XO[B3O1]OXの位置
+  auto influence_bit = next_open_four_bit;
+  influence_bit |= RightShift<1>(semi_three_bit);
+  influence_bit |= LeftShift<4>(semi_three_bit);
 
   // 黒番の場合は長連筋XO[B3O1]OXの位置
   if(P == kBlackTurn){
-    const auto overline_bit = (combined_open_bit & RightShift<2>(semi_three_bit)) | (combined_open_bit & LeftShift<5>(semi_three_bit));
-    std::vector<size_t> combined_shift_list;
-    GetBitIndexList(overline_bit, &combined_shift_list);
-
-    for(const auto combined_shift : combined_shift_list){
-      const auto board_position = GetBoardPosition(combined_shift);
-      const auto move = GetBoardMove(board_position);
-
-      influence_area->set(move);
-    }
+    const auto overline_bit = RightShift<2>(semi_three_bit) | LeftShift<5>(semi_three_bit);
+    influence_bit |= combined_open_bit & overline_bit;
   }
+
+  SetMoveBitSet(influence_bit, influence_area);
 }
 
 inline const BoardPosition LineNeighborhood::GetBoardPosition(const size_t combined_shift) const
@@ -245,6 +218,50 @@ inline std::uint64_t LineNeighborhood::GetOpenPositionCombinedBit() const
   
   return GetCombinedBit(bit_even, bit_odd);
 }
+
+inline void LineNeighborhood::SetMoveBitSet(const std::uint64_t search_bit, MoveBitSet * const move_bit_set) const
+{
+  assert(move_bit_set != nullptr);
+
+  std::vector<size_t> combined_shift_list;
+  GetBitIndexList(search_bit, &combined_shift_list);
+
+  for(const auto combined_shift : combined_shift_list){
+    const auto board_position = GetBoardPosition(combined_shift);
+    const auto move = GetBoardMove(board_position);
+
+    move_bit_set->set(move);
+  }
+}
+
+inline void LineNeighborhood::SetOpenMoveBitSet(const std::uint64_t search_bit, const size_t pattern_index, MoveBitSet * const move_bit_set) const
+{
+  if(search_bit == 0){
+    return;
+  }
+
+  assert(move_bit_set != nullptr);
+
+  std::vector<size_t> bit_index_list;
+  GetBitIndexList(search_bit, &bit_index_list);
+
+  for(const auto combined_shift : bit_index_list){
+    const BoardPosition pattern_position = GetBoardPosition(combined_shift);
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, pattern_index);
+    const MovePosition move = GetBoardMove(open_position);
+
+    move_bit_set->set(move);
+  }  
+}
+
+inline const bool LineNeighborhood::IsAllOpenPosition() const
+{
+  const auto black_bit = GetPlayerStoneCombinedBit<kBlackTurn>();
+  const auto white_bit = GetPlayerStoneCombinedBit<kWhiteTurn>();
+
+  return (black_bit == 0) && (white_bit == 0);
+}
+
 
 }   // namespace realcore
 

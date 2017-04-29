@@ -99,8 +99,9 @@ const ForbiddenCheckState LineNeighborhood::ForbiddenCheck(std::vector<BoardPosi
   const auto semi_three_direction_count = semi_three_direction_bit.count();
 
   if(semi_three_direction_count < 2){
+    // 禁手ではない
     GetNonOverlineInfluenceArea(combined_black_bit, combined_open_bit, influence_area);
-    GetNonDoubleFourInfluenceArea(combined_black_bit, combined_open_bit, influence_area);
+    GetNonDoubleFourInfluenceArea(combined_black_bit, combined_open_bit, make_five_move_bit, influence_area);
 
     if(semi_three_direction_count == 1){
       GetNonDoubleSemiThreeInfluenceArea(combined_black_bit, combined_open_bit, influence_area);
@@ -141,41 +142,23 @@ void LineNeighborhood::GetNonOverlineInfluenceArea(const uint64_t combined_stone
   
   for(size_t pattern_index=0; pattern_index<kPatternNum; pattern_index++){
     const auto search_bit = pattern_search[pattern_index];
-
-    if(search_bit == 0){
-      continue;
-    }
-    
-    std::vector<size_t> bit_index_list;
-    GetBitIndexList(search_bit, &bit_index_list);
-
-    for(const auto combined_shift : bit_index_list){
-      const BoardPosition pattern_position = GetBoardPosition(combined_shift);
-      const BoardPosition open_position = GetOpenBoardPosition(pattern_position, pattern_index);
-      const MovePosition move = GetBoardMove(open_position);
-
-      influence_area->set(move);
-    }
+    SetOpenMoveBitSet(search_bit, pattern_index, influence_area);
   }
 }
 
-void LineNeighborhood::GetNonDoubleFourInfluenceArea(const uint64_t combined_stone_bit, const uint64_t combined_open_bit, MoveBitSet * const influence_area) const
+void LineNeighborhood::GetNonDoubleFourInfluenceArea(const uint64_t combined_stone_bit, const uint64_t combined_open_bit, const std::uint64_t make_five_move_bit, MoveBitSet * const influence_area) const
 {
   if(influence_area == nullptr){
     return;
   }
+
+  constexpr size_t kPatternNum = GetOpenStatePatternNum(kNextFourBlack);
+  std::array<std::uint64_t, kPatternNum> pattern_search{{0}};
+
+  SearchNextFour<kBlackTurn>(combined_stone_bit, combined_open_bit, &pattern_search);
   
-  // 同一点に対して五連位置が２つ作れるかチェックする
-  const auto open_four_bit = SearchOpenFour<kBlackTurn>(combined_stone_bit, combined_open_bit);
-  std::uint64_t make_five_move_bit = 0;
-  SearchFour<kBlackTurn>(combined_stone_bit, combined_open_bit, &make_five_move_bit);
-
-  // 達四があると五連にする位置が2カ所あるので重複カウントしないように片方をオフにする
-  // @see doc/06_forbidden_check/forbidden_check.pptx, 「達四がある場合の四のマッチ方法」
-  make_five_move_bit ^= RightShift<1>(open_four_bit);
-
   if(make_five_move_bit != 0){
-    // 中心点に着手することで四がすでに１つできるケース
+    // 四がすでに１つできているケース
     std::vector<size_t> bit_index_list;
     GetBitIndexList(make_five_move_bit, &bit_index_list);
     assert(bit_index_list.size() == 1);   // 四々はないので五連を作る位置は１つのみ
@@ -183,11 +166,6 @@ void LineNeighborhood::GetNonDoubleFourInfluenceArea(const uint64_t combined_sto
     const auto make_five_board_position = GetBoardPosition(bit_index_list[0]);
 
     // 黒石を１つ加えることでもう１つ四が作れる位置を探す
-    constexpr size_t kPatternNum = GetOpenStatePatternNum(kNextFourBlack);
-    std::array<std::uint64_t, kPatternNum> pattern_search{{0}};
-
-    SearchNextFour<kBlackTurn>(combined_stone_bit, combined_open_bit, &pattern_search);
-    
     for(size_t pattern_index=0; pattern_index<kPatternNum; pattern_index++){
       const auto search_bit = pattern_search[pattern_index];
 
@@ -266,11 +244,6 @@ void LineNeighborhood::GetNonDoubleFourInfluenceArea(const uint64_t combined_sto
   std::array<int, kMoveNum> next_five_position_table;
   next_five_position_table.fill(-1);
 
-  constexpr size_t kPatternNum = GetOpenStatePatternNum(kNextFourBlack);
-  std::array<std::uint64_t, kPatternNum> pattern_search{{0}};
-
-  SearchNextFour<kBlackTurn>(combined_stone_bit, combined_open_bit, &pattern_search);
-  
   for(size_t pattern_index=0; pattern_index<kPatternNum; pattern_index++){
     const auto search_bit = pattern_search[pattern_index];
 
@@ -335,7 +308,6 @@ void LineNeighborhood::GetNonDoubleSemiThreeInfluenceArea(const std::uint64_t co
     return;
   }
   
-  // 見かけの三々点に黒石が来ると見かけの三々が成立する可能性がある(保守的に多めに影響領域を求める)
   constexpr size_t kPatternNum = GetOpenStatePatternNum(kNextSemiThreeBlack);
   std::array<std::uint64_t, kPatternNum> pattern_search{{0}};
 
@@ -458,28 +430,11 @@ void LineNeighborhood::AddOpenState<kWhiteTurn>(const UpdateOpenStateFlag &updat
 
 void LineNeighborhood::GetOpenMovePosition(MoveList * const move_list) const
 {
-  assert(move_list != nullptr);
-  assert(move_list->empty());
-
   const auto combined_open_bit = GetOpenPositionCombinedBit();
-  std::vector<size_t> bit_index_list;
-  GetBitIndexList(combined_open_bit, &bit_index_list);
-  bool center_open = false;   // 近傍中心が空点の場合は4方向で空点Bitが立つため重複しないようにする
-
-  for(const auto combined_shift : bit_index_list){
-    const BoardPosition board_position = GetBoardPosition(combined_shift);
-    const MovePosition move = GetBoardMove(board_position);
-
-    if(move == move_){
-      center_open = true;
-    }else{
-      (*move_list) += move;
-    }
-  }
-
-  if(center_open){
-    (*move_list) += move_;
-  }
+  MoveBitSet open_bit;
+  SetMoveBitSet(combined_open_bit, &open_bit);
+  
+  GetMoveList(open_bit, move_list);
 }
 
 }   // namesapce realcore

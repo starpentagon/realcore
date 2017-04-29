@@ -309,6 +309,35 @@ TEST_F(LineNeighborhoodTest, GetOpenMovePositionTest)
   ASSERT_TRUE(find(move_list.begin(), move_list.end(), kMoveGG) != move_list.end());
 }
 
+TEST_F(LineNeighborhoodTest, IsAllOpenPositionTest)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . . . . . . . . . . | E 
+  // F | . . . . x . . . . . . . . | F 
+  // G | . . . . . . . . . . . . . | G 
+  // H | . . . . . . x . . . . . . | H 
+  // I | . . . . . . o . . . . . . | I 
+  // J | . . . . . . o . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  constexpr size_t kForbiddenCheckSize = 2;
+  BitBoard bit_board(MoveList("hhhiffhj"));
+  LineNeighborhood line_neighborhood(kMoveLD, kForbiddenCheckSize, bit_board);  
+
+  ASSERT_TRUE(line_neighborhood.IsAllOpenPosition());
+
+  line_neighborhood.SetCenterState<kBlackStone>();
+  ASSERT_FALSE(line_neighborhood.IsAllOpenPosition());
+}
+
 TEST_F(LineNeighborhoodTest, DefaultConstructorTest)
 {
   DefaultConstructorTest();

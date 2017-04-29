@@ -84,6 +84,9 @@ public:
   template<PlayerTurn P>
   void AddOpenState(const UpdateOpenStateFlag &update_flag, BoardOpenState * const board_open_state) const;
 
+  //! @brief すべてが空点かどうかをチェックする
+  const bool IsAllOpenPosition() const;
+
 private:
   //! @brief local_bit_board配列のindexとbit indexから対応する方向を求める
   const BoardDirection GetBoardDirection(const size_t index, const size_t bit_index) const;
@@ -109,7 +112,7 @@ private:
   void GetDoubleFourInfluenceArea(const std::uint64_t four_bit, const std::uint64_t combined_open_bit, const std::uint64_t make_five_move_bit, MoveBitSet * const influence_area) const;
 
   //! @brief 「四々でない」状態の影響領域を求める
-  void GetNonDoubleFourInfluenceArea(const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, MoveBitSet * const influence_area) const;
+  void GetNonDoubleFourInfluenceArea(const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, const std::uint64_t make_five_move_bit, MoveBitSet * const influence_area) const;
 
   //! @brief 見かけの三々の影響領域を求める
   //! @pre 見かけの三々が成立していること
@@ -118,6 +121,12 @@ private:
 
   //! @brief 「見かけの三々でない」状態の影響領域を求める
   void GetNonDoubleSemiThreeInfluenceArea(const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, MoveBitSet * const influence_area) const;
+
+  //! @brief 検索結果をMoveBitSetに設定する
+  void SetMoveBitSet(const std::uint64_t search_bit, MoveBitSet * const move_bit_set) const;
+
+  //! @brief 検索結果の空点位置をMoveBitSetに設定する
+  void SetOpenMoveBitSet(const std::uint64_t search_bit, const size_t pattern_index, MoveBitSet * const move_bit_set) const;
 
   //! @brief 黒石/白石の結合ビット(combined bit)を取得する
   template<PlayerTurn P>

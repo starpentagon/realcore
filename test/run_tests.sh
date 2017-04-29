@@ -14,9 +14,14 @@ for file_path in ./*; do
     ./build.sh > /dev/null
     ./run.sh >> ${log_file}
 
-    if [ $? -eq 0 ]
+    exit_code=$?
+
+    if [ ${exit_code} -eq 0 ]
     then
       echo "OK"
+    elif [ ${exit_code} -eq 2 ]
+    then
+      echo "skip"
     else
       echo "NG"
     fi
