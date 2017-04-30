@@ -49,18 +49,18 @@ LineNeighborhood::LineNeighborhood(const MovePosition move, const size_t distanc
 
 const ForbiddenCheckState LineNeighborhood::ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list) const
 {
-  return ForbiddenCheck(next_open_four_list, nullptr);
+  return ForbiddenCheck(next_open_four_list, nullptr, nullptr);
 }
 
-const ForbiddenCheckState LineNeighborhood::ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list, MoveBitSet * const influence_area) const
+const ForbiddenCheckState LineNeighborhood::ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list, MoveBitSet * const downward_influence_area, MoveBitSet * const upward_influence_area) const
 {
   const auto combined_black_bit = GetPlayerStoneCombinedBit<kBlackTurn>();
   const auto combined_open_bit = GetOpenPositionCombinedBit();
 
   // 長連
   if(IsOverline(combined_black_bit)){
-    if(influence_area != nullptr){
-      influence_area->set(move_);
+    if(downward_influence_area != nullptr){
+      downward_influence_area->set(move_);
     }
     
     return kForbiddenMove;
@@ -76,7 +76,7 @@ const ForbiddenCheckState LineNeighborhood::ForbiddenCheck(std::vector<BoardPosi
   make_five_move_bit ^= RightShift<1>(open_four_bit);
 
   if(IsMultipleBit(make_five_move_bit)){
-    GetDoubleFourInfluenceArea<kBlackTurn>(four_bit, combined_open_bit, make_five_move_bit, influence_area);
+    GetDoubleFourInfluenceArea<kBlackTurn>(four_bit, combined_open_bit, make_five_move_bit, downward_influence_area);
     return kForbiddenMove;
   }
 
@@ -98,15 +98,16 @@ const ForbiddenCheckState LineNeighborhood::ForbiddenCheck(std::vector<BoardPosi
 
   const auto semi_three_direction_count = semi_three_direction_bit.count();
 
+  // 長連/四々/見かけの三々が新たに生じるための影響領域を生成する
+  GetNonOverlineInfluenceArea(combined_black_bit, combined_open_bit, upward_influence_area);
+  GetNonDoubleFourInfluenceArea(combined_black_bit, combined_open_bit, make_five_move_bit, upward_influence_area);
+
+  if(semi_three_direction_count >= 1){
+    GetNonDoubleSemiThreeInfluenceArea(combined_black_bit, combined_open_bit, upward_influence_area);
+  }
+
   if(semi_three_direction_count < 2){
     // 禁手ではない
-    GetNonOverlineInfluenceArea(combined_black_bit, combined_open_bit, influence_area);
-    GetNonDoubleFourInfluenceArea(combined_black_bit, combined_open_bit, make_five_move_bit, influence_area);
-
-    if(semi_three_direction_count == 1){
-      GetNonDoubleSemiThreeInfluenceArea(combined_black_bit, combined_open_bit, influence_area);
-    }
-
     return kNonForbiddenMove;
   }
 
@@ -123,7 +124,7 @@ const ForbiddenCheckState LineNeighborhood::ForbiddenCheck(std::vector<BoardPosi
     next_open_four_list->emplace_back(guard_board_position);
   }
 
-  GetDoubleSemiThreeInfluenceArea<kBlackTurn>(semi_three_bit, combined_open_bit, next_open_four_bit, influence_area);
+  GetDoubleSemiThreeInfluenceArea<kBlackTurn>(semi_three_bit, combined_open_bit, next_open_four_bit, downward_influence_area);
 
   return kPossibleForbiddenMove;
 }

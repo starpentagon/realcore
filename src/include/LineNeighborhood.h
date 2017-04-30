@@ -73,8 +73,10 @@ public:
   const ForbiddenCheckState ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list) const;
 
   //! @brief moveが禁手かチェックする
-  //! @param influence_area 戻り値の影響領域
-  const ForbiddenCheckState ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list, MoveBitSet * const influence_area) const;
+  //! @param downward_influence_area 長連/四々/見かけの三々->不成立になるための影響領域
+  //! @param upward_influence_area 長連/四々/見かけの三々が新たに生じるための影響領域
+  //! @note 見かけの三々が生じている場合は禁手成立/不成立の両方の可能性があるためdownward_influence_area, upward_influence_areaの両方を生成する
+  const ForbiddenCheckState ForbiddenCheck(std::vector<BoardPosition> * const next_open_four_list, MoveBitSet * const downward_influence_area, MoveBitSet * const upward_influence_area) const;
 
   //! @brief 空点位置を取得する
   void GetOpenMovePosition(MoveList * const move_list) const;

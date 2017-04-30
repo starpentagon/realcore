@@ -138,8 +138,11 @@ public:
   template<PlayerTurn P>
   const bool IsForbiddenMove(const MovePosition move) const;
 
+  //! @brief 指し手が禁手かチェックする(影響領域算出版)
+  //! @param downward_influence_area 禁手成立 -> 不成立となるための影響領域
+  //! @param upward_influence_area 禁手不成立 -> 成立となるための影響領域
   template<PlayerTurn P>
-  const bool IsForbiddenMove(const MovePosition move, MoveBitSet * const influence_area) const;
+  const bool IsForbiddenMove(const MovePosition move, MoveBitSet * const downward_influence_area, MoveBitSet * const upward_influence_area) const;
 
   //! @brief 禁点を列挙する
   //! @param 禁点の格納先
@@ -174,11 +177,15 @@ public:
   //! @note bit_boardの横方向のStateBitを返す
   void GetBoardStateBit(std::array<StateBit, 8> * const board_info) const;
 
-private:
   //! @brief 盤面の空点状態を取得する
   //! @param board_open_state 空点状態の格納先
   void GetBoardOpenState(const UpdateOpenStateFlag &update_flag, BoardOpenState * const board_open_state) const;
 
+  //! @brief 見かけの三々点を列挙する
+  template<PlayerTurn P>
+  void EnumerateDoubleSemiThreeMoves(const BoardOpenState &board_open_state, MoveBitSet * const double_semi_three_move_set) const;
+
+private:
   //! 指し手パターンの空点状態を取得する
   template<OpenStatePattern Pattern>
   void GetOpenState(const size_t index, const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, BoardOpenState * const board_open_state) const;
@@ -193,10 +200,6 @@ private:
   //! @brief 四々点を列挙する
   template<PlayerTurn P>
   void EnumerateDoubleFourMoves(const BoardOpenState &board_open_state, MoveBitSet * const double_four_move_set) const;
-
-  //! @brief 見かけの三々点を列挙する
-  template<PlayerTurn P>
-  void EnumerateDoubleSemiThreeMoves(const BoardOpenState &board_open_state, MoveBitSet * const double_semi_three_move_set) const;
 
   //! @brief 1手勝ち(達四)が生じているかチェックし、その防手を生成する
   //! @param P チェックする手番
