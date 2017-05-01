@@ -493,25 +493,7 @@ void BitBoard::EnumerateSemiThreeMoves<kWhiteTurn>(const BoardOpenState &board_o
 }
 
 template<>
-const bool BitBoard::IsOneMoveTerminate<kBlackTurn>(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const
-{
-  constexpr auto Q = GetOpponentTurn(kBlackTurn);
-
-  if(!IsOneMoveTerminateOpenFour<kBlackTurn>(board_open_state, guard_move_set)){
-    return false;
-  }
-
-  // 四ノビ防手を生成する
-  MoveBitSet four_bit;
-  EnumerateFourMoves<Q>(board_open_state, &four_bit);
-
-  (*guard_move_set) |= four_bit;
-
-  return true;
-}
-
-template<>
-const bool BitBoard::IsOneMoveTerminate<kWhiteTurn>(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const
+const bool BitBoard::GetTerminateGuard<kBlackTurn>(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const
 {
   MoveBitSet total_guard_move_set;
   total_guard_move_set.flip();
@@ -520,7 +502,7 @@ const bool BitBoard::IsOneMoveTerminate<kWhiteTurn>(const BoardOpenState &board_
 
   // 達四
   MoveBitSet open_four_guard;
-  const bool is_open_four = IsOneMoveTerminateOpenFour<kWhiteTurn>(board_open_state, &open_four_guard);
+  const bool is_open_four = GetOpenFourGuard<kWhiteTurn>(board_open_state, &open_four_guard);
 
   if(is_open_four){
     total_guard_move_set &= open_four_guard;
@@ -528,7 +510,7 @@ const bool BitBoard::IsOneMoveTerminate<kWhiteTurn>(const BoardOpenState &board_
 
   // 四々
   MoveBitSet double_four_guard;
-  const bool is_double_four = IsOneMoveTerminateDoubleFour(board_open_state, &double_four_guard);
+  const bool is_double_four = GetDoubleFourGuard(board_open_state, &double_four_guard);
 
   if(is_double_four){
     total_guard_move_set &= double_four_guard;
@@ -536,7 +518,7 @@ const bool BitBoard::IsOneMoveTerminate<kWhiteTurn>(const BoardOpenState &board_
 
   // 極め手
   MoveBitSet make_forbidden_guard;
-  const bool is_make_forbidden = IsOneMoveTerminateMakeForbidden(board_open_state, &make_forbidden_guard);
+  const bool is_make_forbidden = GetMakeForbiddenGuard(board_open_state, &make_forbidden_guard);
 
   if(is_make_forbidden){
     total_guard_move_set &= make_forbidden_guard;
@@ -556,7 +538,25 @@ const bool BitBoard::IsOneMoveTerminate<kWhiteTurn>(const BoardOpenState &board_
   return true;
 }
 
-const bool BitBoard::IsOneMoveTerminateDoubleFour(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const
+template<>
+const bool BitBoard::GetTerminateGuard<kWhiteTurn>(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const
+{
+  constexpr auto Q = GetOpponentTurn(kBlackTurn);
+
+  if(!GetOpenFourGuard<kBlackTurn>(board_open_state, guard_move_set)){
+    return false;
+  }
+
+  // 四ノビ防手を生成する
+  MoveBitSet four_bit;
+  EnumerateFourMoves<Q>(board_open_state, &four_bit);
+
+  (*guard_move_set) |= four_bit;
+
+  return true;
+}
+
+const bool BitBoard::GetDoubleFourGuard(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const
 {
   MoveBitSet double_four_bit;
   EnumerateDoubleFourMoves<kWhiteTurn>(board_open_state, &double_four_bit);
@@ -583,9 +583,43 @@ const bool BitBoard::IsOneMoveTerminateDoubleFour(const BoardOpenState &board_op
   return true;
 }
 
-const bool BitBoard::IsOneMoveTerminateMakeForbidden(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const
+const bool BitBoard::GetMakeForbiddenGuard(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const
 {
-  return false;
+  vector<MovePair> four_pair_list;
+  EnumerateFourMoves<kWhiteTurn>(board_open_state, &four_pair_list);
+
+  if(four_pair_list.empty()){
+    return false;
+  }
+
+  BitBoard check_bit_board(*this);
+
+  assert(guard_move_set != nullptr);
+  assert(guard_move_set->none());
+  
+  guard_move_set->flip();
+  bool is_make_forbidden = false;
+
+  for(const auto &four_pair : four_pair_list){
+    const auto four_move = four_pair.first;
+    const auto four_guard_move = four_pair.second;
+
+    check_bit_board.SetState<kWhiteStone>(four_move);
+
+    MoveBitSet downward_influence_area, upward_influence_area;
+    const bool is_forbidden = check_bit_board.IsForbiddenMove<kBlackTurn>(four_guard_move, &downward_influence_area, &upward_influence_area);
+
+    if(is_forbidden){
+      is_make_forbidden = true;
+
+      downward_influence_area.set(four_move);
+      *guard_move_set &= downward_influence_area;
+    }
+
+    check_bit_board.SetState<kOpenPosition>(four_move);
+  }
+
+  return is_make_forbidden;
 }
 
 const string BitBoard::str() const

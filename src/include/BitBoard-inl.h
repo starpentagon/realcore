@@ -412,7 +412,7 @@ void BitBoard::EnumerateDoubleSemiThreeMoves(const BoardOpenState &board_open_st
 }
 
 template<PlayerTurn P>
-const bool BitBoard::IsOneMoveTerminateOpenFour(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const
+const bool BitBoard::GetOpenFourGuard(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const
 {
   constexpr auto kPattern = (P == kBlackTurn) ? kNextOpenFourBlack : kNextOpenFourWhite;
 

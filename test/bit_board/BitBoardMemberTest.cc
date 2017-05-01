@@ -714,7 +714,7 @@ public:
     }
   }
   
-  void IsOneMoveTerminateBlackOpenFourTest(){
+  void GetBlackOpenFourGuardTest(){
     //   A B C D E F G H I J K L M N O 
     // A + --------------------------+ A 
     // B | . . . . . . . . . . . . . | B 
@@ -737,7 +737,7 @@ public:
     bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
 
     MoveBitSet guard_move_bit;
-    const auto is_threat = bit_board.IsOneMoveTerminate<kBlackTurn>(board_open_state, &guard_move_bit);
+    const auto is_threat = bit_board.GetTerminateGuard<kWhiteTurn>(board_open_state, &guard_move_bit);
 
     ASSERT_TRUE(is_threat);
     ASSERT_EQ(2, guard_move_bit.count());
@@ -745,7 +745,7 @@ public:
     ASSERT_TRUE(guard_move_bit[kMoveKH]);
   }
 
-  void IsOneMoveTerminateWhiteOpenFourTest(){
+  void GetWhiteOpenFourGuardTest(){
     //   A B C D E F G H I J K L M N O 
     // A + --------------------------+ A 
     // B | . . . . . . . . . . . . . | B 
@@ -768,7 +768,7 @@ public:
     bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
 
     MoveBitSet guard_move_bit;
-    const auto is_threat = bit_board.IsOneMoveTerminate<kWhiteTurn>(board_open_state, &guard_move_bit);
+    const auto is_threat = bit_board.GetTerminateGuard<kBlackTurn>(board_open_state, &guard_move_bit);
 
     ASSERT_TRUE(is_threat);
     ASSERT_EQ(6, guard_move_bit.count());
@@ -780,8 +780,50 @@ public:
     ASSERT_TRUE(guard_move_bit[kMoveLH]);
   }
 
-  void IsOneMoveTerminateWhiteMakeForbiddenTest(){
-    ASSERT_TRUE(false);
+  void GetWhiteMakeForbiddenGuardTest(){
+    // 四ノビで極める
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . x . . . . . * . . | D 
+    // E | . . . o . o . . . . . . . | E 
+    // F | . . . . . . o . x . . . . | F 
+    // G | . . . . . . . o x . . . . | G 
+    // H | . . . . . . x x . . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhigihhfjfgefdeejg"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet guard_move_bit;
+    const auto is_threat = bit_board.GetTerminateGuard<kBlackTurn>(board_open_state, &guard_move_bit);
+
+    ASSERT_TRUE(is_threat);
+    ASSERT_EQ(14, guard_move_bit.count());
+    ASSERT_TRUE(guard_move_bit[kMoveJC]);
+    ASSERT_TRUE(guard_move_bit[kMoveJD]);
+    ASSERT_TRUE(guard_move_bit[kMoveJE]);
+    ASSERT_TRUE(guard_move_bit[kMoveJI]);
+    ASSERT_TRUE(guard_move_bit[kMoveJJ]);
+    ASSERT_TRUE(guard_move_bit[kMoveJK]);
+
+    ASSERT_TRUE(guard_move_bit[kMoveEH]);
+    ASSERT_TRUE(guard_move_bit[kMoveFH]);
+    ASSERT_TRUE(guard_move_bit[kMoveGH]);
+    ASSERT_TRUE(guard_move_bit[kMoveKH]);
+    ASSERT_TRUE(guard_move_bit[kMoveLH]);
+    ASSERT_TRUE(guard_move_bit[kMoveMH]);
+
+    ASSERT_TRUE(guard_move_bit[kMoveJH]);
+    ASSERT_TRUE(guard_move_bit[kMoveKI]);
   }
 };
 
@@ -1220,20 +1262,20 @@ TEST_F(BitBoardTest, GetBoardStateBitTest)
   GetBoardStateBitTest();
 }
 
-TEST_F(BitBoardTest, IsOneMoveTerminateBlackOpenFourTest)
+TEST_F(BitBoardTest, GetBlackOpenFourGuardTest)
 {
-  IsOneMoveTerminateBlackOpenFourTest();
+  GetBlackOpenFourGuardTest();
 }
 
-TEST_F(BitBoardTest, IsOneMoveTerminateWhiteOpenFourTest)
+TEST_F(BitBoardTest, GetWhiteOpenFourGuardTest)
 {
-  IsOneMoveTerminateWhiteOpenFourTest();
+  GetWhiteOpenFourGuardTest();
 }
 
-// IsOneMoveTerminateDoubleFourはIsDoubleFourMoveでテストする
+// GetWhiteDoubleFourGuardはIsDoubleFourでテストする
 
-TEST_F(BitBoardTest, IsOneMoveTerminateWhiteMakeForbiddenTest)
+TEST_F(BitBoardTest, GetWhiteMakeForbiddenGuardTest)
 {
-  IsOneMoveTerminateWhiteMakeForbiddenTest();
+  GetWhiteMakeForbiddenGuardTest();
 }
 }

@@ -68,11 +68,12 @@ const bool Board::IsTerminateMove(const MovePosition move) const
   }
 
   if(P == kWhiteTurn){
-    // 四々がつくれる
+    // 四々が作れるかチェックする
     if(bit_board_.IsDoubleFourMove<kWhiteTurn>(move)){
       return true;
     }
 
+    // 禁手に極められるかチェックする
     MovePosition guard_move;
     const bool is_four = bit_board_.IsFourMove<kWhiteTurn>(move, &guard_move);
 
