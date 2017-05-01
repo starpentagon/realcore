@@ -133,6 +133,11 @@ public:
   void EnumerateSemiThreeMoves(MoveBitSet * const semi_three_move_set) const;
   void EnumerateSemiThreeMoves(const bool is_black_turn, MoveBitSet * const semi_three_move_set) const;
 
+  //! @brief 相手に1手勝ちが生じているかチェックし、その防手を生成する
+  //! @param P 防手を生成する側の手番
+  template<PlayerTurn P>
+  const bool GetTerminateGuard(MoveBitSet * const guard_move_set) const;
+
 protected:
   //! @brief 盤面状態を保持するBitBoard
   BitBoard bit_board_;
