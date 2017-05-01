@@ -134,6 +134,19 @@ const bool Board::IsOpponentFour(MovePosition * const guard_move) const
   return bit_board_.IsFourMoveOnBoard(is_opponent_black, last_move, guard_move);
 }
 
+const bool Board::GetTerminateGuard(MoveBitSet * const guard_move_set) const
+{
+  assert(!IsOpponentFour(nullptr));
+  const auto &board_open_state = board_open_state_list_.back();
+  const bool is_black_turn = board_move_sequence_.IsBlackTurn();
+
+  if(is_black_turn){
+    return bit_board_.GetTerminateGuard<kBlackTurn>(board_open_state, guard_move_set);
+  }else{
+    return bit_board_.GetTerminateGuard<kWhiteTurn>(board_open_state, guard_move_set);
+  }
+}
+
 template<>
 const bool Board::TerminateCheck<kBlackTurn>(MovePosition * const terminating_move) const
 {
@@ -204,6 +217,15 @@ const bool Board::TerminateCheck<kWhiteTurn>(MovePosition * const terminating_mo
   }
 
   return false;
+}
+
+const bool Board::TerminateCheck(const bool black_turn, MovePosition * const terminating_move) const
+{
+  if(black_turn){
+    return TerminateCheck<kBlackTurn>(terminating_move);
+  }else{
+    return TerminateCheck<kWhiteTurn>(terminating_move);
+  }
 }
 
 const bool IsNonTerminateNormalSequence(const MoveList &move_list){

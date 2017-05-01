@@ -109,11 +109,17 @@ public:
   //! @note 禁手チェックを行う
   template<PlayerTurn P>
   const bool TerminateCheck(MovePosition * const terminating_move) const;
+  const bool TerminateCheck(const bool black_turn, MovePosition * const terminating_move) const;
 
   //! @brief 相手に四が生じているか判定する
   //! @param 四の防手の格納先
   //! @retval true 相手に四が生じている
   const bool IsOpponentFour(MovePosition * const guard_move) const;
+
+  //! @brief 相手に1手勝ちが生じているかチェックし、その防手を生成する
+  //! @param P 防手を生成する側の手番
+  //! @note 相手に四ノビが生じていないこと
+  const bool GetTerminateGuard(MoveBitSet * const guard_move_set) const;
 
   //! @brief 禁点を列挙する
   //! @param 禁点の格納先
@@ -132,11 +138,6 @@ public:
   template<PlayerTurn P>
   void EnumerateSemiThreeMoves(MoveBitSet * const semi_three_move_set) const;
   void EnumerateSemiThreeMoves(const bool is_black_turn, MoveBitSet * const semi_three_move_set) const;
-
-  //! @brief 相手に1手勝ちが生じているかチェックし、その防手を生成する
-  //! @param P 防手を生成する側の手番
-  template<PlayerTurn P>
-  const bool GetTerminateGuard(MoveBitSet * const guard_move_set) const;
 
 protected:
   //! @brief 盤面状態を保持するBitBoard

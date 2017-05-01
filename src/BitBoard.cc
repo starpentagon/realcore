@@ -498,8 +498,6 @@ const bool BitBoard::GetTerminateGuard<kBlackTurn>(const BoardOpenState &board_o
   MoveBitSet total_guard_move_set;
   total_guard_move_set.flip();
 
-  constexpr auto Q = GetOpponentTurn(kWhiteTurn);
-
   // 達四
   MoveBitSet open_four_guard;
   const bool is_open_four = GetOpenFourGuard<kWhiteTurn>(board_open_state, &open_four_guard);
@@ -530,7 +528,7 @@ const bool BitBoard::GetTerminateGuard<kBlackTurn>(const BoardOpenState &board_o
 
   // 四ノビ防手を生成する
   MoveBitSet four_bit;
-  EnumerateFourMoves<Q>(board_open_state, &four_bit);
+  EnumerateFourMoves<kBlackTurn>(board_open_state, &four_bit);
 
   total_guard_move_set |= four_bit;
   (*guard_move_set) = total_guard_move_set;
@@ -541,15 +539,13 @@ const bool BitBoard::GetTerminateGuard<kBlackTurn>(const BoardOpenState &board_o
 template<>
 const bool BitBoard::GetTerminateGuard<kWhiteTurn>(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const
 {
-  constexpr auto Q = GetOpponentTurn(kBlackTurn);
-
   if(!GetOpenFourGuard<kBlackTurn>(board_open_state, guard_move_set)){
     return false;
   }
 
   // 四ノビ防手を生成する
   MoveBitSet four_bit;
-  EnumerateFourMoves<Q>(board_open_state, &four_bit);
+  EnumerateFourMoves<kWhiteTurn>(board_open_state, &four_bit);
 
   (*guard_move_set) |= four_bit;
 

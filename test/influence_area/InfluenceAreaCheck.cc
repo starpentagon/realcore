@@ -20,6 +20,7 @@ int main(int argc, char* argv[])
     ("db", value<string>(), "棋譜データベース(csv)")
     ("line", "直線近傍によるパターン判定テスト(長連/四々/見かけの三々)")
     ("dbl-three", "三々判定テスト")
+    ("guard", "1手勝ちの防手テスト")
     ("help,h", "ヘルプを表示");
   
   variables_map arg_map;
@@ -56,6 +57,11 @@ int main(int argc, char* argv[])
   if(arg_map.count("dbl-three")){
     cerr << "BitBoard::IsForbiddenMove" << endl;
     DoubleThreeTest(record_string_list);
+  }
+
+  if(arg_map.count("guard")){
+    cerr << "Board::GetTerminateGuard" << endl;
+    GetTerminateGuardTest(record_string_list);
   }
 
   return 0;
@@ -338,5 +344,133 @@ void DoubleThreeCheck(const realcore::MoveList &board_sequence, std::map<std::st
       cout << "[Diff]board: " << board_sequence.str() << " , Move: " << MoveString(move) << ", ";
       cout << "diff: " << diff_move.str() << endl;
     }
+  }
+}
+
+void GetTerminateGuardTest(const realcore::StringVector &record_string_list)
+{
+  map<string, SearchCounter> check_result;
+  set<HashValue> checked_board;
+  const auto record_count = record_string_list.size();
+
+  for(size_t i=0; i<record_count; ++i){
+    const auto& board_string = record_string_list[i];
+    MoveList board_move_sequence(board_string);
+    MoveList board_move;
+
+    for(const auto move : board_move_sequence){
+      const auto hash_value = CalcHashValue(board_move);
+
+      if(checked_board.find(hash_value) == checked_board.end()){
+        GetTerminateGuardCheck(board_move, &check_result);
+        checked_board.insert(hash_value);
+      }
+
+      board_move += move;
+    }
+
+    if(i % 1000 == 0){
+      cerr << i << endl;
+    }
+  }
+
+  // Board::GetTerminateGuardの影響領域チェック結果
+  cerr << "GetTerminateGuard:" << endl;
+  cerr << "  Exact: " << check_result[kExactCheckTerminateGuard] << endl;
+  cerr << "  Calc: " << check_result[kCalcCheckTerminateGuard] << endl;
+  cerr << "  Calc/Exact: " << 1.0 * check_result[kCalcCheckTerminateGuard] / check_result[kExactCheckTerminateGuard] << endl;
+}
+
+void GetTerminateGuardCheck(const realcore::MoveList &board_sequence, std::map<std::string, realcore::SearchCounter> *check_result)
+{
+  const bool is_black_turn = board_sequence.IsBlackTurn();
+  Board board(board_sequence);
+
+  MovePosition terminating_move;
+  
+  if(board.TerminateCheck(is_black_turn, &terminating_move)){
+    return;
+  }
+
+  const bool is_opponent_four = board.IsOpponentFour(nullptr);
+
+  if(is_opponent_four){
+    return;
+  }
+
+  // todo delete
+  if(board_sequence.str() == "hhhihghfihghfgiggffejhkhiejiijiikiehfifhdhegdfeiejdjggfdeeddecflckhlglgmekikfnhjgigkem"){
+    int a = 1;
+  }
+  // Passをした際に相手に終端手があるかをチェック
+  board.MakeMove(kNullMove);
+  const bool is_terminate_threat = board.TerminateCheck(!is_black_turn, &terminating_move);
+  board.UndoMove();
+  
+  MoveBitSet guard_move_bit;
+  const bool is_terminate_guard = board.GetTerminateGuard(&guard_move_bit);
+
+  if(!is_terminate_threat){
+    // 相手に１手勝ちがないが、１手勝ち防手を生成しているケース
+    if(is_terminate_guard){
+      MoveList guard_move;
+      GetMoveList(guard_move_bit, &guard_move);
+
+      cout << "[Guard move on non-threat]board: " << board_sequence.str() << " , guard: " << guard_move.str() << endl;
+    }
+
+    return;
+  }
+
+  MoveBitSet forbidden_bit;
+  board.EnumerateForbiddenMoves(&forbidden_bit);
+
+  MoveList candidate_move;
+  board_sequence.GetOpenMove(forbidden_bit, &candidate_move);
+
+  // 相手に１手勝ちがあるケース
+  MoveBitSet exact_guard_bit;
+
+  for(const auto move : candidate_move){
+    board.MakeMove(move);
+
+    MovePosition check_terminating_move;
+
+    // todo delete
+    if(board_sequence.str() == "hhhihghfihghfgigjhgfgeffifkhjegiiehegjjfiijjkglffihjhkilikjkkjklijjl" && move == kMoveHL){
+      int a = 1;
+    }
+    const bool check_terminate_threat = board.TerminateCheck(!is_black_turn, &check_terminating_move);
+    
+    if(!check_terminate_threat){
+      exact_guard_bit.set(move);
+    }
+
+    board.UndoMove();
+  }
+
+  // 算出した防手集合が正確な防手集合を包含していることをチェック
+  const bool is_include = ((guard_move_bit | exact_guard_bit) == guard_move_bit);
+
+  if(!is_include){
+    MoveList guard_move, exact_guard_move;
+    GetMoveList(guard_move_bit, &guard_move);
+    GetMoveList(exact_guard_bit, &exact_guard_move);
+    
+    cout << "[Not Include]board: " << board_sequence.str() << " , ";
+    cout << "exact: " << exact_guard_move.str() << " , calc: " << guard_move.str() << endl;
+  }
+
+  (*check_result)[kExactCheckTerminateGuard] += exact_guard_bit.count();
+  (*check_result)[kCalcCheckTerminateGuard] += guard_move_bit.count();
+
+  // 差分領域のチェック
+  const auto diff_area = guard_move_bit ^ exact_guard_bit;
+
+  if(diff_area.count() >= 5){
+    MoveList diff_move;
+    GetMoveList(diff_area, &diff_move);
+    cout << "[Diff]board: " << board_sequence.str() << " , ";
+    cout << "diff: " << diff_move.str() << endl;
   }
 }

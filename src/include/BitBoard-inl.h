@@ -429,12 +429,22 @@ const bool BitBoard::GetOpenFourGuard(const BoardOpenState &board_open_state, Mo
   // 達四点が存在するため防手を生成する
   guard_move_set->flip();
 
+  bool is_open_four = false;
+
   for(const auto &open_state : open_state_list){
     const auto pattern_position = open_state.GetPatternPosition();
     const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    MoveBitSet downward_influence_area, upward_influence_area;
+    const auto is_forbidden = IsForbiddenMove<P>(move, &downward_influence_area, &upward_influence_area);
+
+    if(is_forbidden){
+      continue;
+    }
 
     // XO[B3O1]OX or O[W3O1]O
-    const auto guard_move_1 = GetBoardMove(open_position);          // 達四位置
+    const auto guard_move_1 = move;          // 達四位置
     const auto guard_move_2 = GetBoardMove(pattern_position - 1);   // 右端のO
     const auto guard_move_3 = GetBoardMove(pattern_position + 4);   // 左端のO
     
@@ -444,10 +454,16 @@ const bool BitBoard::GetOpenFourGuard(const BoardOpenState &board_open_state, Mo
     guard_bit.set(guard_move_2);
     guard_bit.set(guard_move_3);
 
+    if(P == kBlackTurn){
+      // 否禁を禁手にする位置を防手位置に加える
+      guard_bit |= upward_influence_area;
+    }
+
     (*guard_move_set) &= guard_bit;
+    is_open_four = true;
   }
 
-  return true;  
+  return is_open_four;  
 }
 
 inline void BitBoard::GetBoardStateBit(std::array<StateBit, 8> * const board_info) const

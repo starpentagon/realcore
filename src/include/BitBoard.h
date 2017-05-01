@@ -169,7 +169,8 @@ public:
   //! @note 黒番の１手勝ち = 達四を作る
   //! @note 白番の１手勝ち = 達四/四々を作る or 四ノビで極める
   //! @note 四ノビ防手も生成する
-  //! @note 禁手チェックは行わない
+  //! @note 相手の1手勝ちになる手の禁手チェックを行う
+  //! @note 防手の禁手チェックは行わない
   //! @retval true １手勝ちが生じている false １手勝ちが生じていない
   template<PlayerTurn P>
   const bool GetTerminateGuard(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const;

@@ -519,6 +519,52 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
     }
   }
   {
+    // 四々(白番)
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . x . x . . | F 
+    // G | . . . . o . o o . o . . . | G 
+    // H | . . . . . o x x o . o . . | H 
+    // I | . . . . . x o o . x . . . | I 
+    // J | . . . . . . o x x x . . . | J 
+    // K | . . . . . x . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O     
+    BitBoard bit_board(MoveList("hhhijjiigiigihjhkikglflhjffgkjghijhjgkhg"));
+    
+    for(const auto move : in_board_move_list){
+      if(bit_board.GetState(move) != kOpenPosition){
+        continue;
+      }
+      
+      const bool expect = (move == kMoveGG || move == kMoveJG);
+
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
+
+      EXPECT_EQ(expect, is_double_four);
+
+      if(move == kMoveGG){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveEG]);
+        ASSERT_TRUE(influence_area[kMoveGG]);
+        ASSERT_TRUE(influence_area[kMoveJG]);
+      }else if(move == kMoveJG){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveGG]);
+        ASSERT_TRUE(influence_area[kMoveJG]);
+        ASSERT_TRUE(influence_area[kMoveLG]);
+      }
+    }
+  }
+  {
     // 否 四四
     //   A B C D E F G H I J K L M N O 
     // A + --------------------------+ A 

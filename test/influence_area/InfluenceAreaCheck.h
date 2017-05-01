@@ -5,7 +5,7 @@
 #include <map>
 
 #include "MoveList.h"
-#include "BitBoard.h"
+#include "Board.h"
 #include "SearchManager.h"
 #include "CSVReader.h"
 
@@ -27,5 +27,11 @@ static const std::string kCalcCheckNonDoubleThree = "CalcCheckNonDoubleThree";
 
 void DoubleThreeCheck(const realcore::MoveList &board_sequence, std::map<std::string, realcore::SearchCounter> *check_result);
 void DoubleThreeTest(const realcore::StringVector &record_string_list);
+
+static const std::string kExactCheckTerminateGuard = "ExactCheckTerminateGuard";
+static const std::string kCalcCheckTerminateGuard = "CalcCheckTerminateGuard";
+
+void GetTerminateGuardCheck(const realcore::MoveList &board_sequence, std::map<std::string, realcore::SearchCounter> *check_result);
+void GetTerminateGuardTest(const realcore::StringVector &record_string_list);
 
 #endif

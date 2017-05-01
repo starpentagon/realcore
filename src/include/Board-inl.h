@@ -174,13 +174,6 @@ inline void Board::EnumerateSemiThreeMoves(const bool is_black_turn, MoveBitSet 
   }
 }
 
-template<PlayerTurn P>
-const bool Board::GetTerminateGuard(MoveBitSet * const guard_move_set) const
-{
-  const auto &board_open_state = board_open_state_list_.back();
-  return bit_board_.GetTerminateGuard<P>(board_open_state, guard_move_set);
-}
-
 }   // namespace realcore
 
 #endif    // BOARD_INL_H

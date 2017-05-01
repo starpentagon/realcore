@@ -53,8 +53,6 @@ const bool LineNeighborhood::IsOpenFour() const
 template<PlayerTurn P>
 const bool LineNeighborhood::IsFour(MovePosition * const guard_move) const
 {
-  assert(guard_move != nullptr);
-
   const auto combined_stone_bit = GetPlayerStoneCombinedBit<P>();
   const auto combined_open_bit = GetOpenPositionCombinedBit();
 
@@ -67,7 +65,10 @@ const bool LineNeighborhood::IsFour(MovePosition * const guard_move) const
 
     assert(!combined_shift_list.empty());
     const auto guard_board_position = GetBoardPosition(combined_shift_list[0]);
-    *guard_move = GetBoardMove(guard_board_position);
+
+    if(guard_move != NULL){
+      *guard_move = GetBoardMove(guard_board_position);
+    }
     
     return true;
   }
@@ -111,7 +112,9 @@ const bool LineNeighborhood::IsDoubleFour(MoveBitSet * const influence_area) con
   
   // 達四があると五連にする位置が2カ所あるので重複カウントしないように片方をオフにする
   // @see doc/06_forbidden_check/forbidden_check.pptx, 「達四がある場合の四のマッチ方法」
-  make_five_move_bit ^= RightShift<1>(open_four_bit);
+  if(P == kBlackTurn){
+    make_five_move_bit ^= RightShift<1>(open_four_bit);
+  }
 
   if(IsMultipleBit(make_five_move_bit)){
     GetDoubleFourInfluenceArea<P>(four_bit, combined_open_bit, make_five_move_bit, influence_area);
