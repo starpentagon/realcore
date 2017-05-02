@@ -373,7 +373,6 @@ const bool MakeNonTerminateNormalSequence(const MoveList &original_move_list, Mo
 
   unsigned int call_limit = 500;    // VLM問題集での正規化に要した呼び出し回数は最大138回
   const bool is_modified = MakeNonTerminateNormalSequence(black_remain, white_remain, modified_move_list, &call_limit);
-  cout << call_limit << endl;
   return is_modified;
 }
 
