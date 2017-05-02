@@ -103,6 +103,7 @@ public:
   //! @pre moveは着手前であること
   template<PlayerTurn P>
   const bool IsOpenFourMove(const MovePosition move) const;
+  const bool IsOpenFourMove(const bool is_black_turn, const MovePosition move) const;
 
   //! @brief 指し手が四かチェックする(着手前版)
   //! @param move 指し手位置

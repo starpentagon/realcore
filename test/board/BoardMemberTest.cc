@@ -99,9 +99,9 @@ public:
         bool is_normal = (board.bit_board_.GetState(move) == kOpenPosition) && move != kMoveKH;
 
         if(is_normal){
-          EXPECT_TRUE(board.IsNormalMove<kBlackTurn>(move));
+          EXPECT_TRUE(board.IsNormalMove(move));
         }else{
-          EXPECT_FALSE(board.IsNormalMove<kBlackTurn>(move));
+          EXPECT_FALSE(board.IsNormalMove(move));
         }
       }
     }
@@ -130,9 +130,9 @@ public:
         bool is_normal = move == kMoveEK;
 
         if(is_normal){
-          EXPECT_TRUE(board.IsNormalMove<kWhiteTurn>(move));
+          EXPECT_TRUE(board.IsNormalMove(move));
         }else{
-          EXPECT_FALSE(board.IsNormalMove<kWhiteTurn>(move));
+          EXPECT_FALSE(board.IsNormalMove(move));
         }
       }
     }
@@ -148,9 +148,9 @@ public:
         bool is_normal = move == kNullMove;
 
         if(is_normal){
-          EXPECT_TRUE(board.IsNormalMove<kBlackTurn>(move));
+          EXPECT_TRUE(board.IsNormalMove(move));
         }else{
-          EXPECT_FALSE(board.IsNormalMove<kBlackTurn>(move));
+          EXPECT_FALSE(board.IsNormalMove(move));
         }
       }
     }
@@ -332,11 +332,11 @@ TEST_F(BoardTest, IsTerminateMoveTest)
     Board board(MoveList("hhhgihigjhjg"));
     
     for(const auto move : in_board_move_list){
-      if(!board.IsNormalMove<kBlackTurn>(move)){
+      if(!board.IsNormalMove(move)){
         continue;
       }
       
-      const bool is_terminate = board.IsTerminateMove<kBlackTurn>(move);
+      const bool is_terminate = board.IsTerminateMove(move);
       bool expect = (move == kMoveGH) || (move == kMoveKH);
 
       EXPECT_EQ(expect, is_terminate);
@@ -364,11 +364,11 @@ TEST_F(BoardTest, IsTerminateMoveTest)
     Board board(MoveList("hhhgihigfgjgoa"));
     
     for(const auto move : in_board_move_list){
-      if(!board.IsNormalMove<kWhiteTurn>(move)){
+      if(!board.IsNormalMove(move)){
         continue;
       }
       
-      const bool is_terminate = board.IsTerminateMove<kWhiteTurn>(move);
+      const bool is_terminate = board.IsTerminateMove(move);
       bool expect = (move == kMoveKG);
 
       EXPECT_EQ(expect, is_terminate);
@@ -396,11 +396,11 @@ TEST_F(BoardTest, IsTerminateMoveTest)
     Board board(MoveList("hhhgghggegfgaaidiaicibiefh"));
     
     for(const auto move : in_board_move_list){
-      if(!board.IsNormalMove<kWhiteTurn>(move)){
+      if(!board.IsNormalMove(move)){
         continue;
       }
       
-      const bool is_terminate = board.IsTerminateMove<kWhiteTurn>(move);
+      const bool is_terminate = board.IsTerminateMove(move);
       bool expect = (move == kMoveIG);
 
       EXPECT_EQ(expect, is_terminate);
@@ -428,11 +428,11 @@ TEST_F(BoardTest, IsTerminateMoveTest)
     Board board(MoveList("hhigihhfjfgefdeejg"));
     
     for(const auto move : in_board_move_list){
-      if(!board.IsNormalMove<kWhiteTurn>(move)){
+      if(!board.IsNormalMove(move)){
         continue;
       }
       
-      const bool is_terminate = board.IsTerminateMove<kWhiteTurn>(move);
+      const bool is_terminate = board.IsTerminateMove(move);
       bool expect = (move == kMoveKI);
 
       EXPECT_EQ(expect, is_terminate);
@@ -461,11 +461,11 @@ TEST_F(BoardTest, IsTerminateMoveTest)
     Board board(MoveList("hhhjlfgkjjllkgddghflem"));
     
     for(const auto move : in_board_move_list){
-      if(!board.IsNormalMove<kWhiteTurn>(move)){
+      if(!board.IsNormalMove(move)){
         continue;
       }
       
-      const bool is_terminate = board.IsTerminateMove<kWhiteTurn>(move);
+      const bool is_terminate = board.IsTerminateMove(move);
       EXPECT_FALSE(is_terminate);
     }
   }
@@ -568,7 +568,7 @@ TEST_F(BoardTest, TerminateCheckTest)
     //   A B C D E F G H I J K L M N O 
     Board board(MoveList("hhhgihigjhjg"));
     MovePosition terminating_move;
-    const bool is_terminate = board.TerminateCheck<kBlackTurn>(&terminating_move);
+    const bool is_terminate = board.TerminateCheck(&terminating_move);
     
     ASSERT_TRUE(is_terminate);
     ASSERT_TRUE(terminating_move == kMoveGH || terminating_move == kMoveKH);
@@ -594,7 +594,7 @@ TEST_F(BoardTest, TerminateCheckTest)
     //   A B C D E F G H I J K L M N O 
     Board board(MoveList("hhigihhfjfgefdeejg"));
     MovePosition terminating_move;
-    const bool is_terminate = board.TerminateCheck<kWhiteTurn>(&terminating_move);
+    const bool is_terminate = board.TerminateCheck(&terminating_move);
     
     ASSERT_TRUE(is_terminate);
     ASSERT_TRUE(terminating_move == kMoveKI);
@@ -620,7 +620,7 @@ TEST_F(BoardTest, TerminateCheckTest)
     //   A B C D E F G H I J K L M N O 
     Board board(MoveList("hhhgggiggijgiikg"));
     MovePosition terminating_move;
-    const bool is_terminate = board.TerminateCheck<kBlackTurn>(&terminating_move);
+    const bool is_terminate = board.TerminateCheck(&terminating_move);
     
     ASSERT_FALSE(is_terminate);
   }
@@ -645,7 +645,7 @@ TEST_F(BoardTest, TerminateCheckTest)
     //   A B C D E F G H I J K L M N O 
     Board board(MoveList("hhhgjfggegfggijg"));
     MovePosition terminating_move;
-    const bool is_terminate = board.TerminateCheck<kBlackTurn>(&terminating_move);
+    const bool is_terminate = board.TerminateCheck(&terminating_move);
     
     ASSERT_TRUE(is_terminate);
     ASSERT_TRUE(terminating_move == kMoveIG);
@@ -656,7 +656,7 @@ TEST_F(BoardTest, TerminateCheckDebug)
 {
   Board board(MoveList("hhgihgfiigeggfgkijhejjkfeikgjklekilldfjmidmjmdgddcjged"));
   MovePosition terminating_move;
-  const bool is_terminate = board.TerminateCheck<kWhiteTurn>(&terminating_move);
+  const bool is_terminate = board.TerminateCheck(&terminating_move);
   
   ASSERT_FALSE(is_terminate);
 }

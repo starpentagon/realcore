@@ -82,8 +82,17 @@ void OpenState::GetInfluenceArea(std::vector<BoardPosition> * const downward_inf
     
     if(P == kBlackTurn && pattern_ == kNextOpenFourBlack){
       // 長連筋
-      downward_influence_area->emplace_back(pattern_position_ - 2);   // 右側のX
-      downward_influence_area->emplace_back(pattern_position_ + 5);   // 左側のX
+      const auto overline_1 = pattern_position_ - 2;   // 右側のX
+
+      if(IsInBoard(overline_1)){
+        downward_influence_area->emplace_back(overline_1);
+      }
+
+      const auto overline_2 = pattern_position_ + 5;   // 左側のX
+
+      if(IsInBoard(overline_2)){
+        downward_influence_area->emplace_back(overline_2);
+      }
     }
 
     return;
@@ -104,8 +113,17 @@ void OpenState::GetInfluenceArea(std::vector<BoardPosition> * const downward_inf
 
     if(P == kBlackTurn && pattern_ == kNextFourBlack){
       // 長連筋(X[B3O2]X)
-      downward_influence_area->emplace_back(pattern_position_ - 1);   // 右側のX
-      downward_influence_area->emplace_back(pattern_position_ + 5);   // 左側のX
+      const auto overline_1 = pattern_position_ - 1;    // 右側のX
+
+      if(IsInBoard(overline_1)){
+        downward_influence_area->emplace_back(overline_1);
+      }
+
+      const auto overline_2 = pattern_position_ + 5;    // 左側のX
+
+      if(IsInBoard(overline_2)){
+        downward_influence_area->emplace_back(overline_2);
+      }
     }
 
     return;
@@ -128,8 +146,17 @@ void OpenState::GetInfluenceArea(std::vector<BoardPosition> * const downward_inf
 
     if(P == kBlackTurn && pattern_ == kNextSemiThreeBlack){
       // 長連筋(XO[B2O2]OX)
-      downward_influence_area->emplace_back(pattern_position_ - 2);   // 右側のX
-      downward_influence_area->emplace_back(pattern_position_ + 5);   // 左側のX
+      const auto overline_1 = pattern_position_ - 2;    // 右側のX
+
+      if(IsInBoard(overline_1)){
+        downward_influence_area->emplace_back(overline_1);
+      }
+
+      const auto overline_2 = pattern_position_ + 5;    // 左側のX
+
+      if(IsInBoard(overline_2)){
+        downward_influence_area->emplace_back(overline_2);
+      }
     }
 
     return;

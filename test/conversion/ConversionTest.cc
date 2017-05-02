@@ -344,3 +344,19 @@ TEST(ConversionTest, GetBoardCordinateTest)
     EXPECT_EQ(expect_y, y);
   }
 }
+
+TEST(ConversionTest, IsInBoardTest)
+{
+  ASSERT_FALSE(IsInBoard(0));
+  ASSERT_TRUE(IsInBoard(255));
+
+  ASSERT_FALSE(IsInBoard(496));
+  ASSERT_TRUE(IsInBoard(273));
+
+  ASSERT_FALSE(IsInBoard(513));
+  ASSERT_TRUE(IsInBoard(718));
+
+  ASSERT_FALSE(IsInBoard(1023));
+  ASSERT_TRUE(IsInBoard(1022));
+}
+  

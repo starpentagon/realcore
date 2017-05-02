@@ -82,10 +82,7 @@ public:
   //! @note 相手の直前手が終端手かどうかは相手の手番時にチェックするため正規手チェックではチェックしない
   //! @pre moveは着手前であること
   //! @see doc/02_terminate_definition/normality.pptx
-  template<PlayerTurn P>
   const bool IsNormalMove(const MovePosition move) const;
-  
-  const bool IsNormalMove(const bool black_turn, const MovePosition move) const;
 
   //! @brief 指し手が終端手かどうかをチェックする
   //! @param move 指し手位置
@@ -95,21 +92,16 @@ public:
   //! @pre moveは正規手であること
   //! @note 禁手チェックは行わない
   //! @see doc/02_terminate_definition/normality.pptx
-  template<PlayerTurn P>
   const bool IsTerminateMove(const MovePosition move) const;
-  const bool IsTerminateMove(const bool black_turn, const MovePosition move) const;
 
   //! @brief 指し手が終端手かどうかをチェックする(四ノビ、四ノビ防手ペア版)
-  template<PlayerTurn P>
   const bool IsTerminateMove(const MovePair &four_pair) const;
 
   //! @brief 終端手が存在するかチェックする
   //! @param terminating_move 終端手の格納先
   //! @retval true 終端手が存在する
   //! @note 禁手チェックを行う
-  template<PlayerTurn P>
   const bool TerminateCheck(MovePosition * const terminating_move) const;
-  const bool TerminateCheck(const bool black_turn, MovePosition * const terminating_move) const;
 
   //! @brief 相手に四が生じているか判定する
   //! @param 四の防手の格納先
@@ -140,6 +132,13 @@ public:
   void EnumerateSemiThreeMoves(const bool is_black_turn, MoveBitSet * const semi_three_move_set) const;
 
 protected:
+  //! @brief 終端手が存在するかチェックする
+  //! @param terminating_move 終端手の格納先
+  //! @retval true 終端手が存在する
+  //! @note 禁手チェックを行う
+  const bool TerminateCheckBlack(MovePosition * const terminating_move) const;
+  const bool TerminateCheckWhite(MovePosition * const terminating_move) const;
+
   //! @brief 盤面状態を保持するBitBoard
   BitBoard bit_board_;
 

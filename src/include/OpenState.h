@@ -76,7 +76,6 @@ public:
   const BoardPosition GetCheckPosition() const;
 
   //! @brief パターンの指し手が成立しなくなる影響領域(downward influence area)を返す
-  //! @note 長連筋の位置は空点でない可能性あるため着手前に空点チェックが必要
   template<PlayerTurn P>
   void GetInfluenceArea(std::vector<BoardPosition> * const downward_influence_area) const;
 

@@ -83,8 +83,8 @@ const Board& Board::operator=(const Board &board)
 void Board::MakeMove(const MovePosition move)
 {
   const bool is_black_turn = board_move_sequence_.IsBlackTurn();
-  assert(IsNormalMove(is_black_turn, move));
-  assert(!IsTerminateMove(is_black_turn, move));
+  assert(IsNormalMove(move));
+  assert(!IsTerminateMove(move));
   
   if(is_black_turn){
     bit_board_.SetState<kBlackStone>(move);
@@ -107,6 +107,105 @@ void Board::UndoMove()
   --board_move_sequence_;
 
   board_open_state_list_.pop_back();
+}
+
+const bool Board::IsNormalMove(const MovePosition move) const
+{
+  // Pass以外の盤外の手は正規手ではない
+  if(!IsInBoardMove(move) && move != kNullMove){
+    return false;
+  }
+
+  // 相手に四があるかチェック
+  MovePosition guard_move;
+  const auto is_opponent_four = IsOpponentFour(&guard_move);
+
+  if(is_opponent_four){
+    // 相手に四がある
+    return guard_move == move;
+  }
+
+  // 相手に四がない場合、Passは正規手
+  if(move == kNullMove){
+    return true;
+  }
+
+  if(bit_board_.GetState(move) != kOpenPosition){
+    return false;
+  }
+
+  const bool is_black_turn = board_move_sequence_.IsBlackTurn();
+
+  if(is_black_turn && bit_board_.IsForbiddenMove<kBlackTurn>(move)){
+    return false;
+  }
+
+  return true;
+}
+
+const bool Board::IsTerminateMove(const MovePosition move) const
+{
+  assert(IsNormalMove(move));
+
+  const bool is_black_turn = board_move_sequence_.IsBlackTurn();
+
+  if(bit_board_.IsOpenFourMove(is_black_turn, move)){
+    // 達四が作れる
+    return true;
+  }
+
+  if(!is_black_turn){
+    // 四々が作れるかチェックする
+    if(bit_board_.IsDoubleFourMove<kWhiteTurn>(move)){
+      return true;
+    }
+
+    // 禁手に極められるかチェックする
+    MovePosition guard_move;
+    const bool is_four = bit_board_.IsFourMove<kWhiteTurn>(move, &guard_move);
+
+    if(is_four){
+      BitBoard bit_board(bit_board_);
+      bit_board.SetState<kWhiteStone>(move);
+
+      if(bit_board.IsForbiddenMove<kBlackTurn>(guard_move)){
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+const bool Board::IsTerminateMove(const MovePair &four_pair) const
+{
+  const auto four_move = four_pair.first;
+  const bool is_black_turn = board_move_sequence_.IsBlackTurn();
+
+  assert(IsNormalMove(four_move));
+
+  if(bit_board_.IsOpenFourMove(is_black_turn, four_move)){
+    // 達四が作れる
+    return true;
+  }
+
+  if(!is_black_turn){
+    // 四々がつくれる
+    if(bit_board_.IsDoubleFourMove<kWhiteTurn>(four_move)){
+      return true;
+    }
+
+    BitBoard bit_board(bit_board_);
+    bit_board.SetState<kWhiteStone>(four_move);
+
+    const auto four_guard = four_pair.second;
+  
+    if(bit_board.IsForbiddenMove<kBlackTurn>(four_guard)){
+      return true;
+    }
+  }
+
+  return false;
 }
 
 void Board::EnumerateForbiddenMoves(MoveBitSet * const forbidden_move_set) const
@@ -147,8 +246,16 @@ const bool Board::GetTerminateGuard(MoveBitSet * const guard_move_set) const
   }
 }
 
-template<>
-const bool Board::TerminateCheck<kBlackTurn>(MovePosition * const terminating_move) const
+const bool Board::TerminateCheck(MovePosition * const terminating_move) const
+{
+  if(board_move_sequence_.IsBlackTurn()){
+    return TerminateCheckBlack(terminating_move);
+  }else{
+    return TerminateCheckWhite(terminating_move);
+  }
+}
+
+const bool Board::TerminateCheckBlack(MovePosition * const terminating_move) const
 {
   assert(terminating_move != nullptr);
 
@@ -156,7 +263,7 @@ const bool Board::TerminateCheck<kBlackTurn>(MovePosition * const terminating_mo
   const bool is_opponent_four = IsOpponentFour(&guard_move);
 
   if(is_opponent_four){
-    const bool is_terminate_move = IsTerminateMove<kBlackTurn>(guard_move);
+    const bool is_terminate_move = IsTerminateMove(guard_move);
 
     // 四ノビ防手が禁手の場合は1手前で終端するのでここでは禁手チェックはしない
     *terminating_move = guard_move;
@@ -187,8 +294,7 @@ const bool Board::TerminateCheck<kBlackTurn>(MovePosition * const terminating_mo
   return false;
 }
 
-template<>
-const bool Board::TerminateCheck<kWhiteTurn>(MovePosition * const terminating_move) const
+const bool Board::TerminateCheckWhite(MovePosition * const terminating_move) const
 {
   assert(terminating_move != nullptr);
 
@@ -196,7 +302,7 @@ const bool Board::TerminateCheck<kWhiteTurn>(MovePosition * const terminating_mo
   const bool is_opponent_four = IsOpponentFour(&guard_move);
 
   if(is_opponent_four){
-    const bool is_terminate_move = IsTerminateMove<kWhiteTurn>(guard_move);
+    const bool is_terminate_move = IsTerminateMove(guard_move);
 
     // 四ノビ防手が禁手の場合は1手前で終端するのでここでは禁手チェックはしない
     *terminating_move = guard_move;
@@ -210,7 +316,7 @@ const bool Board::TerminateCheck<kWhiteTurn>(MovePosition * const terminating_mo
   bit_board_.EnumerateFourMoves<kWhiteTurn>(board_open_state, &four_list);
 
   for(const auto &four_pair : four_list){
-    if(IsTerminateMove<kWhiteTurn>(four_pair)){
+    if(IsTerminateMove(four_pair)){
       *terminating_move = four_pair.first;
       return true;
     }
@@ -219,25 +325,16 @@ const bool Board::TerminateCheck<kWhiteTurn>(MovePosition * const terminating_mo
   return false;
 }
 
-const bool Board::TerminateCheck(const bool black_turn, MovePosition * const terminating_move) const
-{
-  if(black_turn){
-    return TerminateCheck<kBlackTurn>(terminating_move);
-  }else{
-    return TerminateCheck<kWhiteTurn>(terminating_move);
-  }
-}
-
 const bool IsNonTerminateNormalSequence(const MoveList &move_list){
   Board board;
   bool is_black_turn = true;
 
   for(const auto move : move_list){
-    if(!board.IsNormalMove(is_black_turn, move)){
+    if(!board.IsNormalMove(move)){
       return false;
     }
 
-    const bool is_terminate = board.IsTerminateMove(is_black_turn, move);
+    const bool is_terminate = board.IsTerminateMove(move);
 
     if(is_terminate){
       return false;
@@ -312,11 +409,11 @@ const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const 
 
   for(const auto move : candidate_move_list)
   {
-    if(!board.IsNormalMove(is_black_turn, move)){
+    if(!board.IsNormalMove(move)){
       continue;
     }
 
-    if(board.IsTerminateMove(is_black_turn, move)){
+    if(board.IsTerminateMove(move)){
       continue;
     }
 

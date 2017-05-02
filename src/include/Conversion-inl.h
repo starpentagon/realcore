@@ -187,6 +187,14 @@ inline const MovePosition GetBoardMove(const BoardPosition board_position)
   return GetMove(x, y);
 }
 
+inline const bool IsInBoard(const BoardPosition board_position)
+{
+  Cordinate x = 0, y = 0;
+  GetBoardCordinate(board_position, &x, &y);
+
+  return IsInBoard(x, y);
+}
+
 }
 
 #endif

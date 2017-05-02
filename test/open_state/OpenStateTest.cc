@@ -69,7 +69,7 @@ TEST_F(OpenStateTest, GetInfluenceAreaTest)
   {
     // 達四点(黒), XO[BBOB]OX
     constexpr OpenStatePattern kPattern = kNextOpenFourBlack;
-    constexpr BoardPosition pattern_position = 17;
+    constexpr BoardPosition pattern_position = 18;
     constexpr BoardPosition open_position = pattern_position + 1;
     constexpr size_t pattern_search_index = 1;
     OpenState open_state(kPattern, open_position, pattern_position, pattern_search_index);
@@ -77,8 +77,7 @@ TEST_F(OpenStateTest, GetInfluenceAreaTest)
     vector<BoardPosition> black_influence_area, white_influence_area;
 
     open_state.GetInfluenceArea<kBlackTurn>(&black_influence_area);
-    ASSERT_EQ(5, black_influence_area.size());
-    EXPECT_TRUE(HasValue(black_influence_area, pattern_position - 2));
+    ASSERT_EQ(4, black_influence_area.size());
     EXPECT_TRUE(HasValue(black_influence_area, pattern_position - 1));
     EXPECT_TRUE(HasValue(black_influence_area, open_position));
     EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 4));
@@ -93,7 +92,7 @@ TEST_F(OpenStateTest, GetInfluenceAreaTest)
   {
     // 達四点(白), O[WWOW]O
     constexpr OpenStatePattern kPattern = kNextOpenFourWhite;
-    constexpr BoardPosition pattern_position = 17;
+    constexpr BoardPosition pattern_position = 18;
     constexpr BoardPosition open_position = pattern_position + 1;
     constexpr size_t pattern_search_index = 1;
     OpenState open_state(kPattern, open_position, pattern_position, pattern_search_index);
@@ -123,8 +122,7 @@ TEST_F(OpenStateTest, GetInfluenceAreaTest)
     vector<BoardPosition> black_influence_area, white_influence_area;
 
     open_state.GetInfluenceArea<kBlackTurn>(&black_influence_area);
-    ASSERT_EQ(4, black_influence_area.size());
-    EXPECT_TRUE(HasValue(black_influence_area, pattern_position - 1));
+    ASSERT_EQ(3, black_influence_area.size());
     EXPECT_TRUE(HasValue(black_influence_area, pattern_position));
     EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 1));
     EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 5));
@@ -157,7 +155,7 @@ TEST_F(OpenStateTest, GetInfluenceAreaTest)
   {
     // 見かけの三ノビ点(黒), XO[OOBB]OX
     constexpr OpenStatePattern kPattern = kNextSemiThreeBlack;
-    constexpr BoardPosition pattern_position = 17;
+    constexpr BoardPosition pattern_position = 18;
     constexpr BoardPosition open_position = pattern_position + 2;
     constexpr size_t pattern_search_index = 5;
     OpenState open_state(kPattern, open_position, pattern_position, pattern_search_index);
@@ -165,8 +163,7 @@ TEST_F(OpenStateTest, GetInfluenceAreaTest)
     vector<BoardPosition> black_influence_area, white_influence_area;
 
     open_state.GetInfluenceArea<kBlackTurn>(&black_influence_area);
-    ASSERT_EQ(6, black_influence_area.size());
-    EXPECT_TRUE(HasValue(black_influence_area, pattern_position - 2));
+    ASSERT_EQ(5, black_influence_area.size());
     EXPECT_TRUE(HasValue(black_influence_area, pattern_position - 1));
     EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 2));
     EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 3));

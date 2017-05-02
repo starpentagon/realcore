@@ -383,12 +383,11 @@ void GetTerminateGuardTest(const realcore::StringVector &record_string_list)
 
 void GetTerminateGuardCheck(const realcore::MoveList &board_sequence, std::map<std::string, realcore::SearchCounter> *check_result)
 {
-  const bool is_black_turn = board_sequence.IsBlackTurn();
   Board board(board_sequence);
 
   MovePosition terminating_move;
   
-  if(board.TerminateCheck(is_black_turn, &terminating_move)){
+  if(board.TerminateCheck(&terminating_move)){
     return;
   }
 
@@ -400,7 +399,7 @@ void GetTerminateGuardCheck(const realcore::MoveList &board_sequence, std::map<s
 
   // Passをした際に相手に終端手があるかをチェック
   board.MakeMove(kNullMove);
-  const bool is_terminate_threat = board.TerminateCheck(!is_black_turn, &terminating_move);
+  const bool is_terminate_threat = board.TerminateCheck(&terminating_move);
   board.UndoMove();
   
   MoveBitSet guard_move_bit;
@@ -431,7 +430,7 @@ void GetTerminateGuardCheck(const realcore::MoveList &board_sequence, std::map<s
     board.MakeMove(move);
 
     MovePosition check_terminating_move;
-    const bool check_terminate_threat = board.TerminateCheck(!is_black_turn, &check_terminating_move);
+    const bool check_terminate_threat = board.TerminateCheck(&check_terminating_move);
     
     if(!check_terminate_threat){
       exact_guard_bit.set(move);

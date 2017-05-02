@@ -87,6 +87,10 @@ inline const MovePosition GetBoardMove(const BoardPosition board_position);
 //! @note x, yともに[0, 15]であることを保証する
 inline const void GetBoardCordinate(const BoardPosition board_position, Cordinate * const x, Cordinate * const y);
 
+//! @brief board_positionが盤内か判定する
+//! @retval true board_positionが盤内
+inline const bool IsInBoard(const BoardPosition board_position);
+
 }   // namespace realcore
 
 #include "Conversion-inl.h"

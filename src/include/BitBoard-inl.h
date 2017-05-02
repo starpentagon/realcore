@@ -202,6 +202,15 @@ const bool BitBoard::IsOpenFourMove(const MovePosition move) const
   return line_neighbor.template IsOpenFour<P>();
 }
 
+inline const bool BitBoard::IsOpenFourMove(const bool is_black_turn, const MovePosition move) const
+{
+  if(is_black_turn){
+    return IsOpenFourMove<kBlackTurn>(move);
+  }else{
+    return IsOpenFourMove<kWhiteTurn>(move);
+  }
+}
+
 template<PlayerTurn P>
 const bool BitBoard::IsFourMove(const MovePosition move, MovePosition * const guard_move) const
 {
@@ -414,7 +423,8 @@ void BitBoard::EnumerateDoubleSemiThreeMoves(const BoardOpenState &board_open_st
 template<PlayerTurn P>
 const bool BitBoard::GetOpenFourGuard(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const
 {
-  constexpr auto kPattern = (P == kBlackTurn) ? kNextOpenFourBlack : kNextOpenFourWhite;
+  constexpr auto kPattern = (P == kBlackTurn) ? kNextOpenFourWhite : kNextOpenFourBlack;
+  constexpr auto Q = GetOpponentTurn(P);
 
   assert(board_open_state.GetUpdateOpenStateFlag().test(kPattern));
   assert(guard_move_set != nullptr);
@@ -426,35 +436,35 @@ const bool BitBoard::GetOpenFourGuard(const BoardOpenState &board_open_state, Mo
     return false;
   }
 
-  // 達四点が存在するため防手を生成する
+  // 相手の達四点が存在する => 防手を生成する
   guard_move_set->flip();
 
   bool is_open_four = false;
 
   for(const auto &open_state : open_state_list){
-    const auto pattern_position = open_state.GetPatternPosition();
     const auto open_position = open_state.GetOpenPosition();
     const auto move = GetBoardMove(open_position);
 
     MoveBitSet downward_influence_area, upward_influence_area;
-    const auto is_forbidden = IsForbiddenMove<P>(move, &downward_influence_area, &upward_influence_area);
+    const auto is_forbidden = IsForbiddenMove<Q>(move, &downward_influence_area, &upward_influence_area);
 
     if(is_forbidden){
       continue;
     }
 
-    // XO[B3O1]OX or O[W3O1]O
-    const auto guard_move_1 = move;          // 達四位置
-    const auto guard_move_2 = GetBoardMove(pattern_position - 1);   // 右端のO
-    const auto guard_move_3 = GetBoardMove(pattern_position + 4);   // 左端のO
-    
+    // XO[B3O1]OX or O[W3O1]Oの防手位置を生成する
+    // O[W3O1]Oに対する黒番の防手 or XO[B3O1]OXに対する白番の防手のため長連筋の防手はない => 長連筋の空点チェックは不要
     MoveBitSet guard_bit;
 
-    guard_bit.set(guard_move_1);
-    guard_bit.set(guard_move_2);
-    guard_bit.set(guard_move_3);
+    std::vector<BoardPosition> guard_position_list;
+    open_state.GetInfluenceArea<P>(&guard_position_list);
 
-    if(P == kBlackTurn){
+    for(const auto guard_position : guard_position_list){
+      const auto guard_move = GetBoardMove(guard_position);
+      guard_bit.set(guard_move);
+    }
+
+    if(Q == kBlackTurn){
       // 否禁を禁手にする位置を防手位置に加える
       guard_bit |= upward_influence_area;
     }
