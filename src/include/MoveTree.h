@@ -67,6 +67,10 @@ public:
   //! @brief 探索木を初期化する
   const void clear();
 
+  //! @brief 指定のmoveと競合する証明木のOR nodeがあるか返す
+  //! @note VLMではAND nodeですべての空点が生成されるためOR nodeに絞って競合性を判定する
+  const bool IsConflictORNode(const MovePosition move) const;
+
 private:
   //! @brief カレントノードがroot nodeかどうか判定する
   const bool IsRootNode() const;

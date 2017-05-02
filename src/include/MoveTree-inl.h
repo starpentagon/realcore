@@ -2,6 +2,7 @@
 #define MOVE_TREE_INL_H
 
 #include <string>
+#include <map>
 
 #include "MoveTree.h"
 
@@ -260,6 +261,44 @@ inline const void MoveTreeBase<T>::clear()
   // root nodeを設定
   tree_.emplace_back(kNullNodeIndex, kInvalidMove);
   current_node_index_ = kRootNodeIndex;
+}
+
+template<class T>
+const bool MoveTreeBase<T>::IsConflictORNode(const MovePosition move) const
+{
+  constexpr bool kNodeOR = true;
+
+  std::map<MoveNodeIndex, bool> node_and_or;    // 各ノードがAND/OR nodeかを記録する
+
+  for(size_t node_index=1, size=tree_.size(); node_index<size; node_index++){
+    const auto &node = tree_[node_index];
+    const auto parent_node_index = node.GetParentIndex();
+    bool is_node_or = false;
+
+    if(parent_node_index == kRootNodeIndex){
+      // Root node直下はOR node
+      is_node_or = kNodeOR;
+    }else{
+      // 親のAND/ORを反転させたのが該当nodeのAND/OR
+      const bool parent_node_and_or = node_and_or.at(parent_node_index);
+      is_node_or = !parent_node_and_or;
+    }
+
+    node_and_or[node_index] = is_node_or;
+
+    if(is_node_or && node.GetMove() == move){
+      // OR nodeで兄弟ノードがないノードで指し手が競合する場合は証明木がOR nodeで競合する
+      const auto& parent_node = tree_[parent_node_index];
+      const auto& first_child_node_index = parent_node.GetFirstChildIndex();
+      const auto& first_child_node = tree_[first_child_node_index];
+
+      if(first_child_node.GetNextSiblingIndex() == kNullNodeIndex){
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 }   // namespace realcore
