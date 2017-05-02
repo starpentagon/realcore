@@ -398,10 +398,6 @@ void GetTerminateGuardCheck(const realcore::MoveList &board_sequence, std::map<s
     return;
   }
 
-  // todo delete
-  if(board_sequence.str() == "hhhihghfihghfgiggffejhkhiejiijiikiehfifhdhegdfeiejdjggfdeeddecflckhlglgmekikfnhjgigkem"){
-    int a = 1;
-  }
   // Passをした際に相手に終端手があるかをチェック
   board.MakeMove(kNullMove);
   const bool is_terminate_threat = board.TerminateCheck(!is_black_turn, &terminating_move);
@@ -435,11 +431,6 @@ void GetTerminateGuardCheck(const realcore::MoveList &board_sequence, std::map<s
     board.MakeMove(move);
 
     MovePosition check_terminating_move;
-
-    // todo delete
-    if(board_sequence.str() == "hhhihghfihghfgigjhgfgeffifkhjegiiehegjjfiijjkglffihjhkilikjkkjklijjl" && move == kMoveHL){
-      int a = 1;
-    }
     const bool check_terminate_threat = board.TerminateCheck(!is_black_turn, &check_terminating_move);
     
     if(!check_terminate_threat){

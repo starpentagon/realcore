@@ -5,7 +5,7 @@
 #ifndef OPEN_STATE_H
 #define OPEN_STATE_H
 
-#include <array>
+#include <vector>
 #include <bitset>
 
 #include "RealCore.h"
@@ -34,9 +34,6 @@ constexpr UpdateOpenStateFlag kUpdateForbiddenCheck(0b0101011);    // 禁手チ�
 //! @brief 指し手パターンが黒番, 白番どちらのパターンなのかを返す
 constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern);
 
-//! @brief 指し手パターンごとの防手対象位置リスト
-typedef std::array<BoardPosition, 3> GuardPositionList;
-
 // 前方宣言
 class OpenState;
 class OpenStateTest;
@@ -59,7 +56,7 @@ class OpenState{
 
 public:
   //! @brief コンストラクタ
-  OpenState(const OpenStatePattern pattern, const BoardPosition open_position, const BoardPosition pattern_position);
+  OpenState(const OpenStatePattern pattern, const BoardPosition open_position, const BoardPosition pattern_position, const size_t pattern_search_index);
   OpenState(const OpenState &open_state);
 
   //! @brief 代入演算子
@@ -75,19 +72,13 @@ public:
   //! @brief パターンの開始位置を返す
   const BoardPosition GetPatternPosition() const;
 
-  //! @brief チェック対象位置を返す
+  //! @brief チェック対象位置（見かけの三点における達四点 or 四ノビ点における五連を作る位置）を返す
   const BoardPosition GetCheckPosition() const;
-  
-  //! @brief チェック対象位置を設定する
-  //! @param check_position_list 設定するチェック対象位置リスト
-  void SetCheckPosition(const BoardPosition check_position);
 
-  //! @brief 防手位置のリストを取得する
-  const GuardPositionList& GetGuardPositionList() const;
-
-  //! @brief 防手位置のリストを設定する
-  //! @param guard_position_list 設定する防手位置リスト
-  void SetGuardPositionList(const GuardPositionList &guard_position_list);
+  //! @brief パターンの指し手が成立しなくなる影響領域(downward influence area)を返す
+  //! @note 長連筋の位置は空点でない可能性あるため着手前に空点チェックが必要
+  template<PlayerTurn P>
+  void GetInfluenceArea(std::vector<BoardPosition> * const downward_influence_area) const;
 
   //! @brief 指定の指し手位置が影響領域かどうかを判定する
   //! @param P 指し手の手番
@@ -100,8 +91,7 @@ private:
   OpenStatePattern pattern_;              //!< 空点状態の対象となる指し手パターン(長連点, 達四点, etc)
   BoardPosition open_position_;           //!< 空点位置
   BoardPosition pattern_position_;        //!< パターンの開始位置
-  BoardPosition check_position_;          //!< チェック対象位置（見かけの三の四連にする位置）
-  GuardPositionList guard_position_list_; //!< 防手位置
+  size_t pattern_search_index_;           //!< パターン検索index
 };
 }   // namespace realcore
 

@@ -40,7 +40,7 @@ inline void BoardOpenState::AddOpenState<kNextOverline>(const size_t pattern_sea
 {
   constexpr OpenStatePattern Pattern = kNextOverline;
   const BoardPosition open_position = GetOpenBoardPosition(pattern_position, pattern_search_index);
-  open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position);
+  open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
 }
 
 template<>
@@ -48,7 +48,7 @@ inline void BoardOpenState::AddOpenState<kNextOpenFourBlack>(const size_t patter
 {
   constexpr OpenStatePattern Pattern = kNextOpenFourBlack;
   const BoardPosition open_position = GetOpenBoardPosition(pattern_position, pattern_search_index);
-  open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position);
+  open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
 }
 
 template<>
@@ -56,7 +56,7 @@ inline void BoardOpenState::AddOpenState<kNextOpenFourWhite>(const size_t patter
 {
   constexpr OpenStatePattern Pattern = kNextOpenFourWhite;
   const BoardPosition open_position = GetOpenBoardPosition(pattern_position, pattern_search_index);
-  open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position);
+  open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
 }
 
 template<>
@@ -66,23 +66,15 @@ inline void BoardOpenState::AddOpenState<kNextFourBlack>(const size_t pattern_se
 
   {
     const size_t open_index = GetLessIndexOfTwo(pattern_search_index);
-    const size_t guard_index = GetGreaterIndexOfTwo(pattern_search_index);
-
     const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
-    const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
     
-    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position);
-    open_state_list_[Pattern].back().SetGuardPositionList({{guard_position}});
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
   }
   {
     const size_t open_index = GetGreaterIndexOfTwo(pattern_search_index);
-    const size_t guard_index = GetLessIndexOfTwo(pattern_search_index);
-
     const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
-    const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
     
-    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position);
-    open_state_list_[Pattern].back().SetGuardPositionList({{guard_position}});
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
   }
 }
 
@@ -93,23 +85,15 @@ inline void BoardOpenState::AddOpenState<kNextFourWhite>(const size_t pattern_se
 
   {
     const size_t open_index = GetLessIndexOfTwo(pattern_search_index);
-    const size_t guard_index = GetGreaterIndexOfTwo(pattern_search_index);
-
     const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
-    const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
     
-    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position);
-    open_state_list_[Pattern].back().SetGuardPositionList({{guard_position}});
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
   }
   {
     const size_t open_index = GetGreaterIndexOfTwo(pattern_search_index);
-    const size_t guard_index = GetLessIndexOfTwo(pattern_search_index);
-
     const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
-    const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
     
-    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position);
-    open_state_list_[Pattern].back().SetGuardPositionList({{guard_position}});
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
   }
 }
 
@@ -117,30 +101,18 @@ template<>
 inline void BoardOpenState::AddOpenState<kNextSemiThreeBlack>(const size_t pattern_search_index, const BoardPosition pattern_position)
 {
   constexpr OpenStatePattern Pattern = kNextSemiThreeBlack;
-  const BoardPosition left_side_guard_position = pattern_position + 4;  // O[B2O2]Oの左端のO
-  const BoardPosition right_side_guard_position = pattern_position - 1;  // O[B2O2]Oの右端のO
 
   {
     const size_t open_index = GetLessIndexOfTwo(pattern_search_index);
-    const size_t guard_index = GetGreaterIndexOfTwo(pattern_search_index);
-
     const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
-    const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
     
-    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position);
-    open_state_list_[Pattern].back().SetCheckPosition(guard_position);
-    open_state_list_[Pattern].back().SetGuardPositionList({{guard_position, right_side_guard_position, left_side_guard_position}});
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
   }
   {
     const size_t open_index = GetGreaterIndexOfTwo(pattern_search_index);
-    const size_t guard_index = GetLessIndexOfTwo(pattern_search_index);
-
     const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
-    const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
     
-    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position);
-    open_state_list_[Pattern].back().SetCheckPosition(guard_position);
-    open_state_list_[Pattern].back().SetGuardPositionList({{guard_position, right_side_guard_position, left_side_guard_position}});
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
   }
 }
 
@@ -148,28 +120,18 @@ template<>
 inline void BoardOpenState::AddOpenState<kNextSemiThreeWhite>(const size_t pattern_search_index, const BoardPosition pattern_position)
 {
   constexpr OpenStatePattern Pattern = kNextSemiThreeWhite;
-  const BoardPosition left_side_guard_position = pattern_position + 4;  // O[B2O2]Oの左端のO
-  const BoardPosition right_side_guard_position = pattern_position - 1;  // O[B2O2]Oの右端のO
 
   {
     const size_t open_index = GetLessIndexOfTwo(pattern_search_index);
-    const size_t guard_index = GetGreaterIndexOfTwo(pattern_search_index);
-
     const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
-    const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
     
-    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position);
-    open_state_list_[Pattern].back().SetGuardPositionList({{guard_position, right_side_guard_position, left_side_guard_position}});
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
   }
   {
     const size_t open_index = GetGreaterIndexOfTwo(pattern_search_index);
-    const size_t guard_index = GetLessIndexOfTwo(pattern_search_index);
-
     const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
-    const BoardPosition guard_position = GetOpenBoardPosition(pattern_position, guard_index);
     
-    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position);
-    open_state_list_[Pattern].back().SetGuardPositionList({{guard_position, right_side_guard_position, left_side_guard_position}});
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
   }
 }
 

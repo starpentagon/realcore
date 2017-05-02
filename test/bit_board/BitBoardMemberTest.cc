@@ -87,7 +87,9 @@ public:
     const BoardDirection direction = kLateralDirection;
     const BoardPosition open_position = GetBoardPosition(kMoveKH, direction);
     const BoardPosition pattern_position = GetBoardPosition(kMoveIH, direction);
-    OpenState expect(kPattern, open_position, pattern_position);
+    constexpr size_t pattern_search_index = 2;
+
+    OpenState expect(kPattern, open_position, pattern_position, pattern_search_index);
 
     ASSERT_EQ(1, open_state_list.size());
     EXPECT_TRUE(expect == open_state_list[0]);
@@ -125,11 +127,13 @@ public:
 
     const BoardPosition open_position_1 = GetBoardPosition(kMoveGH, direction);
     const BoardPosition pattern_position_1 = GetBoardPosition(kMoveGH, direction);
-    OpenState expect_1(kPattern, open_position_1, pattern_position_1);
+    constexpr size_t pattern_search_index_1 = 0;
+    OpenState expect_1(kPattern, open_position_1, pattern_position_1, pattern_search_index_1);
 
     const BoardPosition open_position_2 = GetBoardPosition(kMoveKH, direction);
     const BoardPosition pattern_position_2 = GetBoardPosition(kMoveHH, direction);
-    OpenState expect_2(kPattern, open_position_2, pattern_position_2);
+    constexpr size_t pattern_search_index_2 = 3;
+    OpenState expect_2(kPattern, open_position_2, pattern_position_2, pattern_search_index_2);
 
     ASSERT_EQ(2, open_state_list.size());
     EXPECT_TRUE(expect_1 == open_state_list[0]);
@@ -200,11 +204,13 @@ public:
 
     const BoardPosition open_position_1 = GetBoardPosition(kMoveGG, direction);
     const BoardPosition pattern_position_1 = GetBoardPosition(kMoveGG, direction);
-    OpenState expect_1(kPattern, open_position_1, pattern_position_1);
+    constexpr size_t pattern_search_index_1 = 0;
+    OpenState expect_1(kPattern, open_position_1, pattern_position_1, pattern_search_index_1);
 
     const BoardPosition open_position_2 = GetBoardPosition(kMoveKG, direction);
     const BoardPosition pattern_position_2 = GetBoardPosition(kMoveHG, direction);
-    OpenState expect_2(kPattern, open_position_2, pattern_position_2);
+    constexpr size_t pattern_search_index_2 = 3;
+    OpenState expect_2(kPattern, open_position_2, pattern_position_2, pattern_search_index_2);
 
     ASSERT_EQ(2, open_state_list.size());
     EXPECT_TRUE(expect_1 == open_state_list[0]);
@@ -275,19 +281,12 @@ public:
 
     const BoardPosition open_position_1 = GetBoardPosition(kMoveHE, direction);
     const BoardPosition pattern_position_1 = GetBoardPosition(kMoveHD, direction);
-    OpenState expect_1(kPattern, open_position_1, pattern_position_1);
-
-    GuardPositionList guard_1{{0}};
-    guard_1[0] = GetBoardPosition(kMoveHG, direction);
-    expect_1.SetGuardPositionList(guard_1);
+    constexpr size_t pattern_search_index = 4;
+    OpenState expect_1(kPattern, open_position_1, pattern_position_1, pattern_search_index);
 
     const BoardPosition open_position_2 = GetBoardPosition(kMoveHG, direction);
     const BoardPosition pattern_position_2 = GetBoardPosition(kMoveHD, direction);
-    OpenState expect_2(kPattern, open_position_2, pattern_position_2);
-
-    GuardPositionList guard_2{{0}};
-    guard_2[0] = GetBoardPosition(kMoveHE, direction);
-    expect_2.SetGuardPositionList(guard_2);
+    OpenState expect_2(kPattern, open_position_2, pattern_position_2, pattern_search_index);
 
     ASSERT_EQ(2, open_state_list.size());
     EXPECT_TRUE(expect_1 == open_state_list[0]);
@@ -373,19 +372,12 @@ public:
 
     const BoardPosition open_position_1 = GetBoardPosition(kMoveLD, direction);
     const BoardPosition pattern_position_1 = GetBoardPosition(kMoveMC, direction);
-    OpenState expect_1(kPattern, open_position_1, pattern_position_1);
-
-    GuardPositionList guard_1{{0}};
-    guard_1[0] = GetBoardPosition(kMoveJF, direction);
-    expect_1.SetGuardPositionList(guard_1);
+    constexpr size_t pattern_search_index = 4;
+    OpenState expect_1(kPattern, open_position_1, pattern_position_1, pattern_search_index);
 
     const BoardPosition open_position_2 = GetBoardPosition(kMoveJF, direction);
     const BoardPosition pattern_position_2 = GetBoardPosition(kMoveMC, direction);
-    OpenState expect_2(kPattern, open_position_2, pattern_position_2);
-
-    GuardPositionList guard_2{{0}};
-    guard_2[0] = GetBoardPosition(kMoveLD, direction);
-    expect_2.SetGuardPositionList(guard_2);
+    OpenState expect_2(kPattern, open_position_2, pattern_position_2, pattern_search_index);
 
     ASSERT_EQ(2, open_state_list.size());
     EXPECT_TRUE(expect_1 == open_state_list[0]);
@@ -519,58 +511,24 @@ public:
     // OpenState at kMoveEE by pattern kMoveEE
     const BoardPosition open_position_1 = GetBoardPosition(kMoveEE, direction);
     const BoardPosition pattern_position_1 = GetBoardPosition(kMoveEE, direction);
-    OpenState expect_1(kPattern, open_position_1, pattern_position_1);
-
-    const auto check_1 = GetBoardPosition(kMoveGG, direction);
-    expect_1.SetCheckPosition(check_1);
-
-    GuardPositionList guard_1{{0}};
-    guard_1[0] = GetBoardPosition(kMoveGG, direction);
-    guard_1[1] = GetBoardPosition(kMoveDD, direction);
-    guard_1[2] = GetBoardPosition(kMoveII, direction);
-    expect_1.SetGuardPositionList(guard_1);
+    constexpr size_t pattern_search_index_1 = 1;
+    OpenState expect_1(kPattern, open_position_1, pattern_position_1, pattern_search_index_1);
 
     // OpenState at kMoveGG by pattern kMoveEE
     const BoardPosition open_position_2 = GetBoardPosition(kMoveGG, direction);
     const BoardPosition pattern_position_2 = GetBoardPosition(kMoveEE, direction);
-    OpenState expect_2(kPattern, open_position_2, pattern_position_2);
-
-    const auto check_2 = GetBoardPosition(kMoveEE, direction);
-    expect_2.SetCheckPosition(check_2);
-
-    GuardPositionList guard_2{{0}};
-    guard_2[0] = GetBoardPosition(kMoveEE, direction);
-    guard_2[1] = GetBoardPosition(kMoveDD, direction);
-    guard_2[2] = GetBoardPosition(kMoveII, direction);
-    expect_2.SetGuardPositionList(guard_2);
+    OpenState expect_2(kPattern, open_position_2, pattern_position_2, pattern_search_index_1);
 
     // OpenState at kMoveGG by pattern kMoveFF
     const BoardPosition open_position_3 = GetBoardPosition(kMoveGG, direction);
     const BoardPosition pattern_position_3 = GetBoardPosition(kMoveFF, direction);
-    OpenState expect_3(kPattern, open_position_3, pattern_position_3);
-
-    const auto check_3 = GetBoardPosition(kMoveII, direction);
-    expect_3.SetCheckPosition(check_3);
-
-    GuardPositionList guard_3{{0}};
-    guard_3[0] = GetBoardPosition(kMoveII, direction);
-    guard_3[1] = GetBoardPosition(kMoveEE, direction);
-    guard_3[2] = GetBoardPosition(kMoveJJ, direction);
-    expect_3.SetGuardPositionList(guard_3);
+    constexpr size_t pattern_search_index_2 = 4;
+    OpenState expect_3(kPattern, open_position_3, pattern_position_3, pattern_search_index_2);
 
     // OpenState at kMoveII by pattern kMoveFF
     const BoardPosition open_position_4 = GetBoardPosition(kMoveII, direction);
     const BoardPosition pattern_position_4 = GetBoardPosition(kMoveFF, direction);
-    OpenState expect_4(kPattern, open_position_4, pattern_position_4);
-
-    const auto check_4 = GetBoardPosition(kMoveGG, direction);
-    expect_4.SetCheckPosition(check_4);
-
-    GuardPositionList guard_4{{0}};
-    guard_4[0] = GetBoardPosition(kMoveGG, direction);
-    guard_4[1] = GetBoardPosition(kMoveEE, direction);
-    guard_4[2] = GetBoardPosition(kMoveJJ, direction);
-    expect_4.SetGuardPositionList(guard_4);
+    OpenState expect_4(kPattern, open_position_4, pattern_position_4, pattern_search_index_2);
 
     ASSERT_EQ(4, open_state_list.size());
     EXPECT_TRUE(expect_1 == open_state_list[0]);
@@ -644,24 +602,13 @@ public:
     // OpenState at kMoveIE by pattern kMoveID
     const BoardPosition open_position_1 = GetBoardPosition(kMoveIE, direction);
     const BoardPosition pattern_position_1 = GetBoardPosition(kMoveID, direction);
-    OpenState expect_1(kPattern, open_position_1, pattern_position_1);
-
-    GuardPositionList guard_1{{0}};
-    guard_1[0] = GetBoardPosition(kMoveIF, direction);
-    guard_1[1] = GetBoardPosition(kMoveIC, direction);
-    guard_1[2] = GetBoardPosition(kMoveIH, direction);
-    expect_1.SetGuardPositionList(guard_1);
+    constexpr size_t pattern_search_index_1 = 2;
+    OpenState expect_1(kPattern, open_position_1, pattern_position_1, pattern_search_index_1);
 
     // OpenState at kMoveIF by pattern kMoveID
     const BoardPosition open_position_2 = GetBoardPosition(kMoveIF, direction);
     const BoardPosition pattern_position_2 = GetBoardPosition(kMoveID, direction);
-    OpenState expect_2(kPattern, open_position_2, pattern_position_2);
-
-    GuardPositionList guard_2{{0}};
-    guard_2[0] = GetBoardPosition(kMoveIE, direction);
-    guard_2[1] = GetBoardPosition(kMoveIC, direction);
-    guard_2[2] = GetBoardPosition(kMoveIH, direction);
-    expect_2.SetGuardPositionList(guard_2);
+    OpenState expect_2(kPattern, open_position_2, pattern_position_2, pattern_search_index_1);
 
     ASSERT_EQ(2, open_state_list.size());
     EXPECT_TRUE(expect_1 == open_state_list[0]);

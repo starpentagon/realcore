@@ -18,10 +18,10 @@ public:
   void ClearInfluencedOpenStateTest(){
     vector<OpenState> test_list;
 
-    test_list.emplace_back(kNextFourBlack, 37, 37);
-    test_list.emplace_back(kNextFourBlack, 41, 37);
-    test_list.emplace_back(kNextFourBlack, 41, 38);
-    test_list.emplace_back(kNextFourBlack, 42, 38);
+    test_list.emplace_back(kNextFourBlack, 37, 37, 0);
+    test_list.emplace_back(kNextFourBlack, 41, 37, 0);
+    test_list.emplace_back(kNextFourBlack, 41, 38, 0);
+    test_list.emplace_back(kNextFourBlack, 42, 38, 0);
     
     BoardOpenState board_open_state;
     vector<OpenState> cleared_list;

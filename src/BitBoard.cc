@@ -391,7 +391,7 @@ void BitBoard::EnumerateFourMoves<kBlackTurn>(const BoardOpenState &board_open_s
     const auto open_position = open_state.GetOpenPosition();
     const auto move = GetBoardMove(open_position);
 
-    const auto guard_position = open_state.GetGuardPositionList()[0];
+    const auto guard_position = open_state.GetCheckPosition();
     const auto guard_move = GetBoardMove(guard_position);
 
     const int attack_guard_key = (move << 16) | guard_move;
@@ -441,7 +441,7 @@ void BitBoard::EnumerateFourMoves<kWhiteTurn>(const BoardOpenState &board_open_s
     const auto open_position = open_state.GetOpenPosition();
     const auto move = GetBoardMove(open_position);
 
-    const auto guard_position = open_state.GetGuardPositionList()[0];
+    const auto guard_position = open_state.GetCheckPosition();
     const auto guard_move = GetBoardMove(guard_position);
 
     const int attack_guard_key = (move << 16) | guard_move;

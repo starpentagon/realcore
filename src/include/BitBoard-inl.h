@@ -367,7 +367,7 @@ void BitBoard::EnumerateDoubleFourMoves(const BoardOpenState &board_open_state, 
       continue;
     }
 
-    const auto next_five_position = open_state.GetGuardPositionList()[0];   // 防手位置 = 次に五連を作る位置
+    const auto next_five_position = open_state.GetCheckPosition();   // 防手位置 = 次に五連を作る位置
     const auto move = GetBoardMove(open_position);
 
     const bool is_double_four = next_five_position_table[move] >= 0 && next_five_position_table[move] != static_cast<int>(next_five_position);
