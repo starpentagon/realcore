@@ -45,7 +45,8 @@ const bool MakeNonTerminateNormalSequence(const MoveList &original_move_list, Mo
 //! @param on_overline_black 長連筋内の白石bit
 //! @param transposition_set 置換表
 //! @param modified_move_list 決定済の指し手リスト
-const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const MoveBitSet &white_remain, MoveList * const modified_move_list);
+//! @param call_limit 再帰呼出し回数の上限
+const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const MoveBitSet &white_remain, MoveList * const modified_move_list, unsigned int * const call_limit);
 
 //! @brief 盤面管理クラス
 class Board

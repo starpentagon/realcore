@@ -371,17 +371,26 @@ const bool MakeNonTerminateNormalSequence(const MoveList &original_move_list, Mo
     return false;
   }
 
-  const bool is_modified = MakeNonTerminateNormalSequence(black_remain, white_remain, modified_move_list);
+  unsigned int call_limit = 500;    // VLM問題集での正規化に要した呼び出し回数は最大138回
+  const bool is_modified = MakeNonTerminateNormalSequence(black_remain, white_remain, modified_move_list, &call_limit);
+  cout << call_limit << endl;
   return is_modified;
 }
 
-const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const MoveBitSet &white_remain, MoveList * const modified_move_list)
+const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const MoveBitSet &white_remain, MoveList * const modified_move_list, unsigned int * const call_limit)
 {
   assert(modified_move_list != nullptr);
+  assert(call_limit != nullptr);
 
   if(black_remain.none() && white_remain.none()){
     return true;
   }
+
+  if(*call_limit == 0){
+    return false;
+  }
+
+  --(*call_limit);
 
   Board board(*modified_move_list);
   const bool is_black_turn = modified_move_list->IsBlackTurn();
@@ -427,7 +436,7 @@ const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const 
 
     *modified_move_list += move;
 
-    const auto is_modified = MakeNonTerminateNormalSequence(child_black_remain, child_white_remain, modified_move_list);
+    const auto is_modified = MakeNonTerminateNormalSequence(child_black_remain, child_white_remain, modified_move_list, call_limit);
 
     if(is_modified){
       return true;
