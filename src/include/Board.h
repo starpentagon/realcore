@@ -118,6 +118,11 @@ public:
   //! @param 禁点の格納先
   void EnumerateForbiddenMoves(MoveBitSet * const forbidden_move_set) const;
 
+  //! @brief 達四点を列挙する
+  template<PlayerTurn P>
+  void EnumerateOpenFourMoves(MoveBitSet * const open_four_move_set) const;
+  void EnumerateOpenFourMoves(const bool is_black_turn, MoveBitSet * const open_four_move_set) const;
+
   //! @brief 四ノビ点を列挙する
   template<PlayerTurn P>
   void EnumerateFourMoves(MoveBitSet * const four_move_set) const;

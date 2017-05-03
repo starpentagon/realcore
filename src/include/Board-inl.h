@@ -11,6 +11,22 @@
 namespace realcore
 {
 template<PlayerTurn P>
+inline void Board::EnumerateOpenFourMoves(MoveBitSet * const open_four_move_set) const
+{
+  const auto &board_open_state = board_open_state_list_.back();
+  bit_board_.EnumerateOpenFourMoves<P>(board_open_state, open_four_move_set);
+}
+
+inline void Board::EnumerateOpenFourMoves(const bool is_black_turn, MoveBitSet * const open_four_move_set) const
+{
+  if(is_black_turn){
+    EnumerateOpenFourMoves<kBlackTurn>(open_four_move_set);
+  }else{
+    EnumerateOpenFourMoves<kWhiteTurn>(open_four_move_set);
+  }
+}
+
+template<PlayerTurn P>
 inline void Board::EnumerateFourMoves(MoveBitSet * const four_move_set) const
 {
   const auto &board_open_state = board_open_state_list_.back();
