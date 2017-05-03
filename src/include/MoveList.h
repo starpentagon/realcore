@@ -117,16 +117,20 @@ public:
 
   //! @brief MoveListの空点を返す
   void GetOpenMove(MoveList * const open_move_list) const;
+  void GetOpenMove(MoveBitSet * const open_move_bit) const;
 
   //! @brief MoveListの空点を返す(禁手除外版)
   void GetOpenMove(const MoveBitSet &forbidden_bit, MoveList * const open_move_list) const;
+  void GetOpenMove(const MoveBitSet &forbidden_bit, MoveBitSet * const open_move_bit) const;
 
   //! @brief 着手可能な指し手リストを返す
   //! @note 空点 + Pass
   void GetPossibleMove(MoveList * const possible_move_list) const;
+  void GetPossibleMove(MoveBitSet * const possible_move_bit) const;
 
   //! @brief 着手可能な指し手リストを返す(禁手除外版)
   void GetPossibleMove(const MoveBitSet &forbidden_bit, MoveList * const possible_move_list) const;
+  void GetPossibleMove(const MoveBitSet &forbidden_bit, MoveBitSet * const possible_move_bit) const;
 
 private:
   //! @brief 初期化時に確保する領域長さを算出する
