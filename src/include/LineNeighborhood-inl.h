@@ -179,7 +179,7 @@ void LineNeighborhood::GetOpenState(const std::uint64_t combined_stone_bit, cons
   assert(distance_ == kOpenStateNeighborhoodSize);
   assert(board_open_state != nullptr);
   
-  // 近傍中心は着手済で少なくとも4つはbitが立つため0-1bit判定は行わない
+  // 近傍中心は着手済で少なくとも4つ(4方向分)はbitが立つため0-1bit判定は行わない
   constexpr size_t kPatternNum = GetOpenStatePatternNum(Pattern);
   std::array<std::uint64_t, kPatternNum> pattern_search{{0}};
   SearchOpenStatePattern<Pattern>(combined_stone_bit, combined_open_bit, &pattern_search);

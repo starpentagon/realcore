@@ -1380,6 +1380,245 @@ TEST(MovePatternSearchTest, SearchNextSemiWhiteTest)
   }
 }
 
+TEST(MovePatternSearchTest, SearchNextPointOfSwordBlackTest)
+{
+  constexpr PlayerTurn P = kBlackTurn;
+
+  {
+    // 剣先点パターン_1(黒, 二連)
+    const string pattern = "OOOBBOOO";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kThreeOfFivePattern> pattern_search_bit_list{{0}};
+    SearchNextPointOfSword<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kThreeOfFivePattern; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+
+      if(i == 0){
+        // OOO|BBOOO|
+        constexpr uint64_t expect_bit = LeftShift<0>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 4){
+        // OO|OBBOO|O
+        constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 6){
+        // O|OOBBO|OO
+        constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 9){
+        // |OOOBB|OOO
+        constexpr uint64_t expect_bit = LeftShift<3>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else{
+        ASSERT_EQ(0ULL, search_bit);
+      }
+    }
+  }
+  {
+    // 剣先点パターン_2(黒, トビ二)
+    const string pattern = "OBOOBOO";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kThreeOfFivePattern> pattern_search_bit_list{{0}};
+    SearchNextPointOfSword<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kThreeOfFivePattern; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+
+      if(i == 2){
+        // O|BOOBO|O
+        constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 7){
+        // |OBOOB|OO
+        constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else{
+        ASSERT_EQ(0ULL, search_bit);
+      }
+    }
+  }
+  {
+    // 剣先点パターン_3(黒, 長連筋)
+    const string pattern = "BOOBOBOO";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kThreeOfFivePattern> pattern_search_bit_list{{0}};
+    SearchNextPointOfSword<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kThreeOfFivePattern; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+
+      if(i == 1){
+        // BOO|BOBOO|
+        constexpr uint64_t expect_bit = LeftShift<0>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 5){
+        // BO|OBOBO|O
+        constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else{
+        ASSERT_EQ(0ULL, search_bit);
+      }
+    }
+  }
+  {
+    // 否剣先点パターン(黒, 長連筋)
+    const string pattern = "BBOBOBOOB";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kThreeOfFivePattern> pattern_search_bit_list{{0}};
+    SearchNextPointOfSword<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kThreeOfFivePattern; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+
+      ASSERT_EQ(0ULL, search_bit);
+    }
+  }
+  {
+    // 否剣先点パターン(黒)
+    const string pattern = "WOOOBOOX";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kThreeOfFivePattern> pattern_search_bit_list{{0}};
+    SearchNextPointOfSword<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kThreeOfFivePattern; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+
+      ASSERT_EQ(0ULL, search_bit);
+    }
+  }
+}
+
+TEST(MovePatternSearchTest, SearchNextPointOfSwordWhiteTest)
+{
+  constexpr PlayerTurn P = kWhiteTurn;
+
+  {
+    // 剣先点パターン_1(白, 二連)
+    const string pattern = "OOOWWOOO";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kThreeOfFivePattern> pattern_search_bit_list{{0}};
+    SearchNextPointOfSword<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kThreeOfFivePattern; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+
+      if(i == 0){
+        // OOO|WWOOO|
+        constexpr uint64_t expect_bit = LeftShift<0>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 4){
+        // OO|OWWOO|O
+        constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 6){
+        // O|OOWWO|OO
+        constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 9){
+        // |OOOWW|OOO
+        constexpr uint64_t expect_bit = LeftShift<3>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else{
+        ASSERT_EQ(0ULL, search_bit);
+      }
+    }
+  }
+  {
+    // 剣先点パターン_2(白, トビ二)
+    const string pattern = "OWOWOOO";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kThreeOfFivePattern> pattern_search_bit_list{{0}};
+    SearchNextPointOfSword<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kThreeOfFivePattern; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+
+      if(i == 1){
+        // O|WOWOO|O
+        constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 5){
+        // |OWOWO|OO
+        constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else{
+        ASSERT_EQ(0ULL, search_bit);
+      }
+    }
+  }
+  {
+    // 剣先点パターン_3(白, 長連筋)
+    const string pattern = "WOOWOWOO";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kThreeOfFivePattern> pattern_search_bit_list{{0}};
+    SearchNextPointOfSword<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kThreeOfFivePattern; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+
+      if(i == 1){
+        // WOO|WOWOO|
+        constexpr uint64_t expect_bit = LeftShift<0>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 5){
+        // WO|OWOWO|O
+        constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 8){
+        // W|OOWOW|OO
+        constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 2){
+        // |WOOWO|WOO
+        constexpr uint64_t expect_bit = LeftShift<3>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else{
+        ASSERT_EQ(0ULL, search_bit);
+      }
+    }
+  }
+  {
+    // 否剣先点パターン(白)
+    const string pattern = "BOOOWOOB";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kThreeOfFivePattern> pattern_search_bit_list{{0}};
+    SearchNextPointOfSword<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kThreeOfFivePattern; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+      ASSERT_EQ(0ULL, search_bit);
+    }
+  }
+}
+
 }   // namespace realcore
 
 

@@ -131,6 +131,45 @@ inline const size_t GetGreaterIndexOfTwo(const size_t index)
   return greater_index[index];
 }
 
+inline const size_t GetMinIndexOfThree(const size_t index)
+{
+  assert(index < kThreeOfFivePattern);
+
+  static const std::array<size_t, kThreeOfFivePattern> min_index{{
+    0,
+    0, 0, 1,
+    0, 0, 0, 1, 1, 2
+  }};
+
+  return min_index[index];
+}
+
+inline const size_t GetMedianIndexOfThree(const size_t index)
+{
+  assert(index < kThreeOfFivePattern);
+
+  static const std::array<size_t, kThreeOfFivePattern> median_index{{
+    1,
+    1, 2, 2,
+    1, 2, 3, 2, 3, 3
+  }};
+
+  return median_index[index];
+}
+
+inline const size_t GetMaxIndexOfThree(const size_t index)
+{
+  assert(index < kThreeOfFivePattern);
+
+  static const std::array<size_t, kThreeOfFivePattern> max_index{{
+    2,
+    3, 3, 3,
+    4, 4, 4, 4, 4, 4
+  }};
+
+  return max_index[index];
+}
+
 template<std::size_t N>
 inline void GetStoneWithTwoOpenBit(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, N> * const pattern_bit_list)
 {
@@ -149,6 +188,32 @@ inline void GetStoneWithTwoOpenBit(const std::uint64_t stone_bit, const std::uin
 
     for(size_t shift=1; shift<M; ++shift){
       const std::uint64_t check_bit = (shift == open_less_index || shift == open_greater_index) ? open_bit : stone_bit;
+      search_bit &= RightShift(shift, check_bit);
+    }
+
+    (*pattern_bit_list)[open_index] = search_bit;
+  }
+}
+
+template<size_t N>
+inline void GetStoneWithThreeOpenBit(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, N> * const pattern_bit_list)
+{
+  static_assert(N == kThreeOfFourPattern || N == kThreeOfFivePattern, "N must be kThreeOfFourPattern(= 4) or kThreeOfFivePattern(= 10)");
+  assert(pattern_bit_list != nullptr);
+
+  // パターン長M(=[B2O3]なら5, [B1O4]なら4)
+  constexpr size_t M = N == kThreeOfFourPattern ? 4 : 5;
+
+  for(size_t open_index=0; open_index<N; ++open_index){
+    // open_indexのみOで残りが黒石 or 白石のパターンを検索する
+    const auto open_min_index = GetMinIndexOfThree(open_index);
+    const auto open_median_index = GetMedianIndexOfThree(open_index);
+    const auto open_max_index = GetMaxIndexOfThree(open_index);
+
+    std::uint64_t search_bit = open_min_index == 0 ? open_bit : stone_bit;
+
+    for(size_t shift=1; shift<M; ++shift){
+      const std::uint64_t check_bit = (shift == open_min_index || shift == open_median_index || shift == open_max_index) ? open_bit : stone_bit;
       search_bit &= RightShift(shift, check_bit);
     }
 

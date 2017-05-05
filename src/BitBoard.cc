@@ -234,6 +234,14 @@ void BitBoard::GetBoardOpenState(const UpdateOpenStateFlag &update_flag, BoardOp
     if(update_flag[kNextSemiThreeWhite]){
       GetOpenState<kNextSemiThreeWhite>(index, combined_white_bit, combined_open_bit, board_open_state);
     }
+
+    if(update_flag[kNextPointOfSwordBlack]){
+      GetOpenState<kNextPointOfSwordBlack>(index, combined_black_bit, combined_open_bit, board_open_state);
+    }
+
+    if(update_flag[kNextPointOfSwordWhite]){
+      GetOpenState<kNextPointOfSwordWhite>(index, combined_white_bit, combined_open_bit, board_open_state);
+    }
   }
 }
 
@@ -489,6 +497,42 @@ void BitBoard::EnumerateSemiThreeMoves<kWhiteTurn>(const BoardOpenState &board_o
     const auto move = GetBoardMove(open_position);
 
     semi_three_move_set->set(move);
+  }
+}
+
+template<>
+void BitBoard::EnumeratePointOfSwordMoves<kBlackTurn>(const BoardOpenState &board_open_state, MoveBitSet * const point_of_sword_move_set) const
+{
+  constexpr auto kPattern = kNextPointOfSwordBlack;
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kPattern));
+  assert(point_of_sword_move_set != nullptr);
+  assert(point_of_sword_move_set->none());
+
+  const auto& open_state_list = board_open_state.GetList(kPattern);
+
+  for(const auto &open_state : open_state_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    point_of_sword_move_set->set(move);
+  }
+}
+
+template<>
+void BitBoard::EnumeratePointOfSwordMoves<kWhiteTurn>(const BoardOpenState &board_open_state, MoveBitSet * const point_of_sword_move_set) const
+{
+  constexpr auto kPattern = kNextPointOfSwordWhite;
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kPattern));
+  assert(point_of_sword_move_set != nullptr);
+  assert(point_of_sword_move_set->none());
+
+  const auto& open_state_list = board_open_state.GetList(kPattern);
+
+  for(const auto &open_state : open_state_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    point_of_sword_move_set->set(move);
   }
 }
 

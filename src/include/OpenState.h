@@ -14,22 +14,24 @@ namespace realcore{
 //! @brief 空点状態の対象となる指し手パターン
 enum OpenStatePattern : std::uint8_t
 {
-  kNextOverline,          //!< 長連点 
-  kNextOpenFourBlack,     //!< 達四点(黒)
-  kNextOpenFourWhite,     //!< 達四点(白)
-  kNextFourBlack,         //!< 四ノビ点(黒)
-  kNextFourWhite,         //!< 四ノビ点(白)
-  kNextSemiThreeBlack,    //!< 見かけの三ノビ点(黒)
-  kNextSemiThreeWhite,    //!< 見かけの三ノビ点(白)
+  kNextOverline,            //!< 長連点, B[B3O1]B
+  kNextOpenFourBlack,       //!< 達四点(黒), XO[B3O1]OX
+  kNextOpenFourWhite,       //!< 達四点(白),  O[W3O1]O
+  kNextFourBlack,           //!< 四ノビ点(黒), X[B3O2]X
+  kNextFourWhite,           //!< 四ノビ点(白),  [W3O2]
+  kNextSemiThreeBlack,      //!< 見かけの三ノビ点(黒), XO[B2O2]OX
+  kNextSemiThreeWhite,      //!< 見かけの三ノビ点(白),  O[W2O2]O
+  kNextPointOfSwordBlack,   //!< 剣先点(黒), X[B2O3]X
+  kNextPointOfSwordWhite,   //!< 剣先点(白),  [W2O3]
 };
 
-constexpr size_t kOpenStatePatternNum = 7;
+constexpr size_t kOpenStatePatternNum = 9;
 const std::array<OpenStatePattern, kOpenStatePatternNum>& GetAllOpenStatePattern();
 
 typedef std::bitset<kOpenStatePatternNum> UpdateOpenStateFlag;    // 更新を行う空点情報のフラグ
 
-constexpr UpdateOpenStateFlag kUpdateAllOpenState(0b1111111);    // すべての空点情報を更新する
-constexpr UpdateOpenStateFlag kUpdateForbiddenCheck(0b0101011);    // 禁手チェック用の空点情報を更新する
+constexpr UpdateOpenStateFlag kUpdateAllOpenState(0b111111111);      // すべての空点情報を更新する
+constexpr UpdateOpenStateFlag kUpdateForbiddenCheck(0b000101011);    // 禁手チェック用の空点情報を更新する
 
 //! @brief 指し手パターンが黒番, 白番どちらのパターンなのかを返す
 constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern);

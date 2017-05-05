@@ -647,6 +647,175 @@ public:
     EXPECT_TRUE(semi_three_bit[kMoveIF]);
   }
 
+  void GetOpenStatePointOfSwordBlackTest()
+  {
+    // kNextPointOfSwordBlack
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . x . . . . . . . . | F 
+    // G | . . . . . . . . . . . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . . . o . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    constexpr OpenStatePattern kPattern = kNextPointOfSwordBlack;
+    BitBoard bit_board(MoveList("hhiiff"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    vector<OpenState> expect_list;
+    const auto &open_state_list = board_open_state.GetList(kPattern);
+
+    const BoardDirection direction = kRightDiagonalDirection;
+
+    // OpenState at kMoveDD by pattern kMoveDD
+    const BoardPosition open_position_1 = GetBoardPosition(kMoveDD, direction);
+    const BoardPosition pattern_position_1 = GetBoardPosition(kMoveDD, direction);
+    constexpr size_t pattern_search_index_1 = 1;
+    OpenState expect_1(kPattern, open_position_1, pattern_position_1, pattern_search_index_1);
+
+    // OpenState at kMoveEE by pattern kMoveDD
+    const BoardPosition open_position_2 = GetBoardPosition(kMoveEE, direction);
+    const BoardPosition pattern_position_2 = GetBoardPosition(kMoveDD, direction);
+    OpenState expect_2(kPattern, open_position_2, pattern_position_2, pattern_search_index_1);
+
+    // OpenState at kMoveGG by pattern kMoveDD
+    const BoardPosition open_position_3 = GetBoardPosition(kMoveGG, direction);
+    const BoardPosition pattern_position_3 = GetBoardPosition(kMoveDD, direction);
+    OpenState expect_3(kPattern, open_position_3, pattern_position_3, pattern_search_index_1);
+
+    ASSERT_EQ(3, open_state_list.size());
+    EXPECT_TRUE(expect_1 == open_state_list[0]);
+    EXPECT_TRUE(expect_2 == open_state_list[1]);
+    EXPECT_TRUE(expect_3 == open_state_list[2]);
+  }
+
+  void EnumeratePointOfSwordBlackTest()
+  {
+    // kNextPointOfSwordBlack
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . x . . . . . . . . | F 
+    // G | . . . . . . . . . . . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . . . o . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhiiff"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet point_of_sword_bit;
+    bit_board.EnumeratePointOfSwordMoves<kBlackTurn>(board_open_state, &point_of_sword_bit);
+
+    ASSERT_EQ(3, point_of_sword_bit.count());
+    EXPECT_TRUE(point_of_sword_bit[kMoveDD]);
+    EXPECT_TRUE(point_of_sword_bit[kMoveEE]);
+    EXPECT_TRUE(point_of_sword_bit[kMoveGG]);
+  }
+
+  void GetOpenStatePointOfSwordWhiteTest(){
+    // kNextPointOfSwordWhite
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . o . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . . . o . . . . . | G 
+    // H | . . . . . . x x . . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    constexpr OpenStatePattern kPattern = kNextPointOfSwordWhite;
+    BitBoard bit_board(MoveList("hhigihid"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    vector<OpenState> expect_list;
+    const auto &open_state_list = board_open_state.GetList(kPattern);
+
+    const BoardDirection direction = kVerticalDirection;
+
+    // OpenState at kMoveIC by pattern kMoveIC
+    const BoardPosition open_position_1 = GetBoardPosition(kMoveIC, direction);
+    const BoardPosition pattern_position_1 = GetBoardPosition(kMoveIC, direction);
+    constexpr size_t pattern_search_index_1 = 2;
+    OpenState expect_1(kPattern, open_position_1, pattern_position_1, pattern_search_index_1);
+
+    // OpenState at kMoveIE by pattern kMoveIC
+    const BoardPosition open_position_2 = GetBoardPosition(kMoveIE, direction);
+    const BoardPosition pattern_position_2 = GetBoardPosition(kMoveIC, direction);
+    OpenState expect_2(kPattern, open_position_2, pattern_position_2, pattern_search_index_1);
+
+    // OpenState at kMoveIF by pattern kMoveIC
+    const BoardPosition open_position_3 = GetBoardPosition(kMoveIF, direction);
+    const BoardPosition pattern_position_3 = GetBoardPosition(kMoveIC, direction);
+    OpenState expect_3(kPattern, open_position_3, pattern_position_3, pattern_search_index_1);
+
+    ASSERT_EQ(3, open_state_list.size());
+    EXPECT_TRUE(expect_1 == open_state_list[0]);
+    EXPECT_TRUE(expect_2 == open_state_list[1]);
+    EXPECT_TRUE(expect_3 == open_state_list[2]);
+  }
+
+  void EnumeratePointOfSwordWhiteTest()
+  {
+    // kNextPointOfSwordWhite
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . o . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . . . o . . . . . | G 
+    // H | . . . . . . x x . . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhigihid"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet point_of_sword_bit;
+    bit_board.EnumeratePointOfSwordMoves<kWhiteTurn>(board_open_state, &point_of_sword_bit);
+
+    ASSERT_EQ(3, point_of_sword_bit.count());
+    EXPECT_TRUE(point_of_sword_bit[kMoveIC]);
+    EXPECT_TRUE(point_of_sword_bit[kMoveIE]);
+    EXPECT_TRUE(point_of_sword_bit[kMoveIF]);
+  }
+
   void GetBoardStateBitTest(){
     BitBoard bit_board;
 
@@ -1169,6 +1338,16 @@ TEST_F(BitBoardTest, GetOpenStateSemiThreeWhiteTest)
   GetOpenStateSemiThreeWhiteTest();
 }
 
+TEST_F(BitBoardTest, GetOpenStatePointOfSwordBlackTest)
+{
+  GetOpenStatePointOfSwordBlackTest();
+}
+
+TEST_F(BitBoardTest, GetOpenStatePointOfSwordWhiteTest)
+{
+  GetOpenStatePointOfSwordWhiteTest();
+}
+
 TEST_F(BitBoardTest, EnumerateOpenFourMovesBlackTest)
 {
   EnumerateOpenFourMovesBlackTest();
@@ -1202,6 +1381,16 @@ TEST_F(BitBoardTest, EnumerateSemiThreeBlackTest)
 TEST_F(BitBoardTest, EnumerateSemiThreeWhiteTest)
 {
   EnumerateSemiThreeWhiteTest();
+}
+
+TEST_F(BitBoardTest, EnumeratePointOfSwordBlackTest)
+{
+  EnumeratePointOfSwordBlackTest();
+}
+
+TEST_F(BitBoardTest, EnumeratePointOfSwordWhiteTest)
+{
+  EnumeratePointOfSwordWhiteTest();
 }
 
 TEST_F(BitBoardTest, GetBoardStateBitTest)

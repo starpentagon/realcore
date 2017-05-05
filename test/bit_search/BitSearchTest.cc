@@ -378,32 +378,129 @@ TEST(BitSearchTest, GetStoneWithTwoOpenBitTest)
   }
 }
 
-TEST(BitSearchTest, GetLessIndexOfTwoTest)
+TEST(BitSearchTest, GetStoneWithThreeOpenBitTest)
 {
-  EXPECT_EQ(0, GetLessIndexOfTwo(0));
-  EXPECT_EQ(0, GetLessIndexOfTwo(1));
-  EXPECT_EQ(1, GetLessIndexOfTwo(2));
-  EXPECT_EQ(0, GetLessIndexOfTwo(3));
-  EXPECT_EQ(1, GetLessIndexOfTwo(4));
-  EXPECT_EQ(2, GetLessIndexOfTwo(5));
-  EXPECT_EQ(0, GetLessIndexOfTwo(6));
-  EXPECT_EQ(1, GetLessIndexOfTwo(7));
-  EXPECT_EQ(2, GetLessIndexOfTwo(8));
-  EXPECT_EQ(3, GetLessIndexOfTwo(9));
+  {
+    // OBOOBOBから[B2O3]を検索
+    const StateBit test_pattern = GetStateBit("OBOOBOB");
+    const StateBit stone_bit = GetBlackStoneBit(test_pattern);
+    const StateBit open_bit = GetOpenPositionBit(test_pattern);
+    constexpr size_t kPattern = kThreeOfFivePattern;
+    
+    array<uint64_t, kPattern> pattern_bit_list{{0}};
+    GetStoneWithThreeOpenBit<kPattern>(stone_bit, open_bit, &pattern_bit_list);
+
+    for(size_t i=0; i<kPattern; i++){
+      const auto pattern_bit = pattern_bit_list[i];
+
+      if(i == 8){
+        // OB|OOBOB|
+        constexpr uint64_t expect = LeftShift<0>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else if(i == 2){
+        // O|BOOBO|B
+        constexpr uint64_t expect = LeftShift<1>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else if(i == 7){
+        // |OBOOB|OB
+        constexpr uint64_t expect = LeftShift<2>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else{
+        EXPECT_EQ(0, pattern_bit);
+      }
+    }
+  }
+  {
+    // OOBOBOOから[B1O3]を検索
+    const StateBit test_pattern = GetStateBit("OOBOBOO");
+    const StateBit stone_bit = GetBlackStoneBit(test_pattern);
+    const StateBit open_bit = GetOpenPositionBit(test_pattern);
+    constexpr size_t kPattern = kThreeOfFourPattern;
+    
+    array<uint64_t, kPattern> pattern_bit_list{{0}};
+    GetStoneWithThreeOpenBit<kPattern>(stone_bit, open_bit, &pattern_bit_list);
+
+    for(size_t i=0; i<kPattern; i++){
+      const auto pattern_bit = pattern_bit_list[i];
+
+      if(i == 1){
+        // OOB|OBOO|
+        constexpr uint64_t expect = LeftShift<0>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else if(i == 2){
+        // |OOBO|BOO
+        constexpr uint64_t expect = LeftShift<3>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else{
+        EXPECT_EQ(0, pattern_bit);
+      }
+    }
+  }
+  {
+    // WOWOWOWBから[W2O3]を検索
+    const StateBit test_pattern = GetStateBit("WOWOWOWB");
+    const StateBit stone_bit = GetWhiteStoneBit(test_pattern);
+    const StateBit open_bit = GetOpenPositionBit(test_pattern);
+    constexpr size_t kPattern = kThreeOfFivePattern;
+    
+    array<uint64_t, kPattern> pattern_bit_list{{0}};
+    GetStoneWithThreeOpenBit<kPattern>(stone_bit, open_bit, &pattern_bit_list);
+
+    for(size_t i=0; i<kPattern; i++){
+      const auto pattern_bit = pattern_bit_list[i];
+
+      if(i == 5){
+        // W|OWOWO|WB
+        constexpr uint64_t expect = LeftShift<2>(0b1);
+        EXPECT_EQ(expect, pattern_bit);
+      }else{
+        EXPECT_EQ(0, pattern_bit);
+      }
+    }
+  }
 }
 
-TEST(BitSearchTest, GetGreaterIndexOfTwoTest)
+TEST(BitSearchTest, GetIndexOfTwoTest)
 {
-  EXPECT_EQ(1, GetGreaterIndexOfTwo(0));
-  EXPECT_EQ(2, GetGreaterIndexOfTwo(1));
-  EXPECT_EQ(2, GetGreaterIndexOfTwo(2));
-  EXPECT_EQ(3, GetGreaterIndexOfTwo(3));
-  EXPECT_EQ(3, GetGreaterIndexOfTwo(4));
-  EXPECT_EQ(3, GetGreaterIndexOfTwo(5));
-  EXPECT_EQ(4, GetGreaterIndexOfTwo(6));
-  EXPECT_EQ(4, GetGreaterIndexOfTwo(7));
-  EXPECT_EQ(4, GetGreaterIndexOfTwo(8));
-  EXPECT_EQ(4, GetGreaterIndexOfTwo(9));
+  set<pair<size_t, size_t>> index_pair;
+
+  for(size_t i=0; i<10; i++){
+    const auto less_index = GetLessIndexOfTwo(i);
+    const auto greater_index = GetGreaterIndexOfTwo(i);
+
+    index_pair.insert(pair<size_t, size_t>(less_index, greater_index));
+  }
+
+  for(size_t less_index=0; less_index<5; less_index++){
+    for(size_t greater_index=less_index+1; greater_index<5; greater_index++){
+      const auto pair_index = pair<size_t, size_t>(less_index, greater_index);
+
+      ASSERT_TRUE(index_pair.find(pair_index) != index_pair.end());
+    }
+  }
+}
+
+TEST(BitSearchTest, GetIndexOfThreeTest)
+{
+  set<tuple<size_t, size_t, size_t>> index_tuple;
+
+  for(size_t i=0; i<10; i++){
+    const auto min_index = GetMinIndexOfThree(i);
+    const auto median_index = GetMedianIndexOfThree(i);
+    const auto max_index = GetMaxIndexOfThree(i);
+
+    index_tuple.insert(tuple<size_t, size_t, size_t>(min_index, median_index, max_index));
+  }
+
+  for(size_t min_index=0; min_index<5; min_index++){
+    for(size_t median_index=min_index+1; median_index<5; median_index++){
+      for(size_t max_index=median_index+1; max_index<5; max_index++){
+        const auto tuple_index = tuple<size_t, size_t, size_t>(min_index, median_index, max_index);
+
+        ASSERT_TRUE(index_tuple.find(tuple_index) != index_tuple.end());
+      }
+    }
+  }
 }
 
 TEST(BitSearchTest, IsSingleBit)

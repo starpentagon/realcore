@@ -30,9 +30,15 @@ inline constexpr size_t GetOpenStatePatternNum(const OpenStatePattern pattern)
   case kNextFourBlack:      // X[B3O2]X
   case kNextFourWhite:      // [W3O2]
     return 10;
+
   case kNextSemiThreeBlack: // XO[B2O2]OX
   case kNextSemiThreeWhite: // O[W2O2]O
     return 6;
+
+  case kNextPointOfSwordBlack:  // X[B2O3]X
+  case kNextPointOfSwordWhite:  // X[W2O3]X
+    return 10;
+
   default:
     assert(false);
     return 0;
@@ -79,6 +85,18 @@ template<>
 inline void SearchOpenStatePattern<kNextSemiThreeWhite>(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, GetOpenStatePatternNum(kNextSemiThreeWhite)> * const pattern_search_bit_list)
 {
   SearchNextSemiThree<kWhiteTurn>(stone_bit, open_bit, pattern_search_bit_list);
+}
+
+template<>
+inline void SearchOpenStatePattern<kNextPointOfSwordBlack>(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, GetOpenStatePatternNum(kNextPointOfSwordBlack)> * const pattern_search_bit_list)
+{
+  SearchNextPointOfSword<kBlackTurn>(stone_bit, open_bit, pattern_search_bit_list);
+}
+
+template<>
+inline void SearchOpenStatePattern<kNextPointOfSwordWhite>(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, GetOpenStatePatternNum(kNextPointOfSwordWhite)> * const pattern_search_bit_list)
+{
+  SearchNextPointOfSword<kWhiteTurn>(stone_bit, open_bit, pattern_search_bit_list);
 }
 
 // 長連点
@@ -254,6 +272,26 @@ inline void SearchNextSemiThree(const std::uint64_t stone_bit, const std::uint64
     (*pattern_search_bit_list)[i] &= LeftShift<1>(open_bit);    // [B2O2]O, [W2O2]O
     (*pattern_search_bit_list)[i] &= RightShift<4>(open_bit);   // O[B2O2]O, O[W2O2]O
     (*pattern_search_bit_list)[i] &= overline_mask;             // XO[B2O2]OX, O[W2O2]O
+  }
+}
+
+template<PlayerTurn P>
+inline void SearchNextPointOfSword(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, kThreeOfFivePattern> * const pattern_search_bit_list)
+{
+  assert(pattern_search_bit_list != nullptr);
+  assert(*std::min_element(pattern_search_bit_list->begin(), pattern_search_bit_list->end()) == 0);
+  assert(*std::max_element(pattern_search_bit_list->begin(), pattern_search_bit_list->end()) == 0);
+
+  // [B3O2][W3O2]パターンを検索する
+  GetStoneWithThreeOpenBit<kThreeOfFivePattern>(stone_bit, open_bit, pattern_search_bit_list);
+  
+  if(P == kBlackTurn){
+    // 長連筋をマスクする(X[B3O2]X, X\ne B)
+    const std::uint64_t overline_mask = ~LeftShift<1>(stone_bit) & ~RightShift<5>(stone_bit);
+
+    for(size_t i=0; i<kTwoOfFivePattern; i++){
+      (*pattern_search_bit_list)[i] &= overline_mask;              // X[B3O2]X, [W3O2]
+    }
   }
 }
 

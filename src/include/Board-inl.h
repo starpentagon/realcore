@@ -74,6 +74,22 @@ inline void Board::EnumerateSemiThreeMoves(const bool is_black_turn, MoveBitSet 
   }
 }
 
+template<PlayerTurn P>
+inline void Board::EnumeratePointOfSwordMoves(MoveBitSet * const point_of_sword_move_set) const
+{
+  const auto &board_open_state = board_open_state_list_.back();
+  bit_board_.EnumeratePointOfSwordMoves<P>(board_open_state, point_of_sword_move_set);
+}
+
+inline void Board::EnumeratePointOfSwordMoves(const bool is_black_turn, MoveBitSet * const point_of_sword_move_set) const
+{
+  if(is_black_turn){
+    EnumeratePointOfSwordMoves<kBlackTurn>(point_of_sword_move_set);
+  }else{
+    EnumeratePointOfSwordMoves<kWhiteTurn>(point_of_sword_move_set);
+  }
+}
+
 }   // namespace realcore
 
 #endif    // BOARD_INL_H

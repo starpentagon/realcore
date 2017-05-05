@@ -390,8 +390,8 @@ void LineNeighborhood::GetBoardPositionList(const LocalBitBoard &bit_list, std::
 template<>
 void LineNeighborhood::AddOpenState<kBlackTurn>(const UpdateOpenStateFlag &update_flag, BoardOpenState * const board_open_state) const
 {
-  const auto combined_black_stone = GetBlackStoneBit(local_bit_board_[0]) | (GetBlackStoneBit(local_bit_board_[1]) << 1);
-  const auto combined_open_stone = GetOpenPositionBit(local_bit_board_[0]) | (GetOpenPositionBit(local_bit_board_[1]) << 1);
+  const auto combined_black_stone = GetPlayerStoneCombinedBit<kBlackTurn>();
+  const auto combined_open_stone = GetOpenPositionCombinedBit();
 
   if(update_flag[kNextOverline]){
     GetOpenState<kNextOverline>(combined_black_stone, combined_open_stone, board_open_state);
@@ -408,13 +408,17 @@ void LineNeighborhood::AddOpenState<kBlackTurn>(const UpdateOpenStateFlag &updat
   if(update_flag[kNextSemiThreeBlack]){
     GetOpenState<kNextSemiThreeBlack>(combined_black_stone, combined_open_stone, board_open_state);
   }
+
+  if(update_flag[kNextPointOfSwordBlack]){
+    GetOpenState<kNextPointOfSwordBlack>(combined_black_stone, combined_open_stone, board_open_state);
+  }
 }
 
 template<>
 void LineNeighborhood::AddOpenState<kWhiteTurn>(const UpdateOpenStateFlag &update_flag, BoardOpenState * const board_open_state) const
 {
-  const auto combined_white_stone = GetWhiteStoneBit(local_bit_board_[0]) | (GetWhiteStoneBit(local_bit_board_[1]) << 1);
-  const auto combined_open_stone = GetOpenPositionBit(local_bit_board_[0]) | (GetOpenPositionBit(local_bit_board_[1]) << 1);
+  const auto combined_white_stone = GetPlayerStoneCombinedBit<kWhiteTurn>();
+  const auto combined_open_stone = GetOpenPositionCombinedBit();
 
   if(update_flag[kNextOpenFourWhite]){
     GetOpenState<kNextOpenFourWhite>(combined_white_stone, combined_open_stone, board_open_state);
@@ -426,6 +430,10 @@ void LineNeighborhood::AddOpenState<kWhiteTurn>(const UpdateOpenStateFlag &updat
 
   if(update_flag[kNextSemiThreeWhite]){
     GetOpenState<kNextSemiThreeWhite>(combined_white_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextPointOfSwordWhite]){
+    GetOpenState<kNextPointOfSwordWhite>(combined_white_stone, combined_open_stone, board_open_state);
   }
 }
 

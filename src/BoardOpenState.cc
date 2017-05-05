@@ -73,6 +73,20 @@ BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state, const boo
     ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
   }
 
+  if(update_flag_[kNextPointOfSwordBlack]){
+    // 剣先点(黒)
+    constexpr OpenStatePattern Pattern = kNextPointOfSwordBlack;
+    const auto &base_list = board_open_state.GetList(Pattern);
+    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
+  }
+
+  if(update_flag_[kNextPointOfSwordWhite]){
+    // 剣先点(白)
+    constexpr OpenStatePattern Pattern = kNextPointOfSwordWhite;
+    const auto &base_list = board_open_state.GetList(Pattern);
+    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
+  }
+
   LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
   if(is_black_turn){

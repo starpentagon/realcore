@@ -291,7 +291,7 @@ template<OpenStatePattern Pattern>
 void BitBoard::GetOpenState(const size_t index, const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, BoardOpenState * const board_open_state) const
 {
   constexpr bool is_multiple_stone_pattern = (Pattern == kNextOverline) || (Pattern == kNextOpenFourBlack) || (Pattern == kNextOpenFourWhite) ||
-    (Pattern == kNextFourBlack) || (Pattern == kNextFourWhite) || (Pattern == kNextSemiThreeBlack) || (Pattern == kNextSemiThreeWhite);
+    (Pattern == kNextFourBlack) || (Pattern == kNextFourWhite) || (Pattern == kNextSemiThreeBlack) || (Pattern == kNextSemiThreeWhite) || (Pattern == kNextPointOfSwordBlack) || (Pattern == kNextPointOfSwordWhite);
 
   static_assert(is_multiple_stone_pattern, "The speeding up check assumes the pattern has multiple stones.");
 

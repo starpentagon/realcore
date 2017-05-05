@@ -113,7 +113,9 @@ inline const std::uint64_t GetOpenBitInPattern(const size_t index, const std::ui
 inline const BoardPosition GetOpenBoardPosition(const BoardPosition pattern_position, const size_t open_index);
 
 static const size_t kTwoOfFourPattern = 6;   // = 4C2
-static const size_t kTwoOfFivePattern = 10;  // = 10C2
+static const size_t kTwoOfFivePattern = 10;  // = 5C2
+static const size_t kThreeOfFourPattern = 4;   // = 4C3
+static const size_t kThreeOfFivePattern = 10;  // = 5C3
 
 //! @brief [BnO2][WnO2]パターンを検索する
 //! @param N パターン長(=n+2C2=(n+2)(n+1)/2)
@@ -126,10 +128,34 @@ template<size_t N>
 inline void GetStoneWithTwoOpenBit(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, N> * const pattern_bit_list);
 
 //! @brief [BnO2][WnO2]パターンのOの位置の小さい方を返す
+//! @pre n = 1, 2, 3であること
 inline const size_t GetLessIndexOfTwo(const size_t index);
 
 //! @brief [BnO2][WnO2]パターンのOの位置の大きい方を返す
+//! @pre n = 1, 2, 3であること
 inline const size_t GetGreaterIndexOfTwo(const size_t index);
+
+//! @brief [BnO3][WnO3]パターンを検索する
+//! @param N パターン長(=n+3C3=(n+3)(n+2)(n+1)/6)
+//! @param stone_bit 黒石 or 白石フラグ
+//! @param open_bit 空点フラグ
+//! @param pattern_bit_list 検索結果フラグ
+//! @note pattern_bit_listにはOの位置が(MinIndex(i), MedianIndex(i), MaxIndex(i))(i = 0, 1,...,N-1)に対応する検索結果が格納される
+//! @note 検索結果には合致したパターンの最小シフト量の位置に１を立てた値が入る
+template<size_t N>
+inline void GetStoneWithThreeOpenBit(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, N> * const pattern_bit_list);
+
+//! @brief [BnO3][WnO3]パターンのOの位置の小さい値を返す
+//! @pre n = 1, 2であること
+inline const size_t GetMinIndexOfThree(const size_t index);
+
+//! @brief [BnO3][WnO3]パターンのOの位置の真ん中の値を返す
+//! @pre n = 1, 2であること
+inline const size_t GetMedianIndexOfThree(const size_t index);
+
+//! @brief [BnO3][WnO3]パターンのOの位置の大きい値を返す
+//! @pre n = 1, 2であること
+inline const size_t GetMaxIndexOfThree(const size_t index);
 
 //! @brief ビットの数が1つだけ立っているかをチェックする
 //! @param bit ビット数を求めるbit(i=1,2)

@@ -165,6 +165,10 @@ public:
   template<PlayerTurn P>
   void EnumerateSemiThreeMoves(const BoardOpenState &board_open_state, MoveBitSet * const semi_three_move_set) const;
 
+  //! @brief 剣先点を列挙する
+  template<PlayerTurn P>
+  void EnumeratePointOfSwordMoves(const BoardOpenState &board_open_state, MoveBitSet * const point_of_sword_move_set) const;
+
   //! @brief 相手に1手勝ちが生じているかチェックし、その防手を生成する
   //! @param P 防手を生成する側の手番
   //! @note 黒番の１手勝ち = 達四を作る
