@@ -473,6 +473,10 @@ const bool BitBoard::GetOpenFourGuard(const BoardOpenState &board_open_state, Mo
     is_open_four = true;
   }
 
+  if(!is_open_four){
+    guard_move_set->reset();
+  }
+
   return is_open_four;  
 }
 

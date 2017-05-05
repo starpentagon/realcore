@@ -659,6 +659,10 @@ const bool BitBoard::GetMakeForbiddenGuard(const BoardOpenState &board_open_stat
     check_bit_board.SetState<kOpenPosition>(four_move);
   }
 
+  if(!is_make_forbidden){
+    guard_move_set->reset();
+  }
+
   return is_make_forbidden;
 }
 
