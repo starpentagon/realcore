@@ -23,6 +23,16 @@ Board::Board(const UpdateOpenStateFlag &update_flag)
   board_open_state_list_.emplace_back(update_flag);
 }
 
+Board::Board(const MoveList &move_list, const UpdateOpenStateFlag &update_flag)
+{
+  board_open_state_list_.reserve(kMoveNum);
+  board_open_state_list_.emplace_back(update_flag);
+
+  for(const auto move : move_list){
+    MakeMove(move);
+  }
+}
+
 Board::Board(const Board &board)
 {
   *this = board;

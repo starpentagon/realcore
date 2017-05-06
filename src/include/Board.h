@@ -60,6 +60,7 @@ public:
   Board(const UpdateOpenStateFlag &update_flag);
   Board(const Board &board);
   Board(const MoveList &move_list);
+  Board(const MoveList &move_list, const UpdateOpenStateFlag &update_flag);
 
   //! @brief 代入演算子
   const Board& operator=(const Board &board);
