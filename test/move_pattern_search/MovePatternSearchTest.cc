@@ -43,6 +43,10 @@ TEST(MovePatternSearchTest, GetOpenStatePatternNumTest)
   EXPECT_EQ(10ULL, GetOpenStatePatternNum(kNextFourWhite));
   EXPECT_EQ(6ULL, GetOpenStatePatternNum(kNextSemiThreeBlack));
   EXPECT_EQ(6ULL, GetOpenStatePatternNum(kNextSemiThreeWhite));
+  EXPECT_EQ(10ULL, GetOpenStatePatternNum(kNextPointOfSwordBlack));
+  EXPECT_EQ(10ULL, GetOpenStatePatternNum(kNextPointOfSwordWhite));
+  EXPECT_EQ(4ULL, GetOpenStatePatternNum(kNextTwoBlack));
+  EXPECT_EQ(4ULL, GetOpenStatePatternNum(kNextTwoWhite));
 }
 
 TEST(MovePatternSearchTest, SearchNextOverlineTest)
@@ -939,7 +943,7 @@ TEST(MovePatternSearchTest, SearchNextFourWhiteTest)
   }
 }
 
-TEST(MovePatternSearchTest, SearchSemiThreeTest)
+TEST(MovePatternSearchTest, SearchSemiThreeBlackTest)
 {
   {
     // 三パターン(黒番)
@@ -1283,13 +1287,13 @@ TEST(MovePatternSearchTest, SearchNextSemiThreeBlackTest)
   }
 }
 
-TEST(MovePatternSearchTest, SearchNextSemiWhiteTest)
+TEST(MovePatternSearchTest, SearchNextSemiThreeWhiteTest)
 {
   constexpr PlayerTurn P = kWhiteTurn;
   constexpr size_t kPatternCount = kTwoOfFourPattern;
 
   {
-    // 否見かけの三ノビ点パターン_1(白, 三連)
+    // 見かけの三ノビ点パターン_1(白, 三連)
     const string pattern = "OOWOWOO";
     const auto test_bit = GetStateBit(pattern);
     const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
@@ -1316,7 +1320,7 @@ TEST(MovePatternSearchTest, SearchNextSemiWhiteTest)
     }
   }
   {
-    // 否見かけの三ノビ点パターン_2(白, トビ三)
+    // 見かけの三ノビ点パターン_2(白, トビ三)
     const string pattern = "OWOOWOO";
     const auto test_bit = GetStateBit(pattern);
     const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
@@ -1338,7 +1342,7 @@ TEST(MovePatternSearchTest, SearchNextSemiWhiteTest)
     }
   }
   {
-    // 否見かけの三ノビ点パターン_3(白, 長連筋)
+    // 見かけの三ノビ点パターン_3(白, 長連筋)
     const string pattern = "WOOWOWOO";
     const auto test_bit = GetStateBit(pattern);
     const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
@@ -1613,6 +1617,166 @@ TEST(MovePatternSearchTest, SearchNextPointOfSwordWhiteTest)
     SearchNextPointOfSword<P>(stone_bit, open_bit, &pattern_search_bit_list);
 
     for(size_t i=0; i<kThreeOfFivePattern; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+      ASSERT_EQ(0ULL, search_bit);
+    }
+  }
+}
+
+TEST(MovePatternSearchTest, SearchNextTwoBlackTest)
+{
+  constexpr PlayerTurn P = kBlackTurn;
+  constexpr size_t kPatternCount = kThreeOfFourPattern;
+
+  {
+    // 二ノビ点パターン_1(黒, 三連)
+    const string pattern = "OOOOBOO";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kPatternCount> pattern_search_bit_list{{0}};
+    SearchNextTwo<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kPatternCount; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+
+      if(i == 2){
+        // OO|OOBO|O
+        constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 3){
+        // O|OOOB|OO
+        constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else{
+        ASSERT_EQ(0ULL, search_bit);
+      }
+    }
+  }
+  {
+    // 二ノビ点パターン_2(黒, 長連筋)
+    const string pattern = "BOOOOBOO";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kPatternCount> pattern_search_bit_list{{0}};
+    SearchNextTwo<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kPatternCount; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+
+      if(i == 2){
+        // BOO|OOBO|O
+        constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else{
+        ASSERT_EQ(0ULL, search_bit);
+      }
+    }
+  }
+  {
+    // 否二ノビ点パターン(黒, 長連筋)
+    const string pattern = "BBOOOBOOB";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kPatternCount> pattern_search_bit_list{{0}};
+    SearchNextTwo<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kPatternCount; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+      ASSERT_EQ(0ULL, search_bit);
+    }
+  }
+  {
+    // 否二ノビ点パターン(黒)
+    const string pattern = "WOOOOOOX";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kPatternCount> pattern_search_bit_list{{0}};
+    SearchNextTwo<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kPatternCount; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+      ASSERT_EQ(0ULL, search_bit);
+    }
+  }
+}
+
+TEST(MovePatternSearchTest, SearchNextTwoWhiteTest)
+{
+  constexpr PlayerTurn P = kWhiteTurn;
+  constexpr size_t kPatternCount = kThreeOfFourPattern;
+
+  {
+    // 二ノビ点パターン_1(白, 三連)
+    const string pattern = "OOOOWOO";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kPatternCount> pattern_search_bit_list{{0}};
+    SearchNextTwo<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kPatternCount; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+
+      if(i == 2){
+        // OO|OOWO|O
+        constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 3){
+        // O|OOOW|OO
+        constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }
+      else{
+        ASSERT_EQ(0ULL, search_bit);
+      }
+    }
+  }
+  {
+    // 二ノビ点パターン_3(白, 長連筋)
+    const string pattern = "WOOOOWOO";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kPatternCount> pattern_search_bit_list{{0}};
+    SearchNextTwo<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kPatternCount; i++){
+      const auto search_bit = pattern_search_bit_list[i];
+
+      if(i == 2){
+        // WOO|OOWO|O
+        constexpr uint64_t expect_bit = LeftShift<1>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else if(i == 3){
+        // WO|OOOW|OO
+        constexpr uint64_t expect_bit = LeftShift<2>(0b1);
+        ASSERT_EQ(expect_bit, search_bit);
+      }else{
+        ASSERT_EQ(0ULL, search_bit);
+      }
+    }
+  }
+  {
+    // 否二ノビ点パターン(白)
+    const string pattern = "BOOWOOWB";
+    const auto test_bit = GetStateBit(pattern);
+    const auto stone_bit = GetPlayerStoneBit<P>(test_bit);
+    const auto open_bit = GetOpenPositionBit(test_bit);
+
+    array<uint64_t, kPatternCount> pattern_search_bit_list{{0}};
+    SearchNextTwo<P>(stone_bit, open_bit, &pattern_search_bit_list);
+
+    for(size_t i=0; i<kPatternCount; i++){
       const auto search_bit = pattern_search_bit_list[i];
       ASSERT_EQ(0ULL, search_bit);
     }

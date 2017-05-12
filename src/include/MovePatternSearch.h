@@ -96,6 +96,14 @@ inline void SearchNextSemiThree(const std::uint64_t stone_bit, const std::uint64
 template<PlayerTurn P>
 inline void SearchNextPointOfSword(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, kThreeOfFivePattern> * const pattern_search_bit_list);
 
+//! @brief 二ノビ点を検索する
+//! @param P 手番
+//! @param stone_bit 黒石 or 白石フラグ
+//! @param open_bit 空点フラグ
+//! @param pattern_search_bit_list XO[B1O3]OX, O[W1O3]Oパターンのうち[(B|W)1O3]の右端の位置に1を立てた値
+template<PlayerTurn P>
+inline void SearchNextTwo(const std::uint64_t stone_bit, const std::uint64_t open_bit, std::array<std::uint64_t, kThreeOfFourPattern> * const pattern_search_bit_list);
+
 }   // namespace realcore
 
 #include "MovePatternSearch-inl.h"

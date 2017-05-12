@@ -185,6 +185,56 @@ inline void BoardOpenState::AddOpenState<kNextPointOfSwordWhite>(const size_t pa
   }
 }
 
+template<>
+inline void BoardOpenState::AddOpenState<kNextTwoBlack>(const size_t pattern_search_index, const BoardPosition pattern_position)
+{
+  constexpr OpenStatePattern Pattern = kNextTwoBlack;
+
+  {
+    const size_t open_index = GetMinIndexOfThree(pattern_search_index);
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
+  }
+  {
+    const size_t open_index = GetMedianIndexOfThree(pattern_search_index);
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
+  }
+  {
+    const size_t open_index = GetMaxIndexOfThree(pattern_search_index);
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
+  }
+}
+
+template<>
+inline void BoardOpenState::AddOpenState<kNextTwoWhite>(const size_t pattern_search_index, const BoardPosition pattern_position)
+{
+  constexpr OpenStatePattern Pattern = kNextTwoWhite;
+
+  {
+    const size_t open_index = GetMinIndexOfThree(pattern_search_index);
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
+  }
+  {
+    const size_t open_index = GetMedianIndexOfThree(pattern_search_index);
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
+  }
+  {
+    const size_t open_index = GetMaxIndexOfThree(pattern_search_index);
+    const BoardPosition open_position = GetOpenBoardPosition(pattern_position, open_index);
+    
+    open_state_list_[Pattern].emplace_back(Pattern, open_position, pattern_position, pattern_search_index);
+  }
+}
+
 template<PlayerTurn P>
 void BoardOpenState::ClearInfluencedOpenState(const std::vector<OpenState> &open_state_list, const MovePosition move, std::vector<OpenState> * const cleared_open_state_list) const
 {

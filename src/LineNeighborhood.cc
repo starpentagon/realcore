@@ -412,6 +412,10 @@ void LineNeighborhood::AddOpenState<kBlackTurn>(const UpdateOpenStateFlag &updat
   if(update_flag[kNextPointOfSwordBlack]){
     GetOpenState<kNextPointOfSwordBlack>(combined_black_stone, combined_open_stone, board_open_state);
   }
+
+  if(update_flag[kNextTwoBlack]){
+    GetOpenState<kNextTwoBlack>(combined_black_stone, combined_open_stone, board_open_state);
+  }
 }
 
 template<>
@@ -434,6 +438,10 @@ void LineNeighborhood::AddOpenState<kWhiteTurn>(const UpdateOpenStateFlag &updat
 
   if(update_flag[kNextPointOfSwordWhite]){
     GetOpenState<kNextPointOfSwordWhite>(combined_white_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextTwoWhite]){
+    GetOpenState<kNextTwoWhite>(combined_white_stone, combined_open_stone, board_open_state);
   }
 }
 

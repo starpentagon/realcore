@@ -87,6 +87,20 @@ BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state, const boo
     ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
   }
 
+  if(update_flag_[kNextTwoBlack]){
+    // 二ノビ点(黒)
+    constexpr OpenStatePattern Pattern = kNextTwoBlack;
+    const auto &base_list = board_open_state.GetList(Pattern);
+    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
+  }
+
+  if(update_flag_[kNextTwoWhite]){
+    // 二ノビ点(白)
+    constexpr OpenStatePattern Pattern = kNextTwoWhite;
+    const auto &base_list = board_open_state.GetList(Pattern);
+    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
+  }
+
   LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
   if(is_black_turn){
