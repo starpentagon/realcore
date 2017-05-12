@@ -816,6 +816,254 @@ public:
     EXPECT_TRUE(point_of_sword_bit[kMoveIF]);
   }
 
+  void GetOpenStateTwoBlackTest()
+  {
+    // kNextTwoBlack
+    //   A B C D E F G H I J K L M N O 
+    // A x --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . . . . . . . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . o o o . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------x O 
+    //   A B C D E F G H I J K L M N O 
+    constexpr OpenStatePattern kPattern = kNextTwoBlack;
+    BitBoard bit_board(MoveList("hhiiaahioogi"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    vector<OpenState> expect_list;
+    const auto &open_state_list = board_open_state.GetList(kPattern);
+
+    const BoardDirection direction = kLateralDirection;
+    vector<OpenState> expected_open_state_list;
+
+    // OpenState kMoveEH, FH, GH by pattern kMoveEH
+    {
+      std::array<MovePosition, 3> move_list{{kMoveEH, kMoveFH, kMoveGH}};
+      const BoardPosition pattern_position = GetBoardPosition(kMoveEH, direction);
+      const size_t pattern_search_index = 0;
+
+      for(const auto move : move_list){
+        const BoardPosition open_position = GetBoardPosition(move, direction);
+        expected_open_state_list.emplace_back(kPattern, open_position, pattern_position, pattern_search_index);
+      }
+    }
+
+    // OpenState kMoveFH, GH, IH by pattern kMoveFH
+    {
+      std::array<MovePosition, 3> move_list{{kMoveFH, kMoveGH, kMoveIH}};
+      const BoardPosition pattern_position = GetBoardPosition(kMoveFH, direction);
+      const size_t pattern_search_index = 1;
+
+      for(const auto move : move_list){
+        const BoardPosition open_position = GetBoardPosition(move, direction);
+        expected_open_state_list.emplace_back(kPattern, open_position, pattern_position, pattern_search_index);
+      }
+    }
+
+    // OpenState kMoveGH, IH, JH by pattern kMoveGH
+    {
+      std::array<MovePosition, 3> move_list{{kMoveGH, kMoveIH, kMoveJH}};
+      const BoardPosition pattern_position = GetBoardPosition(kMoveGH, direction);
+      const size_t pattern_search_index = 2;
+
+      for(const auto move : move_list){
+        const BoardPosition open_position = GetBoardPosition(move, direction);
+        expected_open_state_list.emplace_back(kPattern, open_position, pattern_position, pattern_search_index);
+      }
+    }
+    
+    // OpenState kMoveIH, JH, KH by pattern kMoveHH
+    {
+      std::array<MovePosition, 3> move_list{{kMoveIH, kMoveJH, kMoveKH}};
+      const BoardPosition pattern_position = GetBoardPosition(kMoveHH, direction);
+      const size_t pattern_search_index = 3;
+
+      for(const auto move : move_list){
+        const BoardPosition open_position = GetBoardPosition(move, direction);
+        expected_open_state_list.emplace_back(kPattern, open_position, pattern_position, pattern_search_index);
+      }
+    }
+
+    ASSERT_EQ(12, open_state_list.size());
+
+    for(size_t i=0, size=open_state_list.size(); i<size; i++){
+      const auto &expect = expected_open_state_list[i];
+      const auto &actual = open_state_list[i];
+      ASSERT_TRUE(expect == actual);
+    }
+  }
+
+  void EnumerateTwoBlackTest()
+  {
+    // kNextTwoBlack
+    //   A B C D E F G H I J K L M N O 
+    // A x --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . . . . . . . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . o o o . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------x O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhiiaahioogi"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet two_move_bit;
+    bit_board.EnumerateTwoMoves<kBlackTurn>(board_open_state, &two_move_bit);
+
+    ASSERT_EQ(6, two_move_bit.count());
+    EXPECT_TRUE(two_move_bit[kMoveEH]);
+    EXPECT_TRUE(two_move_bit[kMoveFH]);
+    EXPECT_TRUE(two_move_bit[kMoveGH]);
+    EXPECT_TRUE(two_move_bit[kMoveIH]);
+    EXPECT_TRUE(two_move_bit[kMoveJH]);
+    EXPECT_TRUE(two_move_bit[kMoveKH]);
+  }
+
+  void GetOpenStateTwoWhiteTest()
+  {
+    // kNextTwoWhite
+    //   A B C D E F G H I J K L M N O 
+    // A o --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . . . . . . . . . | G 
+    // H | . . . . . x x x . . . . . | H 
+    // I | . . . . . . o . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    constexpr OpenStatePattern kPattern = kNextTwoWhite;
+    BitBoard bit_board(MoveList("hhhighaaih"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    vector<OpenState> expect_list;
+    const auto &open_state_list = board_open_state.GetList(kPattern);
+
+    const BoardDirection direction = kLateralDirection;
+    vector<OpenState> expected_open_state_list;
+
+    // OpenState kMoveEI, FI, GI by pattern kMoveEI
+    {
+      std::array<MovePosition, 3> move_list{{kMoveEI, kMoveFI, kMoveGI}};
+      const BoardPosition pattern_position = GetBoardPosition(kMoveEI, direction);
+      const size_t pattern_search_index = 0;
+
+      for(const auto move : move_list){
+        const BoardPosition open_position = GetBoardPosition(move, direction);
+        expected_open_state_list.emplace_back(kPattern, open_position, pattern_position, pattern_search_index);
+      }
+    }
+
+    // OpenState kMoveFI, GI, II by pattern kMoveFI
+    {
+      std::array<MovePosition, 3> move_list{{kMoveFI, kMoveGI, kMoveII}};
+      const BoardPosition pattern_position = GetBoardPosition(kMoveFI, direction);
+      const size_t pattern_search_index = 1;
+
+      for(const auto move : move_list){
+        const BoardPosition open_position = GetBoardPosition(move, direction);
+        expected_open_state_list.emplace_back(kPattern, open_position, pattern_position, pattern_search_index);
+      }
+    }
+
+    // OpenState kMoveGI, II, JI by pattern kMoveGI
+    {
+      std::array<MovePosition, 3> move_list{{kMoveGI, kMoveII, kMoveJI}};
+      const BoardPosition pattern_position = GetBoardPosition(kMoveGI, direction);
+      const size_t pattern_search_index = 2;
+
+      for(const auto move : move_list){
+        const BoardPosition open_position = GetBoardPosition(move, direction);
+        expected_open_state_list.emplace_back(kPattern, open_position, pattern_position, pattern_search_index);
+      }
+    }
+    
+    // OpenState kMoveII, JI, KI by pattern kMoveHI
+    {
+      std::array<MovePosition, 3> move_list{{kMoveII, kMoveJI, kMoveKI}};
+      const BoardPosition pattern_position = GetBoardPosition(kMoveHI, direction);
+      const size_t pattern_search_index = 3;
+
+      for(const auto move : move_list){
+        const BoardPosition open_position = GetBoardPosition(move, direction);
+        expected_open_state_list.emplace_back(kPattern, open_position, pattern_position, pattern_search_index);
+      }
+    }
+
+    ASSERT_EQ(12, open_state_list.size());
+
+    for(size_t i=0, size=open_state_list.size(); i<size; i++){
+      const auto &expect = expected_open_state_list[i];
+      const auto &actual = open_state_list[i];
+      ASSERT_TRUE(expect == actual);
+    }
+  }
+
+  void EnumerateTwoWhiteTest()
+  {
+    // kNextTwoWhite
+    //   A B C D E F G H I J K L M N O 
+    // A o --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . . . . . . . . . | G 
+    // H | . . . . . x x x . . . . . | H 
+    // I | . . . . . . o . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhhighaaih"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet two_move_bit;
+    bit_board.EnumerateTwoMoves<kWhiteTurn>(board_open_state, &two_move_bit);
+
+    ASSERT_EQ(6, two_move_bit.count());
+    EXPECT_TRUE(two_move_bit[kMoveEI]);
+    EXPECT_TRUE(two_move_bit[kMoveFI]);
+    EXPECT_TRUE(two_move_bit[kMoveGI]);
+    EXPECT_TRUE(two_move_bit[kMoveII]);
+    EXPECT_TRUE(two_move_bit[kMoveJI]);
+    EXPECT_TRUE(two_move_bit[kMoveKI]);
+  }
+
   void GetBoardStateBitTest(){
     BitBoard bit_board;
 
@@ -1348,6 +1596,16 @@ TEST_F(BitBoardTest, GetOpenStatePointOfSwordWhiteTest)
   GetOpenStatePointOfSwordWhiteTest();
 }
 
+TEST_F(BitBoardTest, GetOpenStateTwoBlackTest)
+{
+  GetOpenStateTwoBlackTest();
+}
+
+TEST_F(BitBoardTest, GetOpenStateTwoWhiteTest)
+{
+  GetOpenStateTwoWhiteTest();
+}
+
 TEST_F(BitBoardTest, EnumerateOpenFourMovesBlackTest)
 {
   EnumerateOpenFourMovesBlackTest();
@@ -1391,6 +1649,16 @@ TEST_F(BitBoardTest, EnumeratePointOfSwordBlackTest)
 TEST_F(BitBoardTest, EnumeratePointOfSwordWhiteTest)
 {
   EnumeratePointOfSwordWhiteTest();
+}
+
+TEST_F(BitBoardTest, EnumerateTwoBlackTest)
+{
+  EnumerateTwoBlackTest();
+}
+
+TEST_F(BitBoardTest, EnumerateTwoWhiteTest)
+{
+  EnumerateTwoWhiteTest();
 }
 
 TEST_F(BitBoardTest, GetBoardStateBitTest)

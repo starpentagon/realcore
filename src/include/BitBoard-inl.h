@@ -293,9 +293,7 @@ void BitBoard::GetOpenState(const size_t index, const std::uint64_t combined_sto
   constexpr bool is_multiple_stone_pattern = (Pattern == kNextOverline) || (Pattern == kNextOpenFourBlack) || (Pattern == kNextOpenFourWhite) ||
     (Pattern == kNextFourBlack) || (Pattern == kNextFourWhite) || (Pattern == kNextSemiThreeBlack) || (Pattern == kNextSemiThreeWhite) || (Pattern == kNextPointOfSwordBlack) || (Pattern == kNextPointOfSwordWhite);
 
-  static_assert(is_multiple_stone_pattern, "The speeding up check assumes the pattern has multiple stones.");
-
-  if(combined_stone_bit == 0 || IsSingleBit(combined_stone_bit)){
+  if(is_multiple_stone_pattern && (combined_stone_bit == 0 || IsSingleBit(combined_stone_bit))){
     return;
   }
 

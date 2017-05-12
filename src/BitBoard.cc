@@ -242,6 +242,14 @@ void BitBoard::GetBoardOpenState(const UpdateOpenStateFlag &update_flag, BoardOp
     if(update_flag[kNextPointOfSwordWhite]){
       GetOpenState<kNextPointOfSwordWhite>(index, combined_white_bit, combined_open_bit, board_open_state);
     }
+
+    if(update_flag[kNextTwoBlack]){
+      GetOpenState<kNextTwoBlack>(index, combined_black_bit, combined_open_bit, board_open_state);
+    }
+
+    if(update_flag[kNextTwoWhite]){
+      GetOpenState<kNextTwoWhite>(index, combined_white_bit, combined_open_bit, board_open_state);
+    }
   }
 }
 
@@ -533,6 +541,42 @@ void BitBoard::EnumeratePointOfSwordMoves<kWhiteTurn>(const BoardOpenState &boar
     const auto move = GetBoardMove(open_position);
 
     point_of_sword_move_set->set(move);
+  }
+}
+
+template<>
+void BitBoard::EnumerateTwoMoves<kBlackTurn>(const BoardOpenState &board_open_state, MoveBitSet * const two_move_set) const
+{
+  constexpr auto kPattern = kNextTwoBlack;
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kPattern));
+  assert(two_move_set != nullptr);
+  assert(two_move_set->none());
+
+  const auto& open_state_list = board_open_state.GetList(kPattern);
+
+  for(const auto &open_state : open_state_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    two_move_set->set(move);
+  }
+}
+
+template<>
+void BitBoard::EnumerateTwoMoves<kWhiteTurn>(const BoardOpenState &board_open_state, MoveBitSet * const two_move_set) const
+{
+  constexpr auto kPattern = kNextTwoWhite;
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kPattern));
+  assert(two_move_set != nullptr);
+  assert(two_move_set->none());
+
+  const auto& open_state_list = board_open_state.GetList(kPattern);
+
+  for(const auto &open_state : open_state_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    two_move_set->set(move);
   }
 }
 
