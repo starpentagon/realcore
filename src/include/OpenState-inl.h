@@ -23,6 +23,8 @@ inline const std::array<OpenStatePattern, kOpenStatePatternNum>& GetAllOpenState
     kNextSemiThreeWhite,
     kNextPointOfSwordBlack,
     kNextPointOfSwordWhite,
+    kNextTwoBlack,
+    kNextTwoWhite,
   }};
 
   return all_open_state_pattern_list;
@@ -198,6 +200,43 @@ void OpenState::GetInfluenceArea(std::vector<BoardPosition> * const downward_inf
     return;
   }
 
+  case kNextTwoBlack:
+  case kNextTwoWhite:
+  {
+    // XO[B1O3]OX, O[W1O3]O
+    const auto right_open_index = GetMinIndexOfThree(pattern_search_index_);
+    const auto middle_open_index = GetMedianIndexOfThree(pattern_search_index_);
+    const auto left_open_index = GetMaxIndexOfThree(pattern_search_index_);
+    
+    const auto right_open_position = GetOpenBoardPosition(pattern_position_, right_open_index);
+    const auto middle_open_position = GetOpenBoardPosition(pattern_position_, middle_open_index);
+    const auto left_open_position = GetOpenBoardPosition(pattern_position_, left_open_index);
+
+    downward_influence_area->emplace_back(right_open_position);   // [B1O3][W1O3]の右側のO
+    downward_influence_area->emplace_back(middle_open_position);  // [B1O3][W1O3]の真ん中のO
+    downward_influence_area->emplace_back(left_open_position);    // [B1O3][W1O3]の左側のO
+
+    downward_influence_area->emplace_back(pattern_position_ - 1);   // 右側のO
+    downward_influence_area->emplace_back(pattern_position_ + 4);   // 左側のO
+
+    if(P == kBlackTurn && pattern_ == kNextTwoBlack){
+      // 長連筋(XO[B1O3]OX)
+      const auto overline_1 = pattern_position_ - 2;    // 右側のX
+
+      if(IsInBoard(overline_1)){
+        downward_influence_area->emplace_back(overline_1);
+      }
+
+      const auto overline_2 = pattern_position_ + 5;    // 左側のX
+
+      if(IsInBoard(overline_2)){
+        downward_influence_area->emplace_back(overline_2);
+      }
+    }
+
+    return;
+  }
+
   default:
     assert(false);
     return;
@@ -237,6 +276,10 @@ inline const bool OpenState::IsInfluenceMove(const MovePosition move) const
     return (P == kBlackTurn) ? (-1 <= difference && difference <= 5) : (0 <= difference && difference <= 4);
   case kNextPointOfSwordWhite:
     return (P == kBlackTurn) ? (0 <= difference && difference <= 4) : (0 <= difference && difference <= 4);
+  case kNextTwoBlack:
+    return (P == kBlackTurn) ? (-2 <= difference && difference <= 5) : (-1 <= difference && difference <= 4);
+  case kNextTwoWhite:
+    return (P == kBlackTurn) ? (-1 <= difference && difference <= 4) : (-1 <= difference && difference <= 4);
   default:
     assert(false);
     return false;
@@ -264,7 +307,8 @@ inline const OpenState& OpenState::operator=(const OpenState &open_state)
 
 inline constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern)
 {
-  return ((pattern == kNextOpenFourWhite) || (pattern == kNextFourWhite) || (pattern == kNextSemiThreeWhite) || (pattern == kNextPointOfSwordWhite)) ? kWhiteTurn : kBlackTurn;
+  return ((pattern == kNextOpenFourWhite) || (pattern == kNextFourWhite) || (pattern == kNextSemiThreeWhite) || 
+  (pattern == kNextPointOfSwordWhite) || (pattern == kNextTwoWhite)) ? kWhiteTurn : kBlackTurn;
 }
 }   // namespace realcore
 

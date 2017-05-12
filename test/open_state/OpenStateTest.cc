@@ -246,6 +246,59 @@ TEST_F(OpenStateTest, GetInfluenceAreaTest)
     EXPECT_TRUE(HasValue(white_influence_area, pattern_position + 2));
     EXPECT_TRUE(HasValue(white_influence_area, pattern_position + 3));
   }
+  {
+    // 二ノビ点(黒), XO[OOOB]OX
+    constexpr OpenStatePattern kPattern = kNextTwoBlack;
+    constexpr BoardPosition pattern_position = 18;
+    constexpr BoardPosition open_position = pattern_position + 2;
+    constexpr size_t pattern_search_index = 3;
+    OpenState open_state(kPattern, open_position, pattern_position, pattern_search_index);
+
+    vector<BoardPosition> black_influence_area, white_influence_area;
+
+    open_state.GetInfluenceArea<kBlackTurn>(&black_influence_area);
+    ASSERT_EQ(6, black_influence_area.size());
+    EXPECT_TRUE(HasValue(black_influence_area, pattern_position - 1));
+    EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 1));
+    EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 2));
+    EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 3));
+    EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 4));
+    EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 5));
+
+    open_state.GetInfluenceArea<kWhiteTurn>(&white_influence_area);
+    ASSERT_EQ(5, white_influence_area.size());
+    EXPECT_TRUE(HasValue(white_influence_area, pattern_position - 1));
+    EXPECT_TRUE(HasValue(white_influence_area, pattern_position + 1));
+    EXPECT_TRUE(HasValue(white_influence_area, pattern_position + 2));
+    EXPECT_TRUE(HasValue(white_influence_area, pattern_position + 3));
+    EXPECT_TRUE(HasValue(white_influence_area, pattern_position + 4));
+  }
+  {
+    // 二ノビ点(白), O[OOOW]O
+    constexpr OpenStatePattern kPattern = kNextTwoWhite;
+    constexpr BoardPosition pattern_position = 17;
+    constexpr BoardPosition open_position = pattern_position + 2;
+    constexpr size_t pattern_search_index = 3;
+    OpenState open_state(kPattern, open_position, pattern_position, pattern_search_index);
+
+    vector<BoardPosition> black_influence_area, white_influence_area;
+
+    open_state.GetInfluenceArea<kBlackTurn>(&black_influence_area);
+    ASSERT_EQ(5, black_influence_area.size());
+    EXPECT_TRUE(HasValue(black_influence_area, pattern_position - 1));
+    EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 1));
+    EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 2));
+    EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 3));
+    EXPECT_TRUE(HasValue(black_influence_area, pattern_position + 4));
+
+    open_state.GetInfluenceArea<kWhiteTurn>(&white_influence_area);
+    ASSERT_EQ(5, white_influence_area.size());
+    EXPECT_TRUE(HasValue(white_influence_area, pattern_position - 1));
+    EXPECT_TRUE(HasValue(white_influence_area, pattern_position + 1));
+    EXPECT_TRUE(HasValue(white_influence_area, pattern_position + 2));
+    EXPECT_TRUE(HasValue(white_influence_area, pattern_position + 3));
+    EXPECT_TRUE(HasValue(white_influence_area, pattern_position + 4));
+  }
 }
 
 TEST_F(OpenStateTest, IsInfluenceMove)
@@ -400,6 +453,38 @@ TEST_F(OpenStateTest, IsInfluenceMove)
     }
   }
   {
+    // kNextTwoBlack
+    constexpr BoardPosition board_position = 857;    // x = 3, y = 10
+    OpenState open_state(kNextTwoBlack, open_position, board_position, pattern_search_index);
+
+    for(const auto move : in_board_move_list){
+      const bool expect_black_result = (move == kMoveAH) || (move == kMoveBI) || (move == kMoveCJ) || (move == kMoveDK) || (move == kMoveEL) || (move == kMoveFM) || (move == kMoveGN) || (move == kMoveHO);
+      const bool expect_white_result = (move == kMoveBI) || (move == kMoveCJ) || (move == kMoveDK) || (move == kMoveEL) || (move == kMoveFM) || (move == kMoveGN);
+
+      const bool is_influence_black = open_state.IsInfluenceMove<kBlackTurn>(move);
+      ASSERT_EQ(expect_black_result, is_influence_black);
+
+      const bool is_influence_white = open_state.IsInfluenceMove<kWhiteTurn>(move);
+      ASSERT_EQ(expect_white_result, is_influence_white);
+    }
+  }
+  {
+    // kNextTwoWhite
+    constexpr BoardPosition board_position = 857;    // x = 3, y = 10
+    OpenState open_state(kNextTwoWhite, open_position, board_position, pattern_search_index);
+
+    for(const auto move : in_board_move_list){
+      const bool expect_black_result = (move == kMoveBI) || (move == kMoveCJ) || (move == kMoveDK) || (move == kMoveEL) || (move == kMoveFM) || (move == kMoveGN);
+      const bool expect_white_result = (move == kMoveBI) || (move == kMoveCJ) || (move == kMoveDK) || (move == kMoveEL) || (move == kMoveFM) || (move == kMoveGN);
+
+      const bool is_influence_black = open_state.IsInfluenceMove<kBlackTurn>(move);
+      ASSERT_EQ(expect_black_result, is_influence_black);
+
+      const bool is_influence_white = open_state.IsInfluenceMove<kWhiteTurn>(move);
+      ASSERT_EQ(expect_white_result, is_influence_white);
+    }
+  }
+  {
     // move = kNullMove
     constexpr BoardPosition board_position = 18;    // x = 2, y = 1
     OpenState open_state(kNextOverline, open_position, board_position, pattern_search_index);
@@ -535,6 +620,8 @@ TEST_F(OpenStateTest, GetPatternPlayerTurnTest)
   EXPECT_EQ(kWhiteTurn, GetPatternPlayerTurn(kNextSemiThreeWhite));
   EXPECT_EQ(kBlackTurn, GetPatternPlayerTurn(kNextPointOfSwordBlack));
   EXPECT_EQ(kWhiteTurn, GetPatternPlayerTurn(kNextPointOfSwordWhite));
+  EXPECT_EQ(kBlackTurn, GetPatternPlayerTurn(kNextTwoBlack));
+  EXPECT_EQ(kWhiteTurn, GetPatternPlayerTurn(kNextTwoWhite));
 }
 
 TEST_F(OpenStateTest, UpdateOpenStateFlagTest)

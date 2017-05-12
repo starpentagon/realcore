@@ -23,15 +23,17 @@ enum OpenStatePattern : std::uint8_t
   kNextSemiThreeWhite,      //!< 見かけの三ノビ点(白),  O[W2O2]O
   kNextPointOfSwordBlack,   //!< 剣先点(黒), X[B2O3]X
   kNextPointOfSwordWhite,   //!< 剣先点(白),  [W2O3]
+  kNextTwoBlack,            //!< 二ノビ点(黒), XO[B1O3]OX
+  kNextTwoWhite,            //!< 二ノビ点(白),  O[W1O3]O
 };
 
-constexpr size_t kOpenStatePatternNum = 9;
+constexpr size_t kOpenStatePatternNum = 11;
 const std::array<OpenStatePattern, kOpenStatePatternNum>& GetAllOpenStatePattern();
 
 typedef std::bitset<kOpenStatePatternNum> UpdateOpenStateFlag;    // 更新を行う空点情報のフラグ
 
-constexpr UpdateOpenStateFlag kUpdateAllOpenState(0b111111111);      // すべての空点情報を更新する
-constexpr UpdateOpenStateFlag kUpdateForbiddenCheck(0b000101011);    // 禁手チェック用の空点情報を更新する
+constexpr UpdateOpenStateFlag kUpdateAllOpenState(0b11111111111);      // すべての空点情報を更新する
+constexpr UpdateOpenStateFlag kUpdateForbiddenCheck(0b00000101011);    // 禁手チェック用の空点情報を更新する
 
 //! @brief 指し手パターンが黒番, 白番どちらのパターンなのかを返す
 constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern);
