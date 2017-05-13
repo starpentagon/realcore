@@ -5,6 +5,7 @@
 #ifndef OPEN_STATE_H
 #define OPEN_STATE_H
 
+#include <array>
 #include <vector>
 #include <bitset>
 
@@ -82,6 +83,12 @@ public:
   //! @brief パターンの指し手が成立しなくなる影響領域(downward influence area)を返す
   template<PlayerTurn P>
   void GetInfluenceArea(std::vector<BoardPosition> * const downward_influence_area) const;
+
+  //! @brief 剣先点における四ノビ位置([B203][W2O3]のopen_position以外のO)を返す
+  void GetFourPosition(std::array<BoardPosition, 2> * const four_position_list) const;
+
+  //! @brief 二ノビ点における見かけ三になる位置([B1O3][W1O3]のopen_position以外のO)を返す
+  void GetSemiThreePosition(std::array<BoardPosition, 2> * const semi_three_position_list) const;
 
   //! @brief 指定の指し手位置が影響領域かどうかを判定する
   //! @param P 指し手の手番

@@ -642,4 +642,45 @@ TEST_F(OpenStateTest, UpdateOpenStateFlagTest)
     }
   }
 }
+
+TEST_F(OpenStateTest, GetFourPositionTest)
+{
+  const BoardPosition open_position = GetBoardPosition(kMoveEH, kLateralDirection);
+  const BoardPosition pattern_position = GetBoardPosition(kMoveEH, kLateralDirection);
+  const size_t pattern_search_index = 0;
+
+  OpenState open_state(kNextPointOfSwordBlack, open_position, pattern_position, pattern_search_index);
+  
+  array<BoardPosition, 2> four_position;
+  open_state.GetFourPosition(&four_position);
+
+  array<MovePosition, 2> expect_move{{kMoveFH, kMoveGH}};
+
+  for(const auto move : expect_move){
+    const auto board_position = GetBoardPosition(move, kLateralDirection);
+    const auto find_it = find(four_position.begin(), four_position.end(), board_position);
+    ASSERT_TRUE(find_it != four_position.end());
+  }
+}
+
+TEST_F(OpenStateTest, GetSemiThreePositionTest)
+{
+  const BoardPosition open_position = GetBoardPosition(kMoveEH, kLateralDirection);
+  const BoardPosition pattern_position = GetBoardPosition(kMoveEH, kLateralDirection);
+  const size_t pattern_search_index = 0;
+
+  OpenState open_state(kNextTwoBlack, open_position, pattern_position, pattern_search_index);
+  
+  array<BoardPosition, 2> semi_three_position;
+  open_state.GetSemiThreePosition(&semi_three_position);
+
+  array<MovePosition, 2> expect_move{{kMoveFH, kMoveGH}};
+
+  for(const auto move : expect_move){
+    const auto board_position = GetBoardPosition(move, kLateralDirection);
+    const auto find_it = find(semi_three_position.begin(), semi_three_position.end(), board_position);
+    ASSERT_TRUE(find_it != semi_three_position.end());
+  }
+}
+
 }   // namespace realcore

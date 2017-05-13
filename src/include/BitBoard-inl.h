@@ -487,6 +487,62 @@ inline void BitBoard::GetBoardStateBit(std::array<StateBit, 8> * const board_inf
   }
 }
 
+template<PlayerTurn P>
+void BitBoard::EnumerateMiseMoves(const BoardOpenState &board_open_state, MoveBitSet * const mise_move_set) const
+{
+  assert(mise_move_set != nullptr);
+  assert(mise_move_set->none());
+
+  constexpr OpenStatePattern kTwoPattern = (P == kBlackTurn) ? kNextTwoBlack : kNextTwoWhite;
+  constexpr OpenStatePattern kPointOfSwordPattern = (P == kBlackTurn) ? kNextPointOfSwordBlack : kNextPointOfSwordWhite;
+
+  // 二ノビ点の三を作る位置が四ノビ点になるケース
+  MoveBitSet four_bit;
+  EnumerateFourMoves<P>(board_open_state, &four_bit);
+
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kTwoPattern));
+  const auto& two_open_state_list = board_open_state.GetList(kTwoPattern);
+
+  for(const auto &open_state : two_open_state_list){
+    std::array<BoardPosition, 2> semi_three_position_list{{0}};
+    open_state.GetSemiThreePosition(&semi_three_position_list);
+
+    for(const auto make_three_position : semi_three_position_list){
+      const auto make_three_move = GetBoardMove(make_three_position);
+
+      if(four_bit[make_three_move]){
+        const auto open_position = open_state.GetOpenPosition();
+        const auto mise_move = GetBoardMove(open_position);
+
+        mise_move_set->set(mise_move);
+      }
+    }
+  }
+
+  // 剣先点の四を作る位置が三ノビ点になるケース
+  MoveBitSet three_bit;
+  EnumerateSemiThreeMoves<P>(board_open_state, &three_bit);
+  
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kPointOfSwordPattern));
+  const auto& sword_open_state_list = board_open_state.GetList(kPointOfSwordPattern);
+
+  for(const auto &open_state : sword_open_state_list){
+    std::array<BoardPosition, 2> four_position_list{{0}};
+    open_state.GetFourPosition(&four_position_list);
+
+    for(const auto make_four_position : four_position_list){
+      const auto make_four_move = GetBoardMove(make_four_position);
+
+      if(three_bit[make_four_move]){
+        const auto open_position = open_state.GetOpenPosition();
+        const auto mise_move = GetBoardMove(open_position);
+
+        mise_move_set->set(mise_move);
+      }
+    }
+  }
+}
+
 }
 
 #endif    // BIT_BOARD_INL_H
