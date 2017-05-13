@@ -494,6 +494,7 @@ void BitBoard::EnumerateMiseMoves(const BoardOpenState &board_open_state, MoveBi
   assert(mise_move_set->none());
 
   constexpr OpenStatePattern kTwoPattern = (P == kBlackTurn) ? kNextTwoBlack : kNextTwoWhite;
+  constexpr OpenStatePattern kThreePattern = (P == kBlackTurn) ? kNextSemiThreeBlack : kNextSemiThreeWhite;
   constexpr OpenStatePattern kPointOfSwordPattern = (P == kBlackTurn) ? kNextPointOfSwordBlack : kNextPointOfSwordWhite;
 
   // 二ノビ点の三を作る位置が四ノビ点になるケース
@@ -520,9 +521,22 @@ void BitBoard::EnumerateMiseMoves(const BoardOpenState &board_open_state, MoveBi
   }
 
   // 剣先点の四を作る位置が三ノビ点になるケース
-  MoveBitSet three_bit;
-  EnumerateSemiThreeMoves<P>(board_open_state, &three_bit);
-  
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kThreePattern));
+  const auto& three_open_state_list = board_open_state.GetList(kThreePattern);
+
+  std::array<std::bitset<kBoardDirectionNum>, kMoveNum> make_three_flag;
+
+  for(const auto &three_open_state : three_open_state_list){
+    const auto three_position = three_open_state.GetOpenPosition();
+    const auto three_move = GetBoardMove(three_position);
+    const auto three_direction = GetBoardDirection(three_position);
+    
+    std::bitset<kBoardDirectionNum> make_three_bit(0b1111);
+    make_three_bit.reset(three_direction);
+
+    make_three_flag[three_move] |= make_three_bit;
+  }
+
   assert(board_open_state.GetUpdateOpenStateFlag().test(kPointOfSwordPattern));
   const auto& sword_open_state_list = board_open_state.GetList(kPointOfSwordPattern);
 
@@ -532,13 +546,18 @@ void BitBoard::EnumerateMiseMoves(const BoardOpenState &board_open_state, MoveBi
 
     for(const auto make_four_position : four_position_list){
       const auto make_four_move = GetBoardMove(make_four_position);
+      const auto make_four_direction = GetBoardDirection(make_four_position);
+      const auto &make_mise_flag = make_three_flag[make_four_move];
 
-      if(three_bit[make_four_move]){
-        const auto open_position = open_state.GetOpenPosition();
-        const auto mise_move = GetBoardMove(open_position);
-
-        mise_move_set->set(mise_move);
+      // 四ノビする方向と別方向に三ができるかチェックする
+      if(!make_mise_flag[make_four_direction]){
+        continue;
       }
+
+      const auto open_position = open_state.GetOpenPosition();
+      const auto mise_move = GetBoardMove(open_position);
+
+      mise_move_set->set(mise_move);
     }
   }
 }

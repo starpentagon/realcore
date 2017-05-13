@@ -597,4 +597,63 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
     }
   }
 }
+
+TEST_F(BitBoardTest, EnumerateMiseMovesTest)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A x --------------------------+ A 
+  // B | x . . . . . . . . . . . . | B 
+  // C | . x . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . . . . . . . . . . | E 
+  // F | . . . . . . . . . . . . . | F 
+  // G | . . . x o o o . . . . . . | G 
+  // H | . . . . . . x o . . . . . | H 
+  // I | . . . . . . . . . . . . . | I 
+  // J | . . . . . . x . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . x x * . . | L 
+  // M | . . o . . . . . . . . . . | M 
+  // N | o . . o . . . . . . . . . | N 
+  // O + o ------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  MoveList board_move_list("hhhghjfgjlihklggegboccbnbbdmaaen");
+  BitBoard bit_board(board_move_list);
+
+  BoardOpenState board_open_state;
+  bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+  
+  {
+    // 黒番
+    MoveBitSet mise_bit;
+    bit_board.EnumerateMiseMoves<kBlackTurn>(board_open_state, &mise_bit);
+
+    ASSERT_EQ(mise_bit.count(), 5);
+    EXPECT_TRUE(mise_bit[kMoveHI]);
+    EXPECT_TRUE(mise_bit[kMoveHK]);
+    EXPECT_TRUE(mise_bit[kMoveED]);
+    EXPECT_TRUE(mise_bit[kMoveEF]);
+    EXPECT_TRUE(mise_bit[kMoveEH]);
+  }
+  {
+    // 白番
+    MoveBitSet mise_bit;
+    bit_board.EnumerateMiseMoves<kWhiteTurn>(board_open_state, &mise_bit);
+    
+    ASSERT_EQ(mise_bit.count(), 12);
+    EXPECT_TRUE(mise_bit[kMoveIE]);
+    EXPECT_TRUE(mise_bit[kMoveIF]);
+    EXPECT_TRUE(mise_bit[kMoveII]);
+    EXPECT_TRUE(mise_bit[kMoveIJ]);
+    EXPECT_TRUE(mise_bit[kMoveLE]);
+    EXPECT_TRUE(mise_bit[kMoveKF]);
+    EXPECT_TRUE(mise_bit[kMoveHI]);
+    EXPECT_TRUE(mise_bit[kMoveGJ]);
+    EXPECT_TRUE(mise_bit[kMoveFK]);
+    EXPECT_TRUE(mise_bit[kMoveEL]);
+    EXPECT_TRUE(mise_bit[kMoveBL]);
+    EXPECT_TRUE(mise_bit[kMoveBM]);
+  }
+}
+
 }   // namespace realcore
