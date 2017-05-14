@@ -143,6 +143,11 @@ public:
   void EnumeratePointOfSwordMoves(MoveBitSet * const point_of_sword_move_set) const;
   void EnumeratePointOfSwordMoves(const bool is_black_turn, MoveBitSet * const point_of_sword_move_set) const;
 
+  //! @brief ミセ手(Passすると四三)を列挙する
+  template<PlayerTurn P>
+  void EnumerateMiseMoves(MoveBitSet * const mise_move_set) const;
+  void EnumerateMiseMoves(const bool is_black_turn, MoveBitSet * const mise_move_set) const;
+
 protected:
   //! @brief 終端手が存在するかチェックする
   //! @param terminating_move 終端手の格納先

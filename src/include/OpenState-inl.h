@@ -260,26 +260,25 @@ inline const bool OpenState::IsInfluenceMove(const MovePosition move) const
   switch(pattern_){
   case kNextOverline:
     return (P == kBlackTurn) ? false : (0 <= difference && difference <= 3);
+
   case kNextOpenFourBlack:
-    return (P == kBlackTurn) ? (-2 <= difference && difference <= 5) : (-1 <= difference && difference <= 4);
-  case kNextOpenFourWhite:
-    return (P == kBlackTurn) ? (-1 <= difference && difference <= 4) : (-1 <= difference && difference <= 4);
-  case kNextFourBlack:
-    return (P == kBlackTurn) ? (-1 <= difference && difference <= 5) : (0 <= difference && difference <= 4);
-  case kNextFourWhite:
-    return (P == kBlackTurn) ? (0 <= difference && difference <= 4) : (0 <= difference && difference <= 4);
   case kNextSemiThreeBlack:
-    return (P == kBlackTurn) ? (-2 <= difference && difference <= 5) : (-1 <= difference && difference <= 4);
-  case kNextSemiThreeWhite:
-    return (P == kBlackTurn) ? (-1 <= difference && difference <= 4) : (-1 <= difference && difference <= 4);
-  case kNextPointOfSwordBlack:
-    return (P == kBlackTurn) ? (-1 <= difference && difference <= 5) : (0 <= difference && difference <= 4);
-  case kNextPointOfSwordWhite:
-    return (P == kBlackTurn) ? (0 <= difference && difference <= 4) : (0 <= difference && difference <= 4);
   case kNextTwoBlack:
     return (P == kBlackTurn) ? (-2 <= difference && difference <= 5) : (-1 <= difference && difference <= 4);
+
+  case kNextOpenFourWhite:
+  case kNextSemiThreeWhite:
   case kNextTwoWhite:
     return (P == kBlackTurn) ? (-1 <= difference && difference <= 4) : (-1 <= difference && difference <= 4);
+
+  case kNextFourBlack:
+  case kNextPointOfSwordBlack:
+    return (P == kBlackTurn) ? (-1 <= difference && difference <= 5) : (0 <= difference && difference <= 4);
+
+  case kNextFourWhite:
+  case kNextPointOfSwordWhite:
+    return (P == kBlackTurn) ? (0 <= difference && difference <= 4) : (0 <= difference && difference <= 4);
+
   default:
     assert(false);
     return false;
