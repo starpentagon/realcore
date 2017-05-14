@@ -148,6 +148,11 @@ public:
   void EnumerateMiseMoves(MoveBitSet * const mise_move_set, MoveBitSet * const multi_mise_move_set) const;
   void EnumerateMiseMoves(const bool is_black_turn, MoveBitSet * const mise_move_set, MoveBitSet * const multi_mise_move_set) const;
 
+  //! @brief 見かけの三々点を列挙する
+  template<PlayerTurn P>
+  void EnumerateDoubleSemiThreeMoves(MoveBitSet * const double_semi_three_move_set) const;
+  void EnumerateDoubleSemiThreeMoves(const bool is_black_turn, MoveBitSet * const double_semi_three_move_set) const;
+
 protected:
   //! @brief 終端手が存在するかチェックする
   //! @param terminating_move 終端手の格納先

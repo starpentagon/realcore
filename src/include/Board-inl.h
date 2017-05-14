@@ -106,6 +106,22 @@ inline void Board::EnumerateMiseMoves(const bool is_black_turn, MoveBitSet * con
   }
 }
 
+template<PlayerTurn P>
+void Board::EnumerateDoubleSemiThreeMoves(MoveBitSet * const double_semi_three_move_set) const
+{
+  const auto &board_open_state = board_open_state_list_.back();
+  bit_board_.EnumerateDoubleSemiThreeMoves<P>(board_open_state, double_semi_three_move_set);
+}
+
+inline void Board::EnumerateDoubleSemiThreeMoves(const bool is_black_turn, MoveBitSet * const double_semi_three_move_set) const
+{
+  if(is_black_turn){
+    EnumerateDoubleSemiThreeMoves<kBlackTurn>(double_semi_three_move_set);
+  }else{
+    EnumerateDoubleSemiThreeMoves<kWhiteTurn>(double_semi_three_move_set);
+  }
+}
+
 }   // namespace realcore
 
 #endif    // BOARD_INL_H
