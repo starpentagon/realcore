@@ -91,18 +91,18 @@ inline void Board::EnumeratePointOfSwordMoves(const bool is_black_turn, MoveBitS
 }
 
 template<PlayerTurn P>
-void Board::EnumerateMiseMoves(MoveBitSet * const mise_move_set) const
+void Board::EnumerateMiseMoves(MoveBitSet * const mise_move_set, MoveBitSet * const multi_mise_move_set) const
 {
   const auto &board_open_state = board_open_state_list_.back();
-  bit_board_.EnumerateMiseMoves<P>(board_open_state, mise_move_set);
+  bit_board_.EnumerateMiseMoves<P>(board_open_state, mise_move_set, multi_mise_move_set);
 }
 
-void Board::EnumerateMiseMoves(const bool is_black_turn, MoveBitSet * const mise_move_set) const
+inline void Board::EnumerateMiseMoves(const bool is_black_turn, MoveBitSet * const mise_move_set, MoveBitSet * const multi_mise_move_set) const
 {
   if(is_black_turn){
-    EnumerateMiseMoves<kBlackTurn>(mise_move_set);
+    EnumerateMiseMoves<kBlackTurn>(mise_move_set, multi_mise_move_set);
   }else{
-    EnumerateMiseMoves<kWhiteTurn>(mise_move_set);
+    EnumerateMiseMoves<kWhiteTurn>(mise_move_set, multi_mise_move_set);
   }
 }
 

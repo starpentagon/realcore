@@ -145,8 +145,8 @@ public:
 
   //! @brief ミセ手(Passすると四三)を列挙する
   template<PlayerTurn P>
-  void EnumerateMiseMoves(MoveBitSet * const mise_move_set) const;
-  void EnumerateMiseMoves(const bool is_black_turn, MoveBitSet * const mise_move_set) const;
+  void EnumerateMiseMoves(MoveBitSet * const mise_move_set, MoveBitSet * const multi_mise_move_set) const;
+  void EnumerateMiseMoves(const bool is_black_turn, MoveBitSet * const mise_move_set, MoveBitSet * const multi_mise_move_set) const;
 
 protected:
   //! @brief 終端手が存在するかチェックする

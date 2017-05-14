@@ -33,8 +33,20 @@ const std::array<OpenStatePattern, kOpenStatePatternNum>& GetAllOpenStatePattern
 
 typedef std::bitset<kOpenStatePatternNum> UpdateOpenStateFlag;    // 更新を行う空点情報のフラグ
 
-constexpr UpdateOpenStateFlag kUpdateAllOpenState(0b11111111111);      // すべての空点情報を更新する
-constexpr UpdateOpenStateFlag kUpdateForbiddenCheck(0b00000101011);    // 禁手チェック用の空点情報を更新する
+// 指し手パターンの生成フラグ定数
+static constexpr uint64_t kUpdateFlagForbidden = 0b00000101011;           //!< 禁手チェック用(黒番の長連点, 達四点, 四ノビ点, 見かけの三ノビ点)
+static constexpr uint64_t kUpdateFlagOpenFourWhite = 0b00000000100;       //!< 達四点(白)
+static constexpr uint64_t kUpdateFlagFourWhite = 0b00000010000;           //!< 四ノビ点(白)
+static constexpr uint64_t kUpdateFlagSemiThreeWhite = 0b00001000000;      //!< 見かけの三ノビ点(白)
+static constexpr uint64_t kUpdateFlagPointOfSwordBlack = 0b00010000000;   //!< 剣先点(黒)
+static constexpr uint64_t kUpdateFlagPointOfSwordWhite = 0b00100000000;   //!< 剣先点(白)
+static constexpr uint64_t kUpdateFlagTwoBlack = 0b01000000000;            //!< 二ノビ点(黒)
+static constexpr uint64_t kUpdateFlagTwoWhite = 0b10000000000;            //!< 二ノビ点(白)
+
+static constexpr uint64_t kUpdateAllFlag = 0b11111111111;
+
+constexpr UpdateOpenStateFlag kUpdateAllOpenState(kUpdateAllFlag);      // すべての空点情報を更新する
+constexpr UpdateOpenStateFlag kUpdateForbiddenCheck(kUpdateFlagForbidden);    // 禁手チェック用の空点情報を更新する
 
 //! @brief 指し手パターンが黒番, 白番どちらのパターンなのかを返す
 constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern);
