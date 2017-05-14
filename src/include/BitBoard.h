@@ -175,7 +175,7 @@ public:
 
   //! @brief ミセ手(Passすると四三)を列挙する
   template<PlayerTurn P>
-  void EnumerateMiseMoves(const BoardOpenState &board_open_state, MoveBitSet * const mise_move_set) const;
+  void EnumerateMiseMoves(const BoardOpenState &board_open_state, MoveBitSet * const mise_move_set, MoveBitSet * const multi_mise_move_set) const;
 
   //! @brief 相手に1手勝ちが生じているかチェックし、その防手を生成する
   //! @param P 防手を生成する側の手番

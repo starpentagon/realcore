@@ -625,8 +625,8 @@ TEST_F(BitBoardTest, EnumerateMiseMovesTest)
   
   {
     // 黒番
-    MoveBitSet mise_bit;
-    bit_board.EnumerateMiseMoves<kBlackTurn>(board_open_state, &mise_bit);
+    MoveBitSet mise_bit, multi_mise_bit;
+    bit_board.EnumerateMiseMoves<kBlackTurn>(board_open_state, &mise_bit, &multi_mise_bit);
 
     ASSERT_EQ(mise_bit.count(), 5);
     EXPECT_TRUE(mise_bit[kMoveHI]);
@@ -634,11 +634,13 @@ TEST_F(BitBoardTest, EnumerateMiseMovesTest)
     EXPECT_TRUE(mise_bit[kMoveED]);
     EXPECT_TRUE(mise_bit[kMoveEF]);
     EXPECT_TRUE(mise_bit[kMoveEH]);
+
+    ASSERT_TRUE(multi_mise_bit.none());
   }
   {
     // 白番
-    MoveBitSet mise_bit;
-    bit_board.EnumerateMiseMoves<kWhiteTurn>(board_open_state, &mise_bit);
+    MoveBitSet mise_bit, multi_mise_bit;
+    bit_board.EnumerateMiseMoves<kWhiteTurn>(board_open_state, &mise_bit, &multi_mise_bit);
     
     ASSERT_EQ(mise_bit.count(), 12);
     EXPECT_TRUE(mise_bit[kMoveIE]);
@@ -653,6 +655,43 @@ TEST_F(BitBoardTest, EnumerateMiseMovesTest)
     EXPECT_TRUE(mise_bit[kMoveEL]);
     EXPECT_TRUE(mise_bit[kMoveBL]);
     EXPECT_TRUE(mise_bit[kMoveBM]);
+
+    ASSERT_TRUE(multi_mise_bit.none());
+  }
+}
+
+TEST_F(BitBoardTest, EnumerateMultiMiseMovesTest)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . o . . . . . . . . | E 
+  // F | . . . . . x x x o . . . . | F 
+  // G | . . . . . o x o . . . . . | G 
+  // H | . . . . . . x x o . . . . | H 
+  // I | . . . . . . o . . . . . . | I 
+  // J | . . . . . . . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  MoveList board_move_list("hhigihjhhfgghghigffeifjf");
+  BitBoard bit_board(board_move_list);
+
+  BoardOpenState board_open_state;
+  bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+  
+  {
+    // 黒番
+    MoveBitSet mise_bit, multi_mise_bit;
+    bit_board.EnumerateMiseMoves<kBlackTurn>(board_open_state, &mise_bit, &multi_mise_bit);
+
+    ASSERT_EQ(multi_mise_bit.count(), 1);
+    EXPECT_TRUE(multi_mise_bit[kMoveEH]);
   }
 }
 

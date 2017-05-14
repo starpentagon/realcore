@@ -488,14 +488,22 @@ inline void BitBoard::GetBoardStateBit(std::array<StateBit, 8> * const board_inf
 }
 
 template<PlayerTurn P>
-void BitBoard::EnumerateMiseMoves(const BoardOpenState &board_open_state, MoveBitSet * const mise_move_set) const
+void BitBoard::EnumerateMiseMoves(const BoardOpenState &board_open_state, MoveBitSet * const mise_move_set, MoveBitSet * const multi_mise_move_set) const
 {
   assert(mise_move_set != nullptr);
   assert(mise_move_set->none());
+  assert(multi_mise_move_set == nullptr || multi_mise_move_set->none());
 
   constexpr OpenStatePattern kTwoPattern = (P == kBlackTurn) ? kNextTwoBlack : kNextTwoWhite;
   constexpr OpenStatePattern kThreePattern = (P == kBlackTurn) ? kNextSemiThreeBlack : kNextSemiThreeWhite;
   constexpr OpenStatePattern kPointOfSwordPattern = (P == kBlackTurn) ? kNextPointOfSwordBlack : kNextPointOfSwordWhite;
+
+  // 両ミセ(複数の方向にミセ手の焦点がある)を判定するためにミセ手位置から見たミセ手の焦点の方向を記録する
+  std::array<int8_t, kMoveNum> mise_direction_table;
+
+  if(multi_mise_move_set != nullptr){
+    mise_direction_table.fill(-1);
+  }
 
   // 二ノビ点の三を作る位置が四ノビ点になるケース
   MoveBitSet four_bit;
@@ -516,6 +524,17 @@ void BitBoard::EnumerateMiseMoves(const BoardOpenState &board_open_state, MoveBi
         const auto mise_move = GetBoardMove(open_position);
 
         mise_move_set->set(mise_move);
+
+        if(multi_mise_move_set != nullptr){
+          const auto mise_direction = GetBoardDirection(open_position);
+          const bool is_multi_direciton = mise_direction_table[mise_move] != -1 && mise_direction_table[mise_move] != mise_direction;
+
+          if(is_multi_direciton){
+            multi_mise_move_set->set(mise_move);
+          }
+
+          mise_direction_table[mise_move] = mise_direction;
+        }
       }
     }
   }
@@ -558,6 +577,17 @@ void BitBoard::EnumerateMiseMoves(const BoardOpenState &board_open_state, MoveBi
       const auto mise_move = GetBoardMove(open_position);
 
       mise_move_set->set(mise_move);
+
+      if(multi_mise_move_set != nullptr){
+        const auto mise_direction = GetBoardDirection(open_position);
+        const bool is_multi_direciton = mise_direction_table[mise_move] != -1 && mise_direction_table[mise_move] != mise_direction;
+
+        if(is_multi_direciton){
+          multi_mise_move_set->set(mise_move);
+        }
+
+        mise_direction_table[mise_move] = mise_direction;
+      }
     }
   }
 }
