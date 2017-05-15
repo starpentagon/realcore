@@ -74,7 +74,6 @@ inline const bool MoveList::operator==(const MoveList &move_list) const
 
 inline const bool MoveList::operator!=(const MoveList &move_list) const
 {
-  // todo 実装
   return !(*this == move_list);
 }
 

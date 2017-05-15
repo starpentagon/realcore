@@ -122,6 +122,24 @@ inline void Board::EnumerateDoubleSemiThreeMoves(const bool is_black_turn, MoveB
   }
 }
 
+//! @brief 二ノビ点を列挙する
+template<PlayerTurn P>
+void Board::EnumerateTwoMoves(MoveBitSet * const two_move_set) const
+{
+  const auto &board_open_state = board_open_state_list_.back();
+  bit_board_.EnumerateTwoMoves<P>(board_open_state, two_move_set);
+
+}
+
+inline void Board::EnumerateTwoMoves(const bool is_black_turn, MoveBitSet * const two_move_set) const
+{
+  if(is_black_turn){
+    EnumerateTwoMoves<kBlackTurn>(two_move_set);
+  }else{
+    EnumerateTwoMoves<kWhiteTurn>(two_move_set);
+  }
+}
+
 }   // namespace realcore
 
 #endif    // BOARD_INL_H

@@ -155,8 +155,6 @@ public:
     HashTable<TestData> hash_table(test_table_space, kLockTable);
     constexpr size_t kMaxCounter = numeric_limits<TableLogicCounter>::max();
     
-    // todo upsertをしてtable要素数も試験する
-
     for(size_t i=2; i<=kMaxCounter; i++){
       hash_table.LogicalInitialize();
       ASSERT_EQ(i, hash_table.logic_counter_);
