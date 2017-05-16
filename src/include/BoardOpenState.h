@@ -74,6 +74,9 @@ public:
   //! @brief 空点状態の更新フラグを取得する
   const UpdateOpenStateFlag& GetUpdateOpenStateFlag() const;
   
+  //! @brief 空点状態の更新フラグを設定する
+  void SetUpdateOpenStateFlag(const UpdateOpenStateFlag &update_flag);
+
 private:
   //! @brief 着手の影響を受けるOpenState要素を削除したリストを生成する
   //! @param P moveの手番

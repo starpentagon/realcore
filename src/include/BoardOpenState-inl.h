@@ -285,6 +285,12 @@ inline const UpdateOpenStateFlag& BoardOpenState::GetUpdateOpenStateFlag() const
   return update_flag_;
 }
 
+inline void BoardOpenState::SetUpdateOpenStateFlag(const UpdateOpenStateFlag &update_flag)
+{
+  assert((update_flag_ | update_flag) == update_flag_);
+  update_flag_ = update_flag;
+}
+
 }   // namespace realcore
 
 #endif    // BOARD_OPEN_STATE_INL_H
