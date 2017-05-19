@@ -224,6 +224,29 @@ TEST_F(HashTableTest, FindTest)
   FindTest();
 }
 
+TEST_F(HashTableTest, IsConflictTest)
+{
+  HashTable<TestData> hash_table(test_table_space, kLockTable);
+
+  constexpr HashValue hash_value = 0;
+  TestData data;
+  
+  // insert
+  data.hash_value = hash_value;
+  data.value = 1;
+  hash_table.Upsert(hash_value, data);
+
+  // find
+  const HashValue conflict_hash_value = hash_value + hash_table.size();
+  
+  auto is_find = hash_table.find(conflict_hash_value, &data);
+  ASSERT_FALSE(is_find);
+
+  auto is_conflict = hash_table.IsConflict(conflict_hash_value, &data);
+  ASSERT_TRUE(is_conflict);
+  ASSERT_EQ(1, data.value);
+}
+
 TEST_F(HashTableTest, UpsertTest)
 {
   UpsertTest();

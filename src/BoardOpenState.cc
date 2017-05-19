@@ -24,81 +24,9 @@ BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state, const boo
 {
   update_flag_ = board_open_state.GetUpdateOpenStateFlag();
 
-  if(update_flag_[kNextOverline]){
-    // 長連点
-    constexpr OpenStatePattern Pattern = kNextOverline;
-    const auto &base_list = board_open_state.GetList(Pattern);
-    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
-  }
-
-  if(update_flag_[kNextOpenFourBlack]){
-    // 達四点(黒)
-    constexpr OpenStatePattern Pattern = kNextOpenFourBlack;
-    const auto &base_list = board_open_state.GetList(Pattern);
-    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
-  }
-
-  if(update_flag_[kNextOpenFourWhite]){
-    // 達四点(白)
-    constexpr OpenStatePattern Pattern = kNextOpenFourWhite;
-    const auto &base_list = board_open_state.GetList(Pattern);
-    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
-  }
-
-  if(update_flag_[kNextFourBlack]){
-    // 四ノビ点(黒)
-    constexpr OpenStatePattern Pattern = kNextFourBlack;
-    const auto &base_list = board_open_state.GetList(Pattern);
-    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
-  }
-
-  if(update_flag_[kNextFourWhite]){
-    // 四ノビ点(白)
-    constexpr OpenStatePattern Pattern = kNextFourWhite;
-    const auto &base_list = board_open_state.GetList(Pattern);
-    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
-  }
-
-  if(update_flag_[kNextSemiThreeBlack]){
-    // 見かけの三ノビ点(黒)
-    constexpr OpenStatePattern Pattern = kNextSemiThreeBlack;
-    const auto &base_list = board_open_state.GetList(Pattern);
-    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
-  }
-
-  if(update_flag_[kNextSemiThreeWhite]){
-    // 見かけの三ノビ点(白)
-    constexpr OpenStatePattern Pattern = kNextSemiThreeWhite;
-    const auto &base_list = board_open_state.GetList(Pattern);
-    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
-  }
-
-  if(update_flag_[kNextPointOfSwordBlack]){
-    // 剣先点(黒)
-    constexpr OpenStatePattern Pattern = kNextPointOfSwordBlack;
-    const auto &base_list = board_open_state.GetList(Pattern);
-    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
-  }
-
-  if(update_flag_[kNextPointOfSwordWhite]){
-    // 剣先点(白)
-    constexpr OpenStatePattern Pattern = kNextPointOfSwordWhite;
-    const auto &base_list = board_open_state.GetList(Pattern);
-    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
-  }
-
-  if(update_flag_[kNextTwoBlack]){
-    // 二ノビ点(黒)
-    constexpr OpenStatePattern Pattern = kNextTwoBlack;
-    const auto &base_list = board_open_state.GetList(Pattern);
-    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
-  }
-
-  if(update_flag_[kNextTwoWhite]){
-    // 二ノビ点(白)
-    constexpr OpenStatePattern Pattern = kNextTwoWhite;
-    const auto &base_list = board_open_state.GetList(Pattern);
-    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
+  for(const auto pattern : GetAllOpenStatePattern()){
+    const auto &base_list = board_open_state.GetList(pattern);
+    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[pattern]);
   }
 
   LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);

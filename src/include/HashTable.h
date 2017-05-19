@@ -52,6 +52,10 @@ public:
   //! @brief Hash tableの検索を行う
   const bool find(const HashValue hash_value, T * const element) const;
 
+  //! @brief 競合が生じるかチェックする
+  //! @param element 競合するデータを格納する
+  const bool IsConflict(const HashValue hash_value, T * const element) const;
+
   //! @brief Hash tableの要素数を返す
   const size_t size() const;
 

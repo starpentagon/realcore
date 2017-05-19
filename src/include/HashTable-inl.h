@@ -67,6 +67,26 @@ const bool HashTable<T>::find(const HashValue hash_value, T * const element) con
 }
 
 template<class T>
+const bool HashTable<T>::IsConflict(const HashValue hash_value, T * const element) const
+{
+  const auto index = GetTableIndex(hash_value);
+
+  {
+    Lock lock(mutex_list_[index], lock_control_);
+    const T& hash_data = hash_table_[index];
+
+    if(hash_data.logic_counter != logic_counter_){
+      return false;
+    }
+
+    assert(element != nullptr);
+    *element = hash_data;
+
+    return true;
+  }
+}
+
+template<class T>
 void HashTable<T>::Upsert(const HashValue hash_value, const T &element)
 {
   const auto index = GetTableIndex(hash_value);
