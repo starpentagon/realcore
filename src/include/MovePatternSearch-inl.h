@@ -20,30 +20,15 @@ inline const bool IsOverline(const std::uint64_t black_bit)
 
 inline constexpr size_t GetOpenStatePatternNum(const OpenStatePattern pattern)
 {
-  switch(pattern)
-  {
-  case kNextOverline:       // B[B3O1]B
-  case kNextOpenFourBlack:  // XO[B3O1]OX
-  case kNextOpenFourWhite:  //  O[W3O1]O
-  case kNextTwoBlack:       // XO[B1O3]OX
-  case kNextTwoWhite:       //  O[W1O3]O
+  if(pattern == kNextOverline || pattern == kNextOpenFourBlack || pattern == kNextOpenFourWhite || pattern == kNextTwoBlack || pattern == kNextTwoWhite){
+    // B[B3O1]B, XO[B3O1]OX, O[W3O1]O, XO[B1O3]OX, O[W1O3]O
     return 4;
-
-  case kNextFourBlack:      // X[B3O2]X
-  case kNextFourWhite:      //  [W3O2]
+  }else if(pattern == kNextFourBlack || pattern == kNextFourWhite || pattern == kNextPointOfSwordBlack || pattern == kNextPointOfSwordWhite){
+    // X[B3O2]X, [W3O2], X[B2O3]X, X[W2O3]X
     return 10;
-
-  case kNextSemiThreeBlack: // XO[B2O2]OX
-  case kNextSemiThreeWhite: //  O[W2O2]O
+  }else{
+    // XO[B2O2]OX, O[W2O2]O
     return 6;
-
-  case kNextPointOfSwordBlack:  // X[B2O3]X
-  case kNextPointOfSwordWhite:  // X[W2O3]X
-    return 10;
-
-  default:
-    assert(false);
-    return 0;
   }
 }
 
