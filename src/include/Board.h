@@ -73,6 +73,7 @@ public:
   //! @param move 指し手位置
   //! @pre 指し手は正規手かつ終端手ではないこと
   void MakeMove(const MovePosition move);
+  void MakeMove(const MovePosition move, const UpdateOpenStateFlag &update_flag);
 
   //! @brief 指し手を１手戻す
   void UndoMove();

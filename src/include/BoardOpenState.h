@@ -48,6 +48,7 @@ public:
   //! @param bit_board BitBoard
   //! @pre moveは着手後であること
   BoardOpenState(const BoardOpenState &board_open_state, const bool is_black_turn, const MovePosition move, const BitBoard &bit_board);
+  BoardOpenState(const BoardOpenState &board_open_state, const bool is_black_turn, const MovePosition move, const BitBoard &bit_board, const UpdateOpenStateFlag &update_flag);
 
   //! @brief 代入演算子
   const BoardOpenState& operator=(const BoardOpenState &rhs);
@@ -86,6 +87,8 @@ private:
   template<PlayerTurn P>
   void ClearInfluencedOpenState(const std::vector<OpenState> &open_state_list, const MovePosition move, std::vector<OpenState> * const cleared_open_state_list) const;
   void ClearInfluencedOpenState(const bool is_black_turn, const std::vector<OpenState> &open_state_list, const MovePosition move, std::vector<OpenState> * const cleared_open_state_list) const;
+
+  void Initialize(const BoardOpenState &board_open_state, const bool is_black_turn, const MovePosition move, const BitBoard &bit_board, const UpdateOpenStateFlag &update_flag);
 
   std::array<OpenStateList, kOpenStatePatternNum> open_state_list_;    //! 指し手パターン(長連点, etc)ごとの空点状態リスト
   UpdateOpenStateFlag update_flag_;

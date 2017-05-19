@@ -90,7 +90,7 @@ const Board& Board::operator=(const Board &board)
   return *this;
 }
 
-void Board::MakeMove(const MovePosition move)
+void Board::MakeMove(const MovePosition move, const UpdateOpenStateFlag &update_flag)
 {
   const bool is_black_turn = board_move_sequence_.IsBlackTurn();
   assert(IsNormalMove(move));
@@ -105,7 +105,13 @@ void Board::MakeMove(const MovePosition move)
   board_move_sequence_ += move;
 
   const auto &current_board_open_state = board_open_state_list_.back();
-  board_open_state_list_.emplace_back(current_board_open_state, is_black_turn, move, bit_board_);
+  board_open_state_list_.emplace_back(current_board_open_state, is_black_turn, move, bit_board_, update_flag);
+}
+
+void Board::MakeMove(const MovePosition move)
+{
+  const auto &current_board_open_state = board_open_state_list_.back();
+  MakeMove(move, current_board_open_state.GetUpdateOpenStateFlag());
 }
 
 void Board::UndoMove()

@@ -20,9 +20,9 @@ BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state)
   *this = board_open_state;
 }
 
-BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state, const bool is_black_turn, const MovePosition move, const BitBoard &bit_board)
+void BoardOpenState::Initialize(const BoardOpenState &board_open_state, const bool is_black_turn, const MovePosition move, const BitBoard &bit_board, const UpdateOpenStateFlag &update_flag)
 {
-  update_flag_ = board_open_state.GetUpdateOpenStateFlag();
+  update_flag_ = update_flag;
 
   // @note OpenStatePatternリストのfor文にすると30%程度遅くなったのでfor文を展開した実装を採用
   if(update_flag_[kNextOverline]){
@@ -109,6 +109,16 @@ BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state, const boo
   }else{
     line_neighborhood.AddOpenState<kWhiteTurn>(update_flag_, this);
   }
+}
+
+BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state, const bool is_black_turn, const MovePosition move, const BitBoard &bit_board)
+{
+  Initialize(board_open_state, is_black_turn, move, bit_board, board_open_state.GetUpdateOpenStateFlag());
+}
+
+BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state, const bool is_black_turn, const MovePosition move, const BitBoard &bit_board, const UpdateOpenStateFlag &update_flag)
+{
+  Initialize(board_open_state, is_black_turn, move, bit_board, update_flag);
 }
 
 bool IsEqual(const BoardOpenState &lhs, const BoardOpenState &rhs)
