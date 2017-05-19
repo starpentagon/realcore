@@ -270,7 +270,7 @@ void LineNeighborhood::GetNonDoubleFourInfluenceArea(const uint64_t combined_sto
         const size_t make_five_index = GetGreaterIndexOfTwo(pattern_index);
         const BoardPosition make_five_position = GetOpenBoardPosition(pattern_position, make_five_index);
 
-        const bool is_double_four = next_five_position_table[add_move] != -1 && next_five_position_table[add_move] != make_five_position;
+        const bool is_double_four = next_five_position_table[add_move] != -1 && next_five_position_table[add_move] != static_cast<int>(make_five_position);
         next_five_position_table[add_move] = make_five_position;
 
         if(is_double_four){
@@ -291,7 +291,7 @@ void LineNeighborhood::GetNonDoubleFourInfluenceArea(const uint64_t combined_sto
         const size_t make_five_index = GetLessIndexOfTwo(pattern_index);
         const BoardPosition make_five_position = GetOpenBoardPosition(pattern_position, make_five_index);
 
-        const bool is_double_four = next_five_position_table[add_move] != -1 && next_five_position_table[add_move] != make_five_position;
+        const bool is_double_four = next_five_position_table[add_move] != -1 && next_five_position_table[add_move] != static_cast<int>(make_five_position);
         next_five_position_table[add_move] = make_five_position;
 
         if(is_double_four){
