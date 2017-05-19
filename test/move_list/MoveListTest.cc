@@ -554,6 +554,25 @@ TEST_F(MoveListTest, CalcBoardDistanceTest)
   ASSERT_EQ(expect_distance, distance);
 }
 
+TEST_F(MoveListTest, SelectMoveTest){
+  MoveBitSet move_bit, select_bit;
+  MoveList move_list;
+
+  move_bit.set(kMoveHH);
+  move_bit.set(kMoveHI);
+
+  select_bit.set(kMoveHH);
+
+  SelectMove(select_bit, &move_bit, &move_list);
+
+  ASSERT_EQ(1, move_bit.count());
+  ASSERT_TRUE(move_bit[kMoveHI]);
+
+  ASSERT_EQ(1, move_list.size());
+  ASSERT_EQ(kMoveHH, move_list[0]);
+}
+
+
 }   // namespace realcore
 
 

@@ -42,6 +42,13 @@ void SortByNearMove(const MovePosition move, MoveList * const move_list);
 //! @note from, toのいずれかが盤外の場合は225を返す
 const size_t CalcBoardDistance(const MovePosition from, const MoveList &move_list);
 
+//! @brief MoveBitSetから指定のMoveを抽出する
+//! @param select_bit 抽出対象のMoveBit
+//! @param move_bit 抽出元のMoveBit
+//! @param move_list 指し手の格納先
+//! @note move_bitの抽出されたmove位置はoffになる
+void SelectMove(const MoveBitSet &select_bit, MoveBitSet * const move_bit, MoveList * const move_list);
+
 //! @brief 指し手リストの管理クラス
 //! @detail 以下の機能を提供する
 //! - 指し手のリスト管理

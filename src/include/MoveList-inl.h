@@ -183,6 +183,16 @@ inline const size_t CalcBoardDistance(const MovePosition from, const MoveList &m
   return distance;
 }
 
+inline void SelectMove(const MoveBitSet &select_bit, MoveBitSet * const move_bit, MoveList * const move_list)
+{
+  assert(move_bit != nullptr);
+  
+  const MoveBitSet select_move_bit(select_bit & *move_bit);
+  *move_bit ^= select_move_bit;
+
+  GetMoveList(select_move_bit, move_list);
+}
+
 }
 
 #endif  // MOVE_LIST_INL_H
