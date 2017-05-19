@@ -34,14 +34,18 @@ const std::array<OpenStatePattern, kOpenStatePatternNum>& GetAllOpenStatePattern
 typedef std::bitset<kOpenStatePatternNum> UpdateOpenStateFlag;    // 更新を行う空点情報のフラグ
 
 // 指し手パターンの生成フラグ定数
-static constexpr uint64_t kUpdateFlagForbidden = 0b00000101011;           //!< 禁手チェック用(黒番の長連点, 達四点, 四ノビ点, 見かけの三ノビ点)
-static constexpr uint64_t kUpdateFlagOpenFourWhite = 0b00000000100;       //!< 達四点(白)
-static constexpr uint64_t kUpdateFlagFourWhite = 0b00000010000;           //!< 四ノビ点(白)
-static constexpr uint64_t kUpdateFlagSemiThreeWhite = 0b00001000000;      //!< 見かけの三ノビ点(白)
-static constexpr uint64_t kUpdateFlagPointOfSwordBlack = 0b00010000000;   //!< 剣先点(黒)
-static constexpr uint64_t kUpdateFlagPointOfSwordWhite = 0b00100000000;   //!< 剣先点(白)
-static constexpr uint64_t kUpdateFlagTwoBlack = 0b01000000000;            //!< 二ノビ点(黒)
-static constexpr uint64_t kUpdateFlagTwoWhite = 0b10000000000;            //!< 二ノビ点(白)
+static constexpr uint64_t kUpdateFlagForbidden = 0b00000101011;                           //!< 禁手チェック用(黒番の長連点, 達四点, 四ノビ点, 見かけの三ノビ点)
+static constexpr uint64_t kUpdateFlagOverline = 0b1 << kNextOverline;                     //!< 長連点
+static constexpr uint64_t kUpdateFlagOpenFourBlack = 0b1 << kNextOpenFourBlack;           //!< 達四点(黒)
+static constexpr uint64_t kUpdateFlagOpenFourWhite = 0b1 << kNextOpenFourWhite;           //!< 達四点(白)
+static constexpr uint64_t kUpdateFlagFourBlack = 0b1 << kNextFourBlack;                   //!< 四ノビ点(黒)
+static constexpr uint64_t kUpdateFlagFourWhite = 0b1 << kNextFourWhite;                   //!< 四ノビ点(白)
+static constexpr uint64_t kUpdateFlagSemiThreeBlack = 0b1 << kNextSemiThreeBlack;         //!< 見かけの三ノビ点(黒)
+static constexpr uint64_t kUpdateFlagSemiThreeWhite = 0b1 << kNextSemiThreeWhite;         //!< 見かけの三ノビ点(白)
+static constexpr uint64_t kUpdateFlagPointOfSwordBlack = 0b1 << kNextPointOfSwordBlack;   //!< 剣先点(黒)
+static constexpr uint64_t kUpdateFlagPointOfSwordWhite = 0b1 << kNextPointOfSwordWhite;   //!< 剣先点(白)
+static constexpr uint64_t kUpdateFlagTwoBlack = 0b1 << kNextTwoBlack;                     //!< 二ノビ点(黒)
+static constexpr uint64_t kUpdateFlagTwoWhite = 0b1 << kNextTwoWhite;                     //!< 二ノビ点(白)
 
 static constexpr uint64_t kUpdateAllFlag = 0b11111111111;
 
