@@ -289,4 +289,54 @@ TEST_F(MoveTreeBaseTest, AddSubtreeTest){
   AddSubtreeTest();
 }
 
+TEST_F(MoveTreeBaseTest, GetTopNodeMove){
+  MoveTree move_tree;
+
+  ASSERT_EQ(kInvalidMove, move_tree.GetTopNodeMove());
+  
+  move_tree.AddChild(kMoveHH);
+  move_tree.MoveChildNode(kMoveHH);
+  move_tree.AddChild(kMoveOO);
+
+  ASSERT_EQ(kMoveHH, move_tree.GetTopNodeMove());
+}
+
+TEST_F(MoveTreeBaseTest, emptyTest){
+  MoveTree move_tree;
+  ASSERT_TRUE(move_tree.empty());
+
+  move_tree.AddChild(kMoveHH);
+  ASSERT_FALSE(move_tree.empty());  
+}
+
+TEST_F(MoveTreeBaseTest, clearTest){
+  MoveTree move_tree;
+  ASSERT_TRUE(move_tree.empty());
+
+  move_tree.AddChild(kMoveHH);
+  ASSERT_FALSE(move_tree.empty());  
+
+  move_tree.clear();
+  ASSERT_TRUE(move_tree.empty());
+}
+
+TEST_F(MoveTreeBaseTest, IsConflictORNodeTest){
+  MoveTree move_tree;
+  
+  move_tree.AddChild(kMoveHH);    // OR node on root
+  move_tree.AddChild(kMoveHG);    // OR node on root
+  move_tree.AddChild(kMoveHI);    // OR node on root
+  
+  move_tree.MoveChildNode(kMoveHH);
+
+  move_tree.AddChild(kMoveHG);    // AND node
+  move_tree.MoveChildNode(kMoveHG);
+
+  move_tree.AddChild(kMoveHI);    // OR node
+
+  ASSERT_FALSE(move_tree.IsConflictORNode(kMoveHH));
+  ASSERT_FALSE(move_tree.IsConflictORNode(kMoveHG));
+  ASSERT_TRUE(move_tree.IsConflictORNode(kMoveHI));
+}
+
 }   // namespace realcore

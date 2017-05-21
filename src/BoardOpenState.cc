@@ -20,10 +20,11 @@ BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state)
   *this = board_open_state;
 }
 
-BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state, const bool is_black_turn, const MovePosition move, const BitBoard &bit_board)
+void BoardOpenState::Initialize(const BoardOpenState &board_open_state, const bool is_black_turn, const MovePosition move, const BitBoard &bit_board, const UpdateOpenStateFlag &update_flag)
 {
-  update_flag_ = board_open_state.GetUpdateOpenStateFlag();
+  SetUpdateOpenStateFlag(update_flag);
 
+  // @note OpenStatePatternリストのfor文にすると30%程度遅くなったのでfor文を展開した実装を採用
   if(update_flag_[kNextOverline]){
     // 長連点
     constexpr OpenStatePattern Pattern = kNextOverline;
@@ -73,6 +74,34 @@ BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state, const boo
     ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
   }
 
+  if(update_flag_[kNextPointOfSwordBlack]){
+    // 剣先点(黒)
+    constexpr OpenStatePattern Pattern = kNextPointOfSwordBlack;
+    const auto &base_list = board_open_state.GetList(Pattern);
+    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
+  }
+
+  if(update_flag_[kNextPointOfSwordWhite]){
+    // 剣先点(白)
+    constexpr OpenStatePattern Pattern = kNextPointOfSwordWhite;
+    const auto &base_list = board_open_state.GetList(Pattern);
+    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
+  }
+
+  if(update_flag_[kNextTwoBlack]){
+    // 二ノビ点(黒)
+    constexpr OpenStatePattern Pattern = kNextTwoBlack;
+    const auto &base_list = board_open_state.GetList(Pattern);
+    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
+  }
+
+  if(update_flag_[kNextTwoWhite]){
+    // 二ノビ点(白)
+    constexpr OpenStatePattern Pattern = kNextTwoWhite;
+    const auto &base_list = board_open_state.GetList(Pattern);
+    ClearInfluencedOpenState(is_black_turn, base_list, move, &open_state_list_[Pattern]);
+  }
+
   LineNeighborhood line_neighborhood(move, kOpenStateNeighborhoodSize, bit_board);
 
   if(is_black_turn){
@@ -80,6 +109,18 @@ BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state, const boo
   }else{
     line_neighborhood.AddOpenState<kWhiteTurn>(update_flag_, this);
   }
+}
+
+BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state, const bool is_black_turn, const MovePosition move, const BitBoard &bit_board)
+: update_flag_(kUpdateAllOpenState)
+{
+  Initialize(board_open_state, is_black_turn, move, bit_board, board_open_state.GetUpdateOpenStateFlag());
+}
+
+BoardOpenState::BoardOpenState(const BoardOpenState &board_open_state, const bool is_black_turn, const MovePosition move, const BitBoard &bit_board, const UpdateOpenStateFlag &update_flag)
+: update_flag_(kUpdateAllOpenState)
+{
+  Initialize(board_open_state, is_black_turn, move, bit_board, update_flag);
 }
 
 bool IsEqual(const BoardOpenState &lhs, const BoardOpenState &rhs)

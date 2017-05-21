@@ -202,6 +202,15 @@ const bool BitBoard::IsOpenFourMove(const MovePosition move) const
   return line_neighbor.template IsOpenFour<P>();
 }
 
+inline const bool BitBoard::IsOpenFourMove(const bool is_black_turn, const MovePosition move) const
+{
+  if(is_black_turn){
+    return IsOpenFourMove<kBlackTurn>(move);
+  }else{
+    return IsOpenFourMove<kWhiteTurn>(move);
+  }
+}
+
 template<PlayerTurn P>
 const bool BitBoard::IsFourMove(const MovePosition move, MovePosition * const guard_move) const
 {
@@ -237,8 +246,17 @@ const bool BitBoard::IsFourMoveOnBoard(const MovePosition move, MovePosition * c
   return line_neighbor.IsFour<P>(guard_move);
 }
 
+inline const bool BitBoard::IsFourMoveOnBoard(const bool is_black_turn, const MovePosition move, MovePosition * const guard_move) const
+{
+  if(is_black_turn){
+    return IsFourMoveOnBoard<kBlackTurn>(move, guard_move);
+  }else{
+    return IsFourMoveOnBoard<kWhiteTurn>(move, guard_move);
+  }
+}
+
 template<PlayerTurn P>
-const bool BitBoard::IsDoubleFourMove(const MovePosition move) const
+const bool BitBoard::IsDoubleFourMove(const MovePosition move, MoveBitSet * const influence_area) const
 {
   if(!IsInBoardMove(move)){
     return false;
@@ -253,7 +271,13 @@ const bool BitBoard::IsDoubleFourMove(const MovePosition move) const
   constexpr PositionState S = GetPlayerStone(P);
   line_neighbor.SetCenterState<S>();
 
-  return line_neighbor.IsDoubleFour<P>();
+  return line_neighbor.IsDoubleFour<P>(influence_area);
+}
+
+template<PlayerTurn P>
+inline const bool BitBoard::IsDoubleFourMove(const MovePosition move) const
+{
+  return IsDoubleFourMove<P>(move, nullptr);
 }
 
 template<OpenStatePattern Pattern>
@@ -267,11 +291,9 @@ template<OpenStatePattern Pattern>
 void BitBoard::GetOpenState(const size_t index, const std::uint64_t combined_stone_bit, const std::uint64_t combined_open_bit, BoardOpenState * const board_open_state) const
 {
   constexpr bool is_multiple_stone_pattern = (Pattern == kNextOverline) || (Pattern == kNextOpenFourBlack) || (Pattern == kNextOpenFourWhite) ||
-    (Pattern == kNextFourBlack) || (Pattern == kNextFourWhite) || (Pattern == kNextSemiThreeBlack) || (Pattern == kNextSemiThreeWhite);
+    (Pattern == kNextFourBlack) || (Pattern == kNextFourWhite) || (Pattern == kNextSemiThreeBlack) || (Pattern == kNextSemiThreeWhite) || (Pattern == kNextPointOfSwordBlack) || (Pattern == kNextPointOfSwordWhite);
 
-  static_assert(is_multiple_stone_pattern, "The speeding up check assumes the pattern has multiple stones.");
-
-  if(combined_stone_bit == 0 || IsSingleBit(combined_stone_bit)){
+  if(is_multiple_stone_pattern && (combined_stone_bit == 0 || IsSingleBit(combined_stone_bit))){
     return;
   }
 
@@ -307,24 +329,265 @@ inline void BitBoard::EnumerateForbiddenMoves(MoveBitSet * const forbidden_move_
   EnumerateForbiddenMoves(board_open_state, forbidden_move_set);
 }
 
-inline void GetMoveList(const MoveBitSet &move_bit_set, MoveList *move_list)
+template<PlayerTurn P>
+void BitBoard::EnumerateDoubleFourMoves(const BoardOpenState &board_open_state, MoveBitSet * const double_four_move_set) const
 {
-  assert(move_list != nullptr);
-  constexpr MoveBitSet bit_mask(0xFFFFFFFFFFFFFFFF);
+  assert(double_four_move_set != nullptr);
+  assert(double_four_move_set->none());
+  
+  constexpr auto kOpenFourPattern = (P == kBlackTurn) ? kNextOpenFourBlack : kNextOpenFourWhite;
 
-  for(size_t i=0; i<4; i++){
-    const auto shift_num = 64 * i;
-    const auto value = ((move_bit_set >> shift_num) & bit_mask).to_ullong();
-    
-    if(value == 0){
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kOpenFourPattern));
+  const auto& next_open_four_list = board_open_state.GetList(kOpenFourPattern);
+
+  // 達四があると四ノビパターンが２回マッチされてしまう
+  // ->達四の空点位置とパターン位置が一致する四はスキップしてカウントする。
+  // ->達四の空点位置とパターン位置を記録しておく
+  std::vector<int> open_four_key_list;
+  open_four_key_list.reserve(next_open_four_list.size());
+
+  for(const auto &open_state : next_open_four_list){
+    const auto pattern_position = open_state.GetPatternPosition();
+    const auto open_position = open_state.GetOpenPosition();
+    const int open_four_key = (static_cast<int>(open_position) << 16) | static_cast<int>(pattern_position);
+    open_four_key_list.emplace_back(open_four_key);
+  }
+
+  // 同一空点に五連を作る位置が２ヶ所以上あるかを調べる
+  std::array<int, kMoveNum> next_five_position_table;
+  next_five_position_table.fill(-1);
+
+  constexpr auto kFourPattern = (P == kBlackTurn) ? kNextFourBlack : kNextFourWhite;
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kFourPattern));
+  const auto& next_four_list = board_open_state.GetList(kFourPattern);
+
+  for(const auto &open_state : next_four_list){
+    const auto pattern_position = open_state.GetPatternPosition();
+    const auto open_position = open_state.GetOpenPosition();
+    const int open_four_key = (static_cast<int>(open_position) << 16) | static_cast<int>(pattern_position);
+
+    // 達四と空点位置, パターン位置が一致する四はスキップする
+    std::vector<int>::const_iterator find_it = find(open_four_key_list.begin(), open_four_key_list.end(), open_four_key);
+
+    if(find_it != open_four_key_list.end()){
+      // 達四にマッチした四パターンのためスキップする
       continue;
     }
 
-    std::vector<size_t> index_list;
-    GetBitIndexList(value, &index_list);
+    const auto next_five_position = open_state.GetCheckPosition();   // 防手位置 = 次に五連を作る位置
+    const auto move = GetBoardMove(open_position);
 
-    for(const auto index : index_list){
-      *move_list += static_cast<MovePosition>(index + shift_num);
+    const bool is_double_four = next_five_position_table[move] >= 0 && next_five_position_table[move] != static_cast<int>(next_five_position);
+    next_five_position_table[move] = next_five_position;
+
+    if(is_double_four){
+      double_four_move_set->set(move);
+    }
+  }
+}
+
+template<PlayerTurn P>
+void BitBoard::EnumerateDoubleSemiThreeMoves(const BoardOpenState &board_open_state, MoveBitSet * const double_semi_three_move_set) const
+{
+  assert(double_semi_three_move_set != nullptr);
+  assert(double_semi_three_move_set->none());
+
+  constexpr auto kPattern = (P == kBlackTurn) ? kNextSemiThreeBlack : kNextSemiThreeWhite;
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kPattern));
+  const auto& next_semi_three_list = board_open_state.GetList(kPattern);
+
+  // 見かけの三々点
+  // 2方向以上で見かけの三々になる指し手位置を求める
+  std::array<std::bitset<kBoardDirectionNum>, kMoveNum> move_direction_semi_three;
+
+  for(const auto &open_state : next_semi_three_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+    const auto direction = GetBoardDirection(open_position);
+
+    move_direction_semi_three[move].set(direction);
+  }
+
+  for(const auto &open_state : next_semi_three_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    if(move_direction_semi_three[move].count() >= 2){
+      double_semi_three_move_set->set(move);
+    }
+  }
+}
+
+template<PlayerTurn P>
+const bool BitBoard::GetOpenFourGuard(const BoardOpenState &board_open_state, MoveBitSet * const guard_move_set) const
+{
+  constexpr auto kPattern = (P == kBlackTurn) ? kNextOpenFourWhite : kNextOpenFourBlack;
+  constexpr auto Q = GetOpponentTurn(P);
+
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kPattern));
+  assert(guard_move_set != nullptr);
+  assert(guard_move_set->none());
+  
+  const auto& open_state_list = board_open_state.GetList(kPattern);
+
+  if(open_state_list.empty()){
+    return false;
+  }
+
+  // 相手の達四点が存在する => 防手を生成する
+  guard_move_set->flip();
+
+  bool is_open_four = false;
+
+  for(const auto &open_state : open_state_list){
+    const auto open_position = open_state.GetOpenPosition();
+    const auto move = GetBoardMove(open_position);
+
+    MoveBitSet downward_influence_area, upward_influence_area;
+    const auto is_forbidden = IsForbiddenMove<Q>(move, &downward_influence_area, &upward_influence_area);
+
+    if(is_forbidden){
+      continue;
+    }
+
+    // XO[B3O1]OX or O[W3O1]Oの防手位置を生成する
+    // O[W3O1]Oに対する黒番の防手 or XO[B3O1]OXに対する白番の防手のため長連筋の防手はない => 長連筋の空点チェックは不要
+    MoveBitSet guard_bit;
+
+    std::vector<BoardPosition> guard_position_list;
+    open_state.GetInfluenceArea<P>(&guard_position_list);
+
+    for(const auto guard_position : guard_position_list){
+      const auto guard_move = GetBoardMove(guard_position);
+      guard_bit.set(guard_move);
+    }
+
+    if(Q == kBlackTurn){
+      // 否禁を禁手にする位置を防手位置に加える
+      guard_bit |= upward_influence_area;
+    }
+
+    (*guard_move_set) &= guard_bit;
+    is_open_four = true;
+  }
+
+  if(!is_open_four){
+    guard_move_set->reset();
+  }
+
+  return is_open_four;  
+}
+
+inline void BitBoard::GetBoardStateBit(std::array<StateBit, 8> * const board_info) const
+{
+  assert(board_info != nullptr);
+  
+  for(size_t i=0; i<8; i++){
+    (*board_info)[i] = bit_board_[i];
+  }
+}
+
+template<PlayerTurn P>
+void BitBoard::EnumerateMiseMoves(const BoardOpenState &board_open_state, MoveBitSet * const mise_move_set, MoveBitSet * const multi_mise_move_set) const
+{
+  assert(mise_move_set != nullptr);
+  assert(mise_move_set->none());
+  assert(multi_mise_move_set == nullptr || multi_mise_move_set->none());
+
+  constexpr OpenStatePattern kTwoPattern = (P == kBlackTurn) ? kNextTwoBlack : kNextTwoWhite;
+  constexpr OpenStatePattern kThreePattern = (P == kBlackTurn) ? kNextSemiThreeBlack : kNextSemiThreeWhite;
+  constexpr OpenStatePattern kPointOfSwordPattern = (P == kBlackTurn) ? kNextPointOfSwordBlack : kNextPointOfSwordWhite;
+
+  // 両ミセ(複数の方向にミセ手の焦点がある)を判定するためにミセ手位置から見たミセ手の焦点の方向を記録する
+  std::array<int8_t, kMoveNum> mise_direction_table;
+
+  if(multi_mise_move_set != nullptr){
+    mise_direction_table.fill(-1);
+  }
+
+  // 二ノビ点の三を作る位置が四ノビ点になるケース
+  MoveBitSet four_bit;
+  EnumerateFourMoves<P>(board_open_state, &four_bit);
+
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kTwoPattern));
+  const auto& two_open_state_list = board_open_state.GetList(kTwoPattern);
+
+  for(const auto &open_state : two_open_state_list){
+    std::array<BoardPosition, 2> semi_three_position_list{{0}};
+    open_state.GetSemiThreePosition(&semi_three_position_list);
+
+    for(const auto make_three_position : semi_three_position_list){
+      const auto make_three_move = GetBoardMove(make_three_position);
+
+      if(four_bit[make_three_move]){
+        const auto open_position = open_state.GetOpenPosition();
+        const auto mise_move = GetBoardMove(open_position);
+
+        mise_move_set->set(mise_move);
+
+        if(multi_mise_move_set != nullptr){
+          const auto mise_direction = GetBoardDirection(open_position);
+          const bool is_multi_direciton = mise_direction_table[mise_move] != -1 && mise_direction_table[mise_move] != mise_direction;
+
+          if(is_multi_direciton){
+            multi_mise_move_set->set(mise_move);
+          }
+
+          mise_direction_table[mise_move] = mise_direction;
+        }
+      }
+    }
+  }
+
+  // 剣先点の四を作る位置が三ノビ点になるケース
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kThreePattern));
+  const auto& three_open_state_list = board_open_state.GetList(kThreePattern);
+
+  std::array<std::bitset<kBoardDirectionNum>, kMoveNum> make_three_flag;
+
+  for(const auto &three_open_state : three_open_state_list){
+    const auto three_position = three_open_state.GetOpenPosition();
+    const auto three_move = GetBoardMove(three_position);
+    const auto three_direction = GetBoardDirection(three_position);
+    
+    std::bitset<kBoardDirectionNum> make_three_bit(0b1111);
+    make_three_bit.reset(three_direction);
+
+    make_three_flag[three_move] |= make_three_bit;
+  }
+
+  assert(board_open_state.GetUpdateOpenStateFlag().test(kPointOfSwordPattern));
+  const auto& sword_open_state_list = board_open_state.GetList(kPointOfSwordPattern);
+
+  for(const auto &open_state : sword_open_state_list){
+    std::array<BoardPosition, 2> four_position_list{{0}};
+    open_state.GetFourPosition(&four_position_list);
+
+    for(const auto make_four_position : four_position_list){
+      const auto make_four_move = GetBoardMove(make_four_position);
+      const auto make_four_direction = GetBoardDirection(make_four_position);
+      const auto &make_mise_flag = make_three_flag[make_four_move];
+
+      // 四ノビする方向と別方向に三ができるかチェックする
+      if(!make_mise_flag[make_four_direction]){
+        continue;
+      }
+
+      const auto open_position = open_state.GetOpenPosition();
+      const auto mise_move = GetBoardMove(open_position);
+
+      mise_move_set->set(mise_move);
+
+      if(multi_mise_move_set != nullptr){
+        const auto mise_direction = GetBoardDirection(open_position);
+        const bool is_multi_direciton = mise_direction_table[mise_move] != -1 && mise_direction_table[mise_move] != mise_direction;
+
+        if(is_multi_direciton){
+          multi_mise_move_set->set(mise_move);
+        }
+
+        mise_direction_table[mise_move] = mise_direction;
+      }
     }
   }
 }

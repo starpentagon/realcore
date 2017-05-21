@@ -264,10 +264,18 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveJG;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveIG]);
+        ASSERT_TRUE(influence_area[kMoveJG]);
+        ASSERT_TRUE(influence_area[kMoveMG]);
+      }
     }
   }
   {
@@ -296,10 +304,18 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveHD;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveHB]);
+        ASSERT_TRUE(influence_area[kMoveHD]);
+        ASSERT_TRUE(influence_area[kMoveHF]);
+      }
     }
   }
   {
@@ -328,10 +344,18 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveMH;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveJH]);
+        ASSERT_TRUE(influence_area[kMoveMH]);
+        ASSERT_TRUE(influence_area[kMoveNH]);
+      }
     }
   }
   {
@@ -360,10 +384,18 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveJE;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveLC]);
+        ASSERT_TRUE(influence_area[kMoveJE]);
+        ASSERT_TRUE(influence_area[kMoveIF]);
+      }
     }
   }
   {
@@ -392,10 +424,18 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveKD;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveLC]);
+        ASSERT_TRUE(influence_area[kMoveKD]);
+        ASSERT_TRUE(influence_area[kMoveIF]);
+      }
     }
   }
   {
@@ -424,10 +464,18 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveJG;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveIG]);
+        ASSERT_TRUE(influence_area[kMoveJG]);
+        ASSERT_TRUE(influence_area[kMoveKG]);
+      }
     }
   }
   {
@@ -456,10 +504,64 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
         continue;
       }
       
-      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move);
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
       const bool expect = move == kMoveIG;
 
       EXPECT_EQ(expect, is_double_four);
+
+      if(expect){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveIF]);
+        ASSERT_TRUE(influence_area[kMoveIG]);
+        ASSERT_TRUE(influence_area[kMoveJG]);
+      }
+    }
+  }
+  {
+    // 四々(白番)
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . x . x . . | F 
+    // G | . . . . o . o o . o . . . | G 
+    // H | . . . . . o x x o . o . . | H 
+    // I | . . . . . x o o . x . . . | I 
+    // J | . . . . . . o x x x . . . | J 
+    // K | . . . . . x . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O     
+    BitBoard bit_board(MoveList("hhhijjiigiigihjhkikglflhjffgkjghijhjgkhg"));
+    
+    for(const auto move : in_board_move_list){
+      if(bit_board.GetState(move) != kOpenPosition){
+        continue;
+      }
+      
+      const bool expect = (move == kMoveGG || move == kMoveJG);
+
+      MoveBitSet influence_area;
+      const bool is_double_four = bit_board.IsDoubleFourMove<kWhiteTurn>(move, &influence_area);
+
+      EXPECT_EQ(expect, is_double_four);
+
+      if(move == kMoveGG){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveEG]);
+        ASSERT_TRUE(influence_area[kMoveGG]);
+        ASSERT_TRUE(influence_area[kMoveJG]);
+      }else if(move == kMoveJG){
+        ASSERT_EQ(3, influence_area.count());
+        ASSERT_TRUE(influence_area[kMoveGG]);
+        ASSERT_TRUE(influence_area[kMoveJG]);
+        ASSERT_TRUE(influence_area[kMoveLG]);
+      }
     }
   }
   {
@@ -495,4 +597,102 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
     }
   }
 }
+
+TEST_F(BitBoardTest, EnumerateMiseMovesTest)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A x --------------------------+ A 
+  // B | x . . . . . . . . . . . . | B 
+  // C | . x . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . . . . . . . . . . | E 
+  // F | . . . . . . . . . . . . . | F 
+  // G | . . . x o o o . . . . . . | G 
+  // H | . . . . . . x o . . . . . | H 
+  // I | . . . . . . . . . . . . . | I 
+  // J | . . . . . . x . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . x x * . . | L 
+  // M | . . o . . . . . . . . . . | M 
+  // N | o . . o . . . . . . . . . | N 
+  // O + o ------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  MoveList board_move_list("hhhghjfgjlihklggegboccbnbbdmaaen");
+  BitBoard bit_board(board_move_list);
+
+  BoardOpenState board_open_state;
+  bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+  
+  {
+    // 黒番
+    MoveBitSet mise_bit, multi_mise_bit;
+    bit_board.EnumerateMiseMoves<kBlackTurn>(board_open_state, &mise_bit, &multi_mise_bit);
+
+    ASSERT_EQ(mise_bit.count(), 5);
+    EXPECT_TRUE(mise_bit[kMoveHI]);
+    EXPECT_TRUE(mise_bit[kMoveHK]);
+    EXPECT_TRUE(mise_bit[kMoveED]);
+    EXPECT_TRUE(mise_bit[kMoveEF]);
+    EXPECT_TRUE(mise_bit[kMoveEH]);
+
+    ASSERT_TRUE(multi_mise_bit.none());
+  }
+  {
+    // 白番
+    MoveBitSet mise_bit, multi_mise_bit;
+    bit_board.EnumerateMiseMoves<kWhiteTurn>(board_open_state, &mise_bit, &multi_mise_bit);
+    
+    ASSERT_EQ(mise_bit.count(), 12);
+    EXPECT_TRUE(mise_bit[kMoveIE]);
+    EXPECT_TRUE(mise_bit[kMoveIF]);
+    EXPECT_TRUE(mise_bit[kMoveII]);
+    EXPECT_TRUE(mise_bit[kMoveIJ]);
+    EXPECT_TRUE(mise_bit[kMoveLE]);
+    EXPECT_TRUE(mise_bit[kMoveKF]);
+    EXPECT_TRUE(mise_bit[kMoveHI]);
+    EXPECT_TRUE(mise_bit[kMoveGJ]);
+    EXPECT_TRUE(mise_bit[kMoveFK]);
+    EXPECT_TRUE(mise_bit[kMoveEL]);
+    EXPECT_TRUE(mise_bit[kMoveBL]);
+    EXPECT_TRUE(mise_bit[kMoveBM]);
+
+    ASSERT_TRUE(multi_mise_bit.none());
+  }
+}
+
+TEST_F(BitBoardTest, EnumerateMultiMiseMovesTest)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . o . . . . . . . . | E 
+  // F | . . . . . x x x o . . . . | F 
+  // G | . . . . . o x o . . . . . | G 
+  // H | . . . . . . x x o . . . . | H 
+  // I | . . . . . . o . . . . . . | I 
+  // J | . . . . . . . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  MoveList board_move_list("hhigihjhhfgghghigffeifjf");
+  BitBoard bit_board(board_move_list);
+
+  BoardOpenState board_open_state;
+  bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+  
+  {
+    // 黒番
+    MoveBitSet mise_bit, multi_mise_bit;
+    bit_board.EnumerateMiseMoves<kBlackTurn>(board_open_state, &mise_bit, &multi_mise_bit);
+
+    ASSERT_EQ(multi_mise_bit.count(), 1);
+    EXPECT_TRUE(multi_mise_bit[kMoveEH]);
+  }
+}
+
 }   // namespace realcore

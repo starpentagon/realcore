@@ -23,7 +23,7 @@ public:
     const MoveList move_list;
 
     EXPECT_TRUE(board.bit_board_ == bit_board);
-    EXPECT_TRUE(board.move_list_ == move_list);
+    EXPECT_TRUE(board.board_move_sequence_ == move_list);
   }
 
   void CopyConstructorTest(){
@@ -32,7 +32,7 @@ public:
 
     const Board board_2(board_1);
     EXPECT_TRUE(board_1.bit_board_ == board_2.bit_board_);
-    EXPECT_TRUE(board_1.move_list_ == board_2.move_list_);
+    EXPECT_TRUE(board_1.board_move_sequence_ == board_2.board_move_sequence_);
   }
 
   void MoveListConstructorTest(){
@@ -44,7 +44,7 @@ public:
     board_expect.MakeMove(kMoveHG);
 
     EXPECT_TRUE(board.bit_board_ == board_expect.bit_board_);
-    EXPECT_TRUE(board.move_list_ == board_expect.move_list_);
+    EXPECT_TRUE(board.board_move_sequence_ == board_expect.board_move_sequence_);
   }
 
   void BoardOpenStateUpdateTest(){
@@ -99,9 +99,9 @@ public:
         bool is_normal = (board.bit_board_.GetState(move) == kOpenPosition) && move != kMoveKH;
 
         if(is_normal){
-          EXPECT_TRUE(board.IsNormalMove<kBlackTurn>(move));
+          EXPECT_TRUE(board.IsNormalMove(move));
         }else{
-          EXPECT_FALSE(board.IsNormalMove<kBlackTurn>(move));
+          EXPECT_FALSE(board.IsNormalMove(move));
         }
       }
     }
@@ -130,9 +130,9 @@ public:
         bool is_normal = move == kMoveEK;
 
         if(is_normal){
-          EXPECT_TRUE(board.IsNormalMove<kWhiteTurn>(move));
+          EXPECT_TRUE(board.IsNormalMove(move));
         }else{
-          EXPECT_FALSE(board.IsNormalMove<kWhiteTurn>(move));
+          EXPECT_FALSE(board.IsNormalMove(move));
         }
       }
     }
@@ -148,9 +148,9 @@ public:
         bool is_normal = move == kNullMove;
 
         if(is_normal){
-          EXPECT_TRUE(board.IsNormalMove<kBlackTurn>(move));
+          EXPECT_TRUE(board.IsNormalMove(move));
         }else{
-          EXPECT_FALSE(board.IsNormalMove<kBlackTurn>(move));
+          EXPECT_FALSE(board.IsNormalMove(move));
         }
       }
     }
@@ -191,31 +191,31 @@ public:
     Board board;
     MoveList move_list;
 
-    ASSERT_TRUE(board.move_list_ == move_list);
+    ASSERT_TRUE(board.board_move_sequence_ == move_list);
 
     // 黒の着手
     board.MakeMove(kMoveHH);
     move_list += kMoveHH;
 
-    ASSERT_TRUE(board.move_list_ == move_list);
+    ASSERT_TRUE(board.board_move_sequence_ == move_list);
 
     // 白の着手
     board.MakeMove(kMoveHG);
     move_list += kMoveHG;
 
-    ASSERT_TRUE(board.move_list_ == move_list);
+    ASSERT_TRUE(board.board_move_sequence_ == move_list);
 
     // 1手戻す
     board.UndoMove();
     --move_list;
 
-    ASSERT_TRUE(board.move_list_ == move_list);
+    ASSERT_TRUE(board.board_move_sequence_ == move_list);
     
     // 1手戻す
     board.UndoMove();
     --move_list;
 
-    ASSERT_TRUE(board.move_list_ == move_list);
+    ASSERT_TRUE(board.board_move_sequence_ == move_list);
   }
 
   void BoardOpenStateStackTest(){
@@ -332,11 +332,11 @@ TEST_F(BoardTest, IsTerminateMoveTest)
     Board board(MoveList("hhhgihigjhjg"));
     
     for(const auto move : in_board_move_list){
-      if(!board.IsNormalMove<kBlackTurn>(move)){
+      if(!board.IsNormalMove(move)){
         continue;
       }
       
-      const bool is_terminate = board.IsTerminateMove<kBlackTurn>(move);
+      const bool is_terminate = board.IsTerminateMove(move);
       bool expect = (move == kMoveGH) || (move == kMoveKH);
 
       EXPECT_EQ(expect, is_terminate);
@@ -364,11 +364,11 @@ TEST_F(BoardTest, IsTerminateMoveTest)
     Board board(MoveList("hhhgihigfgjgoa"));
     
     for(const auto move : in_board_move_list){
-      if(!board.IsNormalMove<kWhiteTurn>(move)){
+      if(!board.IsNormalMove(move)){
         continue;
       }
       
-      const bool is_terminate = board.IsTerminateMove<kWhiteTurn>(move);
+      const bool is_terminate = board.IsTerminateMove(move);
       bool expect = (move == kMoveKG);
 
       EXPECT_EQ(expect, is_terminate);
@@ -396,11 +396,11 @@ TEST_F(BoardTest, IsTerminateMoveTest)
     Board board(MoveList("hhhgghggegfgaaidiaicibiefh"));
     
     for(const auto move : in_board_move_list){
-      if(!board.IsNormalMove<kWhiteTurn>(move)){
+      if(!board.IsNormalMove(move)){
         continue;
       }
       
-      const bool is_terminate = board.IsTerminateMove<kWhiteTurn>(move);
+      const bool is_terminate = board.IsTerminateMove(move);
       bool expect = (move == kMoveIG);
 
       EXPECT_EQ(expect, is_terminate);
@@ -428,11 +428,11 @@ TEST_F(BoardTest, IsTerminateMoveTest)
     Board board(MoveList("hhigihhfjfgefdeejg"));
     
     for(const auto move : in_board_move_list){
-      if(!board.IsNormalMove<kWhiteTurn>(move)){
+      if(!board.IsNormalMove(move)){
         continue;
       }
       
-      const bool is_terminate = board.IsTerminateMove<kWhiteTurn>(move);
+      const bool is_terminate = board.IsTerminateMove(move);
       bool expect = (move == kMoveKI);
 
       EXPECT_EQ(expect, is_terminate);
@@ -461,11 +461,11 @@ TEST_F(BoardTest, IsTerminateMoveTest)
     Board board(MoveList("hhhjlfgkjjllkgddghflem"));
     
     for(const auto move : in_board_move_list){
-      if(!board.IsNormalMove<kWhiteTurn>(move)){
+      if(!board.IsNormalMove(move)){
         continue;
       }
       
-      const bool is_terminate = board.IsTerminateMove<kWhiteTurn>(move);
+      const bool is_terminate = board.IsTerminateMove(move);
       EXPECT_FALSE(is_terminate);
     }
   }
@@ -490,4 +490,175 @@ TEST_F(BoardTest, UpdateTest)
 {
   BoardOpenStateUpdateTest();
 }
+
+TEST_F(BoardTest, IsOpponentFour)
+{
+  {
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------o A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . x . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . x . . . . . . . . | F 
+    // G | . . . . . x . o . . . . . | G 
+    // H | . . . . . . x . . . . . . o H 
+    // I | . . . . . x . o . . . . . | I 
+    // J | . . . . x o . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . x . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------o O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhiggiiifjooggoaccohffgjdl"));
+    MovePosition guard_move;
+    const bool is_opponent_four = board.IsOpponentFour(&guard_move);
+
+    ASSERT_TRUE(is_opponent_four);
+    ASSERT_EQ(kMoveEK, guard_move);
+  }
+  {
+    // 最終手がPassの場合
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------o A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . x . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . x . . . . . . . . | F 
+    // G | . . . . . x . o . . . . . | G 
+    // H | . . . . . . x . . . . . . o H 
+    // I | . . . . . x . o . . . . . | I 
+    // J | . . . . x o . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------o O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhiggiiifjooggoaccohffgjpp"));
+    MovePosition guard_move;
+    const bool is_opponent_four = board.IsOpponentFour(&guard_move);
+    
+    ASSERT_FALSE(is_opponent_four);
+  }
+}
+
+TEST_F(BoardTest, TerminateCheckTest)
+{
+  {
+    // 達四(黒番)ができるケース
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . . o o o . . . . | G 
+    // H | . . . . . . x x x . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhhgihigjhjg"));
+    MovePosition terminating_move;
+    const bool is_terminate = board.TerminateCheck(&terminating_move);
+    
+    ASSERT_TRUE(is_terminate);
+    ASSERT_TRUE(terminating_move == kMoveGH || terminating_move == kMoveKH);
+  }
+  {
+    // 四ノビで極める
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . x . . . . . * . . | D 
+    // E | . . . o . o . . . . . . . | E 
+    // F | . . . . . . o . x . . . . | F 
+    // G | . . . . . . . o x . . . . | G 
+    // H | . . . . . . x x . . . . . | H 
+    // I | . . . . . . . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhigihhfjfgefdeejg"));
+    MovePosition terminating_move;
+    const bool is_terminate = board.TerminateCheck(&terminating_move);
+    
+    ASSERT_TRUE(is_terminate);
+    ASSERT_TRUE(terminating_move == kMoveKI);
+  }
+  {
+    // 相手に四ノビがあり終端しない
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . . x o o o o . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . x . x . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhhgggiggijgiikg"));
+    MovePosition terminating_move;
+    const bool is_terminate = board.TerminateCheck(&terminating_move);
+    
+    ASSERT_FALSE(is_terminate);
+  }
+  {
+    // 相手の四ノビをノリ返して終端する場合
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . x . . . . | F 
+    // G | . . . x o o o . o . . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . x . . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    Board board(MoveList("hhhgjfggegfggijg"));
+    MovePosition terminating_move;
+    const bool is_terminate = board.TerminateCheck(&terminating_move);
+    
+    ASSERT_TRUE(is_terminate);
+    ASSERT_TRUE(terminating_move == kMoveIG);
+  }
+}
+
+TEST_F(BoardTest, TerminateCheckDebug)
+{
+  Board board(MoveList("hhgihgfiigeggfgkijhejjkfeikgjklekilldfjmidmjmdgddcjged"));
+  MovePosition terminating_move;
+  const bool is_terminate = board.TerminateCheck(&terminating_move);
+  
+  ASSERT_FALSE(is_terminate);
+}
+
 }

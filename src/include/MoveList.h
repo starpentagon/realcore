@@ -8,10 +8,14 @@
 #include <vector>
 #include <string>
 
+#include "Move.h"
+
 namespace realcore{
+
+const MoveBitSet& GetInBoardMoveBitSet();
+
 class MoveList;
 class MoveListTest;
-enum MovePosition : std::uint8_t;
 enum BoardSymmetry : std::uint8_t;
 
 //! @brief [a-o][a-o]形式の文字列に対応する指し手リストを生成する
@@ -22,11 +26,28 @@ enum BoardSymmetry : std::uint8_t;
 //! @note 生成に失敗した場合はmove_listを初期化し空に戻す
 bool GetMoveList(const std::string &move_string, MoveList * const move_list);
 
+//! MoveBitSetから指し手リストを取得する
+void GetMoveList(const MoveBitSet &move_bit_set, MoveList * const move_list);
+
 //! @brief 対称変換した指し手リストを生成する
 //! @param move_list 変換対称の指し手リスト
 //! @param symmetry 対称性
 //! @param symmetric_move_list 対称変換した指し手リストの格納先
 void GetSymmetricMoveList(const MoveList &move_list, const BoardSymmetry symmetry, MoveList * const symmetric_move_list);
+
+//! @brief 指定の指し手とのBoardDistanceが昇順になるようにソートする
+void SortByNearMove(const MovePosition move, MoveList * const move_list);
+
+//! @brief 盤面距離を求める
+//! @note from, toのいずれかが盤外の場合は225を返す
+const size_t CalcBoardDistance(const MovePosition from, const MoveList &move_list);
+
+//! @brief MoveBitSetから指定のMoveを抽出する
+//! @param select_bit 抽出対象のMoveBit
+//! @param move_bit 抽出元のMoveBit
+//! @param move_list 指し手の格納先
+//! @note move_bitの抽出されたmove位置はoffになる
+void SelectMove(const MoveBitSet &select_bit, MoveBitSet * const move_bit, MoveList * const move_list);
 
 //! @brief 指し手リストの管理クラス
 //! @detail 以下の機能を提供する
@@ -75,6 +96,7 @@ public:
 
   //! @brief 代入演算子
   const MoveList& operator=(const MoveList &move_list);
+  const MoveList& operator=(const std::vector<MoveValue> &move_value);
   const MoveList& operator=(const MovePosition move);
 
   //! @brief 連結演算子
@@ -99,6 +121,23 @@ public:
 
   //! @breif 範囲の終端イテレータを返す
   std::vector<MovePosition>::const_iterator end() const;
+
+  //! @brief MoveListの空点を返す
+  void GetOpenMove(MoveList * const open_move_list) const;
+  void GetOpenMove(MoveBitSet * const open_move_bit) const;
+
+  //! @brief MoveListの空点を返す(禁手除外版)
+  void GetOpenMove(const MoveBitSet &forbidden_bit, MoveList * const open_move_list) const;
+  void GetOpenMove(const MoveBitSet &forbidden_bit, MoveBitSet * const open_move_bit) const;
+
+  //! @brief 着手可能な指し手リストを返す
+  //! @note 空点 + Pass
+  void GetPossibleMove(MoveList * const possible_move_list) const;
+  void GetPossibleMove(MoveBitSet * const possible_move_bit) const;
+
+  //! @brief 着手可能な指し手リストを返す(禁手除外版)
+  void GetPossibleMove(const MoveBitSet &forbidden_bit, MoveList * const possible_move_list) const;
+  void GetPossibleMove(const MoveBitSet &forbidden_bit, MoveBitSet * const possible_move_bit) const;
 
 private:
   //! @brief 初期化時に確保する領域長さを算出する

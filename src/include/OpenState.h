@@ -6,6 +6,7 @@
 #define OPEN_STATE_H
 
 #include <array>
+#include <vector>
 #include <bitset>
 
 #include "RealCore.h"
@@ -14,28 +15,45 @@ namespace realcore{
 //! @brief 空点状態の対象となる指し手パターン
 enum OpenStatePattern : std::uint8_t
 {
-  kNextOverline,          //!< 長連点 
-  kNextOpenFourBlack,     //!< 達四点(黒)
-  kNextOpenFourWhite,     //!< 達四点(白)
-  kNextFourBlack,         //!< 四ノビ点(黒)
-  kNextFourWhite,         //!< 四ノビ点(白)
-  kNextSemiThreeBlack,    //!< 見かけの三ノビ点(黒)
-  kNextSemiThreeWhite,    //!< 見かけの三ノビ点(白)
+  kNextOverline,            //!< 長連点, B[B3O1]B
+  kNextOpenFourBlack,       //!< 達四点(黒), XO[B3O1]OX
+  kNextOpenFourWhite,       //!< 達四点(白),  O[W3O1]O
+  kNextFourBlack,           //!< 四ノビ点(黒), X[B3O2]X
+  kNextFourWhite,           //!< 四ノビ点(白),  [W3O2]
+  kNextSemiThreeBlack,      //!< 見かけの三ノビ点(黒), XO[B2O2]OX
+  kNextSemiThreeWhite,      //!< 見かけの三ノビ点(白),  O[W2O2]O
+  kNextPointOfSwordBlack,   //!< 剣先点(黒), X[B2O3]X
+  kNextPointOfSwordWhite,   //!< 剣先点(白),  [W2O3]
+  kNextTwoBlack,            //!< 二ノビ点(黒), XO[B1O3]OX
+  kNextTwoWhite,            //!< 二ノビ点(白),  O[W1O3]O
 };
 
-constexpr size_t kOpenStatePatternNum = 7;
+constexpr size_t kOpenStatePatternNum = 11;
 const std::array<OpenStatePattern, kOpenStatePatternNum>& GetAllOpenStatePattern();
 
 typedef std::bitset<kOpenStatePatternNum> UpdateOpenStateFlag;    // 更新を行う空点情報のフラグ
 
-constexpr UpdateOpenStateFlag kUpdateAllOpenState(0b1111111);    // すべての空点情報を更新する
-constexpr UpdateOpenStateFlag kUpdateForbiddenCheck(0b0101011);    // 禁手チェック用の空点情報を更新する
+// 指し手パターンの生成フラグ定数
+static constexpr uint64_t kUpdateFlagForbidden = 0b00000101011;                           //!< 禁手チェック用(黒番の長連点, 達四点, 四ノビ点, 見かけの三ノビ点)
+static constexpr uint64_t kUpdateFlagOverline = 0b1 << kNextOverline;                     //!< 長連点
+static constexpr uint64_t kUpdateFlagOpenFourBlack = 0b1 << kNextOpenFourBlack;           //!< 達四点(黒)
+static constexpr uint64_t kUpdateFlagOpenFourWhite = 0b1 << kNextOpenFourWhite;           //!< 達四点(白)
+static constexpr uint64_t kUpdateFlagFourBlack = 0b1 << kNextFourBlack;                   //!< 四ノビ点(黒)
+static constexpr uint64_t kUpdateFlagFourWhite = 0b1 << kNextFourWhite;                   //!< 四ノビ点(白)
+static constexpr uint64_t kUpdateFlagSemiThreeBlack = 0b1 << kNextSemiThreeBlack;         //!< 見かけの三ノビ点(黒)
+static constexpr uint64_t kUpdateFlagSemiThreeWhite = 0b1 << kNextSemiThreeWhite;         //!< 見かけの三ノビ点(白)
+static constexpr uint64_t kUpdateFlagPointOfSwordBlack = 0b1 << kNextPointOfSwordBlack;   //!< 剣先点(黒)
+static constexpr uint64_t kUpdateFlagPointOfSwordWhite = 0b1 << kNextPointOfSwordWhite;   //!< 剣先点(白)
+static constexpr uint64_t kUpdateFlagTwoBlack = 0b1 << kNextTwoBlack;                     //!< 二ノビ点(黒)
+static constexpr uint64_t kUpdateFlagTwoWhite = 0b1 << kNextTwoWhite;                     //!< 二ノビ点(白)
+
+static constexpr uint64_t kUpdateAllFlag = 0b11111111111;
+
+constexpr UpdateOpenStateFlag kUpdateAllOpenState(kUpdateAllFlag);      // すべての空点情報を更新する
+constexpr UpdateOpenStateFlag kUpdateForbiddenCheck(kUpdateFlagForbidden);    // 禁手チェック用の空点情報を更新する
 
 //! @brief 指し手パターンが黒番, 白番どちらのパターンなのかを返す
 constexpr PlayerTurn GetPatternPlayerTurn(const OpenStatePattern pattern);
-
-//! @brief 指し手パターンごとの防手対象位置リスト
-typedef std::array<BoardPosition, 3> GuardPositionList;
 
 // 前方宣言
 class OpenState;
@@ -59,7 +77,7 @@ class OpenState{
 
 public:
   //! @brief コンストラクタ
-  OpenState(const OpenStatePattern pattern, const BoardPosition open_position, const BoardPosition pattern_position);
+  OpenState(const OpenStatePattern pattern, const BoardPosition open_position, const BoardPosition pattern_position, const size_t pattern_search_index);
   OpenState(const OpenState &open_state);
 
   //! @brief 代入演算子
@@ -75,19 +93,18 @@ public:
   //! @brief パターンの開始位置を返す
   const BoardPosition GetPatternPosition() const;
 
-  //! @brief チェック対象位置を返す
+  //! @brief チェック対象位置（見かけの三点における達四点 or 四ノビ点における五連を作る位置）を返す
   const BoardPosition GetCheckPosition() const;
-  
-  //! @brief チェック対象位置を設定する
-  //! @param check_position_list 設定するチェック対象位置リスト
-  void SetCheckPosition(const BoardPosition check_position);
 
-  //! @brief 防手位置のリストを取得する
-  const GuardPositionList& GetGuardPositionList() const;
+  //! @brief パターンの指し手が成立しなくなる影響領域(downward influence area)を返す
+  template<PlayerTurn P>
+  void GetInfluenceArea(std::vector<BoardPosition> * const downward_influence_area) const;
 
-  //! @brief 防手位置のリストを設定する
-  //! @param guard_position_list 設定する防手位置リスト
-  void SetGuardPositionList(const GuardPositionList &guard_position_list);
+  //! @brief 剣先点における四ノビ位置([B203][W2O3]のopen_position以外のO)を返す
+  void GetFourPosition(std::array<BoardPosition, 2> * const four_position_list) const;
+
+  //! @brief 二ノビ点における見かけ三になる位置([B1O3][W1O3]のopen_position以外のO)を返す
+  void GetSemiThreePosition(std::array<BoardPosition, 2> * const semi_three_position_list) const;
 
   //! @brief 指定の指し手位置が影響領域かどうかを判定する
   //! @param P 指し手の手番
@@ -100,8 +117,7 @@ private:
   OpenStatePattern pattern_;              //!< 空点状態の対象となる指し手パターン(長連点, 達四点, etc)
   BoardPosition open_position_;           //!< 空点位置
   BoardPosition pattern_position_;        //!< パターンの開始位置
-  BoardPosition check_position_;          //!< チェック対象位置（見かけの三の四連にする位置）
-  GuardPositionList guard_position_list_; //!< 防手位置
+  size_t pattern_search_index_;           //!< パターン検索index
 };
 }   // namespace realcore
 

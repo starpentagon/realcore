@@ -61,7 +61,7 @@ const string GetStateBitString(StateBit state_bit)
       state_str = " " + state_str;
     }
 
-    state_bit >>= 2;
+    state_bit = RightShift<1>(state_bit);
   }
 
   return state_str;

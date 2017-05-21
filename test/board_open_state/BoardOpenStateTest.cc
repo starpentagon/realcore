@@ -18,10 +18,10 @@ public:
   void ClearInfluencedOpenStateTest(){
     vector<OpenState> test_list;
 
-    test_list.emplace_back(kNextFourBlack, 37, 37);
-    test_list.emplace_back(kNextFourBlack, 41, 37);
-    test_list.emplace_back(kNextFourBlack, 41, 38);
-    test_list.emplace_back(kNextFourBlack, 42, 38);
+    test_list.emplace_back(kNextFourBlack, 37, 37, 0);
+    test_list.emplace_back(kNextFourBlack, 41, 37, 0);
+    test_list.emplace_back(kNextFourBlack, 41, 38, 0);
+    test_list.emplace_back(kNextFourBlack, 42, 38, 0);
     
     BoardOpenState board_open_state;
     vector<OpenState> cleared_list;
@@ -40,6 +40,10 @@ public:
     EXPECT_TRUE(board_open_state.GetList(kNextFourWhite).empty());
     EXPECT_TRUE(board_open_state.GetList(kNextSemiThreeBlack).empty());
     EXPECT_TRUE(board_open_state.GetList(kNextSemiThreeWhite).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextPointOfSwordBlack).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextPointOfSwordWhite).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextTwoBlack).empty());
+    EXPECT_TRUE(board_open_state.GetList(kNextTwoWhite).empty());
 
     EXPECT_TRUE(board_open_state.update_flag_ == kUpdateAllOpenState);
   }
@@ -345,25 +349,192 @@ TEST_F(BoardOpenStateTest, UpdateSemiThreeWhiteTest)
   }
 }
 
+TEST_F(BoardOpenStateTest, UpdatePointOfSwordBlackTest)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . . . . . . . . . . | E 
+  // F | . . . . . . x . . . . . . | F 
+  // G | . . . . . . . o . . . . . | G 
+  // H | . . . . . . x . . . . . . | H 
+  // I | . . . . . . . . . . . . . | I 
+  // J | . . . . . . . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  MoveList board_move_list("hhighf");
+  BitBoard bit_board(board_move_list);
+  MovePosition move = board_move_list.GetLastMove();
+
+  // 増加分が反映されるか
+  BoardOpenState base, state_1(base, true, move, bit_board);
+
+  {
+    const auto &open_state_list = state_1.GetList(kNextPointOfSwordBlack);
+    ASSERT_EQ(3 * 3, open_state_list.size());
+  }
+
+  // 減少分が反映されるか
+  move = kMoveHG;
+  bit_board.SetState<kWhiteStone>(move);
+  BoardOpenState state_2(state_1, false, move, bit_board);
+
+  {
+    const auto &open_state_list = state_2.GetList(kNextPointOfSwordBlack);
+    ASSERT_EQ(0, open_state_list.size());    
+  }
+}
+
+TEST_F(BoardOpenStateTest, UpdatePointOfSwordWhiteTest)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . . . . . . o . . . | E 
+  // F | . . . . . . x . . . . . . | F 
+  // G | . . . . . . . o . . . . . | G 
+  // H | . . . . . . x . . . . . . | H 
+  // I | . . . . . . . . . . . . . | I 
+  // J | . . . . . . . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  MoveList board_move_list("hhighfke");
+  BitBoard bit_board(board_move_list);
+  MovePosition move = board_move_list.GetLastMove();
+
+  // 増加分が反映されるか
+  BoardOpenState base, state_1(base, false, move, bit_board);
+
+  {
+    const auto &open_state_list = state_1.GetList(kNextPointOfSwordWhite);
+    ASSERT_EQ(3, open_state_list.size());
+  }
+
+  // 減少分が反映されるか
+  move = kMoveLD;
+  bit_board.SetState<kBlackStone>(move);
+  BoardOpenState state_2(state_1, true, move, bit_board);
+
+  {
+    const auto &open_state_list = state_2.GetList(kNextPointOfSwordWhite);
+    ASSERT_EQ(0, open_state_list.size());    
+  }
+}
+
+TEST_F(BoardOpenStateTest, UpdateTwoBlackTest)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . . . . . . . . . . | E 
+  // F | . . . . . . . . . . . . . | F 
+  // G | . . . . . . . . . . . . . | G 
+  // H | . . . . . . x . . . . . . | H 
+  // I | . . . . . . . . . . . . . | I 
+  // J | . . . . . . . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  constexpr OpenStatePattern kPattern = kNextTwoBlack;
+  MoveList board_move_list("hh");
+  BitBoard bit_board(board_move_list);
+  MovePosition move = board_move_list.GetLastMove();
+
+  // 増加分が反映されるか
+  BoardOpenState base, state_1(base, true, move, bit_board);
+
+  {
+    const auto &open_state_list = state_1.GetList(kPattern);
+    constexpr size_t expected_count = 3 * 4 * 4;    // 1回のマッチで3つの空点状態が生成 * 1方向に4カ所マッチ * 4方向
+    ASSERT_EQ(expected_count, open_state_list.size());
+  }
+
+  // 減少分が反映されるか
+  move = kMoveIG;
+  bit_board.SetState<kWhiteStone>(move);
+  BoardOpenState state_2(state_1, false, move, bit_board);
+
+  {
+    const auto &open_state_list = state_2.GetList(kPattern);
+    constexpr size_t expected_count = 3 * 4 * 3;    // 1回のマッチで3つの空点状態が生成 * 1方向に4カ所マッチ * 3方向
+    ASSERT_EQ(expected_count, open_state_list.size());    
+  }
+}
+
+TEST_F(BoardOpenStateTest, UpdateTwoWhiteTest)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . . . . . . . . . . | E 
+  // F | . . . . . . . . . . . . . | F 
+  // G | . . . . . . . o . . . . . | G 
+  // H | . . . . . . x . . . . . . | H 
+  // I | . . . . . . . . . . . . . | I 
+  // J | . . . . . . . . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  constexpr OpenStatePattern kPattern = kNextTwoWhite;
+  MoveList board_move_list("hhig");
+  BitBoard bit_board(board_move_list);
+  MovePosition move = board_move_list.GetLastMove();
+
+  // 増加分が反映されるか
+  BoardOpenState base, state_1(base, false, move, bit_board);
+
+  {
+    const auto &open_state_list = state_1.GetList(kPattern);
+    constexpr size_t expected_count = 3 * 4 * 3;    // 1回のマッチで3つの空点状態が生成 * 1方向に4カ所マッチ * 3方向
+    ASSERT_EQ(expected_count, open_state_list.size());
+  }
+
+  // 減少分が反映されるか
+  move = kMoveIH;
+  bit_board.SetState<kBlackStone>(move);
+  BoardOpenState state_2(state_1, true, move, bit_board);
+
+  {
+    const auto &open_state_list = state_2.GetList(kPattern);
+    constexpr size_t expected_count = 3 * 4 * 2;    // 1回のマッチで3つの空点状態が生成 * 1方向に4カ所マッチ * 2方向
+    ASSERT_EQ(expected_count, open_state_list.size());    
+  }
+}
+
 TEST_F(BoardOpenStateTest, IsEqualTest)
 {
   BoardOpenState state_1, state_2;
 
   EXPECT_TRUE(IsEqual(state_1, state_2));
 
-  MoveList board_move_list("hhigff");
+  MoveList board_move_list("hhihff");
   BitBoard bit_board(board_move_list);
   MovePosition move = board_move_list.GetLastMove();
   BoardOpenState state_3(state_1, true, move, bit_board);
 
   EXPECT_FALSE(IsEqual(state_3, state_2));
-
-  // 空間状態がすべて空になりstate_2と等しくなる
-  move = kMoveEE;
-  bit_board.SetState<kWhiteStone>(move);
-  BoardOpenState state_4(state_3, false, move, bit_board);
-
-  EXPECT_TRUE(IsEqual(state_4, state_2));
 }
 
 TEST_F(BoardOpenStateTest, CompareOperTest)
@@ -372,19 +543,12 @@ TEST_F(BoardOpenStateTest, CompareOperTest)
 
   EXPECT_TRUE(state_1 == state_2);
 
-  MoveList board_move_list("hhigff");
+  MoveList board_move_list("hhihff");
   BitBoard bit_board(board_move_list);
   MovePosition move = board_move_list.GetLastMove();
   BoardOpenState state_3(state_1, true, move, bit_board);
 
   EXPECT_TRUE(state_3 != state_2);
-
-  // 空間状態がすべて空になりstate_2と等しくなる
-  move = kMoveEE;
-  bit_board.SetState<kWhiteStone>(move);
-  BoardOpenState state_4(state_3, false, move, bit_board);
-
-  EXPECT_TRUE(state_4 == state_2);
 }
 
 TEST_F(BoardOpenStateTest, CopyTest)

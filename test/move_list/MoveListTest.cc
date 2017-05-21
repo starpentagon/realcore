@@ -128,6 +128,20 @@ TEST_F(MoveListTest, AssignOperTest)
   list_3 = kMoveAA;
 
   EXPECT_TRUE(list_1 == list_3);
+
+  // MoveValue版
+  std::vector<MoveValue> move_value_list;
+  move_value_list.emplace_back(kMoveHH, 0);
+  move_value_list.emplace_back(kMoveHI, 1);
+  move_value_list.emplace_back(kMoveHJ, 2);
+
+  MoveList list_4;
+  list_4 = move_value_list;
+
+  ASSERT_EQ(3, list_4.size());
+  ASSERT_EQ(kMoveHH, list_4[0]);
+  ASSERT_EQ(kMoveHI, list_4[1]);
+  ASSERT_EQ(kMoveHJ, list_4[2]);  
 }
 
 TEST_F(MoveListTest, CompareOperTest)
@@ -344,7 +358,7 @@ TEST_F(MoveListTest, GetSymmetricMoveListTest)
   }
 }
 
-TEST_F(MoveListTest, IsBlackTurn)
+TEST_F(MoveListTest, IsBlackTurnTest)
 {
   MoveList move_list;
   EXPECT_TRUE(move_list.IsBlackTurn());
@@ -352,6 +366,212 @@ TEST_F(MoveListTest, IsBlackTurn)
   move_list += kMoveHH;
   EXPECT_FALSE(move_list.IsBlackTurn());
 }
+
+TEST_F(MoveListTest, GetMoveBitSetListTest)
+{
+  MoveBitSet move_bit_set;
+
+  move_bit_set.set(kMoveAA);
+  move_bit_set.set(kMoveHH);
+  move_bit_set.set(kMoveOO);
+  move_bit_set.set(kNullMove);
+
+  MoveList move_list;
+  GetMoveList(move_bit_set, &move_list);
+
+  ASSERT_EQ(4, move_list.size());
+  EXPECT_EQ(kNullMove, move_list[0]);
+  EXPECT_EQ(kMoveAA, move_list[1]);
+  EXPECT_EQ(kMoveHH, move_list[2]);
+  EXPECT_EQ(kMoveOO, move_list[3]);
+}
+
+TEST_F(MoveListTest, GetOpenMoveTest)
+{
+  MoveList move_list;
+  move_list += kMoveHH;
+
+  MoveList open_move_list;
+  MoveBitSet open_move_bit;
+
+  move_list.GetOpenMove(&open_move_list);
+  move_list.GetOpenMove(&open_move_bit);
+
+  ASSERT_EQ(kInBoardMoveNum - 1, open_move_list.size());
+  ASSERT_EQ(kInBoardMoveNum - 1, open_move_bit.count());
+
+  for(const auto move : GetAllInBoardMove()){
+    auto find_it = find(open_move_list.begin(), open_move_list.end(), move);
+
+    if(move == kMoveHH){
+      ASSERT_TRUE(find_it == open_move_list.end());
+      ASSERT_FALSE(open_move_bit[move]);
+    }else{
+      ASSERT_FALSE(find_it == open_move_list.end());
+      ASSERT_TRUE(open_move_bit[move]);
+    }
+  }
+}
+
+TEST_F(MoveListTest, GetOpenMoveForbiddenTest)
+{
+  MoveList move_list;
+  move_list += kMoveHH;
+
+  MoveList open_move_list;
+  MoveBitSet open_move_bit;
+
+  MoveBitSet forbidden_bit;
+  forbidden_bit.set(kMoveHG);
+
+  move_list.GetOpenMove(forbidden_bit, &open_move_list);
+  move_list.GetOpenMove(forbidden_bit, &open_move_bit);
+
+  ASSERT_EQ(kInBoardMoveNum - 2, open_move_list.size());
+  ASSERT_EQ(kInBoardMoveNum - 2, open_move_bit.count());
+
+  for(const auto move : GetAllInBoardMove()){
+    auto find_it = find(open_move_list.begin(), open_move_list.end(), move);
+
+    if(move == kMoveHH || move == kMoveHG){
+      ASSERT_TRUE(find_it == open_move_list.end());
+      ASSERT_FALSE(open_move_bit[move]);
+    }else{
+      ASSERT_FALSE(find_it == open_move_list.end());
+      ASSERT_TRUE(open_move_bit[move]);
+    }
+  }
+}
+
+TEST_F(MoveListTest, GetPossibleMoveTest)
+{
+  MoveList move_list;
+  move_list += kMoveHH;
+
+  MoveList possible_move_list;
+  MoveBitSet possible_move_bit;
+
+  move_list.GetPossibleMove(&possible_move_list);
+  move_list.GetPossibleMove(&possible_move_bit);
+
+  ASSERT_EQ(kInBoardMoveNum, possible_move_list.size());
+  ASSERT_EQ(kInBoardMoveNum, possible_move_bit.count());
+
+  for(const auto move : GetAllInBoardMove()){
+    auto find_it = find(possible_move_list.begin(), possible_move_list.end(), move);
+
+    if(move == kMoveHH){
+      ASSERT_TRUE(find_it == possible_move_list.end());
+      ASSERT_FALSE(possible_move_bit[move]);
+    }else{
+      ASSERT_FALSE(find_it == possible_move_list.end());
+      ASSERT_TRUE(possible_move_bit[move]);
+    }
+  }
+
+  auto find_it = find(possible_move_list.begin(), possible_move_list.end(), kNullMove);
+  ASSERT_FALSE(find_it == possible_move_list.end());
+}
+
+TEST_F(MoveListTest, GetPossibleMoveForbiddenTest)
+{
+  MoveList move_list;
+  move_list += kMoveHH;
+
+  MoveList possible_move_list;
+  MoveBitSet possible_move_bit;
+
+  MoveBitSet forbidden_bit;
+  forbidden_bit.set(kMoveHG);
+
+  move_list.GetPossibleMove(forbidden_bit, &possible_move_list);
+  move_list.GetPossibleMove(forbidden_bit, &possible_move_bit);
+
+  ASSERT_EQ(kInBoardMoveNum - 1, possible_move_list.size());
+  ASSERT_EQ(kInBoardMoveNum - 1, possible_move_bit.count());
+
+  for(const auto move : GetAllInBoardMove()){
+    auto find_it = find(possible_move_list.begin(), possible_move_list.end(), move);
+
+    if(move == kMoveHH || move == kMoveHG){
+      ASSERT_TRUE(find_it == possible_move_list.end());
+      ASSERT_FALSE(possible_move_bit[move]);
+    }else{
+      ASSERT_FALSE(find_it == possible_move_list.end());
+      ASSERT_TRUE(possible_move_bit[move]);
+    }
+  }
+
+  auto find_it = find(possible_move_list.begin(), possible_move_list.end(), kNullMove);
+  ASSERT_FALSE(find_it == possible_move_list.end());
+  ASSERT_TRUE(possible_move_bit[kNullMove]);
+}
+
+TEST_F(MoveListTest, GetInBoardMoveBitSetTest)
+{
+  const auto& move_bit_set = GetInBoardMoveBitSet();
+
+  for(const auto move : GetAllMove()){
+    if(IsInBoardMove(move)){
+      ASSERT_TRUE(move_bit_set[move]);
+    }else{
+      ASSERT_FALSE(move_bit_set[move]);
+    }
+  }
+}
+
+TEST_F(MoveListTest, SortByNearMoveTest)
+{
+  MoveList test_list;
+  
+  test_list += kMoveHH;
+  test_list += kMoveAA;
+  test_list += kMoveOO;
+
+  SortByNearMove(kMoveBB, &test_list);
+
+  ASSERT_EQ(kMoveAA, test_list[0]);
+  ASSERT_EQ(kMoveHH, test_list[1]);
+  ASSERT_EQ(kMoveOO, test_list[2]);
+}
+
+TEST_F(MoveListTest, CalcBoardDistanceTest)
+{
+  constexpr MovePosition from_move = kMoveHH;
+  MoveList move_list;
+
+  move_list += kMoveBG;
+  move_list += kMoveLO;
+  move_list += kMoveEF;
+
+  size_t expect_distance = kMaxBoardDistance;
+
+  for(const auto move : move_list){
+    expect_distance = min(expect_distance, CalcBoardDistance(from_move, move));
+  }
+
+  const auto distance = CalcBoardDistance(from_move, move_list);
+  ASSERT_EQ(expect_distance, distance);
+}
+
+TEST_F(MoveListTest, SelectMoveTest){
+  MoveBitSet move_bit, select_bit;
+  MoveList move_list;
+
+  move_bit.set(kMoveHH);
+  move_bit.set(kMoveHI);
+
+  select_bit.set(kMoveHH);
+
+  SelectMove(select_bit, &move_bit, &move_list);
+
+  ASSERT_EQ(1, move_bit.count());
+  ASSERT_TRUE(move_bit[kMoveHI]);
+
+  ASSERT_EQ(1, move_list.size());
+  ASSERT_EQ(kMoveHH, move_list[0]);
+}
+
 
 }   // namespace realcore
 

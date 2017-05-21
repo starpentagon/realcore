@@ -14,7 +14,7 @@ inline void ScanBitSequence(uint64_t bit_sequence, std::vector<size_t> * const i
   
   while(bit_sequence != 0){
     if((bit_sequence & lowest_bit_mask) != 0){
-      index_list->push_back(index);
+      index_list->emplace_back(index);
     }
 
     index++;
@@ -44,7 +44,7 @@ inline void ShiftMap(uint64_t bit_sequence, std::vector<size_t> * const index_li
     const std::uint64_t value = bit_sequence & eight_bit_mask;
 
     for(auto index : value_index_table[value]){
-      index_list->push_back(index + shift_num);
+      index_list->emplace_back(index + shift_num);
     }
 
     bit_sequence >>= 8;
@@ -57,7 +57,7 @@ inline void EnumerateRightmostBit(uint64_t bit_sequence, std::vector<size_t> * c
   while(bit_sequence != 0){
     const std::uint64_t rightmost_bit = realcore::GetRightmostBit(bit_sequence);
     const size_t rightmost_bit_index = realcore::GetNumberOfTrailingZeros(bit_sequence, rightmost_bit);
-    index_list->push_back(rightmost_bit_index);
+    index_list->emplace_back(rightmost_bit_index);
 
     bit_sequence ^= rightmost_bit;
   }

@@ -8,6 +8,10 @@
 
 #include <cstdint>
 #include <array>
+#include <string>
+#include <utility>
+#include <vector>
+#include <bitset>
 
 #include "RealCore.h"
 
@@ -29,6 +33,12 @@ constexpr size_t kInBoardMoveNum = kBoardLineNum * kBoardLineNum;
 
 //! @brief 有効な指し手(盤内 or Pass)の数
 constexpr size_t kValidMoveNum = (kInBoardMoveNum + 1);
+
+// 指し手のビットを管理するbitset
+typedef std::bitset<kMoveNum> MoveBitSet;
+
+//! (MovePosition, value)型
+typedef std::pair<MovePosition, std::int64_t> MoveValue;
 
 //! @brief すべての指し手リストを返す
 //! @retval MovePosition型として定義されているすべての指し手の配列を返す
@@ -86,10 +96,22 @@ const MovePosition GetMove(const Cordinate x, const Cordinate y);
 //! @retval 対称変換した位置
 const MovePosition GetSymmetricMove(const MovePosition move, const BoardSymmetry symmetry);
 
+static constexpr size_t kMaxBoardDistance = 225;    // BoardDistanceの最大値
+static constexpr size_t kMaxInBoardDistance = 119;  // 盤内の手間の最大値
+
+//! @brief 盤面距離を求める
+//! @note from, toのいずれかが盤外の場合は225を返す
+const size_t CalcBoardDistance(const MovePosition from, const MovePosition to);
+
 //! @brief 指し手の文字列を返す
-//! @pre 指し手は有効な指し手であること
+//! @note kNullMoveは"pp", 無効な手や未定義の指し手は"--"を返す
 std::string MoveString(const MovePosition move);
 
+//! @brief MoveValue型のリストを昇順ソートする
+void AscendingSort(std::vector<MoveValue> * const move_value_list);
+
+//! @brief MoveValue型のリストを降順ソートする
+void DescendingSort(std::vector<MoveValue> * const move_value_list);
 }   // namespace　realcore
 
 #include "Move-inl.h"

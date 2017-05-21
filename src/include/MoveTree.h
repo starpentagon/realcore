@@ -57,6 +57,20 @@ public:
   //! @brief 木構造のノードリストを返す
   const std::vector< MoveTreeNode<T> >& GetMoveTreeNodeList() const;
 
+  //! @brief root nodeの最初の子の指し手を返す
+  //! @note root nodeのみの場合はkInvlaidMoveを返す
+  const MovePosition GetTopNodeMove() const;
+
+  //! @brief 探索木が空かどうかを返す
+  const bool empty() const;
+
+  //! @brief 探索木を初期化する
+  const void clear();
+
+  //! @brief 指定のmoveと競合する証明木のOR nodeがあるか返す
+  //! @note VLMではAND nodeですべての空点が生成されるためOR nodeに絞って競合性を判定する
+  const bool IsConflictORNode(const MovePosition move) const;
+
 private:
   //! @brief カレントノードがroot nodeかどうか判定する
   const bool IsRootNode() const;

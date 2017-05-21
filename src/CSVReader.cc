@@ -87,7 +87,7 @@ bool ReadCSV(const std::string &csv_file, std::map<std::string, StringVector> * 
 
     for(size_t i=0, size=line_data.size(); i<size; i++){
       const auto col = header[i];
-      (*csv_data)[col].push_back(line_data[i]);
+      (*csv_data)[col].emplace_back(line_data[i]);
     }
   }
 
@@ -109,7 +109,7 @@ void CSVSplitter(const std::string &line, StringVector * const line_data)
   line_data->reserve(size);
 
   for(; it!=it_end; ++it){
-    line_data->push_back(*it);
+    line_data->emplace_back(*it);
   }
 }
 
