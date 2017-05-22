@@ -45,6 +45,9 @@ public:
   //! @note root nodeの場合は何もしない
   void MoveParent();
 
+  //! @brief Rootノードへ移動する
+  void MoveRootNode();
+
   //! @brief すべての子ノードの指し手を取得する
   void GetChildMoveList(MoveList * const move_list) const;
 

@@ -192,6 +192,20 @@ public:
 
     ASSERT_EQ("hh(hg)(igii)", move_tree.str());
   }
+
+  void MoveRootNodeTest(){
+    MoveTree move_tree;
+    
+    ASSERT_TRUE(move_tree.IsRootNode());
+
+    move_tree.AddChild(kMoveHH);
+    move_tree.MoveChildNode(kMoveHH);
+
+    ASSERT_FALSE(move_tree.IsRootNode());
+
+    move_tree.MoveRootNode();
+    ASSERT_TRUE(move_tree.IsRootNode());
+  }
 };
 
 TEST_F(MoveTreeBaseTest, DefaultConstructorTest)
@@ -337,6 +351,10 @@ TEST_F(MoveTreeBaseTest, IsConflictORNodeTest){
   ASSERT_FALSE(move_tree.IsConflictORNode(kMoveHH));
   ASSERT_FALSE(move_tree.IsConflictORNode(kMoveHG));
   ASSERT_TRUE(move_tree.IsConflictORNode(kMoveHI));
+}
+
+TEST_F(MoveTreeBaseTest, MoveRootNodeTest){
+  MoveRootNodeTest();
 }
 
 }   // namespace realcore

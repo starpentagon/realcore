@@ -301,6 +301,12 @@ const bool MoveTreeBase<T>::IsConflictORNode(const MovePosition move) const
   return false;
 }
 
+template<class T>
+void MoveTreeBase<T>::MoveRootNode()
+{
+  current_node_index_ = kRootNodeIndex;
+}
+
 }   // namespace realcore
 
 #endif    // MOVE_TREE_INL_H
