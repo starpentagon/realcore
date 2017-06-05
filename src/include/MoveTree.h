@@ -54,6 +54,9 @@ public:
   //! @brief 探索木のサイズ（root node以外のノード数）を返す
   const size_t size() const;
 
+  //! @brief 探索木の深さを返す
+  const size_t depth() const;
+
   //! @brief MoveTree全体を[a-o]形式の文字列を出力する
   std::string str() const;
 

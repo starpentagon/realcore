@@ -146,6 +146,25 @@ inline const size_t MoveTreeBase<T>::size() const
 }
 
 template<class T>
+inline const size_t MoveTreeBase<T>::depth() const
+{
+  std::vector<size_t> depth_list(tree_.size(), 0);   //!< ノード別深さリスト
+  size_t tree_depth = 0;
+
+  for(size_t node_index=1, size=tree_.size(); node_index<size; node_index++){
+    const auto &node = tree_[node_index];
+    const auto parent_node_index = node.GetParentIndex();
+
+    const size_t node_depth = depth_list[parent_node_index] + 1;
+    depth_list[node_index] = node_depth;
+
+    tree_depth = std::max(tree_depth, node_depth);
+  }
+
+  return tree_depth;
+}
+
+template<class T>
 inline const bool MoveTreeBase<T>::IsRootNode() const
 {
   return (current_node_index_ == kRootNodeIndex);

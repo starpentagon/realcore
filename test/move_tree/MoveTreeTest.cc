@@ -357,4 +357,22 @@ TEST_F(MoveTreeBaseTest, MoveRootNodeTest){
   MoveRootNodeTest();
 }
 
+TEST_F(MoveTreeBaseTest, depthTest){
+  MoveTree move_tree;
+
+  ASSERT_EQ(0, move_tree.depth());
+
+  move_tree.AddChild(kMoveHH);    // OR node on root
+  ASSERT_EQ(1, move_tree.depth());
+
+  move_tree.AddChild(kMoveHG);    // OR node on root
+  move_tree.AddChild(kMoveHI);    // OR node on root
+  ASSERT_EQ(1, move_tree.depth());
+
+  move_tree.MoveChildNode(kMoveHH);
+  move_tree.AddChild(kMoveHG);    // AND node
+
+  ASSERT_EQ(2, move_tree.depth());
+}
+
 }   // namespace realcore
