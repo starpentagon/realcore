@@ -75,14 +75,15 @@ const BitBoard& BitBoard::operator=(const BitBoard &bit_board)
 }
 
 template<>
-const bool BitBoard::IsForbiddenMove<kBlackTurn>(const MovePosition move, MoveBitSet * const downward_influence_area, MoveBitSet * const upward_influence_area) const
+const bool BitBoard::IsForbiddenMove<kBlackTurn>(const MovePosition move, MoveBitSet * const downward_influence_area, MoveBitSet * const black_upward_influence_area, MoveBitSet * const white_upward_influence_area) const
 {
   if(!IsInBoardMove(move)){
     return false;
   }
   
   assert(GetState(move) == kOpenPosition);
-  assert((downward_influence_area == nullptr && upward_influence_area == nullptr) || (downward_influence_area != nullptr && upward_influence_area != nullptr));
+  assert((downward_influence_area == nullptr && black_upward_influence_area == nullptr && white_upward_influence_area == nullptr) || 
+   (downward_influence_area != nullptr && black_upward_influence_area != nullptr && white_upward_influence_area != nullptr));
 
   // 禁手チェックはmoveの長さ5の直線近傍をチェックすれば十分
   // @see doc/06_forbidden_check/forbidden_check.pptx
@@ -92,12 +93,13 @@ const bool BitBoard::IsForbiddenMove<kBlackTurn>(const MovePosition move, MoveBi
   line_neighbor.SetCenterState<kBlackStone>();
 
   // 直線近傍の禁手チェック
+  // @note 直線近傍の禁手チェックでの上向き影響領域は黒石のみ存在
   vector<BoardPosition> next_open_four_list;
-  const ForbiddenCheckState forbidden_state = line_neighbor.ForbiddenCheck(&next_open_four_list, downward_influence_area, upward_influence_area);
+  const ForbiddenCheckState forbidden_state = line_neighbor.ForbiddenCheck(&next_open_four_list, downward_influence_area, black_upward_influence_area);
 
   if(forbidden_state == kForbiddenMove){
-    if(upward_influence_area != nullptr){
-      upward_influence_area->reset();
+    if(black_upward_influence_area != nullptr){
+      black_upward_influence_area->reset();
     }
 
     return true;
@@ -127,19 +129,20 @@ const bool BitBoard::IsForbiddenMove<kBlackTurn>(const MovePosition move, MoveBi
     const MovePosition next_open_four_move = GetBoardMove(board_position);
     bool is_forbidden = false;
 
-    if(downward_influence_area == nullptr && upward_influence_area == nullptr){
-      is_forbidden = board.IsForbiddenMove<kBlackTurn>(next_open_four_move, nullptr, nullptr);
+    if(downward_influence_area == nullptr && black_upward_influence_area == nullptr && white_upward_influence_area == nullptr){
+      is_forbidden = board.IsForbiddenMove<kBlackTurn>(next_open_four_move, nullptr, nullptr, nullptr);
     }else{
       MoveBitSet upward_three;    // 達四点が禁手成立 -> 不成立になると三が生じる
-      MoveBitSet downward_three;  // 達四点が否禁 -> 禁手となると三が生じない
-      is_forbidden = board.IsForbiddenMove<kBlackTurn>(next_open_four_move, &upward_three, &downward_three);
+      MoveBitSet black_downward_three, white_downward_three;  // 達四点が否禁 -> 禁手となると三が生じない
+      is_forbidden = board.IsForbiddenMove<kBlackTurn>(next_open_four_move, &upward_three, &black_downward_three, &white_downward_three);
 
       if(is_forbidden){
         // 三になっていない
-        *upward_influence_area |= upward_three;
+        *black_upward_influence_area |= upward_three;
+        *white_upward_influence_area |= upward_three;
       }else{
         // 三になっている
-        *downward_influence_area |= downward_three;
+        *downward_influence_area |= black_downward_three | white_downward_three;
       }
     }
 
@@ -148,8 +151,12 @@ const bool BitBoard::IsForbiddenMove<kBlackTurn>(const MovePosition move, MoveBi
       three_count++;
 
       if(three_count == 2){
-        if(upward_influence_area != nullptr){
-          upward_influence_area->reset();
+        if(black_upward_influence_area != nullptr){
+          black_upward_influence_area->reset();
+        }
+
+        if(white_upward_influence_area != nullptr){
+          white_upward_influence_area->reset();
         }
 
         return true;
@@ -169,11 +176,11 @@ const bool BitBoard::IsForbiddenMove<kBlackTurn>(const MovePosition move, MoveBi
 template<>
 const bool BitBoard::IsForbiddenMove<kBlackTurn>(const MovePosition move) const
 {
-  return IsForbiddenMove<kBlackTurn>(move, nullptr, nullptr);
+  return IsForbiddenMove<kBlackTurn>(move, nullptr, nullptr, nullptr);
 }
 
 template<>
-const bool BitBoard::IsForbiddenMove<kWhiteTurn>(const MovePosition move, MoveBitSet * const downward_influence_area, MoveBitSet * const upward_influence_area) const
+const bool BitBoard::IsForbiddenMove<kWhiteTurn>(const MovePosition move, MoveBitSet * const downward_influence_area, MoveBitSet * const black_upward_influence_area, MoveBitSet * const white_upward_influence_area) const
 {
   // 白番に禁手はない
   return false;
@@ -690,8 +697,8 @@ const bool BitBoard::GetMakeForbiddenGuard(const BoardOpenState &board_open_stat
 
     check_bit_board.SetState<kWhiteStone>(four_move);
 
-    MoveBitSet downward_influence_area, upward_influence_area;
-    const bool is_forbidden = check_bit_board.IsForbiddenMove<kBlackTurn>(four_guard_move, &downward_influence_area, &upward_influence_area);
+    MoveBitSet downward_influence_area, black_upward_influence_area, white_upward_influence_area;
+    const bool is_forbidden = check_bit_board.IsForbiddenMove<kBlackTurn>(four_guard_move, &downward_influence_area, &black_upward_influence_area, &white_upward_influence_area);
 
     if(is_forbidden){
       is_make_forbidden = true;

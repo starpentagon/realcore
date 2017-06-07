@@ -20,10 +20,15 @@ static const std::string kCheckCalcNonForbidden = "CalcNonForbidden";           
 void LineNeighborhoodForbiddenCheck(const realcore::MoveList &board_sequence, std::map<std::string, realcore::SearchCounter> *check_result);
 void LineNeighborhoodForbiddenTest(const realcore::StringVector &record_string_list);
 
-static const std::string kExactCheckDoubleThree = "ExactCheckDoubleThree";
-static const std::string kExactCheckNonDoubleThree = "ExactCheckNonDoubleThree";
-static const std::string kCalcCheckDoubleThree = "CalcCheckDoubleThree";
-static const std::string kCalcCheckNonDoubleThree = "CalcCheckNonDoubleThree";
+static const std::string kExactCheckDoubleThreeBlack = "ExactCheckDoubleThreeBlack";
+static const std::string kExactCheckNonDoubleThreeBlack = "ExactCheckNonDoubleThreeBlack";
+static const std::string kCalcCheckDoubleThreeBlack = "CalcCheckDoubleThreeBlack";
+static const std::string kCalcCheckNonDoubleThreeBlack = "CalcCheckNonDoubleThreeBlack";
+
+static const std::string kExactCheckDoubleThreeWhite = "ExactCheckDoubleThreeWhite";
+static const std::string kExactCheckNonDoubleThreeWhite = "ExactCheckNonDoubleThreeWhite";
+static const std::string kCalcCheckDoubleThreeWhite = "CalcCheckDoubleThreeWhite";
+static const std::string kCalcCheckNonDoubleThreeWhite = "CalcCheckNonDoubleThreeWhite";
 
 void DoubleThreeCheck(const realcore::MoveList &board_sequence, std::map<std::string, realcore::SearchCounter> *check_result);
 void DoubleThreeTest(const realcore::StringVector &record_string_list);
