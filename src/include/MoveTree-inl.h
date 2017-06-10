@@ -19,6 +19,12 @@ template<class T>
 void MoveTreeBase<T>::AddChild(const MovePosition move)
 {
   assert(tree_.size() < kMaxMoveNodeIndex);
+
+  // すでに登録済の手の場合は抜ける
+  if(GetChildNodeIndex(move) != kNullNodeIndex){
+    return;
+  }
+
   const MoveNodeIndex child_node_index = static_cast<MoveNodeIndex>(tree_.size());
 
   tree_.emplace_back(current_node_index_, move);
@@ -32,6 +38,19 @@ void MoveTreeBase<T>::AddChild(const MovePosition move)
 
     youngest_child_node.SetNextSiblingIndex(child_node_index);
   }
+}
+
+template<class T>
+void MoveTreeBase<T>::AddChild(const MoveList &move_list)
+{
+  const MoveNodeIndex current_node_index = current_node_index_;
+
+  for(const auto move : move_list){
+    AddChild(move);
+    MoveChildNode(move);
+  }
+
+  current_node_index_ = current_node_index;
 }
 
 template<class T>

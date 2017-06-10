@@ -86,6 +86,20 @@ public:
     }
   }
 
+  void AddChildListTest(){
+    MoveTree move_tree;
+    MoveList move_list;
+
+    move_list += kMoveHH;
+    move_list += kMoveHI;
+
+    move_tree.AddChild(move_list);
+
+    ASSERT_EQ(2, move_tree.size());
+    ASSERT_TRUE(move_tree.MoveChildNode(kMoveHH));
+    ASSERT_TRUE(move_tree.MoveChildNode(kMoveHI));
+  }
+
   void GetChildNodeIndexTest()
   {
     MoveTree move_tree;
@@ -216,6 +230,11 @@ TEST_F(MoveTreeBaseTest, DefaultConstructorTest)
 TEST_F(MoveTreeBaseTest, AddChildTest)
 {
   AddChildTest();
+}
+
+TEST_F(MoveTreeBaseTest, AddChildListTest)
+{
+  AddChildListTest();
 }
 
 TEST_F(MoveTreeBaseTest, GetChildNodeIndexTest)

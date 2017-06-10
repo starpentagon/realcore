@@ -30,6 +30,7 @@ public:
   //! @param move 子ノードへの指し手
   //! @note カレントノードは変更しない
   void AddChild(const MovePosition move);
+  void AddChild(const MoveList &move_list);
   
   //! @brief 探索木をカレントノードに追加する
   //! @param move_tree 探索木
