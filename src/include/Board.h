@@ -167,6 +167,10 @@ protected:
   const bool TerminateCheckBlack(MovePosition * const terminating_move) const;
   const bool TerminateCheckWhite(MovePosition * const terminating_move) const;
 
+  //! @brief 盤面が対称形か返す
+  //! @param symmetry 対称性
+  bool IsBoardSymmetric(const BoardSymmetry symmetry) const;
+
   //! @brief 盤面状態を保持するBitBoard
   BitBoard bit_board_;
 
