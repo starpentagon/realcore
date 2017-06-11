@@ -290,6 +290,23 @@ inline const std::vector< MoveTreeNode<T> >& MoveTreeBase<T>::GetMoveTreeNodeLis
 }
 
 template<class T>
+void MoveTreeBase<T>::GetLeafNodeList(std::vector< MoveTreeNode<T> > * const leaf_list) const
+{
+  assert(leaf_list != nullptr);
+  assert(leaf_list->empty());
+
+  leaf_list->reserve(tree_.size());
+
+  for(size_t node_index=1, size=tree_.size(); node_index<size; node_index++){
+    const auto &node = tree_[node_index];
+
+    if(!node.HasChild()){
+      leaf_list->emplace_back(node);
+    }
+  }
+}
+
+template<class T>
 inline const MovePosition MoveTreeBase<T>::GetTopNodeMove() const
 {
   const auto& root_node = tree_[kRootNodeIndex];
@@ -359,6 +376,30 @@ template<class T>
 void MoveTreeBase<T>::MoveRootNode()
 {
   current_node_index_ = kRootNodeIndex;
+}
+
+template<class T>
+void MoveTreeBase<T>::GetMoveList(MoveList * const move_list) const
+{
+  assert(move_list != nullptr);
+  assert(move_list->empty());
+
+  std::vector<MovePosition> reverse_root_sequence;
+  auto node_index = current_node_index_;
+
+  while(node_index != kRootNodeIndex){
+    auto& node = tree_[node_index];
+    const auto move = node.GetMove();
+
+    reverse_root_sequence.emplace_back(move);
+    node_index = node.GetParentIndex();
+  }
+
+  auto it = reverse_root_sequence.rbegin(), it_end = reverse_root_sequence.rend();
+
+  for(; it!=it_end; ++it){
+    *move_list += *it;
+  }
 }
 
 }   // namespace realcore

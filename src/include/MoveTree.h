@@ -54,6 +54,9 @@ public:
   //! @brief すべての子ノードの指し手を取得する
   void GetChildMoveList(MoveList * const move_list) const;
 
+  //! @brief Root nodeからの指し手リストを取得する
+  void GetMoveList(MoveList * const move_list) const;
+
   //! @brief 探索木のサイズ（root node以外のノード数）を返す
   const size_t size() const;
 
@@ -65,6 +68,9 @@ public:
 
   //! @brief 木構造のノードリストを返す
   const std::vector< MoveTreeNode<T> >& GetMoveTreeNodeList() const;
+
+  //! @brief Leaf nodeのリストを返す
+  void GetLeafNodeList(std::vector< MoveTreeNode<T> > * const leaf_list) const;
 
   //! @brief root nodeの最初の子の指し手を返す
   //! @note root nodeのみの場合はkInvlaidMoveを返す

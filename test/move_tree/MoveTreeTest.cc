@@ -423,4 +423,76 @@ TEST_F(MoveTreeBaseTest, depthTest){
   ASSERT_EQ(2, move_tree.depth());
 }
 
+TEST_F(MoveTreeBaseTest, GetMoveListTest){
+  MoveTree move_tree;
+  
+  {
+    MoveList move_list;
+    move_tree.GetMoveList(&move_list);
+
+    ASSERT_TRUE(move_list.empty());
+  }
+
+  move_tree.AddChild(kMoveHH);
+  move_tree.MoveChildNode(kMoveHH);
+  
+  {
+    MoveList move_list;
+    move_tree.GetMoveList(&move_list);
+
+    ASSERT_EQ(1, move_list.size());
+    ASSERT_EQ(kMoveHH, move_list[0]);
+  }
+
+  move_tree.AddChild(kMoveHI);
+  move_tree.MoveChildNode(kMoveHI);
+
+  {
+    MoveList move_list;
+    move_tree.GetMoveList(&move_list);
+
+    ASSERT_EQ(2, move_list.size());
+    ASSERT_EQ(kMoveHH, move_list[0]);
+    ASSERT_EQ(kMoveHI, move_list[1]);
+  }
+}
+
+TEST_F(MoveTreeBaseTest, GetMoveTreeNodeListTest){
+  MoveTree move_tree;
+
+  move_tree.AddChild(kMoveHH);    // OR node on root
+  move_tree.AddChild(kMoveHG);    // OR node on root
+  move_tree.AddChild(kMoveHI);    // OR node on root
+
+  move_tree.MoveChildNode(kMoveHH);
+  move_tree.AddChild(kMoveHG);    // AND node
+  
+  const auto node_list = move_tree.GetMoveTreeNodeList();
+
+  ASSERT_EQ(5, node_list.size());
+  ASSERT_EQ(kMoveHH, node_list[1].GetMove());
+  ASSERT_EQ(kMoveHG, node_list[2].GetMove());
+  ASSERT_EQ(kMoveHI, node_list[3].GetMove());
+  ASSERT_EQ(kMoveHG, node_list[4].GetMove());
+}
+
+TEST_F(MoveTreeBaseTest, GetLeafNodeListTest){
+  MoveTree move_tree;
+
+  move_tree.AddChild(kMoveHH);    // OR node on root
+  move_tree.AddChild(kMoveHG);    // OR node on root
+  move_tree.AddChild(kMoveHI);    // OR node on root
+
+  move_tree.MoveChildNode(kMoveHH);
+  move_tree.AddChild(kMoveHG);    // AND node
+  
+  std::vector< MoveTreeNode<EmptyAditionalData> > node_list;
+  move_tree.GetLeafNodeList(&node_list);
+
+  ASSERT_EQ(3, node_list.size());
+  ASSERT_EQ(kMoveHG, node_list[0].GetMove());
+  ASSERT_EQ(kMoveHI, node_list[1].GetMove());
+  ASSERT_EQ(kMoveHG, node_list[2].GetMove());
+}
+
 }   // namespace realcore
