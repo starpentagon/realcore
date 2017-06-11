@@ -130,6 +130,22 @@ const bool MoveTreeBase<T>::MoveChildNode(const MovePosition move)
 }
 
 template<class T>
+const bool MoveTreeBase<T>::MoveChildNode(const MoveList &move_list)
+{
+  const auto current_node_index = current_node_index_;
+
+  for(const auto move : move_list){
+    if(!MoveChildNode(move)){
+      // 移動に失敗した場合はカレントノードを元に戻す
+      current_node_index_ = current_node_index;
+      return false;
+    }
+  }
+
+  return true;
+}
+
+template<class T>
 inline void MoveTreeBase<T>::MoveParent()
 {
   if(IsRootNode()){

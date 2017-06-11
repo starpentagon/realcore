@@ -40,7 +40,9 @@ public:
   //! @brief カレントノードから子ノードへ移動する
   //! @param move 子ノードへの指し手
   //! @retval true: 移動成功, false: 指定の指し手の子ノードが存在せず移動失敗
+  //! @note 移動が失敗した場合、カレントノードは変更されない
   const bool MoveChildNode(const MovePosition move);
+  const bool MoveChildNode(const MoveList &move_list);
 
   //! @brief カレントノードから親ノードへ移動する
   //! @note root nodeの場合は何もしない

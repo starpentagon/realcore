@@ -132,6 +132,30 @@ public:
     ASSERT_EQ(1, move_tree.current_node_index_);
   }
 
+  void MoveChildNodeMoveListTest()
+  {
+    MoveTree move_tree;
+    move_tree.AddChild(kMoveHH);
+    move_tree.MoveChildNode(kMoveHH);
+
+    move_tree.AddChild(kMoveHI);
+    move_tree.MoveChildNode(kMoveHI);
+
+    move_tree.AddChild(kMoveHJ);
+    move_tree.MoveRootNode();
+
+    {
+      MoveList move_list("hhhg");
+      ASSERT_FALSE(move_tree.MoveChildNode(move_list));
+      ASSERT_EQ(kRootNodeIndex, move_tree.current_node_index_);      
+    }
+    {
+      MoveList move_list("hhhi");
+      ASSERT_TRUE(move_tree.MoveChildNode(move_list));
+      ASSERT_EQ(2, move_tree.current_node_index_);      
+    }
+  }
+
   void MoveParentTest()
   {
     MoveTree move_tree;
@@ -250,6 +274,11 @@ TEST_F(MoveTreeBaseTest, GetYoungestChildNodeIndexTest)
 TEST_F(MoveTreeBaseTest, MoveChildNodeTest)
 {
   MoveChildNodeTest();
+}
+
+TEST_F(MoveTreeBaseTest, MoveChildNodeMoveListTest)
+{
+  MoveChildNodeMoveListTest();
 }
 
 TEST_F(MoveTreeBaseTest, MoveParentTest)
