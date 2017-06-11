@@ -117,6 +117,13 @@ void MoveTreeBase<T>::AddSubtree(const MoveTreeBase<T> &move_tree)
 }
 
 template<class T>
+inline void MoveTreeBase<T>::MoveNode(const MoveNodeIndex node_index)
+{
+  assert(node_index < tree_.size());
+  current_node_index_ = node_index;
+}
+
+template<class T>
 const bool MoveTreeBase<T>::MoveChildNode(const MovePosition move)
 {
   const auto child_node_index = GetChildNodeIndex(move);
@@ -290,18 +297,18 @@ inline const std::vector< MoveTreeNode<T> >& MoveTreeBase<T>::GetMoveTreeNodeLis
 }
 
 template<class T>
-void MoveTreeBase<T>::GetLeafNodeList(std::vector< MoveTreeNode<T> > * const leaf_list) const
+void MoveTreeBase<T>::GetLeafNodeList(std::vector<MoveNodeIndex> * const leaf_index_list) const
 {
-  assert(leaf_list != nullptr);
-  assert(leaf_list->empty());
+  assert(leaf_index_list != nullptr);
+  assert(leaf_index_list->empty());
 
-  leaf_list->reserve(tree_.size());
+  leaf_index_list->reserve(tree_.size());
 
   for(size_t node_index=1, size=tree_.size(); node_index<size; node_index++){
     const auto &node = tree_[node_index];
 
     if(!node.HasChild()){
-      leaf_list->emplace_back(node);
+      leaf_index_list->emplace_back(node_index);
     }
   }
 }

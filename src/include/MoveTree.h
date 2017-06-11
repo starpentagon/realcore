@@ -44,6 +44,9 @@ public:
   const bool MoveChildNode(const MovePosition move);
   const bool MoveChildNode(const MoveList &move_list);
 
+  //! @brief 指定のノードに移動する
+  void MoveNode(const MoveNodeIndex node_index);
+
   //! @brief カレントノードから親ノードへ移動する
   //! @note root nodeの場合は何もしない
   void MoveParent();
@@ -70,7 +73,7 @@ public:
   const std::vector< MoveTreeNode<T> >& GetMoveTreeNodeList() const;
 
   //! @brief Leaf nodeのリストを返す
-  void GetLeafNodeList(std::vector< MoveTreeNode<T> > * const leaf_list) const;
+  void GetLeafNodeList(std::vector<MoveNodeIndex> * const leaf_index_list) const;
 
   //! @brief root nodeの最初の子の指し手を返す
   //! @note root nodeのみの場合はkInvlaidMoveを返す

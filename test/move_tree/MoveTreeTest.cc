@@ -486,13 +486,13 @@ TEST_F(MoveTreeBaseTest, GetLeafNodeListTest){
   move_tree.MoveChildNode(kMoveHH);
   move_tree.AddChild(kMoveHG);    // AND node
   
-  std::vector< MoveTreeNode<EmptyAditionalData> > node_list;
+  std::vector<MoveNodeIndex> node_list;
   move_tree.GetLeafNodeList(&node_list);
 
   ASSERT_EQ(3, node_list.size());
-  ASSERT_EQ(kMoveHG, node_list[0].GetMove());
-  ASSERT_EQ(kMoveHI, node_list[1].GetMove());
-  ASSERT_EQ(kMoveHG, node_list[2].GetMove());
+  ASSERT_EQ(2, node_list[0]);
+  ASSERT_EQ(3, node_list[1]);
+  ASSERT_EQ(4, node_list[2]);
 }
 
 }   // namespace realcore
