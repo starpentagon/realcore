@@ -89,10 +89,10 @@ public:
   //! @note VLMではAND nodeですべての空点が生成されるためOR nodeに絞って競合性を判定する
   const bool IsConflictORNode(const MovePosition move) const;
 
-private:
   //! @brief カレントノードがroot nodeかどうか判定する
   const bool IsRootNode() const;
 
+private:
   //! @brief 指定の指し手の子ノードのnode indexを取得する
   //! @note 指定の指し手の子ノードが存在しなかった場合はkNullNodeIndexを返す
   const MoveNodeIndex GetChildNodeIndex(const MovePosition move) const;
