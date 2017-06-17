@@ -341,6 +341,21 @@ const bool Board::TerminateCheckWhite(MovePosition * const terminating_move) con
   return false;
 }
 
+bool Board::IsBoardSymmetric(const BoardSymmetry symmetry) const
+{
+  array<StateBit, 8> original_bit_array;
+  bit_board_.GetBoardStateBit(&original_bit_array);
+
+  MoveList symmetric_move_list;
+  GetSymmetricMoveList(board_move_sequence_, symmetry, &symmetric_move_list);
+  BitBoard symmetric_board(symmetric_move_list);
+
+  array<StateBit, 8> symmetric_bit_array;
+  symmetric_board.GetBoardStateBit(&symmetric_bit_array);
+
+  return original_bit_array == symmetric_bit_array;
+}
+
 const bool IsNonTerminateNormalSequence(const MoveList &move_list){
   Board board;
   bool is_black_turn = true;

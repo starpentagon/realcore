@@ -141,9 +141,10 @@ public:
 
   //! @brief 指し手が禁手かチェックする(影響領域算出版)
   //! @param downward_influence_area 禁手成立 -> 不成立となるための影響領域
-  //! @param upward_influence_area 禁手不成立 -> 成立となるための影響領域
+  //! @param black_upward_influence_area 禁手不成立 -> 成立となるための黒石の影響領域
+  //! @param white_upward_influence_area 禁手不成立 -> 成立となるための白石の影響領域
   template<PlayerTurn P>
-  const bool IsForbiddenMove(const MovePosition move, MoveBitSet * const downward_influence_area, MoveBitSet * const upward_influence_area) const;
+  const bool IsForbiddenMove(const MovePosition move, MoveBitSet * const downward_influence_area, MoveBitSet * const black_upward_influence_area, MoveBitSet * const white_upward_influence_area) const;
 
   //! @brief 禁点を列挙する
   //! @param 禁点の格納先

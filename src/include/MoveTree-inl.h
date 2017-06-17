@@ -19,6 +19,12 @@ template<class T>
 void MoveTreeBase<T>::AddChild(const MovePosition move)
 {
   assert(tree_.size() < kMaxMoveNodeIndex);
+
+  // すでに登録済の手の場合は抜ける
+  if(GetChildNodeIndex(move) != kNullNodeIndex){
+    return;
+  }
+
   const MoveNodeIndex child_node_index = static_cast<MoveNodeIndex>(tree_.size());
 
   tree_.emplace_back(current_node_index_, move);
@@ -32,6 +38,19 @@ void MoveTreeBase<T>::AddChild(const MovePosition move)
 
     youngest_child_node.SetNextSiblingIndex(child_node_index);
   }
+}
+
+template<class T>
+void MoveTreeBase<T>::AddChild(const MoveList &move_list)
+{
+  const MoveNodeIndex current_node_index = current_node_index_;
+
+  for(const auto move : move_list){
+    AddChild(move);
+    MoveChildNode(move);
+  }
+
+  current_node_index_ = current_node_index;
 }
 
 template<class T>
@@ -98,6 +117,13 @@ void MoveTreeBase<T>::AddSubtree(const MoveTreeBase<T> &move_tree)
 }
 
 template<class T>
+inline void MoveTreeBase<T>::MoveNode(const MoveNodeIndex node_index)
+{
+  assert(node_index < tree_.size());
+  current_node_index_ = node_index;
+}
+
+template<class T>
 const bool MoveTreeBase<T>::MoveChildNode(const MovePosition move)
 {
   const auto child_node_index = GetChildNodeIndex(move);
@@ -107,6 +133,22 @@ const bool MoveTreeBase<T>::MoveChildNode(const MovePosition move)
   }
 
   current_node_index_ = child_node_index;
+  return true;
+}
+
+template<class T>
+const bool MoveTreeBase<T>::MoveChildNode(const MoveList &move_list)
+{
+  const auto current_node_index = current_node_index_;
+
+  for(const auto move : move_list){
+    if(!MoveChildNode(move)){
+      // 移動に失敗した場合はカレントノードを元に戻す
+      current_node_index_ = current_node_index;
+      return false;
+    }
+  }
+
   return true;
 }
 
@@ -143,6 +185,25 @@ template<class T>
 inline const size_t MoveTreeBase<T>::size() const
 {
   return tree_.size() - 1;
+}
+
+template<class T>
+inline const size_t MoveTreeBase<T>::depth() const
+{
+  std::vector<size_t> depth_list(tree_.size(), 0);   //!< ノード別深さリスト
+  size_t tree_depth = 0;
+
+  for(size_t node_index=1, size=tree_.size(); node_index<size; node_index++){
+    const auto &node = tree_[node_index];
+    const auto parent_node_index = node.GetParentIndex();
+
+    const size_t node_depth = depth_list[parent_node_index] + 1;
+    depth_list[node_index] = node_depth;
+
+    tree_depth = std::max(tree_depth, node_depth);
+  }
+
+  return tree_depth;
 }
 
 template<class T>
@@ -236,6 +297,23 @@ inline const std::vector< MoveTreeNode<T> >& MoveTreeBase<T>::GetMoveTreeNodeLis
 }
 
 template<class T>
+void MoveTreeBase<T>::GetLeafNodeList(std::vector<MoveNodeIndex> * const leaf_index_list) const
+{
+  assert(leaf_index_list != nullptr);
+  assert(leaf_index_list->empty());
+
+  leaf_index_list->reserve(tree_.size());
+
+  for(size_t node_index=1, size=tree_.size(); node_index<size; node_index++){
+    const auto &node = tree_[node_index];
+
+    if(!node.HasChild()){
+      leaf_index_list->emplace_back(node_index);
+    }
+  }
+}
+
+template<class T>
 inline const MovePosition MoveTreeBase<T>::GetTopNodeMove() const
 {
   const auto& root_node = tree_[kRootNodeIndex];
@@ -299,6 +377,36 @@ const bool MoveTreeBase<T>::IsConflictORNode(const MovePosition move) const
   }
 
   return false;
+}
+
+template<class T>
+void MoveTreeBase<T>::MoveRootNode()
+{
+  current_node_index_ = kRootNodeIndex;
+}
+
+template<class T>
+void MoveTreeBase<T>::GetMoveList(MoveList * const move_list) const
+{
+  assert(move_list != nullptr);
+  assert(move_list->empty());
+
+  std::vector<MovePosition> reverse_root_sequence;
+  auto node_index = current_node_index_;
+
+  while(node_index != kRootNodeIndex){
+    auto& node = tree_[node_index];
+    const auto move = node.GetMove();
+
+    reverse_root_sequence.emplace_back(move);
+    node_index = node.GetParentIndex();
+  }
+
+  auto it = reverse_root_sequence.rbegin(), it_end = reverse_root_sequence.rend();
+
+  for(; it!=it_end; ++it){
+    *move_list += *it;
+  }
 }
 
 }   // namespace realcore

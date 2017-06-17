@@ -1109,6 +1109,67 @@ public:
     ASSERT_TRUE(guard_move_bit[kMoveKH]);
   }
 
+  void GetBlackOpenFourGuardTest2(){
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------x ----+ A 
+    // B | . . . . . . . . . x . . . | B 
+    // C | . . . . x . . o x . . . . | C 
+    // D | . . * . . o . x . . * . . | D 
+    // E | . . . o . . . . x . . . . | E 
+    // F | . . . o x x . o . . . . . | F 
+    // G | . . . . . x o . o . . . . | G 
+    // H | . . . . . . x x . x . . . x H 
+    // I | . . . . o o . . . x . . . x I 
+    // J | . . . x . . x o . . . . o | J 
+    // K | . . . . . x . . o . . x x | K 
+    // L | . . * . . . . . . . o o . | L 
+    // M x . . . o . . . . . . . . . | M 
+    // N o o . . . . . . . o . . . . | N 
+    // O o o ------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhhghjfiejgiiheeffefggifgfijlagdkbicidjkjcllmkmlnknjoijnohaoamanjebofcemgkbnkijgkh"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet guard_move_bit;
+    const auto is_threat = bit_board.GetTerminateGuard<kWhiteTurn>(board_open_state, &guard_move_bit);
+
+    ASSERT_TRUE(is_threat);
+    ASSERT_TRUE(guard_move_bit[kMoveJJ]);
+  }
+
+  void GetBlackOpenFourGuardTest3(){
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . o x . . . * . . | D 
+    // E | . . . . . x o . . . . . . | E 
+    // F | . . o o x o x x o x o . . | F 
+    // G | . . x o x o o o x o x . . | G 
+    // H | . . . . . x x . . o . . . | H 
+    // I | . . . . . x o . x . . . . | I 
+    // J | . . . . . o x . . . . . . | J 
+    // K | . . . . . o o x . . . . . | K 
+    // L | . . * . . x x . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhggghhggihiffigfggfhfgjhjjfifefjgegjigkgehekfhkdgkgglkhhddfhlgdlglfik"));
+    BoardOpenState board_open_state;
+    bit_board.GetBoardOpenState(kUpdateAllOpenState, &board_open_state);
+
+    MoveBitSet guard_move_bit;
+    const auto is_threat = bit_board.GetTerminateGuard<kWhiteTurn>(board_open_state, &guard_move_bit);
+
+    ASSERT_TRUE(is_threat);
+    ASSERT_EQ(3, guard_move_bit.count());
+    ASSERT_TRUE(guard_move_bit[kMoveFH]);
+    ASSERT_TRUE(guard_move_bit[kMoveJL]);
+    ASSERT_TRUE(guard_move_bit[kMoveKM]);
+  }
+
   void GetWhiteOpenFourGuardTest(){
     //   A B C D E F G H I J K L M N O 
     // A + --------------------------+ A 
@@ -1669,6 +1730,16 @@ TEST_F(BitBoardTest, GetBoardStateBitTest)
 TEST_F(BitBoardTest, GetBlackOpenFourGuardTest)
 {
   GetBlackOpenFourGuardTest();
+}
+
+TEST_F(BitBoardTest, GetBlackOpenFourGuardTest2)
+{
+  GetBlackOpenFourGuardTest2();
+}
+
+TEST_F(BitBoardTest, GetBlackOpenFourGuardTest3)
+{
+  GetBlackOpenFourGuardTest3();
 }
 
 TEST_F(BitBoardTest, GetWhiteOpenFourGuardTest)

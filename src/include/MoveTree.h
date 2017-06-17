@@ -30,6 +30,7 @@ public:
   //! @param move 子ノードへの指し手
   //! @note カレントノードは変更しない
   void AddChild(const MovePosition move);
+  void AddChild(const MoveList &move_list);
   
   //! @brief 探索木をカレントノードに追加する
   //! @param move_tree 探索木
@@ -39,23 +40,40 @@ public:
   //! @brief カレントノードから子ノードへ移動する
   //! @param move 子ノードへの指し手
   //! @retval true: 移動成功, false: 指定の指し手の子ノードが存在せず移動失敗
+  //! @note 移動が失敗した場合、カレントノードは変更されない
   const bool MoveChildNode(const MovePosition move);
+  const bool MoveChildNode(const MoveList &move_list);
+
+  //! @brief 指定のノードに移動する
+  void MoveNode(const MoveNodeIndex node_index);
 
   //! @brief カレントノードから親ノードへ移動する
   //! @note root nodeの場合は何もしない
   void MoveParent();
 
+  //! @brief Rootノードへ移動する
+  void MoveRootNode();
+
   //! @brief すべての子ノードの指し手を取得する
   void GetChildMoveList(MoveList * const move_list) const;
 
+  //! @brief Root nodeからの指し手リストを取得する
+  void GetMoveList(MoveList * const move_list) const;
+
   //! @brief 探索木のサイズ（root node以外のノード数）を返す
   const size_t size() const;
+
+  //! @brief 探索木の深さを返す
+  const size_t depth() const;
 
   //! @brief MoveTree全体を[a-o]形式の文字列を出力する
   std::string str() const;
 
   //! @brief 木構造のノードリストを返す
   const std::vector< MoveTreeNode<T> >& GetMoveTreeNodeList() const;
+
+  //! @brief Leaf nodeのリストを返す
+  void GetLeafNodeList(std::vector<MoveNodeIndex> * const leaf_index_list) const;
 
   //! @brief root nodeの最初の子の指し手を返す
   //! @note root nodeのみの場合はkInvlaidMoveを返す
@@ -71,10 +89,10 @@ public:
   //! @note VLMではAND nodeですべての空点が生成されるためOR nodeに絞って競合性を判定する
   const bool IsConflictORNode(const MovePosition move) const;
 
-private:
   //! @brief カレントノードがroot nodeかどうか判定する
   const bool IsRootNode() const;
 
+private:
   //! @brief 指定の指し手の子ノードのnode indexを取得する
   //! @note 指定の指し手の子ノードが存在しなかった場合はkNullNodeIndexを返す
   const MoveNodeIndex GetChildNodeIndex(const MovePosition move) const;

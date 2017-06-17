@@ -721,6 +721,55 @@ TEST_F(BitBoardTest, IsDoubleThreeTest)
     }
   }
   {
+    // 五連が絡む禁手判定
+    // 1996年5月の規定変更で五連と同時に出来る三、四も有効となった。
+    // IDの横の三は活三のためID点は三々
+    // 出展: 連珠世界2000年11月号
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------o A 
+    // B | . . . . . . . . . . . . . o B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . x x . . . . * . . | D 
+    // E | . . . . . . x . . . . . . | E 
+    // F | . . . . . x x . . . . . . | F 
+    // G | . . . . . . x . . . . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . . o . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N o . . . . . . . . . . . . . o N 
+    // O o --------------------------o O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhhihgoohfongfaogdanfdoaheob"));
+    EXPECT_TRUE(bit_board.IsForbiddenMove<kBlackTurn>(kMoveID));
+  }
+  {
+    // 五連が絡む禁手判定
+    // HG点の横の三はIG点が縦の三と左斜めの三が活三なので禁点なので眠三。したがってHG点は否禁
+    // 出展: 連珠世界2001年09月号
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . x o . x . o * . . | D 
+    // E | . . . . . x o . . . . . . | E 
+    // F | . . . . . x . x . . . . . | F 
+    // G | . . . . . . . . x x . . . | G 
+    // H | . . . . o . x . . o . . . | H 
+    // I | . . . . x . x o . . . . . | I 
+    // J | . . . . . o x . . . . . . | J 
+    // K | . . . . . . o . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhiihigjhjhkfifhjgkhifhegegdgfkdidppkgppfdpp"));
+    EXPECT_FALSE(bit_board.IsForbiddenMove<kBlackTurn>(kMoveHG));
+  }
+  {
     // 否禁(三々)
     //   A B C D E F G H I J K L M N O 
     // A + --------------------------o A 

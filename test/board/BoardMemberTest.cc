@@ -263,6 +263,40 @@ public:
       }
     }
   }
+
+  void IsBoardSymmetricTest()
+  {
+    MoveList move_list("hhhggghiighffhefgfejifkfjhkjegeleiglekilgeklgkcfiecjikdckgfckijckklcddmffdmjhdbhhlgnjdinldnhfmeahmeojmkahnko");
+    Board board(move_list);
+    //   A B C D E F G H I J K L M N O 
+    // A + ------o ----------o ------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . o . o . . . o . o . . | C 
+    // D | . . x . x . x . x . x . . | D 
+    // E | . . . . . x . x . . . . . | E 
+    // F | . o . o . x o x . o . o . | F 
+    // G | . . . x . x o x . x . . . | G 
+    // H | o . . . x . x . x . . . o | H 
+    // I | . . . x . . o . . x . . . | I 
+    // J | . o . o . . . . . o . o . | J 
+    // K | . . . x . x . x . x . . . | K 
+    // L | . . * o . o x o . o * . . | L 
+    // M | . . . . x . x . x . . . . | M 
+    // N | . . . . . o x o . . . . . | N 
+    // O + ------o ----------o ------+ O 
+    //   A B C D E F G H I J K L M N O 
+    for(const auto symmetric : GetBoardSymmetry()){
+      if(symmetric == kIdenticalSymmetry){
+        continue;
+      }
+
+      if(symmetric == kHorizontalSymmetry){
+        ASSERT_TRUE(board.IsBoardSymmetric(symmetric));
+      }else{
+        ASSERT_FALSE(board.IsBoardSymmetric(symmetric));
+      }
+    }
+  }
 };
 
 TEST_F(BoardTest, DefaultConstructorTest){
@@ -659,6 +693,11 @@ TEST_F(BoardTest, TerminateCheckDebug)
   const bool is_terminate = board.TerminateCheck(&terminating_move);
   
   ASSERT_FALSE(is_terminate);
+}
+
+TEST_F(BoardTest, IsBoardSymmetricTest)
+{
+  IsBoardSymmetricTest();
 }
 
 }

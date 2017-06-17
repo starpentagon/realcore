@@ -248,14 +248,23 @@ void DoubleThreeTest(const realcore::StringVector &record_string_list)
   }
 
   // BitBoard::IsForbiddenMoveの影響領域チェック結果
-  cerr << "DoubleThree:" << endl;
-  cerr << "  Exact: " << double_three_forbidden_check[kExactCheckDoubleThree] << endl;
-  cerr << "  Calc: " << double_three_forbidden_check[kCalcCheckDoubleThree] << endl;
-  cerr << "  Calc/Exact: " << 1.0 * double_three_forbidden_check[kCalcCheckDoubleThree] / double_three_forbidden_check[kExactCheckDoubleThree] << endl;
-  cerr << "NonDoubleThree:" << endl;
-  cerr << "  Exact: " << double_three_forbidden_check[kExactCheckNonDoubleThree] << endl;
-  cerr << "  Calc: " << double_three_forbidden_check[kCalcCheckNonDoubleThree] << endl;
-  cerr << "  Calc/Exact: " << 1.0 * double_three_forbidden_check[kCalcCheckNonDoubleThree] / double_three_forbidden_check[kExactCheckNonDoubleThree] << endl;
+  cerr << "DoubleThree(black):" << endl;
+  cerr << "  Exact: " << double_three_forbidden_check[kExactCheckDoubleThreeBlack] << endl;
+  cerr << "  Calc: " << double_three_forbidden_check[kCalcCheckDoubleThreeBlack] << endl;
+  cerr << "  Calc/Exact: " << 1.0 * double_three_forbidden_check[kCalcCheckDoubleThreeBlack] / double_three_forbidden_check[kExactCheckDoubleThreeBlack] << endl;
+  cerr << "NonDoubleThree(black):" << endl;
+  cerr << "  Exact: " << double_three_forbidden_check[kExactCheckNonDoubleThreeBlack] << endl;
+  cerr << "  Calc: " << double_three_forbidden_check[kCalcCheckNonDoubleThreeBlack] << endl;
+  cerr << "  Calc/Exact: " << 1.0 * double_three_forbidden_check[kCalcCheckNonDoubleThreeBlack] / double_three_forbidden_check[kExactCheckNonDoubleThreeBlack] << endl;
+  cerr << endl;
+  cerr << "DoubleThree(white):" << endl;
+  cerr << "  Exact: " << double_three_forbidden_check[kExactCheckDoubleThreeWhite] << endl;
+  cerr << "  Calc: " << double_three_forbidden_check[kCalcCheckDoubleThreeWhite] << endl;
+  cerr << "  Calc/Exact: " << 1.0 * double_three_forbidden_check[kCalcCheckDoubleThreeWhite] / double_three_forbidden_check[kExactCheckDoubleThreeWhite] << endl;
+  cerr << "NonDoubleThree(white):" << endl;
+  cerr << "  Exact: " << double_three_forbidden_check[kExactCheckNonDoubleThreeWhite] << endl;
+  cerr << "  Calc: " << double_three_forbidden_check[kCalcCheckNonDoubleThreeWhite] << endl;
+  cerr << "  Calc/Exact: " << 1.0 * double_three_forbidden_check[kCalcCheckNonDoubleThreeWhite] / double_three_forbidden_check[kExactCheckNonDoubleThreeWhite] << endl;
 }
 
 void DoubleThreeCheck(const realcore::MoveList &board_sequence, std::map<std::string, realcore::SearchCounter> *check_result)
@@ -280,14 +289,15 @@ void DoubleThreeCheck(const realcore::MoveList &board_sequence, std::map<std::st
   GetMoveList(double_semi_three, &double_semi_three_move_list);
 
   for(const auto move : double_semi_three_move_list){
-    MoveBitSet downward_influence_area, upward_influence_area;
-    const bool is_forbidden = bit_board.IsForbiddenMove<kBlackTurn>(move, &downward_influence_area, &upward_influence_area);
-    const MoveBitSet &influence_area = is_forbidden ? downward_influence_area : upward_influence_area;
+    MoveBitSet downward_influence_area, black_upward_influence_area, white_upward_influence_area;
+    const bool is_forbidden = bit_board.IsForbiddenMove<kBlackTurn>(move, &downward_influence_area, &black_upward_influence_area, &white_upward_influence_area);
+    const MoveBitSet &black_influence_area = is_forbidden ? downward_influence_area : black_upward_influence_area;
+    const MoveBitSet &white_influence_area = is_forbidden ? downward_influence_area : white_upward_influence_area;
 
-    MoveBitSet exact_influence_area;
+    MoveBitSet black_exact_influence_area, white_exact_influence_area;
 
     if(is_forbidden){
-      exact_influence_area.set(move);
+      white_exact_influence_area.set(move);
     }
     
     for(const auto check_move : candidate_move){
@@ -300,7 +310,7 @@ void DoubleThreeCheck(const realcore::MoveList &board_sequence, std::map<std::st
       const bool check_forbidden = bit_board.IsForbiddenMove<kBlackTurn>(move);
       
       if(check_forbidden != is_forbidden){
-        exact_influence_area.set(check_move);
+        black_exact_influence_area.set(check_move);
       }
       
       bit_board.SetState<kOpenPosition>(check_move);
@@ -311,7 +321,7 @@ void DoubleThreeCheck(const realcore::MoveList &board_sequence, std::map<std::st
       const bool check_forbidden = bit_board.IsForbiddenMove<kBlackTurn>(move);
       
       if(check_forbidden != is_forbidden){
-        exact_influence_area.set(check_move);
+        white_exact_influence_area.set(check_move);
       }
 
       bit_board.SetState<kOpenPosition>(check_move);
@@ -319,29 +329,53 @@ void DoubleThreeCheck(const realcore::MoveList &board_sequence, std::map<std::st
     }
 
     // 算出した影響領域が正確な影響領域を包含していることをチェック
-    const bool is_include = ((influence_area | exact_influence_area) == influence_area);
+    const bool is_black_include = ((black_influence_area | black_exact_influence_area) == black_influence_area);
+    const bool is_white_include = ((white_influence_area | white_exact_influence_area) == white_influence_area);
 
-    if(!is_include){
+    if(!is_black_include){
       MoveList influence_move, exact_influence_move;
-      GetMoveList(influence_area, &influence_move);
-      GetMoveList(exact_influence_area, &exact_influence_move);
-      cout << "[Not Include]board: " << board_sequence.str() << " , Move: " << MoveString(move) << ", ";
+      GetMoveList(black_influence_area, &influence_move);
+      GetMoveList(black_exact_influence_area, &exact_influence_move);
+      cout << "[Not Include(black)]board: " << board_sequence.str() << " , Move: " << MoveString(move) << ", ";
       cout << "exact: " << exact_influence_move.str() << " , calc: " << influence_move.str() << endl;
     }
 
-    const auto exact_label = is_forbidden ? kExactCheckDoubleThree : kExactCheckNonDoubleThree;
-    const auto calc_label = is_forbidden ? kCalcCheckDoubleThree : kCalcCheckNonDoubleThree;
+    if(!is_white_include){
+      MoveList influence_move, exact_influence_move;
+      GetMoveList(white_influence_area, &influence_move);
+      GetMoveList(white_exact_influence_area, &exact_influence_move);
+      cout << "[Not Include(white)]board: " << board_sequence.str() << " , Move: " << MoveString(move) << ", ";
+      cout << "exact: " << exact_influence_move.str() << " , calc: " << influence_move.str() << endl;
+    }
 
-    (*check_result)[exact_label] += exact_influence_area.count();
-    (*check_result)[calc_label] += influence_area.count();
+    const auto black_exact_label = is_forbidden ? kExactCheckDoubleThreeBlack : kExactCheckNonDoubleThreeBlack;
+    const auto black_calc_label = is_forbidden ? kCalcCheckDoubleThreeBlack : kCalcCheckNonDoubleThreeBlack;
+
+    (*check_result)[black_exact_label] += black_exact_influence_area.count();
+    (*check_result)[black_calc_label] += black_influence_area.count();
+
+    const auto white_exact_label = is_forbidden ? kExactCheckDoubleThreeWhite : kExactCheckNonDoubleThreeWhite;
+    const auto white_calc_label = is_forbidden ? kCalcCheckDoubleThreeWhite : kCalcCheckNonDoubleThreeWhite;
+
+    (*check_result)[white_exact_label] += white_exact_influence_area.count();
+    (*check_result)[white_calc_label] += white_influence_area.count();
 
     // 差分領域のチェック
-    const auto diff_area = influence_area ^ exact_influence_area;
+    const auto black_diff_area = black_influence_area ^ black_exact_influence_area;
 
-    if(!is_forbidden && diff_area.count() >= 7){
+    if(!is_forbidden && black_diff_area.count() >= 7){
       MoveList diff_move;
-      GetMoveList(diff_area, &diff_move);
-      cout << "[Diff]board: " << board_sequence.str() << " , Move: " << MoveString(move) << ", ";
+      GetMoveList(black_diff_area, &diff_move);
+      cout << "[Diff(black)]board: " << board_sequence.str() << " , Move: " << MoveString(move) << ", ";
+      cout << "diff: " << diff_move.str() << endl;
+    }
+
+    const auto white_diff_area = white_influence_area ^ white_exact_influence_area;
+
+    if(!is_forbidden && white_diff_area.count() >= 7){
+      MoveList diff_move;
+      GetMoveList(white_diff_area, &diff_move);
+      cout << "[Diff(white)]board: " << board_sequence.str() << " , Move: " << MoveString(move) << ", ";
       cout << "diff: " << diff_move.str() << endl;
     }
   }

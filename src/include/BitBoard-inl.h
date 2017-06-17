@@ -443,8 +443,8 @@ const bool BitBoard::GetOpenFourGuard(const BoardOpenState &board_open_state, Mo
     const auto open_position = open_state.GetOpenPosition();
     const auto move = GetBoardMove(open_position);
 
-    MoveBitSet downward_influence_area, upward_influence_area;
-    const auto is_forbidden = IsForbiddenMove<Q>(move, &downward_influence_area, &upward_influence_area);
+    MoveBitSet downward_influence_area, black_upward_influence_area, white_upward_influence_area;
+    const auto is_forbidden = IsForbiddenMove<Q>(move, &downward_influence_area, &black_upward_influence_area, &white_upward_influence_area);
 
     if(is_forbidden){
       continue;
@@ -464,7 +464,7 @@ const bool BitBoard::GetOpenFourGuard(const BoardOpenState &board_open_state, Mo
 
     if(Q == kBlackTurn){
       // 否禁を禁手にする位置を防手位置に加える
-      guard_bit |= upward_influence_area;
+      guard_bit |= white_upward_influence_area;
     }
 
     (*guard_move_set) &= guard_bit;
