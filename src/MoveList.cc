@@ -1,3 +1,7 @@
+#include <array>
+#include <iostream>
+#include <fstream>
+
 #include "Move.h"
 #include "MoveList.h"
 
@@ -187,6 +191,37 @@ void SortByNearMove(const MovePosition move, MoveList * const move_list)
   for(const auto &near_move : move_distance_list){
     *move_list += near_move.first;
   }
+}
+
+void ReadPOSFile(const std::string &pos_file_path, MoveList * const move_list)
+{
+  assert(move_list != nullptr);
+  assert(move_list->empty());
+
+  ifstream pos_file(pos_file_path, ios::in | ios::binary);
+
+  if(!pos_file){
+    cerr << "Failed to open pos file: " << pos_file_path << endl;
+    return;
+  }
+
+  pos_file.seekg(0, ios::end);
+  const size_t size = pos_file.tellg();
+  pos_file.seekg(0, ios::beg);
+
+  char *buffer = new char[size];
+  pos_file.read(buffer, size);
+
+  for(size_t i=1; i<size; i++){
+    const unsigned char val = static_cast<unsigned char>(buffer[i]);
+    const Cordinate x = static_cast<Cordinate>(val % kBoardLineNum + 1);
+    const Cordinate y = static_cast<Cordinate>(val / kBoardLineNum + 1);
+
+    const auto move = GetMove(x, y);
+    *move_list += move;
+  }
+
+  delete [] buffer;
 }
 
 }   // namespace realcore
