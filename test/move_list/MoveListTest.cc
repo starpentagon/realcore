@@ -572,6 +572,15 @@ TEST_F(MoveListTest, SelectMoveTest){
   ASSERT_EQ(kMoveHH, move_list[0]);
 }
 
+TEST_F(MoveListTest, ReadPOSFile){
+  string pos_file_path("test.pos");
+  MoveList move_list;
+
+  ReadPOSFile(pos_file_path, &move_list);
+  
+  MoveList expected_list("hhhghihjihghfiiigjfk");
+  ASSERT_EQ(expected_list, move_list);
+}
 
 }   // namespace realcore
 

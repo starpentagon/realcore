@@ -29,6 +29,9 @@ bool GetMoveList(const std::string &move_string, MoveList * const move_list);
 //! MoveBitSetから指し手リストを取得する
 void GetMoveList(const MoveBitSet &move_bit_set, MoveList * const move_list);
 
+//! POS形式ファイルを読み込む
+void ReadPOSFile(const std::string &pos_file_path, MoveList * const move_list);
+
 //! @brief 対称変換した指し手リストを生成する
 //! @param move_list 変換対称の指し手リスト
 //! @param symmetry 対称性
