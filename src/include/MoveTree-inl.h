@@ -1,7 +1,7 @@
 #ifndef MOVE_TREE_INL_H
 #define MOVE_TREE_INL_H
 
-#include <string>
+#include <sstream>
 #include <map>
 
 #include "MoveTree.h"
@@ -291,13 +291,14 @@ std::string MoveTreeBase<T>::str(MoveNodeIndex move_node_index) const
 }
 
 template<class T>
-std::string MoveTreeBase<T>::GetSGFText(const bool is_black_turn) const
+std::string MoveTreeBase<T>::GetSGFLabeledText(const bool is_black_turn) const
 {
-  return GetSGFText(kRootNodeIndex, is_black_turn);
+  static constexpr size_t kRootDepth = 1;
+  return GetSGFLabeledText(kRootNodeIndex, is_black_turn, kRootDepth);
 }
 
 template<class T>
-std::string MoveTreeBase<T>::GetSGFText(MoveNodeIndex move_node_index, const bool is_black_turn) const
+std::string MoveTreeBase<T>::GetSGFLabeledText(MoveNodeIndex move_node_index, const bool is_black_turn, const size_t depth) const
 {
   std::string subtree_str = "";
   MoveNodeIndex child_node_index = tree_[move_node_index].GetFirstChildIndex();
@@ -310,16 +311,21 @@ std::string MoveTreeBase<T>::GetSGFText(MoveNodeIndex move_node_index, const boo
   const auto &child_node = tree_[child_node_index];
   const bool is_multiple_brothers = child_node.GetNextSiblingIndex() != kNullNodeIndex;
 
+  std::stringstream label_string_stream;
+  label_string_stream << depth;
+  const std::string label = label_string_stream.str();
+
   if(is_multiple_brothers){
     while(child_node_index != kNullNodeIndex){
       auto &child_node = tree_[child_node_index];
       const auto move = child_node.GetMove();
 
       subtree_str += "(";
-      subtree_str += (is_black_turn ? ";B[" : ";W[");
+      subtree_str += (is_black_turn ? ";LB[" : ";LW[");
       subtree_str += move == kNullMove ? "tt" : MoveString(move);
+      subtree_str += ":" + label;
       subtree_str += "]";
-      subtree_str += GetSGFText(child_node_index, !is_black_turn);
+      subtree_str += GetSGFLabeledText(child_node_index, !is_black_turn, depth + 1);
       subtree_str += ")";
       
       child_node_index = child_node.GetNextSiblingIndex();
@@ -327,10 +333,11 @@ std::string MoveTreeBase<T>::GetSGFText(MoveNodeIndex move_node_index, const boo
   }else{
     const auto move = child_node.GetMove();
 
-    subtree_str += (is_black_turn ? ";B[" : ";W[");
+    subtree_str += (is_black_turn ? ";LB[" : ";LW[");
     subtree_str += move == kNullMove ? "tt" : MoveString(move);
+    subtree_str += ":" + label;
     subtree_str += "]";
-    subtree_str += GetSGFText(child_node_index, !is_black_turn);
+    subtree_str += GetSGFLabeledText(child_node_index, !is_black_turn, depth + 1);
   }
 
   return subtree_str;

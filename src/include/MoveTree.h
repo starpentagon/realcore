@@ -70,7 +70,7 @@ public:
   std::string str() const;
 
   //! @brief MoveTree全体をSGF形式で出力する
-  std::string GetSGFText(const bool is_black_turn) const;
+  std::string GetSGFLabeledText(const bool is_black_turn) const;
 
   //! @brief 木構造のノードリストを返す
   const std::vector< MoveTreeNode<T> >& GetMoveTreeNodeList() const;
@@ -107,8 +107,8 @@ private:
   //! @brief node以下のsubtreeを[a-o]形式の文字列を出力する
   std::string str(MoveNodeIndex move_node_index) const;
 
-  //! @brief node以下のsubtreeをSGF形式で出力する
-  std::string GetSGFText(MoveNodeIndex move_node_index, const bool is_black_turn) const;
+  //! @brief node以下のsubtreeをSGF形式(数字ラベル付き)で出力する
+  std::string GetSGFLabeledText(MoveNodeIndex move_node_index, const bool is_black_turn, const size_t depth) const;
 
   std::vector< MoveTreeNode<T> > tree_;   //!< 木構造
   MoveNodeIndex current_node_index_;      // カレントノードのnode index
