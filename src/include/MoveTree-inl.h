@@ -294,11 +294,11 @@ template<class T>
 std::string MoveTreeBase<T>::GetSGFLabeledText(const bool is_black_turn) const
 {
   static constexpr size_t kRootDepth = 1;
-  return GetSGFLabeledText(kRootNodeIndex, is_black_turn, kRootDepth);
+  return GetSGFLabeledText(kRootNodeIndex, is_black_turn, "", kRootDepth);
 }
 
 template<class T>
-std::string MoveTreeBase<T>::GetSGFLabeledText(MoveNodeIndex move_node_index, const bool is_black_turn, const size_t depth) const
+std::string MoveTreeBase<T>::GetSGFLabeledText(MoveNodeIndex move_node_index, const bool is_black_turn, const std::string &label_string, const size_t depth) const
 {
   std::string subtree_str = "";
   MoveNodeIndex child_node_index = tree_[move_node_index].GetFirstChildIndex();
@@ -320,19 +320,18 @@ std::string MoveTreeBase<T>::GetSGFLabeledText(MoveNodeIndex move_node_index, co
       auto &child_node = tree_[child_node_index];
       const auto move = child_node.GetMove();
       const auto move_string = move == kNullMove ? "tt" : MoveString(move);
+      const auto child_label_string = label_string + "[" + move_string + ":" + label + "]";
 
       subtree_str += "(";
       
-      subtree_str += ";LB[";
-      subtree_str += move_string;
-      subtree_str += ":" + label;
-      subtree_str += "]";
+      subtree_str += ";LB";
+      subtree_str += child_label_string;
 
-      subtree_str += (is_black_turn ? ";B[" : ";W[");
+      subtree_str += (is_black_turn ? "B[" : "W[");
       subtree_str += move_string;
       subtree_str += "]";
 
-      subtree_str += GetSGFLabeledText(child_node_index, !is_black_turn, depth + 1);
+      subtree_str += GetSGFLabeledText(child_node_index, !is_black_turn, child_label_string, depth + 1);
       subtree_str += ")";
       
       child_node_index = child_node.GetNextSiblingIndex();
@@ -340,17 +339,16 @@ std::string MoveTreeBase<T>::GetSGFLabeledText(MoveNodeIndex move_node_index, co
   }else{
     const auto move = child_node.GetMove();
     const auto move_string = move == kNullMove ? "tt" : MoveString(move);
+      const auto child_label_string = label_string + "[" + move_string + ":" + label + "]";
 
-    subtree_str += ";LB[";
+      subtree_str += ";LB";
+      subtree_str += child_label_string;
+
+    subtree_str += (is_black_turn ? "B[" : "W[");
     subtree_str += move_string;
-    subtree_str += ":" + label;
     subtree_str += "]";
 
-    subtree_str += (is_black_turn ? ";B[" : ";W[");
-    subtree_str += move_string;
-    subtree_str += "]";
-
-    subtree_str += GetSGFLabeledText(child_node_index, !is_black_turn, depth + 1);
+    subtree_str += GetSGFLabeledText(child_node_index, !is_black_turn, child_label_string, depth + 1);
   }
 
   return subtree_str;

@@ -108,7 +108,7 @@ private:
   std::string str(MoveNodeIndex move_node_index) const;
 
   //! @brief node以下のsubtreeをSGF形式(数字ラベル付き)で出力する
-  std::string GetSGFLabeledText(MoveNodeIndex move_node_index, const bool is_black_turn, const size_t depth) const;
+  std::string GetSGFLabeledText(MoveNodeIndex move_node_index, const bool is_black_turn, const std::string &label_string, const size_t depth) const;
 
   std::vector< MoveTreeNode<T> > tree_;   //!< 木構造
   MoveNodeIndex current_node_index_;      // カレントノードのnode index

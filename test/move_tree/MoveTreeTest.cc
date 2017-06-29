@@ -354,18 +354,18 @@ TEST_F(MoveTreeBaseTest, GetSGFLabeledTextTest){
   ASSERT_EQ("", move_tree.GetSGFLabeledText(kBlackTurn));
 
   move_tree.AddChild(kMoveHH);
-  ASSERT_EQ(";LB[hh:1];B[hh]", move_tree.GetSGFLabeledText(kBlackTurn));
+  ASSERT_EQ(";LB[hh:1]B[hh]", move_tree.GetSGFLabeledText(kBlackTurn));
 
   move_tree.AddChild(kMoveHI);
-  ASSERT_EQ("(;LB[hh:1];B[hh])(;LB[hi:1];B[hi])", move_tree.GetSGFLabeledText(kBlackTurn));
+  ASSERT_EQ("(;LB[hh:1]B[hh])(;LB[hi:1]B[hi])", move_tree.GetSGFLabeledText(kBlackTurn));
 
   move_tree.MoveChildNode(kMoveHH);
   move_tree.AddChild(kMoveOO);
-  ASSERT_EQ("(;LB[hh:1];B[hh];LB[oo:2];W[oo])(;LB[hi:1];B[hi])", move_tree.GetSGFLabeledText(kBlackTurn));
+  ASSERT_EQ("(;LB[hh:1]B[hh];LB[hh:1][oo:2]W[oo])(;LB[hi:1]B[hi])", move_tree.GetSGFLabeledText(kBlackTurn));
 
   move_tree.MoveChildNode(kMoveOO);
   move_tree.AddChild(kNullMove);
-  ASSERT_EQ("(;LB[hh:1];B[hh];LB[oo:2];W[oo];LB[tt:3];B[tt])(;LB[hi:1];B[hi])", move_tree.GetSGFLabeledText(kBlackTurn));
+  ASSERT_EQ("(;LB[hh:1]B[hh];LB[hh:1][oo:2]W[oo];LB[hh:1][oo:2][tt:3]B[tt])(;LB[hi:1]B[hi])", move_tree.GetSGFLabeledText(kBlackTurn));
 }
 
 TEST_F(MoveTreeBaseTest, AddSubtreeTest){
