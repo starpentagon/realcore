@@ -319,12 +319,19 @@ std::string MoveTreeBase<T>::GetSGFLabeledText(MoveNodeIndex move_node_index, co
     while(child_node_index != kNullNodeIndex){
       auto &child_node = tree_[child_node_index];
       const auto move = child_node.GetMove();
+      const auto move_string = move == kNullMove ? "tt" : MoveString(move);
 
       subtree_str += "(";
-      subtree_str += (is_black_turn ? ";LB[" : ";LW[");
-      subtree_str += move == kNullMove ? "tt" : MoveString(move);
+      
+      subtree_str += ";LB[";
+      subtree_str += move_string;
       subtree_str += ":" + label;
       subtree_str += "]";
+
+      subtree_str += (is_black_turn ? ";B[" : ";W[");
+      subtree_str += move_string;
+      subtree_str += "]";
+
       subtree_str += GetSGFLabeledText(child_node_index, !is_black_turn, depth + 1);
       subtree_str += ")";
       
@@ -332,11 +339,17 @@ std::string MoveTreeBase<T>::GetSGFLabeledText(MoveNodeIndex move_node_index, co
     }
   }else{
     const auto move = child_node.GetMove();
+    const auto move_string = move == kNullMove ? "tt" : MoveString(move);
 
-    subtree_str += (is_black_turn ? ";LB[" : ";LW[");
-    subtree_str += move == kNullMove ? "tt" : MoveString(move);
+    subtree_str += ";LB[";
+    subtree_str += move_string;
     subtree_str += ":" + label;
     subtree_str += "]";
+
+    subtree_str += (is_black_turn ? ";B[" : ";W[");
+    subtree_str += move_string;
+    subtree_str += "]";
+
     subtree_str += GetSGFLabeledText(child_node_index, !is_black_turn, depth + 1);
   }
 
