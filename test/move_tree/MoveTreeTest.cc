@@ -347,6 +347,23 @@ TEST_F(MoveTreeBaseTest, strTest){
   ASSERT_EQ("(hhoo)(hi)", move_tree.str());
 }
 
+TEST_F(MoveTreeBaseTest, GetSGFTextTest){
+  MoveTree move_tree;
+  constexpr bool kBlackTurn = true;
+
+  ASSERT_EQ("", move_tree.GetSGFText(kBlackTurn));
+
+  move_tree.AddChild(kMoveHH);
+  ASSERT_EQ(";B[hh]", move_tree.GetSGFText(kBlackTurn));
+
+  move_tree.AddChild(kMoveHI);
+  ASSERT_EQ("(;B[hh])(;B[hi])", move_tree.GetSGFText(kBlackTurn));
+
+  move_tree.MoveChildNode(kMoveHH);
+  move_tree.AddChild(kMoveOO);
+  ASSERT_EQ("(;B[hh];W[oo])(;B[hi])", move_tree.GetSGFText(kBlackTurn));
+}
+
 TEST_F(MoveTreeBaseTest, AddSubtreeTest){
   AddSubtreeTest();
 }

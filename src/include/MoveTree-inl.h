@@ -291,6 +291,49 @@ std::string MoveTreeBase<T>::str(MoveNodeIndex move_node_index) const
 }
 
 template<class T>
+std::string MoveTreeBase<T>::GetSGFText(const bool is_black_turn) const
+{
+  return GetSGFText(kRootNodeIndex, is_black_turn);
+}
+
+template<class T>
+std::string MoveTreeBase<T>::GetSGFText(MoveNodeIndex move_node_index, const bool is_black_turn) const
+{
+  std::string subtree_str = "";
+  MoveNodeIndex child_node_index = tree_[move_node_index].GetFirstChildIndex();
+  
+  if(child_node_index == kNullNodeIndex){
+    // leaf node
+    return subtree_str;
+  }
+
+  const auto &child_node = tree_[child_node_index];
+  const bool is_multiple_brothers = child_node.GetNextSiblingIndex() != kNullNodeIndex;
+
+  if(is_multiple_brothers){
+    while(child_node_index != kNullNodeIndex){
+      auto &child_node = tree_[child_node_index];
+
+      subtree_str += "(";
+      subtree_str += (is_black_turn ? ";B[" : ";W[");
+      subtree_str += MoveString(child_node.GetMove());
+      subtree_str += "]";
+      subtree_str += GetSGFText(child_node_index, !is_black_turn);
+      subtree_str += ")";
+      
+      child_node_index = child_node.GetNextSiblingIndex();
+    }
+  }else{
+    subtree_str += (is_black_turn ? ";B[" : ";W[");
+    subtree_str += MoveString(child_node.GetMove());
+    subtree_str += "]";
+    subtree_str += GetSGFText(child_node_index, !is_black_turn);
+  }
+
+  return subtree_str;
+}
+
+template<class T>
 inline const std::vector< MoveTreeNode<T> >& MoveTreeBase<T>::GetMoveTreeNodeList() const
 {
   return tree_;

@@ -275,7 +275,6 @@ TEST_F(MoveListTest, GetSGFPositionText)
 
   move_list += kNullMove;
   EXPECT_EQ("AB[ab][ac]AW[hh][hg]", move_list.GetSGFPositionText());
-
 }
 
 TEST_F(MoveListTest, GetMoveListTest)
