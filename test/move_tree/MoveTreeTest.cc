@@ -362,6 +362,10 @@ TEST_F(MoveTreeBaseTest, GetSGFTextTest){
   move_tree.MoveChildNode(kMoveHH);
   move_tree.AddChild(kMoveOO);
   ASSERT_EQ("(;B[hh];W[oo])(;B[hi])", move_tree.GetSGFText(kBlackTurn));
+
+  move_tree.MoveChildNode(kMoveOO);
+  move_tree.AddChild(kNullMove);
+  ASSERT_EQ("(;B[hh];W[oo];B[tt])(;B[hi])", move_tree.GetSGFText(kBlackTurn));
 }
 
 TEST_F(MoveTreeBaseTest, AddSubtreeTest){
