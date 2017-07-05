@@ -1,7 +1,7 @@
 #ifndef MOVE_TREE_INL_H
 #define MOVE_TREE_INL_H
 
-#include <string>
+#include <sstream>
 #include <map>
 
 #include "MoveTree.h"
@@ -285,6 +285,70 @@ std::string MoveTreeBase<T>::str(MoveNodeIndex move_node_index) const
   }else{
     subtree_str = MoveString(child_node.GetMove());
     subtree_str += str(child_node_index);
+  }
+
+  return subtree_str;
+}
+
+template<class T>
+std::string MoveTreeBase<T>::GetSGFLabeledText(const bool is_black_turn) const
+{
+  static constexpr size_t kRootDepth = 1;
+  return GetSGFLabeledText(kRootNodeIndex, is_black_turn, "", kRootDepth);
+}
+
+template<class T>
+std::string MoveTreeBase<T>::GetSGFLabeledText(MoveNodeIndex move_node_index, const bool is_black_turn, const std::string &label_string, const size_t depth) const
+{
+  std::string subtree_str = "";
+  MoveNodeIndex child_node_index = tree_[move_node_index].GetFirstChildIndex();
+  
+  if(child_node_index == kNullNodeIndex){
+    // leaf node
+    return subtree_str;
+  }
+
+  const auto &child_node = tree_[child_node_index];
+  const bool is_multiple_brothers = child_node.GetNextSiblingIndex() != kNullNodeIndex;
+
+  std::stringstream label_string_stream;
+  label_string_stream << depth;
+  const std::string label = label_string_stream.str();
+
+  if(is_multiple_brothers){
+    while(child_node_index != kNullNodeIndex){
+      auto &child_node = tree_[child_node_index];
+      const auto move = child_node.GetMove();
+      const auto move_string = move == kNullMove ? "tt" : MoveString(move);
+      const auto child_label_string = label_string + "[" + move_string + ":" + label + "]";
+
+      subtree_str += "(";
+      
+      subtree_str += ";LB";
+      subtree_str += child_label_string;
+
+      subtree_str += (is_black_turn ? "B[" : "W[");
+      subtree_str += move_string;
+      subtree_str += "]";
+
+      subtree_str += GetSGFLabeledText(child_node_index, !is_black_turn, child_label_string, depth + 1);
+      subtree_str += ")";
+      
+      child_node_index = child_node.GetNextSiblingIndex();
+    }
+  }else{
+    const auto move = child_node.GetMove();
+    const auto move_string = move == kNullMove ? "tt" : MoveString(move);
+      const auto child_label_string = label_string + "[" + move_string + ":" + label + "]";
+
+      subtree_str += ";LB";
+      subtree_str += child_label_string;
+
+    subtree_str += (is_black_turn ? "B[" : "W[");
+    subtree_str += move_string;
+    subtree_str += "]";
+
+    subtree_str += GetSGFLabeledText(child_node_index, !is_black_turn, child_label_string, depth + 1);
   }
 
   return subtree_str;

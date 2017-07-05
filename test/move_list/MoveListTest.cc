@@ -255,6 +255,28 @@ TEST_F(MoveListTest, strTest)
   EXPECT_EQ("abhhpp", move_list.str());
 }
 
+TEST_F(MoveListTest, GetSGFPositionText)
+{
+  MoveList move_list;
+
+  EXPECT_EQ("", move_list.str());
+
+  move_list += kMoveAB;
+  EXPECT_EQ("AB[ab]", move_list.GetSGFPositionText());
+
+  move_list += kMoveHH;
+  EXPECT_EQ("AB[ab]AW[hh]", move_list.GetSGFPositionText());
+
+  move_list += kMoveAC;
+  EXPECT_EQ("AB[ab][ac]AW[hh]", move_list.GetSGFPositionText());
+
+  move_list += kMoveHG;
+  EXPECT_EQ("AB[ab][ac]AW[hh][hg]", move_list.GetSGFPositionText());
+
+  move_list += kNullMove;
+  EXPECT_EQ("AB[ab][ac]AW[hh][hg]", move_list.GetSGFPositionText());
+}
+
 TEST_F(MoveListTest, GetMoveListTest)
 {
   {

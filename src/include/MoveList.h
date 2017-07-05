@@ -91,6 +91,9 @@ public:
   //! @pre 指し手は有効な指し手であること
   std::string str() const;
 
+  //! @brief 開始局面をSGF形式で返す
+  std::string GetSGFPositionText() const;
+
   //! @brief 初期化時の領域を確保する
   //! @param initial_size 初期化時の指し手リスト長
   //! @note 事前に領域を確保することで領域の再確保を抑制しパフォーマンスを改善できる

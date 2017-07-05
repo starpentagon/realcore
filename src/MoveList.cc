@@ -48,6 +48,54 @@ string MoveList::str() const
   return move_str;
 }
 
+string MoveList::GetSGFPositionText() const
+{
+  MoveList black_list, white_list;
+  bool is_black_turn = true;
+
+  for(const auto move : move_list_){
+    if(is_black_turn){
+      black_list += move;
+    }else{
+      white_list += move;
+    }
+
+    is_black_turn = !is_black_turn;
+  }
+
+  string sgf_str;
+
+  if(!black_list.empty()){
+    string sgf_black_str("AB");
+
+    for(const auto move : black_list){
+      if(move == kNullMove){
+        continue;
+      }
+
+      sgf_black_str += "[" + MoveString(move) + "]";
+    }
+
+    sgf_str += sgf_black_str;
+  }
+
+  if(!white_list.empty()){
+    string sgf_white_str("AW");
+
+    for(const auto move : white_list){
+      if(move == kNullMove){
+        continue;
+      }
+
+      sgf_white_str += "[" + MoveString(move) + "]";
+    }
+
+    sgf_str += sgf_white_str;
+  }
+
+  return sgf_str;
+}
+
 void MoveList::GetOpenMove(MoveBitSet * const open_move_bit) const
 {
   assert(open_move_bit != nullptr);
