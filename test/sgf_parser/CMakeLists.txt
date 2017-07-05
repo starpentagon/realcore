@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5.1)
 
 # プロジェクト名
-set(project_name sgf_reader_test)
+set(project_name sgf_parser_test)
 project(${project_name} CXX)
 
 # Build Type(Release or Debug)
@@ -29,8 +29,8 @@ add_executable(
     ${project_name}
     $ENV{REALCORE_DIR}/src/Move.cc
     $ENV{REALCORE_DIR}/src/MoveList.cc
-    $ENV{REALCORE_DIR}/src/SGFReader.cc
-    ../SGFReaderTest.cc
+    $ENV{REALCORE_DIR}/src/SGFParser.cc
+    ../SGFParserTest.cc
 )
 
 # ライブラリ

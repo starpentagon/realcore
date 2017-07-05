@@ -2,26 +2,26 @@
 #include <regex>
 
 #include "MoveList.h"
-#include "SGFReader.h"
+#include "SGFParser.h"
 
 using namespace std;
 using namespace realcore;
 
 void GetMoveListFromSGFData(const std::string &sgf_data, MoveList * move_list)
 {
-  SGFReader sgf_reader;
-  sgf_reader.ParseSGF(sgf_data);
+  SGFParser sgf_parser;
+  sgf_parser.ParseSGF(sgf_data);
 
-  const auto diagram_str = sgf_reader.GetGameRecord();
+  const auto diagram_str = sgf_parser.GetGameRecord();
   GetMoveList(diagram_str, move_list);
 }
 
-SGFReader::SGFReader()
+SGFParser::SGFParser()
 : game_end_status_(kUnknownEndStatus), game_result_(kUnknownResult)
 {
 }
 
-void SGFReader::ParseSGF(const string &sgf_data)
+void SGFParser::ParseSGF(const string &sgf_data)
 {
   try{
     game_date_ = ParseGameDate(sgf_data);
@@ -41,7 +41,7 @@ void SGFReader::ParseSGF(const string &sgf_data)
   }
 }
 
-string SGFReader::ParseGameDate(const std::string &sgf_data) const
+string SGFParser::ParseGameDate(const std::string &sgf_data) const
 {
   static regex date_expr("DT\\[(.*?)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), date_expr);
@@ -55,7 +55,7 @@ string SGFReader::ParseGameDate(const std::string &sgf_data) const
   }
 }
 
-string SGFReader::ParseBlackPlayerName(const std::string &sgf_data) const
+string SGFParser::ParseBlackPlayerName(const std::string &sgf_data) const
 {
   static regex black_player_name_expr("PB\\[(.*?)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), black_player_name_expr);
@@ -69,7 +69,7 @@ string SGFReader::ParseBlackPlayerName(const std::string &sgf_data) const
   }
 }
 
-string SGFReader::ParseBlackPlayerRank(const std::string &sgf_data) const
+string SGFParser::ParseBlackPlayerRank(const std::string &sgf_data) const
 {
   static regex black_player_rank_expr("BR\\[(.*?)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), black_player_rank_expr);
@@ -82,7 +82,7 @@ string SGFReader::ParseBlackPlayerRank(const std::string &sgf_data) const
   }
 }
 
-string SGFReader::ParseWhitePlayerName(const std::string &sgf_data) const
+string SGFParser::ParseWhitePlayerName(const std::string &sgf_data) const
 {
   static regex white_player_name_expr("PW\\[(.*?)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), white_player_name_expr);
@@ -96,7 +96,7 @@ string SGFReader::ParseWhitePlayerName(const std::string &sgf_data) const
   }
 }
 
-string SGFReader::ParseWhitePlayerRank(const std::string &sgf_data) const
+string SGFParser::ParseWhitePlayerRank(const std::string &sgf_data) const
 {
   static regex white_player_rank_expr("WR\\[(.*?)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), white_player_rank_expr);
@@ -109,7 +109,7 @@ string SGFReader::ParseWhitePlayerRank(const std::string &sgf_data) const
   }
 }
 
-string SGFReader::ParseGameRule(const std::string &sgf_data) const
+string SGFParser::ParseGameRule(const std::string &sgf_data) const
 {
   static regex game_rule_expr("(GN|RU)\\[.*?((RIF)|(Sakata)|(Yamaguchi)|(Tarannikov)|(Jonsson)|(Unknown)).*?\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), game_rule_expr);
@@ -122,7 +122,7 @@ string SGFReader::ParseGameRule(const std::string &sgf_data) const
   }
 }
 
-GameEndStatus SGFReader::ParseGameEndStatus(const std::string &sgf_data) const
+GameEndStatus SGFParser::ParseGameEndStatus(const std::string &sgf_data) const
 {
   static regex draw_expr("RE\\[B?W?\\+?Draw\\]");
   sregex_iterator it_draw(sgf_data.begin(), sgf_data.end(), draw_expr);
@@ -149,7 +149,7 @@ GameEndStatus SGFReader::ParseGameEndStatus(const std::string &sgf_data) const
   }
 }
 
-GameResult SGFReader::ParseGameResult(const std::string &sgf_data) const
+GameResult SGFParser::ParseGameResult(const std::string &sgf_data) const
 {
   if(ParseGameEndStatus(sgf_data) == kAgreedDraw){
     return kDraw;
@@ -173,7 +173,7 @@ GameResult SGFReader::ParseGameResult(const std::string &sgf_data) const
   }
 }
 
-string SGFReader::ParseGameRecord(const std::string &sgf_data) const
+string SGFParser::ParseGameRecord(const std::string &sgf_data) const
 {
   static regex move_expr(";(B|W)\\[([a-z][a-z])\\]");
 
@@ -228,7 +228,7 @@ string SGFReader::ParseGameRecord(const std::string &sgf_data) const
   return record;
 }
 
-string SGFReader::ParseAlternativeMoves(const std::string &sgf_data) const
+string SGFParser::ParseAlternativeMoves(const std::string &sgf_data) const
 {
   static regex alternative_expr("(5A|FA)\\[([a-o0-9\\s\\[\\]]*)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), alternative_expr);
@@ -246,7 +246,7 @@ string SGFReader::ParseAlternativeMoves(const std::string &sgf_data) const
   }
 }
 
-string SGFReader::ParseEventName(const std::string &sgf_data) const
+string SGFParser::ParseEventName(const std::string &sgf_data) const
 {
   static regex event_expr("EV\\[(.*?)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), event_expr);

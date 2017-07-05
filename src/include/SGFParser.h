@@ -1,9 +1,9 @@
 //! @file
-//! @brief 1局分のSGFデータを読込むクラス
+//! @brief 1局分のSGFデータを読み込むクラス
 //! @author Koichi NABETANI
 //! @date 2017/07/05
-#ifndef SGF_READER_H
-#define SGF_READER_H
+#ifndef SGF_PARSER_H
+#define SGF_PARSER_H
 
 #include <string>
 
@@ -33,13 +33,13 @@ class MoveList;
 void GetMoveListFromSGFData(const std::string &sgf_data, MoveList * move_list);
 
 //! @brief 1局分のSGFデータを読み込み対局情報を保持するクラス
-class SGFReaderTest;
+class SGFParserTest;
 
-class SGFReader{
-  friend class SGFReaderTest;
+class SGFParser{
+  friend class SGFParserTest;
 
 public:
-  SGFReader();
+  SGFParser();
   
   //! @param sgf_data SGFデータ
   //! @note 読み込みに失敗した場合はlogic_error例外を送出する
@@ -113,9 +113,9 @@ private:
   std::string alternative_moves_; //!< 5手目の提示（取り除かれた珠）(option)
 
   std::string event_name_;    //!< 大会名(option)
-};  // class SGFReader
+};  // class SGFParser
 }   // namespace realcore
 
-#include "SGFReader-inl.h"
+#include "SGFParser-inl.h"
 
-#endif    // SGF_READER_H
+#endif    // SGF_PARSER_H

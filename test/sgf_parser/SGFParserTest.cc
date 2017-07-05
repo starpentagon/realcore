@@ -1,17 +1,17 @@
 #include "gtest/gtest.h"
 
-#include "SGFReader.h"
+#include "SGFParser.h"
 
 using namespace std;
 
 namespace realcore
 {
 
-class SGFReaderTest
+class SGFParserTest
 : public ::testing::Test
 {
 public:
-  SGFReaderTest(){
+  SGFParserTest(){
     sgf_data_ = ""
 "(;"
 "GM[5]FF[4]"
@@ -32,59 +32,59 @@ public:
 ";)"
 ""
 "---";
-    sgf_reader_.ParseSGF(sgf_data_);
+    sgf_parser_.ParseSGF(sgf_data_);
   }
 
   void GetGameDateTest(){
-    const auto actual = sgf_reader_.GetGameDate();
+    const auto actual = sgf_parser_.GetGameDate();
     EXPECT_EQ("2003-10-07", actual);
   }
 
   void GetBlackPlayerNameTest()
   {
-    const auto actual = sgf_reader_.GetBlackPlayerName();
+    const auto actual = sgf_parser_.GetBlackPlayerName();
     EXPECT_EQ("PlayerB", actual);
   }
 
   void GetBlackPlayerRankTest()
   {
-    const auto actual = sgf_reader_.GetBlackPlayerRank();
+    const auto actual = sgf_parser_.GetBlackPlayerRank();
     EXPECT_EQ("1d ", actual);
   }
 
   void GetWhitePlayerNameTest()
   {
-    const auto actual = sgf_reader_.GetWhitePlayerName();
+    const auto actual = sgf_parser_.GetWhitePlayerName();
     EXPECT_EQ("PlayerA", actual);
   }
 
   void GetWhitePlayerRankTest()
   {
-    const auto actual = sgf_reader_.GetWhitePlayerRank();
+    const auto actual = sgf_parser_.GetWhitePlayerRank();
     EXPECT_EQ("3d*", actual);
   }
 
   void GetGameRuleTest()
   {
-    const auto actual = sgf_reader_.GetGameRule();
+    const auto actual = sgf_parser_.GetGameRule();
     EXPECT_EQ("RIF", actual);
   }
 
   void GetGameEndStatusTest()
   {
-    const auto actual = sgf_reader_.GetEndStatus();
+    const auto actual = sgf_parser_.GetEndStatus();
     EXPECT_EQ(kResign, actual);
   }
 
   void GetGameResultTest()
   {
-    const auto actual = sgf_reader_.GetGameResult();
+    const auto actual = sgf_parser_.GetGameResult();
     EXPECT_EQ(kWhiteWin, actual);
   }
 
   void GetGameRecordTest()
   {
-    const auto actual = sgf_reader_.GetGameRecord();
+    const auto actual = sgf_parser_.GetGameRecord();
     const string expect_record = "hhhgjfigiekgjgjhkigg";
 
     EXPECT_EQ(expect_record, actual);
@@ -92,7 +92,7 @@ public:
 
   void GetAlternativeMovesTest()
   {
-    const auto actual = sgf_reader_.GetAlternativeMoves();
+    const auto actual = sgf_parser_.GetAlternativeMoves();
     const string expect_alternative = "gg; hh";
 
     EXPECT_EQ(expect_alternative, actual);
@@ -100,65 +100,65 @@ public:
 
   void GetEventNameTest()
   {
-    const auto actual = sgf_reader_.GetEventName();
+    const auto actual = sgf_parser_.GetEventName();
     EXPECT_EQ("none", actual);
   }
 private:
   string sgf_data_;
-  SGFReader sgf_reader_;
+  SGFParser sgf_parser_;
 };
 
-TEST_F(SGFReaderTest, GetGameDateTest)
+TEST_F(SGFParserTest, GetGameDateTest)
 {
   GetGameDateTest();
 }
 
-TEST_F(SGFReaderTest, GetBlackPlayerNameTest)
+TEST_F(SGFParserTest, GetBlackPlayerNameTest)
 {
   GetBlackPlayerNameTest();
 }
 
-TEST_F(SGFReaderTest, GetBlackPlayerRankTest)
+TEST_F(SGFParserTest, GetBlackPlayerRankTest)
 {
   GetBlackPlayerRankTest();
 }
 
-TEST_F(SGFReaderTest, GetWhitePlayerNameTest)
+TEST_F(SGFParserTest, GetWhitePlayerNameTest)
 {
   GetWhitePlayerNameTest();
 }
 
-TEST_F(SGFReaderTest, GetWhitePlayerRankTest)
+TEST_F(SGFParserTest, GetWhitePlayerRankTest)
 {
   GetWhitePlayerRankTest();
 }
 
-TEST_F(SGFReaderTest, GetGameRuleTest)
+TEST_F(SGFParserTest, GetGameRuleTest)
 {
   GetGameRuleTest();
 }
 
-TEST_F(SGFReaderTest, GetGameEndStatusTest)
+TEST_F(SGFParserTest, GetGameEndStatusTest)
 {
   GetGameEndStatusTest();
 }
 
-TEST_F(SGFReaderTest, GetGameResultTest)
+TEST_F(SGFParserTest, GetGameResultTest)
 {
   GetGameResultTest();
 }
 
-TEST_F(SGFReaderTest, GetGameRecordTest)
+TEST_F(SGFParserTest, GetGameRecordTest)
 {
   GetGameRecordTest();
 }
 
-TEST_F(SGFReaderTest, GetAlternativeMovesTest)
+TEST_F(SGFParserTest, GetAlternativeMovesTest)
 {
   GetAlternativeMovesTest();
 }
 
-TEST_F(SGFReaderTest, GetEventNameTest)
+TEST_F(SGFParserTest, GetEventNameTest)
 {
   GetEventNameTest();
 }
