@@ -7,7 +7,7 @@
 using namespace std;
 using namespace realcore;
 
-void GetMoveListFromSGFData(const SGFCheckBit &check_bit, const std::string &sgf_data, MoveList * move_list)
+void realcore::GetMoveListFromSGFData(const SGFCheckBit &check_bit, const std::string &sgf_data, MoveList * move_list)
 {
   SGFParser sgf_parser(check_bit);
   sgf_parser.ParseSGF(sgf_data);

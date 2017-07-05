@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include "MoveList.h"
 #include "SGFParser.h"
 
 using namespace std;
@@ -105,6 +106,16 @@ public:
     const auto actual = sgf_parser_.GetEventName();
     EXPECT_EQ("none", actual);
   }
+
+  void GetMoveListFromSGFDataTest()
+  {
+      MoveList actual_list;
+      GetMoveListFromSGFData(kSGFCheckNone, sgf_data_, &actual_list);
+
+      MoveList expected_list("hhhgjfigiekgjgjhkigg");
+      EXPECT_EQ(expected_list, actual_list);      
+  }
+
 private:
   string sgf_data_;
   SGFParser sgf_parser_;
@@ -163,5 +174,10 @@ TEST_F(SGFParserTest, GetAlternativeMovesTest)
 TEST_F(SGFParserTest, GetEventNameTest)
 {
   GetEventNameTest();
+}
+
+TEST_F(SGFParserTest, GetMoveListFromSGFDataTest)
+{
+  GetMoveListFromSGFDataTest();
 }
 }   // namespace realcore
