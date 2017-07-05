@@ -6,6 +6,7 @@
 #define SGF_PARSER_H
 
 #include <string>
+#include <bitset>
 
 namespace realcore
 {
@@ -27,10 +28,22 @@ enum GameEndStatus
   kUnknownEndStatus,  //!< 不明
 };
 
+// SGFプロパティが存在しなかった時にエラーを出すかのフラグ
+static constexpr size_t kSGFDateCheck = 0b1;
+static constexpr size_t kSGFBlackPlayerNameCheck = 0b1 << 1;
+static constexpr size_t kSGFWhitePlayerNameCheck = 0b1 << 2;
+static constexpr size_t kSGFGameResultCheck = 0b1 << 3;
+static constexpr size_t kSGFCheckCount = 4;
+
+typedef std::bitset<kSGFCheckCount> SGFCheckBit;
+
+static constexpr SGFCheckBit kSGFCheckAll(kSGFDateCheck | kSGFBlackPlayerNameCheck | kSGFWhitePlayerNameCheck | kSGFGameResultCheck);
+static constexpr SGFCheckBit kSGFCheckNone;
+
 class MoveList;
 
 //! @brief SGFデータの指し手リストを生成する
-void GetMoveListFromSGFData(const std::string &sgf_data, MoveList * move_list);
+void GetMoveListFromSGFData(const SGFCheckBit &check_bit, const std::string &sgf_data, MoveList * move_list);
 
 //! @brief 1局分のSGFデータを読み込み対局情報を保持するクラス
 class SGFParserTest;
@@ -39,7 +52,7 @@ class SGFParser{
   friend class SGFParserTest;
 
 public:
-  SGFParser();
+  SGFParser(const SGFCheckBit &check_bit);
   
   //! @param sgf_data SGFデータ
   //! @note 読み込みに失敗した場合はlogic_error例外を送出する
@@ -113,6 +126,8 @@ private:
   std::string alternative_moves_; //!< 5手目の提示（取り除かれた珠）(option)
 
   std::string event_name_;    //!< 大会名(option)
+
+  SGFCheckBit check_bit_;   //!< SGFプロパティ有無チェックを行うかのフラグ
 };  // class SGFParser
 }   // namespace realcore
 

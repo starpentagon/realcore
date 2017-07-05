@@ -7,17 +7,17 @@
 using namespace std;
 using namespace realcore;
 
-void GetMoveListFromSGFData(const std::string &sgf_data, MoveList * move_list)
+void GetMoveListFromSGFData(const SGFCheckBit &check_bit, const std::string &sgf_data, MoveList * move_list)
 {
-  SGFParser sgf_parser;
+  SGFParser sgf_parser(check_bit);
   sgf_parser.ParseSGF(sgf_data);
 
   const auto diagram_str = sgf_parser.GetGameRecord();
   GetMoveList(diagram_str, move_list);
 }
 
-SGFParser::SGFParser()
-: game_end_status_(kUnknownEndStatus), game_result_(kUnknownResult)
+SGFParser::SGFParser(const SGFCheckBit &check_bit)
+: game_end_status_(kUnknownEndStatus), game_result_(kUnknownResult), check_bit_(check_bit)
 {
 }
 
@@ -49,9 +49,11 @@ string SGFParser::ParseGameDate(const std::string &sgf_data) const
 
   if(it != it_end){
     return it->str(1);
-  }else{
+  }else if(check_bit_[kSGFDateCheck]){
     logic_error error("Date(DT) is not found.");
     throw error;
+  }else{
+    return "";
   }
 }
 
@@ -63,9 +65,11 @@ string SGFParser::ParseBlackPlayerName(const std::string &sgf_data) const
 
   if(it != it_end){
     return it->str(1);
-  }else{
+  }else if(check_bit_[kSGFBlackPlayerNameCheck]){
     logic_error error("Black Player Name(PB) is not found.");
     throw error;
+  }else{
+    return "";
   }
 }
 
@@ -90,9 +94,11 @@ string SGFParser::ParseWhitePlayerName(const std::string &sgf_data) const
 
   if(it != it_end){
     return it->str(1);
-  }else{
+  }else if(check_bit_[kSGFWhitePlayerNameCheck]){
     logic_error error("White Player Name(PW) is not found.");
     throw error;
+  }else{
+    return "";
   }
 }
 
@@ -143,9 +149,11 @@ GameEndStatus SGFParser::ParseGameEndStatus(const std::string &sgf_data) const
     }else{
       return kTimeup;
     }
-  }else{
+  }else if(check_bit_[kSGFGameResultCheck]){
     logic_error error("Game result(RE) is not found.");
     throw error;
+  }else{
+    return kUnknownEndStatus;
   }
 }
 
@@ -167,9 +175,11 @@ GameResult SGFParser::ParseGameResult(const std::string &sgf_data) const
     }else{
       return kWhiteWin;
     }
-  }else{
+  }else if(check_bit_[kSGFGameResultCheck]){
     logic_error error("Game result(RE) is not found.");
     throw error;
+  }else{
+    return kUnknownResult;
   }
 }
 

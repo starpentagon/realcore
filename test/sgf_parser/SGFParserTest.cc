@@ -11,7 +11,9 @@ class SGFParserTest
 : public ::testing::Test
 {
 public:
-  SGFParserTest(){
+  SGFParserTest()
+  : sgf_parser_(kSGFCheckAll)
+  {
     sgf_data_ = ""
 "(;"
 "GM[5]FF[4]"
