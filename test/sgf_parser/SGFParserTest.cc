@@ -180,4 +180,62 @@ TEST_F(SGFParserTest, GetMoveListFromSGFDataTest)
 {
   GetMoveListFromSGFDataTest();
 }
+
+TEST_F(SGFParserTest, GetMoveListFromSGFBoardTest)
+{
+  {
+    // 配石数一致, 黒番
+    const string sgf_data = "(;GM[4]FF[4]CA[UTF-8]AP[Web Renju Board:1.0.0]ST[0]SZ[15]PB[Black]PW[White]AB[hh][ig]AW[gi][gh])";
+    MoveList actual_list;
+    GetMoveListFromSGFData(kSGFCheckNone, sgf_data, &actual_list);
+
+    MoveList expect_list("hhgiiggh");
+    EXPECT_EQ(expect_list, actual_list);
+  }
+  {
+    // 配石数一致, 白番
+    const string sgf_data = "(;GM[4]FF[4]CA[UTF-8]AP[Web Renju Board:1.0.0]ST[0]SZ[15]PB[Black]PW[White]AB[hh][ig][gg]AW[gi][gh])";
+    MoveList actual_list;
+    GetMoveListFromSGFData(kSGFCheckNone, sgf_data, &actual_list);
+
+    MoveList expect_list("hhgiigghgg");
+    EXPECT_EQ(expect_list, actual_list);
+  }
+  {
+    // 配石数一致, 白番指定
+    const string sgf_data = "(;GM[4]FF[4]CA[UTF-8]AP[Web Renju Board:1.0.0]PL[W]ST[0]SZ[15]PB[Black]PW[White]AB[hh][ig]AW[gi][gh])";
+    MoveList actual_list;
+    GetMoveListFromSGFData(kSGFCheckNone, sgf_data, &actual_list);
+
+    MoveList expect_list("hhgiigghpp");
+    EXPECT_EQ(expect_list, actual_list);
+  }
+  {
+    // 配石数一致, 黒番指定
+    const string sgf_data = "(;GM[4]FF[4]CA[UTF-8]AP[Web Renju Board:1.0.0]PL[B]ST[0]SZ[15]PB[Black]PW[White]AB[hh][ig][gg]AW[gi][gh])";
+    MoveList actual_list;
+    GetMoveListFromSGFData(kSGFCheckNone, sgf_data, &actual_list);
+
+    MoveList expect_list("hhgiigghggpp");
+    EXPECT_EQ(expect_list, actual_list);
+  }
+  {
+    // 配石数不一致, 手番指定なし
+    const string sgf_data = "(;GM[4]FF[4]CA[UTF-8]AP[Web Renju Board:1.0.0]ST[0]SZ[15]PB[Black]PW[White]AB[hh][ig][jh]AW[ii])";
+    MoveList actual_list;
+    GetMoveListFromSGFData(kSGFCheckNone, sgf_data, &actual_list);
+
+    MoveList expect_list("hhiiigppjhpp");
+    EXPECT_EQ(expect_list, actual_list);
+  }
+  {
+    // 配石数不一致, 手番指定あり
+    const string sgf_data = "(;GM[4]FF[4]CA[UTF-8]AP[Web Renju Board:1.0.0]PL[W]ST[0]SZ[15]PB[Black]PW[White]AB[hh][ig][jh]AW[ii])";
+    MoveList actual_list;
+    GetMoveListFromSGFData(kSGFCheckNone, sgf_data, &actual_list);
+
+    MoveList expect_list("hhiiigppjh");
+    EXPECT_EQ(expect_list, actual_list);
+  }
+}
 }   // namespace realcore

@@ -5,47 +5,47 @@
 
 namespace realcore{
 
-inline std::string SGFParser::GetGameDate() const{
+inline const std::string SGFParser::GetGameDate() const{
   return game_date_;
 }
 
-inline std::string SGFParser::GetBlackPlayerName() const{
+inline const std::string SGFParser::GetBlackPlayerName() const{
   return black_player_name_;
 }
 
-inline std::string SGFParser::GetBlackPlayerRank() const{
+inline const std::string SGFParser::GetBlackPlayerRank() const{
   return black_player_rank_;
 }
 
-inline std::string SGFParser::GetWhitePlayerName() const{
+inline const std::string SGFParser::GetWhitePlayerName() const{
   return white_player_name_;
 }
 
-inline std::string SGFParser::GetWhitePlayerRank() const{
+inline const std::string SGFParser::GetWhitePlayerRank() const{
   return white_player_rank_;
 }
 
-inline std::string SGFParser::GetGameRule() const{
+inline const std::string SGFParser::GetGameRule() const{
   return game_rule_;
 }
 
-inline GameEndStatus SGFParser::GetEndStatus() const{
+inline const GameEndStatus SGFParser::GetEndStatus() const{
   return game_end_status_;
 }
 
-inline GameResult SGFParser::GetGameResult() const{
+inline const GameResult SGFParser::GetGameResult() const{
   return game_result_;
 }
 
-inline std::string SGFParser::GetGameRecord() const{
+inline const std::string SGFParser::GetGameRecord() const{
   return game_record_;
 }
 
-inline std::string SGFParser::GetAlternativeMoves() const{
+inline const std::string SGFParser::GetAlternativeMoves() const{
   return alternative_moves_;
 }
 
-inline std::string SGFParser::GetEventName() const{
+inline const std::string SGFParser::GetEventName() const{
   return event_name_;
 }
 }
