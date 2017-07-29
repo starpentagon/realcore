@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <array>
 #include <vector>
+#include <map>
 
 #include "RealCore.h"
 #include "BitBoard.h"
@@ -46,7 +47,7 @@ const bool MakeNonTerminateNormalSequence(const MoveList &original_move_list, Mo
 //! @param transposition_set 置換表
 //! @param modified_move_list 決定済の指し手リスト
 //! @param call_limit 再帰呼出し回数の上限
-const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const MoveBitSet &white_remain, MoveList * const modified_move_list, unsigned int * const call_limit);
+const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const MoveBitSet &white_remain, std::map<std::string, bool> * const result_map, MoveList * const modified_move_list, unsigned int * const call_limit);
 
 //! @brief 盤面管理クラス
 class Board
