@@ -362,14 +362,12 @@ const bool IsNonTerminateNormalSequence(const MoveList &move_list){
 
   for(const auto move : move_list){
     if(!board.IsNormalMove(move)){
-      cerr << MoveString(move) << endl;
       return false;
     }
 
     const bool is_terminate = board.IsTerminateMove(move);
 
     if(is_terminate){
-      cerr << MoveString(move) << endl;
       return false;
     }
 
@@ -405,7 +403,7 @@ const bool MakeNonTerminateNormalSequence(const MoveList &original_move_list, Mo
   }
 
   map<string, bool> result_map;
-  unsigned int call_limit = 1000000;    // VLM問題集での正規化に要した呼び出し回数は最大138回
+  unsigned int call_limit = 500;    // VLM問題集での正規化に要した呼び出し回数は最大138回
   const bool is_modified = MakeNonTerminateNormalSequence(black_remain, white_remain, &result_map, modified_move_list, &call_limit);
 
   cerr << result_map.size() << endl;
