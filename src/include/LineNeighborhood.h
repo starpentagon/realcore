@@ -137,6 +137,8 @@ private:
   //! @brief 空点の結合ビット(combined bit)を取得する
   std::uint64_t GetOpenPositionCombinedBit() const;
 
+  std::string str() const;
+
   //! @brief 直線近傍の状態を保持する
   //! @note local_bit_board_[0]の下位32bit: 横方向(14-15bit目が中心)
   //! @note local_bit_board_[0]の上位32bit: 縦方向(46-47bit目が中心)

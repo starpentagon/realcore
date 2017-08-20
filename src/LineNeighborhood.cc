@@ -454,5 +454,12 @@ void LineNeighborhood::GetOpenMovePosition(MoveList * const move_list) const
   GetMoveList(open_bit, move_list);
 }
 
+string LineNeighborhood::str() const
+{
+  stringstream ss;
+
+  return ss.str();
+}
+
 }   // namesapce realcore
 
