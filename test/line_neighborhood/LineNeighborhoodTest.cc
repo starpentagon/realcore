@@ -372,4 +372,38 @@ TEST_F(LineNeighborhoodTest, GetOpenPositionCombinedBitTest)
 {
   GetOpenPositionCombinedBitTest();
 }
+
+TEST_F(LineNeighborhoodTest, strTest)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . . . . . . . . . . | E 
+  // F | . . . . x . . . . . . . . | F 
+  // G | . . . . . . . . . . . . . | G 
+  // H | . . . . . . x . . . . . . | H 
+  // I | . . . . . . o . . . . . . | I 
+  // J | . . . . . . o . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  constexpr size_t kForbiddenCheckSize = 2;
+  BitBoard bit_board(MoveList("hhhiffhj"));
+  LineNeighborhood line_neighborhood(kMoveHH, kForbiddenCheckSize, bit_board);  
+
+  stringstream ss;
+
+  ss << "Horizn: " << "OOBOO" << endl;
+  ss << "Vertcl: " << "OOBWW" << endl;
+  ss << "L-Down: " << "OOBOO" << endl;
+  ss << "R-Down: " << "BOBOO" << endl;
+  
+  ASSERT_EQ(ss.str(), line_neighborhood.str());
+}
+
 }   // namespace realcore

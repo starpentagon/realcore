@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 
 #include "OpenState.h"
 #include "LineNeighborhood.h"
@@ -457,6 +458,34 @@ void LineNeighborhood::GetOpenMovePosition(MoveList * const move_list) const
 string LineNeighborhood::str() const
 {
   stringstream ss;
+  const auto cross = GetStateBitString(local_bit_board_[0]);
+  const auto saltire = GetStateBitString(local_bit_board_[1]);
+
+  // 空白を除く
+  const auto cross_concat = cross.substr(0, 8) + cross.substr(8 + 1, 8) + cross.substr(16 + 2, 8) + cross.substr(24 + 3, 8);
+  const auto saltire_concat = saltire.substr(0, 8) + saltire.substr(8 + 1, 8) + saltire.substr(16 + 2, 8) + saltire.substr(24 + 3, 8);
+
+  // 左詰めで文字列が生成されるので反転して右詰めにする
+  string cross_flip, saltire_flip;
+
+  for(size_t i=0, size=cross_concat.length(); i<size; i++){
+    cross_flip = cross_concat.at(i) + cross_flip;
+    saltire_flip = saltire_concat.at(i) + saltire_flip;
+  }
+
+  // move_を中心とした文字列を抽出する
+  const size_t start_index = 7 - distance_;
+  const size_t string_number = 2 * distance_ + 1;
+
+  const auto horizontal = cross_flip.substr(0, 16).substr(start_index, string_number);
+  const auto vertical = cross_flip.substr(16).substr(start_index, string_number);
+  const auto left_down = saltire_flip.substr(0, 16).substr(start_index, string_number);
+  const auto right_down = saltire_flip.substr(16).substr(start_index, string_number);
+  
+  ss << "Horizn: " << horizontal << endl;
+  ss << "Vertcl: " << vertical << endl;
+  ss << "L-Down: " << left_down << endl;
+  ss << "R-Down: " << right_down << endl;
 
   return ss.str();
 }

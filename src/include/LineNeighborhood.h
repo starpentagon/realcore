@@ -89,6 +89,10 @@ public:
   //! @brief すべてが空点かどうかをチェックする
   const bool IsAllOpenPosition() const;
 
+  //! @brief LineNeighborhoodの状態を文字列で返す
+  //! @note  形式：Horizn,Vertcl,L-Down,R-Down: [BWOX]+
+  std::string str() const;
+
 private:
   //! @brief local_bit_board配列のindexとbit indexから対応する方向を求める
   const BoardDirection GetBoardDirection(const size_t index, const size_t bit_index) const;
@@ -136,8 +140,6 @@ private:
 
   //! @brief 空点の結合ビット(combined bit)を取得する
   std::uint64_t GetOpenPositionCombinedBit() const;
-
-  std::string str() const;
 
   //! @brief 直線近傍の状態を保持する
   //! @note local_bit_board_[0]の下位32bit: 横方向(14-15bit目が中心)
