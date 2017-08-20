@@ -86,6 +86,11 @@ public:
   template<PlayerTurn P>
   void AddOpenState(const UpdateOpenStateFlag &update_flag, BoardOpenState * const board_open_state) const;
 
+  //! @brief 空点状態を追加する(特定方向版)
+  //! @param board_open_state 空点状態の格納先
+  template<PlayerTurn P>
+  void AddOpenState(const UpdateOpenStateFlag &update_flag, const BoardDirection direction, BoardOpenState * const board_open_state) const;
+
   //! @brief すべてが空点かどうかをチェックする
   const bool IsAllOpenPosition() const;
 
@@ -104,6 +109,9 @@ private:
   //! @param bit_list 位置を求めるbit
   //! @param board_position_list BoardPositionの格納先
   void GetBoardPositionList(const LocalBitBoard &bit_list, std::vector<BoardPosition> * const board_position_list) const;
+
+  template<PlayerTurn P>
+  void AddOpenState(const UpdateOpenStateFlag &update_flag, const std::uint64_t combined_player_stone, const std::uint64_t combined_open_stone, BoardOpenState * const board_open_state) const;
 
   //! @brief 指し手パターンの空点状態を取得する
   template<OpenStatePattern Pattern>

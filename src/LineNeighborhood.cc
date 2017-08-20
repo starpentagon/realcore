@@ -389,34 +389,89 @@ void LineNeighborhood::GetBoardPositionList(const LocalBitBoard &bit_list, std::
 }
 
 template<>
+void LineNeighborhood::AddOpenState<kBlackTurn>(const UpdateOpenStateFlag &update_flag, const std::uint64_t combined_player_stone, const std::uint64_t combined_open_stone, BoardOpenState * const board_open_state) const
+{
+  if(update_flag[kNextOverline]){
+    GetOpenState<kNextOverline>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextOpenFourBlack]){
+    GetOpenState<kNextOpenFourBlack>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextFourBlack]){
+    GetOpenState<kNextFourBlack>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextSemiThreeBlack]){
+    GetOpenState<kNextSemiThreeBlack>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextPointOfSwordBlack]){
+    GetOpenState<kNextPointOfSwordBlack>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextTwoBlack]){
+    GetOpenState<kNextTwoBlack>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+}
+
+template<>
+void LineNeighborhood::AddOpenState<kWhiteTurn>(const UpdateOpenStateFlag &update_flag, const std::uint64_t combined_player_stone, const std::uint64_t combined_open_stone, BoardOpenState * const board_open_state) const
+{
+  if(update_flag[kNextOpenFourWhite]){
+    GetOpenState<kNextOpenFourWhite>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+  
+  if(update_flag[kNextFourWhite]){
+    GetOpenState<kNextFourWhite>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextSemiThreeWhite]){
+    GetOpenState<kNextSemiThreeWhite>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextPointOfSwordWhite]){
+    GetOpenState<kNextPointOfSwordWhite>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextTwoWhite]){
+    GetOpenState<kNextTwoWhite>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+}
+
+template<>
 void LineNeighborhood::AddOpenState<kBlackTurn>(const UpdateOpenStateFlag &update_flag, BoardOpenState * const board_open_state) const
 {
   const auto combined_black_stone = GetPlayerStoneCombinedBit<kBlackTurn>();
   const auto combined_open_stone = GetOpenPositionCombinedBit();
 
-  if(update_flag[kNextOverline]){
-    GetOpenState<kNextOverline>(combined_black_stone, combined_open_stone, board_open_state);
+  AddOpenState<kBlackTurn>(update_flag, combined_black_stone, combined_open_stone, board_open_state);
+}
+
+template<>
+void LineNeighborhood::AddOpenState<kBlackTurn>(const UpdateOpenStateFlag &update_flag, const BoardDirection direction, BoardOpenState * const board_open_state) const
+{
+  uint64_t direction_mask = 0ULL;
+
+  if(direction == kLateralDirection){
+    // 横: 下位32bitの奇数bit
+    direction_mask = kUpperBitMask >> 32ULL;
+  }else if(direction == kVerticalDirection){
+    // 横: 上位32bitの奇数bit
+    direction_mask = (kUpperBitMask >> 32ULL) << 32ULL;
+  }else if(direction == kLeftDiagonalDirection){
+    // 左下斜め: 下位32bitの偶数bit
+    direction_mask = (kUpperBitMask >> 32ULL) << 1;
+  }else{
+    // 右下斜め: 上位32bitの偶数bit
+    direction_mask = ((kUpperBitMask >> 32ULL) << 32ULL) << 1;
   }
 
-  if(update_flag[kNextOpenFourBlack]){
-    GetOpenState<kNextOpenFourBlack>(combined_black_stone, combined_open_stone, board_open_state);
-  }
-
-  if(update_flag[kNextFourBlack]){
-    GetOpenState<kNextFourBlack>(combined_black_stone, combined_open_stone, board_open_state);
-  }
-
-  if(update_flag[kNextSemiThreeBlack]){
-    GetOpenState<kNextSemiThreeBlack>(combined_black_stone, combined_open_stone, board_open_state);
-  }
-
-  if(update_flag[kNextPointOfSwordBlack]){
-    GetOpenState<kNextPointOfSwordBlack>(combined_black_stone, combined_open_stone, board_open_state);
-  }
-
-  if(update_flag[kNextTwoBlack]){
-    GetOpenState<kNextTwoBlack>(combined_black_stone, combined_open_stone, board_open_state);
-  }
+  const auto combined_black_stone = GetPlayerStoneCombinedBit<kBlackTurn>() & direction_mask;
+  const auto combined_open_stone = GetOpenPositionCombinedBit() & direction_mask;
+  
+  AddOpenState<kBlackTurn>(update_flag, combined_black_stone, combined_open_stone, board_open_state);
 }
 
 template<>
@@ -425,25 +480,32 @@ void LineNeighborhood::AddOpenState<kWhiteTurn>(const UpdateOpenStateFlag &updat
   const auto combined_white_stone = GetPlayerStoneCombinedBit<kWhiteTurn>();
   const auto combined_open_stone = GetOpenPositionCombinedBit();
 
-  if(update_flag[kNextOpenFourWhite]){
-    GetOpenState<kNextOpenFourWhite>(combined_white_stone, combined_open_stone, board_open_state);
-  }
-  
-  if(update_flag[kNextFourWhite]){
-    GetOpenState<kNextFourWhite>(combined_white_stone, combined_open_stone, board_open_state);
+  AddOpenState<kWhiteTurn>(update_flag, combined_white_stone, combined_open_stone, board_open_state);
+}
+
+template<>
+void LineNeighborhood::AddOpenState<kWhiteTurn>(const UpdateOpenStateFlag &update_flag, const BoardDirection direction, BoardOpenState * const board_open_state) const
+{
+  uint64_t direction_mask = 0ULL;
+
+  if(direction == kLateralDirection){
+    // 横: 下位32bitの奇数bit
+    direction_mask = kUpperBitMask >> 32ULL;
+  }else if(direction == kVerticalDirection){
+    // 横: 上位32bitの奇数bit
+    direction_mask = (kUpperBitMask >> 32ULL) << 32ULL;
+  }else if(direction == kLeftDiagonalDirection){
+    // 左下斜め: 下位32bitの偶数bit
+    direction_mask = (kUpperBitMask >> 32ULL) << 1;
+  }else{
+    // 右下斜め: 上位32bitの偶数bit
+    direction_mask = ((kUpperBitMask >> 32ULL) << 32ULL) << 1;
   }
 
-  if(update_flag[kNextSemiThreeWhite]){
-    GetOpenState<kNextSemiThreeWhite>(combined_white_stone, combined_open_stone, board_open_state);
-  }
+  const auto combined_white_stone = GetPlayerStoneCombinedBit<kWhiteTurn>();
+  const auto combined_open_stone = GetOpenPositionCombinedBit();
 
-  if(update_flag[kNextPointOfSwordWhite]){
-    GetOpenState<kNextPointOfSwordWhite>(combined_white_stone, combined_open_stone, board_open_state);
-  }
-
-  if(update_flag[kNextTwoWhite]){
-    GetOpenState<kNextTwoWhite>(combined_white_stone, combined_open_stone, board_open_state);
-  }
+  AddOpenState<kWhiteTurn>(update_flag, combined_white_stone, combined_open_stone, board_open_state);
 }
 
 void LineNeighborhood::GetOpenMovePosition(MoveList * const move_list) const
