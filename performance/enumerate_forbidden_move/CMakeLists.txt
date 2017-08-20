@@ -28,6 +28,7 @@ link_directories($ENV{BOOST_DIR}/lib)
 add_executable(
     ${project_name}
     $ENV{REALCORE_DIR}/src/CSVReader.cc
+    $ENV{REALCORE_DIR}/src/Move.cc
     $ENV{REALCORE_DIR}/src/MoveList.cc
     $ENV{REALCORE_DIR}/src/LineNeighborhood.cc
     $ENV{REALCORE_DIR}/src/OpenState.cc
