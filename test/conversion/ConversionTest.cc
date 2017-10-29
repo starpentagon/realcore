@@ -360,3 +360,59 @@ TEST(ConversionTest, IsInBoardTest)
   ASSERT_TRUE(IsInBoard(1022));
 }
   
+TEST(ConversionTest, BoardBoundaryTest)
+{
+  // BoardPositionの境界テスト
+  {
+    // 横方向
+    constexpr BoardDirection direction = kLateralDirection;
+    constexpr MovePosition move_lb = kMoveAA;
+    const auto check_lb = GetBoardPosition(move_lb, direction) - 1;
+
+    ASSERT_TRUE(!IsInBoard(check_lb));
+
+    constexpr MovePosition move_ub = kMoveOO;
+    const auto check_ub = GetBoardPosition(move_ub, direction) + 1;
+
+    ASSERT_TRUE(!IsInBoard(check_ub));
+  }
+  {
+    // 縦方向
+    constexpr BoardDirection direction = kVerticalDirection;
+    constexpr MovePosition move_lb = kMoveAA;
+    const auto check_lb = GetBoardPosition(move_lb, direction) - 1;
+
+    ASSERT_TRUE(!IsInBoard(check_lb));
+
+    constexpr MovePosition move_ub = kMoveOO;
+    const auto check_ub = GetBoardPosition(move_ub, direction) + 1;
+
+    ASSERT_TRUE(!IsInBoard(check_ub));
+  }
+  {
+    // 左斜め方向
+    constexpr BoardDirection direction = kLeftDiagonalDirection;
+    constexpr MovePosition move_lb = kMoveAA;
+    const auto check_lb = GetBoardPosition(move_lb, direction) - 1;
+
+    ASSERT_TRUE(!IsInBoard(check_lb));
+
+    constexpr MovePosition move_ub = kMoveBO;
+    const auto check_ub = GetBoardPosition(move_ub, direction) + 1;
+
+    ASSERT_TRUE(!IsInBoard(check_ub));
+  }
+  {
+    // 右斜め方向
+    constexpr BoardDirection direction = kRightDiagonalDirection;
+    constexpr MovePosition move_lb = kMoveAO;
+    const auto check_lb = GetBoardPosition(move_lb, direction) - 1;
+
+    ASSERT_TRUE(!IsInBoard(check_lb));
+
+    constexpr MovePosition move_ub = kMoveNO;
+    const auto check_ub = GetBoardPosition(move_ub, direction) + 1;
+
+    ASSERT_TRUE(!IsInBoard(check_ub));
+  }
+}

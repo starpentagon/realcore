@@ -4,7 +4,9 @@
 #include <cassert>
 #include <array>
 #include <algorithm>
+#include <iostream>
 
+#include "Conversion.h"
 #include "Move.h"
 
 namespace realcore
@@ -189,6 +191,42 @@ inline void DescendingSort(std::vector<MoveValue> * const move_value_list)
   stable_sort(move_value_list->begin(), move_value_list->end(), 
     [](const MoveValue &data1, const MoveValue &data2){return data1.second > data2.second;});
 }
+
+inline void GetLineNeighborhoodBit(const MovePosition move, const size_t length, MoveBitSet * const move_bit)
+{
+  assert(move_bit != nullptr);
+  assert(move_bit->none());
+
+  move_bit->set(move);
+
+  for(const auto direction : GetBoardDirection()){
+    const auto move_board_position = GetBoardPosition(move, direction);
+
+    for(int i=1; i<=length; i++){
+      const BoardPosition board_position = move_board_position + i;
+      const auto neighbor_move = GetBoardMove(board_position);
+      
+      if(!IsInBoardMove(neighbor_move)){
+        break;
+      }
+      std::cerr << MoveString(neighbor_move) << std::endl;
+      move_bit->set(neighbor_move);
+    }
+
+    for(int i=1; i<=length; i++){
+      const BoardPosition board_position = move_board_position - i;
+      const auto neighbor_move = GetBoardMove(board_position);
+      
+      if(!IsInBoardMove(neighbor_move)){
+        break;
+      }
+
+      std::cerr << MoveString(neighbor_move) << std::endl;
+      move_bit->set(neighbor_move);
+    }
+  }
+}
+
 }   // realcore
 
 #endif    // MOVE_INL_H

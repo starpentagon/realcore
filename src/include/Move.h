@@ -112,6 +112,13 @@ void AscendingSort(std::vector<MoveValue> * const move_value_list);
 
 //! @brief MoveValue型のリストを降順ソートする
 void DescendingSort(std::vector<MoveValue> * const move_value_list);
+
+//! @brief 指し手位置の直線近傍マスクを生成する
+//! @param move 指し手位置
+//! @param length 直線近傍の長さ
+//! @param move_bit マスクの格納先
+void GetLineNeighborhoodBit(const MovePosition move, const size_t length, MoveBitSet * const move_bit);
+
 }   // namespace　realcore
 
 #include "Move-inl.h"
