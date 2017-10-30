@@ -209,7 +209,7 @@ inline void GetLineNeighborhoodBit(const MovePosition move, const size_t length,
       if(!IsInBoardMove(neighbor_move)){
         break;
       }
-      std::cerr << MoveString(neighbor_move) << std::endl;
+
       move_bit->set(neighbor_move);
     }
 
@@ -221,7 +221,6 @@ inline void GetLineNeighborhoodBit(const MovePosition move, const size_t length,
         break;
       }
 
-      std::cerr << MoveString(neighbor_move) << std::endl;
       move_bit->set(neighbor_move);
     }
   }

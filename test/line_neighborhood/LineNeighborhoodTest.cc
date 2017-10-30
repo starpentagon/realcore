@@ -166,7 +166,7 @@ public:
     ASSERT_EQ(4, board_position_list.size());
 
     ASSERT_EQ(129, board_position_list[0]);
-    ASSERT_EQ(386, board_position_list[1]);
+    ASSERT_EQ(385, board_position_list[1]);
     ASSERT_EQ(737, board_position_list[2]);
     ASSERT_EQ(994, board_position_list[3]);
   }
@@ -198,7 +198,7 @@ public:
     auto find_it = find(board_position_list.begin(), board_position_list.end(), 129);
     ASSERT_TRUE(find_it != board_position_list.end());
 
-    find_it = find(board_position_list.begin(), board_position_list.end(), 386);
+    find_it = find(board_position_list.begin(), board_position_list.end(), 385);
     ASSERT_TRUE(find_it != board_position_list.end());    
     
     find_it = find(board_position_list.begin(), board_position_list.end(), 737);

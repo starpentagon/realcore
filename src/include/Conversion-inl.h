@@ -162,7 +162,7 @@ inline const void GetBoardCordinate(const BoardPosition board_position, Cordinat
     *y = board_position / 16;
   }else if(board_direction == kVerticalDirection){
     *x = (board_position - 256) / 16;
-    *y = (board_position - 256) % 16 + 1;
+    *y = (board_position - 255) % 16;
   }else if(board_direction == kLeftDiagonalDirection){
     *y = (board_position - 512 + 1) % 16;
     *x = ((board_position - 512) / 16 - *y + 18) % 16;

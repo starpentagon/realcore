@@ -326,7 +326,7 @@ TEST_F(OpenStateTest, IsInfluenceMove)
   }
   {
     // kNextOpenFourBlack
-    constexpr BoardPosition board_position = 274;    // x = 1, y = 2
+    constexpr BoardPosition board_position = 273;    // x = 1, y = 2
     OpenState open_state(kNextOpenFourBlack, open_position, board_position, pattern_search_index);
 
     for(const auto move : in_board_move_list){
@@ -342,7 +342,7 @@ TEST_F(OpenStateTest, IsInfluenceMove)
   }
   {
     // kNextOpenFourWhite
-    constexpr BoardPosition board_position = 274;    // x = 1, y = 2
+    constexpr BoardPosition board_position = 273;    // x = 1, y = 2
     OpenState open_state(kNextOpenFourWhite, open_position, board_position, pattern_search_index);
 
     for(const auto move : in_board_move_list){
