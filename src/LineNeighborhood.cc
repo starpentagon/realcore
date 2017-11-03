@@ -502,7 +502,7 @@ void LineNeighborhood::AddOpenState<kWhiteTurn>(const UpdateOpenStateFlag &updat
     direction_mask = ((kUpperBitMask >> 32ULL) << 32ULL) << 1;
   }
 
-  const auto combined_white_stone = GetPlayerStoneCombinedBit<kWhiteTurn>();
+  const auto combined_white_stone = GetPlayerStoneCombinedBit<kWhiteTurn>() & direction_mask;
   const auto combined_open_stone = GetOpenPositionCombinedBit();
 
   AddOpenState<kWhiteTurn>(update_flag, combined_white_stone, combined_open_stone, board_open_state);
