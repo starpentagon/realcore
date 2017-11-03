@@ -202,7 +202,7 @@ inline void GetLineNeighborhoodBit(const MovePosition move, const size_t length,
   for(const auto direction : GetBoardDirection()){
     const auto move_board_position = GetBoardPosition(move, direction);
 
-    for(int i=1; i<=length; i++){
+    for(size_t i=1; i<=length; i++){
       const BoardPosition board_position = move_board_position + i;
       const auto neighbor_move = GetBoardMove(board_position);
       
@@ -213,7 +213,7 @@ inline void GetLineNeighborhoodBit(const MovePosition move, const size_t length,
       move_bit->set(neighbor_move);
     }
 
-    for(int i=1; i<=length; i++){
+    for(size_t i=1; i<=length; i++){
       const BoardPosition board_position = move_board_position - i;
       const auto neighbor_move = GetBoardMove(board_position);
       
