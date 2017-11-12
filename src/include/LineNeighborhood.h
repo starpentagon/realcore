@@ -94,6 +94,9 @@ public:
   //! @brief すべてが空点かどうかをチェックする
   const bool IsAllOpenPosition() const;
 
+  //! @brief LocalBitBoardを取得する
+  void GetLocalBitBoard(LocalBitBoard * const local_bit_board) const;
+
   //! @brief LineNeighborhoodの状態を文字列で返す
   //! @note  形式：Horizn,Vertcl,L-Down,R-Down: [BWOX]+
   std::string str() const;

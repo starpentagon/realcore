@@ -265,6 +265,12 @@ inline const bool LineNeighborhood::IsAllOpenPosition() const
   return (black_bit == 0) && (white_bit == 0);
 }
 
+inline void LineNeighborhood::GetLocalBitBoard(LocalBitBoard * const local_bit_board) const
+{
+  assert(local_bit_board != nullptr);
+  *local_bit_board = local_bit_board_;
+}
+
 
 }   // namespace realcore
 

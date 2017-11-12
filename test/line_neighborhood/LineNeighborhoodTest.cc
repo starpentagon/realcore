@@ -207,6 +207,20 @@ public:
     find_it = find(board_position_list.begin(), board_position_list.end(), 994);
     ASSERT_TRUE(find_it != board_position_list.end());    
   }
+
+  void GetLocalBitBoardTest(){
+    MoveList board_list("hhigiigg");
+    BitBoard bit_board(board_list);
+    constexpr size_t distance = 3;
+
+    LineNeighborhood line_neighborhood(kMoveHH, distance, bit_board);
+    LocalBitBoard local_bit_board{{0}};
+
+    line_neighborhood.GetLocalBitBoard(&local_bit_board);
+
+    ASSERT_EQ(local_bit_board[0], line_neighborhood.local_bit_board_[0]);
+    ASSERT_EQ(local_bit_board[1], line_neighborhood.local_bit_board_[1]);
+  }
 };
 
 TEST_F(LineNeighborhoodTest, ForbiddenCheckTest)
@@ -404,6 +418,11 @@ TEST_F(LineNeighborhoodTest, strTest)
   ss << "R-Down: " << "BOBOO" << endl;
   
   ASSERT_EQ(ss.str(), line_neighborhood.str());
+}
+
+TEST_F(LineNeighborhoodTest, GetLocalBitBoardTest)
+{
+  GetLocalBitBoardTest();
 }
 
 }   // namespace realcore
