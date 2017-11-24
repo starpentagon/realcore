@@ -146,6 +146,10 @@ public:
   template<PlayerTurn P>
   const bool IsForbiddenMove(const MovePosition move, MoveBitSet * const downward_influence_area, MoveBitSet * const black_upward_influence_area, MoveBitSet * const white_upward_influence_area) const;
 
+  //! @brief 盤面に五連以上の石が存在するかチェックする
+  template<PlayerTurn P>
+  const bool IsFiveStones() const;
+
   //! @brief 禁点を列挙する
   //! @param 禁点の格納先
   void EnumerateForbiddenMoves(const BoardOpenState &board_open_state, MoveBitSet * const forbidden_move_set) const;

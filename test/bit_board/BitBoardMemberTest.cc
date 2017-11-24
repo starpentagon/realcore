@@ -1753,4 +1753,50 @@ TEST_F(BitBoardTest, GetWhiteMakeForbiddenGuardTest)
 {
   GetWhiteMakeForbiddenGuardTest();
 }
+
+TEST_F(BitBoardTest, IsFiveStonesTest)
+{
+  {
+    // 正例： 黒(五連)
+    MoveList move_list("hhihhgighfhiheifhd");
+    BitBoard bit_board(move_list);
+
+    ASSERT_TRUE(bit_board.IsFiveStones<kBlackTurn>());
+  }
+  {
+    // 正例： 黒(長連)
+    MoveList move_list("hhihhgighfhiheifhciihd");
+    BitBoard bit_board(move_list);
+
+    ASSERT_TRUE(bit_board.IsFiveStones<kBlackTurn>());
+  }
+  {
+    // 正例： 白(五連)
+    MoveList move_list("hhihhgighfhiheifieiigiij");
+    BitBoard bit_board(move_list);
+
+    ASSERT_TRUE(bit_board.IsFiveStones<kWhiteTurn>());
+  }
+  {
+    // 正例： 白(長連)
+    MoveList move_list("hhihhgighfhiheifieiigiikfjij");
+    BitBoard bit_board(move_list);
+
+    ASSERT_TRUE(bit_board.IsFiveStones<kWhiteTurn>());
+  }
+  {
+    // 負例: 黒
+    MoveList move_list("hhihhgighfhiheifieiigi");
+    BitBoard bit_board(move_list);
+
+    ASSERT_FALSE(bit_board.IsFiveStones<kBlackTurn>());
+  }
+  {
+    // 負例: 白
+    MoveList move_list("hhihhgighfhiheifieiigi");
+    BitBoard bit_board(move_list);
+
+    ASSERT_FALSE(bit_board.IsFiveStones<kWhiteTurn>());
+  }
+}
 }

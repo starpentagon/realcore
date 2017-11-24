@@ -592,6 +592,23 @@ void BitBoard::EnumerateMiseMoves(const BoardOpenState &board_open_state, MoveBi
   }
 }
 
+template<PlayerTurn P>
+inline const bool BitBoard::IsFiveStones() const
+{
+  static constexpr size_t kFiveStones = 5;
+
+  for(const auto state_bit : bit_board_){
+    const auto stone_bit = GetPlayerStoneBit<P>(state_bit);
+    const auto search_bit = GetConsectiveStoneBit<kFiveStones>(stone_bit);
+    
+    if(search_bit != 0){
+      return true;
+    }
+  }
+
+  return false;
+}
+
 }
 
 #endif    // BIT_BOARD_INL_H
