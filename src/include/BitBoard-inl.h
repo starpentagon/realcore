@@ -610,7 +610,17 @@ inline const bool BitBoard::IsFiveStones() const
 }
 
 template<PlayerTurn P>
-inline const bool BitBoard::IsSixStones() const
+inline const bool BitBoard::IsFiveStones(const MovePosition move) const
+{
+  static constexpr PositionState S = GetPlayerStone(P);
+  LineNeighborhood line_neighbor(move, kOpenStateNeighborhoodSize, *this);
+  line_neighbor.SetCenterState<S>();
+
+  return line_neighbor.IsFive<P>();
+}
+
+template<PlayerTurn P>
+inline const bool BitBoard::IsOverline() const
 {
   static constexpr size_t kSixStones = 6;
 
@@ -624,6 +634,16 @@ inline const bool BitBoard::IsSixStones() const
   }
 
   return false;
+}
+
+template<PlayerTurn P>
+inline const bool BitBoard::IsOverline(const MovePosition move) const
+{
+  static constexpr PositionState S = GetPlayerStone(P);
+  LineNeighborhood line_neighbor(move, kOpenStateNeighborhoodSize, *this);
+  line_neighbor.SetCenterState<S>();
+
+  return line_neighbor.IsOverline<P>();
 }
 
 }

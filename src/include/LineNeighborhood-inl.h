@@ -40,10 +40,23 @@ inline const BoardDirection LineNeighborhood::GetBoardDirection(const size_t ind
   return board_direction_list[direction_index];
 }
 
+template<PlayerTurn P>
 inline const bool LineNeighborhood::IsOverline() const
 {
-  const auto combined_black_bit = GetPlayerStoneCombinedBit<kBlackTurn>();
+  const auto combined_black_bit = GetPlayerStoneCombinedBit<P>();
   return realcore::IsOverline(combined_black_bit);
+}
+
+template<PlayerTurn P>
+inline const bool LineNeighborhood::IsFive() const
+{
+  const auto combined_stone_bit = GetPlayerStoneCombinedBit<P>();
+
+  constexpr size_t kFiveStone = 5;
+  const std::uint64_t five_bit = GetConsectiveStoneBit<kFiveStone>(combined_stone_bit);
+  const bool is_five = five_bit != 0;
+  
+  return is_five;
 }
 
 template<PlayerTurn P>

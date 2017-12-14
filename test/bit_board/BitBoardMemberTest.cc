@@ -1754,7 +1754,7 @@ TEST_F(BitBoardTest, GetWhiteMakeForbiddenGuardTest)
   GetWhiteMakeForbiddenGuardTest();
 }
 
-TEST_F(BitBoardTest, IsFiveStonesTest)
+TEST_F(BitBoardTest, IsFiveStonesBoardTest)
 {
   {
     // 正例： 黒(五連)
@@ -1800,49 +1800,141 @@ TEST_F(BitBoardTest, IsFiveStonesTest)
   }
 }
 
-TEST_F(BitBoardTest, IsSixStonesTest)
+TEST_F(BitBoardTest, IsFiveStonesMoveTest)
+{
+  {
+    // 正例： 黒(五連)
+    MoveList move_list("hhihhgighfhiheif");
+    BitBoard bit_board(move_list);
+
+    ASSERT_TRUE(bit_board.IsFiveStones<kBlackTurn>(kMoveHD));
+  }
+  {
+    // 正例： 黒(長連)
+    MoveList move_list("hhihhgighfhiheifhcii");
+    BitBoard bit_board(move_list);
+
+    ASSERT_TRUE(bit_board.IsFiveStones<kBlackTurn>(kMoveHD));
+  }
+  {
+    // 正例： 白(五連)
+    MoveList move_list("hhihhgighfhiheifieiigi");
+    BitBoard bit_board(move_list);
+
+    ASSERT_TRUE(bit_board.IsFiveStones<kWhiteTurn>(kMoveIJ));
+  }
+  {
+    // 正例： 白(長連)
+    MoveList move_list("hhihhgighfhiheifieiigiikfj");
+    BitBoard bit_board(move_list);
+
+    ASSERT_TRUE(bit_board.IsFiveStones<kWhiteTurn>(kMoveIJ));
+  }
+  {
+    // 負例: 黒
+    MoveList move_list("hhihhgighfhiheifieii");
+    BitBoard bit_board(move_list);
+
+    ASSERT_FALSE(bit_board.IsFiveStones<kBlackTurn>(kMoveGI));
+  }
+  {
+    // 負例: 白
+    MoveList move_list("hhihhgighfhiheifieii");
+    BitBoard bit_board(move_list);
+
+    ASSERT_FALSE(bit_board.IsFiveStones<kWhiteTurn>(kMoveGI));
+  }
+}
+
+TEST_F(BitBoardTest, IsOverlineBoardTest)
 {
   {
     // 負例： 黒(五連)
     MoveList move_list("hhihhgighfhiheifhd");
     BitBoard bit_board(move_list);
 
-    ASSERT_FALSE(bit_board.IsSixStones<kBlackTurn>());
+    ASSERT_FALSE(bit_board.IsOverline<kBlackTurn>());
   }
   {
     // 正例： 黒(長連)
     MoveList move_list("hhihhgighfhiheifhciihd");
     BitBoard bit_board(move_list);
 
-    ASSERT_TRUE(bit_board.IsSixStones<kBlackTurn>());
+    ASSERT_TRUE(bit_board.IsOverline<kBlackTurn>());
   }
   {
     // 負例： 白(五連)
     MoveList move_list("hhihhgighfhiheifieiigiij");
     BitBoard bit_board(move_list);
 
-    ASSERT_FALSE(bit_board.IsSixStones<kWhiteTurn>());
+    ASSERT_FALSE(bit_board.IsOverline<kWhiteTurn>());
   }
   {
     // 正例： 白(長連)
     MoveList move_list("hhihhgighfhiheifieiigiikfjij");
     BitBoard bit_board(move_list);
 
-    ASSERT_TRUE(bit_board.IsSixStones<kWhiteTurn>());
+    ASSERT_TRUE(bit_board.IsOverline<kWhiteTurn>());
   }
   {
     // 負例: 黒
     MoveList move_list("hhihhgighfhiheifieiigi");
     BitBoard bit_board(move_list);
 
-    ASSERT_FALSE(bit_board.IsSixStones<kBlackTurn>());
+    ASSERT_FALSE(bit_board.IsOverline<kBlackTurn>());
   }
   {
     // 負例: 白
     MoveList move_list("hhihhgighfhiheifieiigi");
     BitBoard bit_board(move_list);
 
-    ASSERT_FALSE(bit_board.IsSixStones<kWhiteTurn>());
+    ASSERT_FALSE(bit_board.IsOverline<kWhiteTurn>());
+  }
+}
+
+TEST_F(BitBoardTest, IsOverlineMoveTest)
+{
+  {
+    // 負例： 黒(五連)
+    MoveList move_list("hhihhgighfhiheif");
+    BitBoard bit_board(move_list);
+
+    ASSERT_FALSE(bit_board.IsOverline<kBlackTurn>(kMoveHD));
+  }
+  {
+    // 正例： 黒(長連)
+    MoveList move_list("hhihhgighfhiheifhcii");
+    BitBoard bit_board(move_list);
+
+    ASSERT_TRUE(bit_board.IsOverline<kBlackTurn>(kMoveHD));
+  }
+  {
+    // 負例： 白(五連)
+    MoveList move_list("hhihhgighfhiheifieiigi");
+    BitBoard bit_board(move_list);
+
+    ASSERT_FALSE(bit_board.IsOverline<kWhiteTurn>(kMoveIJ));
+  }
+  {
+    // 正例： 白(長連)
+    MoveList move_list("hhihhgighfhiheifieiigiikfj");
+    BitBoard bit_board(move_list);
+
+    ASSERT_TRUE(bit_board.IsOverline<kWhiteTurn>(kMoveIJ));
+  }
+  {
+    // 負例: 黒
+    MoveList move_list("hhihhgighfhiheifieii");
+    BitBoard bit_board(move_list);
+
+    ASSERT_FALSE(bit_board.IsOverline<kBlackTurn>(kMoveGI));
+  }
+  {
+    // 負例: 白
+    MoveList move_list("hhihhgighfhiheifieii");
+    BitBoard bit_board(move_list);
+
+    ASSERT_FALSE(bit_board.IsOverline<kWhiteTurn>(kMoveGI));
   }
 }
 }

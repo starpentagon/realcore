@@ -44,7 +44,12 @@ public:
   void SetCenterState();
 
   //! @brief moveが長連を作る手かチェックする
+  template<PlayerTurn P>
   const bool IsOverline() const;
+
+  //! @brief moveが五連以上を作る手かチェックする
+  template<PlayerTurn P>
+  const bool IsFive() const;
 
   //! @brief moveが達四を作る手かチェックする
   //! @retval true 達四ができている

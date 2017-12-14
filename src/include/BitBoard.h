@@ -150,9 +150,17 @@ public:
   template<PlayerTurn P>
   const bool IsFiveStones() const;
 
+  //! @brief 指し手moveにより五連以上が存在するかチェックする
+  template<PlayerTurn P>
+  const bool IsFiveStones(const MovePosition move) const;
+
   //! @brief 盤面に六連以上の石が存在するかチェックする
   template<PlayerTurn P>
-  const bool IsSixStones() const;
+  const bool IsOverline() const;
+
+  //! @brief 指し手moveにより六連以上の石が存在するかチェックする
+  template<PlayerTurn P>
+  const bool IsOverline(const MovePosition move) const;
 
   //! @brief 禁点を列挙する
   //! @param 禁点の格納先
