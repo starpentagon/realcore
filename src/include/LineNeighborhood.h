@@ -43,6 +43,9 @@ public:
   template<PositionState S>
   void SetCenterState();
 
+  //! @brief moveが長連を作る手かチェックする
+  const bool IsOverline() const;
+
   //! @brief moveが達四を作る手かチェックする
   //! @retval true 達四ができている
   template<PlayerTurn P>

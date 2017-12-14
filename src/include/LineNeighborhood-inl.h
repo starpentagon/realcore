@@ -40,6 +40,12 @@ inline const BoardDirection LineNeighborhood::GetBoardDirection(const size_t ind
   return board_direction_list[direction_index];
 }
 
+inline const bool LineNeighborhood::IsOverline() const
+{
+  const auto combined_black_bit = GetPlayerStoneCombinedBit<kBlackTurn>();
+  return realcore::IsOverline(combined_black_bit);
+}
+
 template<PlayerTurn P>
 const bool LineNeighborhood::IsOpenFour() const
 {

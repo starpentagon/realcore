@@ -59,7 +59,7 @@ const ForbiddenCheckState LineNeighborhood::ForbiddenCheck(std::vector<BoardPosi
   const auto combined_open_bit = GetOpenPositionCombinedBit();
 
   // 長連
-  if(IsOverline(combined_black_bit)){
+  if(realcore::IsOverline(combined_black_bit)){
     if(downward_influence_area != nullptr){
       downward_influence_area->set(move_);
     }
