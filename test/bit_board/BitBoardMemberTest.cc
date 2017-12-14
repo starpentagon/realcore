@@ -1799,4 +1799,50 @@ TEST_F(BitBoardTest, IsFiveStonesTest)
     ASSERT_FALSE(bit_board.IsFiveStones<kWhiteTurn>());
   }
 }
+
+TEST_F(BitBoardTest, IsSixStonesTest)
+{
+  {
+    // 負例： 黒(五連)
+    MoveList move_list("hhihhgighfhiheifhd");
+    BitBoard bit_board(move_list);
+
+    ASSERT_FALSE(bit_board.IsSixStones<kBlackTurn>());
+  }
+  {
+    // 正例： 黒(長連)
+    MoveList move_list("hhihhgighfhiheifhciihd");
+    BitBoard bit_board(move_list);
+
+    ASSERT_TRUE(bit_board.IsSixStones<kBlackTurn>());
+  }
+  {
+    // 負例： 白(五連)
+    MoveList move_list("hhihhgighfhiheifieiigiij");
+    BitBoard bit_board(move_list);
+
+    ASSERT_FALSE(bit_board.IsSixStones<kWhiteTurn>());
+  }
+  {
+    // 正例： 白(長連)
+    MoveList move_list("hhihhgighfhiheifieiigiikfjij");
+    BitBoard bit_board(move_list);
+
+    ASSERT_TRUE(bit_board.IsSixStones<kWhiteTurn>());
+  }
+  {
+    // 負例: 黒
+    MoveList move_list("hhihhgighfhiheifieiigi");
+    BitBoard bit_board(move_list);
+
+    ASSERT_FALSE(bit_board.IsSixStones<kBlackTurn>());
+  }
+  {
+    // 負例: 白
+    MoveList move_list("hhihhgighfhiheifieiigi");
+    BitBoard bit_board(move_list);
+
+    ASSERT_FALSE(bit_board.IsSixStones<kWhiteTurn>());
+  }
+}
 }

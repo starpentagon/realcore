@@ -150,6 +150,10 @@ public:
   template<PlayerTurn P>
   const bool IsFiveStones() const;
 
+  //! @brief 盤面に六連以上の石が存在するかチェックする
+  template<PlayerTurn P>
+  const bool IsSixStones() const;
+
   //! @brief 禁点を列挙する
   //! @param 禁点の格納先
   void EnumerateForbiddenMoves(const BoardOpenState &board_open_state, MoveBitSet * const forbidden_move_set) const;

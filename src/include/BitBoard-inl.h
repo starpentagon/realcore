@@ -609,6 +609,23 @@ inline const bool BitBoard::IsFiveStones() const
   return false;
 }
 
+template<PlayerTurn P>
+inline const bool BitBoard::IsSixStones() const
+{
+  static constexpr size_t kSixStones = 6;
+
+  for(const auto state_bit : bit_board_){
+    const auto stone_bit = GetPlayerStoneBit<P>(state_bit);
+    const auto search_bit = GetConsectiveStoneBit<kSixStones>(stone_bit);
+    
+    if(search_bit != 0){
+      return true;
+    }
+  }
+
+  return false;
+}
+
 }
 
 #endif    // BIT_BOARD_INL_H
