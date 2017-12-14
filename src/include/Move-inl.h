@@ -192,17 +192,24 @@ inline void DescendingSort(std::vector<MoveValue> * const move_value_list)
     [](const MoveValue &data1, const MoveValue &data2){return data1.second > data2.second;});
 }
 
-inline void GetLineNeighborhoodBit(const MovePosition move, const size_t length, MoveBitSet * const move_bit)
+template<size_t L>
+inline const MoveBitSet& GetLineNeighborhoodBit(const MovePosition move)
 {
-  assert(move_bit != nullptr);
-  assert(move_bit->none());
+  static std::bitset<kMoveNum> generated_flag;
+  static std::array<MoveBitSet, kMoveNum> line_neighborhood_bit;
+  
+  if(generated_flag[move]){
+    return line_neighborhood_bit[move];
+  }
 
-  move_bit->set(move);
+  MoveBitSet &move_bit_set = line_neighborhood_bit[move];
+
+  move_bit_set.set(move);
 
   for(const auto direction : GetBoardDirection()){
     const auto move_board_position = GetBoardPosition(move, direction);
 
-    for(size_t i=1; i<=length; i++){
+    for(size_t i=1; i<=L; i++){
       const BoardPosition board_position = move_board_position + i;
       const auto neighbor_move = GetBoardMove(board_position);
       
@@ -210,10 +217,10 @@ inline void GetLineNeighborhoodBit(const MovePosition move, const size_t length,
         break;
       }
 
-      move_bit->set(neighbor_move);
+      move_bit_set.set(neighbor_move);
     }
 
-    for(size_t i=1; i<=length; i++){
+    for(size_t i=1; i<=L; i++){
       const BoardPosition board_position = move_board_position - i;
       const auto neighbor_move = GetBoardMove(board_position);
       
@@ -221,11 +228,13 @@ inline void GetLineNeighborhoodBit(const MovePosition move, const size_t length,
         break;
       }
 
-      move_bit->set(neighbor_move);
+      move_bit_set.set(neighbor_move);
     }
   }
-}
 
+  generated_flag.set(move);
+  return line_neighborhood_bit[move];
+}
 }   // realcore
 
 #endif    // MOVE_INL_H

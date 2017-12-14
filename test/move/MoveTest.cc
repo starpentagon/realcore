@@ -308,8 +308,7 @@ TEST(MoveTest, DescendingSortTest)
 TEST(MoveTest, GetLineNeighborhoodBitTest)
 {
   {
-    MoveBitSet move_bit;
-    GetLineNeighborhoodBit(kMoveHH, 1, &move_bit);
+    const MoveBitSet &move_bit = GetLineNeighborhoodBit<1>(kMoveHH);
 
     ASSERT_EQ(9, move_bit.count());
 
@@ -324,8 +323,7 @@ TEST(MoveTest, GetLineNeighborhoodBitTest)
     ASSERT_TRUE(move_bit[kMoveII]);
   }
   {
-    MoveBitSet move_bit;
-    GetLineNeighborhoodBit(kMoveAA, 1, &move_bit);
+    const MoveBitSet &move_bit = GetLineNeighborhoodBit<1>(kMoveAA);
 
     ASSERT_EQ(4, move_bit.count());
 
