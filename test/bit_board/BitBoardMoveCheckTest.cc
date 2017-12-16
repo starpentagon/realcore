@@ -598,6 +598,382 @@ TEST_F(BitBoardTest, IsDoubleFourMoveTest)
   }
 }
 
+TEST_F(BitBoardTest, IsDoubleSemiThreeMoveBlackTest)
+{
+  const auto in_board_move_list = GetAllInBoardMove();
+  
+  {
+    // 三々(黒番)
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . o o o . . . . . . | G 
+    // H | . . . . . o x . x . . . . | H 
+    // I | . . . . . x . . . x . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhhggiggjhghkifg"));
+
+    for(const auto move : in_board_move_list){
+      if(bit_board.GetState(move) != kOpenPosition){
+        continue;
+      }
+      
+      if(move == kMoveIG){
+        EXPECT_TRUE(bit_board.IsDoubleSemiThreeMove<kBlackTurn>(move));
+      }else{
+        EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kBlackTurn>(move));
+      }
+
+      EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kWhiteTurn>(move));
+    }
+  }
+  {
+    // 三々
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . o . . . o . . . o . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . x . . | F 
+    // G | . . . . . . . . . x . . . | G 
+    // H | . . . . . x x . . . . . . | H 
+    // I | . . . . . . . . x . . . . | I 
+    // J | . . . . . . . . x . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . o . . . o . . . o . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O   
+    BitBoard bit_board(MoveList("hhhdlfldjjddkgllghdljihl"));
+
+    for(const auto move : in_board_move_list){
+      if(bit_board.GetState(move) != kOpenPosition){
+        continue;
+      }
+      
+      if(move == kMoveJH || move == kMoveII){
+        EXPECT_TRUE(bit_board.IsDoubleSemiThreeMove<kBlackTurn>(move));
+      }else{
+        EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kBlackTurn>(move));
+      }
+
+      EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kWhiteTurn>(move));
+    }
+  }
+  {
+    // 三々(判定路が必要になる複雑なケース)
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------o A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . o . . . . o . . . o . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G o . . . . . . . . . . . . . | G 
+    // H o . x . . . . x . . . . . . | H 
+    // I | . x x . . . . . . . . . . | I 
+    // J | x . x . . . . . . . . . . | J 
+    // K | . . . . . x . . . . . . . | K 
+    // L | . . * x . . . . . . * . . | L 
+    // M | . . . x x . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + ------o --o --------o ----o O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhoobjahciagemeodigochlofmccellcgkhcdjoa"));
+
+    for(const auto move : in_board_move_list){
+      if(bit_board.GetState(move) != kOpenPosition){
+        continue;
+      }
+      
+      bool is_semi_double_three = move == kMoveDH;
+      is_semi_double_three |= move == kMoveCJ;
+      is_semi_double_three |= move == kMoveEJ;
+      is_semi_double_three |= move == kMoveCK;
+      is_semi_double_three |= move == kMoveDK;
+      is_semi_double_three |= move == kMoveEK;
+      is_semi_double_three |= move == kMoveDL;
+      is_semi_double_three |= move == kMoveFL;
+
+      if(is_semi_double_three){
+        EXPECT_TRUE(bit_board.IsDoubleSemiThreeMove<kBlackTurn>(move));
+      }else{
+        EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kBlackTurn>(move));
+      }
+
+      EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kWhiteTurn>(move));
+    }
+  }
+  {
+    // 出展: 連珠世界2000年11月号
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------o A 
+    // B | . . . . . . . . . . . . . o B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . x x . . . . * . . | D 
+    // E | . . . . . . x . . . . . . | E 
+    // F | . . . . . x x . . . . . . | F 
+    // G | . . . . . . x . . . . . . | G 
+    // H | . . . . . . x . . . . . . | H 
+    // I | . . . . . . o . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N o . . . . . . . . . . . . . o N 
+    // O o --------------------------o O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhhihgoohfongfaogdanfdoaheob"));
+    EXPECT_TRUE(bit_board.IsDoubleSemiThreeMove<kBlackTurn>(kMoveID));
+  }
+  {
+    // 出展: 連珠世界2001年09月号
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . x o . x . o * . . | D 
+    // E | . . . . . x o . . . . . . | E 
+    // F | . . . . . x . x . . . . . | F 
+    // G | . . . . . . . . x x . . . | G 
+    // H | . . . . o . x . . o . . . | H 
+    // I | . . . . x . x o . . . . . | I 
+    // J | . . . . . o x . . . . . . | J 
+    // K | . . . . . . o . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhiihigjhjhkfifhjgkhifhegegdgfkdidppkgppfdpp"));
+    EXPECT_TRUE(bit_board.IsDoubleSemiThreeMove<kBlackTurn>(kMoveHG));
+  }
+  {
+    // 否禁(三々)
+    //   A B C D E F G H I J K L M N O 
+    // A + --------------------------o A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . x . . . . . . . . . | C 
+    // D | o . x . x . o . x x * . o | D 
+    // E | . . . x . . . . . . x . . | E 
+    // F | . . . . . . . . . . x . . | F 
+    // G | . . . . . . . . . . . . . | G 
+    // H | . x . . . x x . . . . . . | H 
+    // I | . . . x . . . . . . . . . | I 
+    // J | . . . x . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M o . . . . . . . . . . . . . | M 
+    // N | o . . . . . . . . . . . . | N 
+    // O o --o --o --o --o --o --o --+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("hhbdddamecbnfdhdeecojdoakdndleaolfeoghgoeiioejkochmo"));
+
+    MoveBitSet move_bit_set;
+    bit_board.EnumerateForbiddenMoves(&move_bit_set);
+
+    ASSERT_EQ(0, move_bit_set.count());
+
+    for(const auto move : in_board_move_list){
+      if(bit_board.GetState(move) != kOpenPosition){
+        continue;
+      }
+
+      EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kBlackTurn>(move));
+      EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kWhiteTurn>(move));
+    }
+  }
+  {
+    // 盤内以外
+    BitBoard bit_board;
+
+    for(auto move : GetAllMove()){
+      if(IsInBoardMove(move)){
+        continue;
+      }
+
+      EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kBlackTurn>(move));
+      EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kWhiteTurn>(move));
+    }
+  }
+}
+
+TEST_F(BitBoardTest, IsDoubleSemiThreeMoveWhiteTest)
+{
+  const auto in_board_move_list = GetAllInBoardMove();
+  
+  {
+    // 三々(白番)
+    //   A B C D E F G H I J K L M N O 
+    // A x --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G | . . . . x x x . . . . . . | G 
+    // H | . . . . . x o . o . . . . | H 
+    // I | . . . . . o . . . o . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("aahhhggiggjhghkifg"));
+
+    for(const auto move : in_board_move_list){
+      if(bit_board.GetState(move) != kOpenPosition){
+        continue;
+      }
+      
+      if(move == kMoveIG){
+        EXPECT_TRUE(bit_board.IsDoubleSemiThreeMove<kWhiteTurn>(move));
+      }else{
+        EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kWhiteTurn>(move));
+      }
+
+      EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kBlackTurn>(move));
+    }
+  }
+  {
+    // 三々
+    //   A B C D E F G H I J K L M N O 
+    // A x --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . x . . . x . . . x . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . o . . | F 
+    // G | . . . . . . . . . o . . . | G 
+    // H | . . . . . o o . . . . . . | H 
+    // I | . . . . . . . . o . . . . | I 
+    // J | . . . . . . . . o . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . x . . . x . . . x . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("aahhhdlfldjjddkgllghdljihl"));
+
+    for(const auto move : in_board_move_list){
+      if(bit_board.GetState(move) != kOpenPosition){
+        continue;
+      }
+      
+      if(move == kMoveJH || move == kMoveII){
+        EXPECT_TRUE(bit_board.IsDoubleSemiThreeMove<kWhiteTurn>(move));
+      }else{
+        EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kWhiteTurn>(move));
+      }
+
+      EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kBlackTurn>(move));
+    }
+  }
+  {
+    // 三々(判定路が必要になる複雑なケース)
+    //   A B C D E F G H I J K L M N O 
+    // A x --------------------------x A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . x . . . . x . . . x . . | C 
+    // D | . . * . . . . . . . * . . | D 
+    // E | . . . . . . . . . . . . . | E 
+    // F | . . . . . . . . . . . . . | F 
+    // G x . . . . . . . . . . . . . | G 
+    // H x . o . . . . o . . . . . . | H 
+    // I | . o o . . . . . . . . . . | I 
+    // J | o . o . . . . . . . . . . | J 
+    // K | . . . . . o . . . . . . . | K 
+    // L | . . * o . . . . . . * . . | L 
+    // M | . . . o o . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + ------x --x --------x ----x O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("aahhoobjahciagemeodigochlofmccellcgkhcdjoa"));
+    
+    for(const auto move : in_board_move_list){
+      if(bit_board.GetState(move) != kOpenPosition){
+        continue;
+      }
+      
+      bool is_semi_double_three = move == kMoveDH;
+      is_semi_double_three |= move == kMoveCJ;
+      is_semi_double_three |= move == kMoveEJ;
+      is_semi_double_three |= move == kMoveCK;
+      is_semi_double_three |= move == kMoveDK;
+      is_semi_double_three |= move == kMoveEK;
+      is_semi_double_three |= move == kMoveDL;
+      is_semi_double_three |= move == kMoveFL;
+
+      if(is_semi_double_three){
+        EXPECT_TRUE(bit_board.IsDoubleSemiThreeMove<kWhiteTurn>(move));
+      }else{
+        EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kWhiteTurn>(move));
+      }
+
+      EXPECT_FALSE(bit_board.IsDoubleSemiThreeMove<kBlackTurn>(move));
+    }
+  }
+  {
+    // 出展: 連珠世界2000年11月号
+    //   A B C D E F G H I J K L M N O 
+    // A x --------------------------x A 
+    // B | . . . . . . . . . . . . . x B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . o o . . . . * . . | D 
+    // E | . . . . . . o . . . . . . | E 
+    // F | . . . . . o o . . . . . . | F 
+    // G | . . . . . . o . . . . . . | G 
+    // H | . . . . . . o . . . . . . | H 
+    // I | . . . . . . x . . . . . . | I 
+    // J | . . . . . . . . . . . . . | J 
+    // K | . . . . . . . . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N x . . . . . . . . . . . . . x N 
+    // O x --------------------------x O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("aahhhihgoohfongfaogdanfdoaheob"));
+    EXPECT_TRUE(bit_board.IsDoubleSemiThreeMove<kWhiteTurn>(kMoveID));
+  }
+  {
+    // 出展: 連珠世界2001年09月号
+    //   A B C D E F G H I J K L M N O 
+    // A x --------------------------+ A 
+    // B | . . . . . . . . . . . . . | B 
+    // C | . . . . . . . . . . . . . | C 
+    // D | . . * . o x . o . x * . . | D 
+    // E | . . . . . o x . . . . . . | E 
+    // F | . . . . . o . o . . . . . | F 
+    // G | . . . . . . . . o o . . . | G 
+    // H | . . . . x . o . . x . . . | H 
+    // I | . . . . o . o x . . . . . | I 
+    // J | . . . . . x o . . . . . . | J 
+    // K | . . . . . . x . . . . . . | K 
+    // L | . . * . . . . . . . * . . | L 
+    // M | . . . . . . . . . . . . . | M 
+    // N | . . . . . . . . . . . . . | N 
+    // O + --------------------------+ O 
+    //   A B C D E F G H I J K L M N O 
+    BitBoard bit_board(MoveList("aahhiihigjhjhkfifhjgkhifhegegdgfkdidppkgppfdpp"));
+    EXPECT_TRUE(bit_board.IsDoubleSemiThreeMove<kWhiteTurn>(kMoveHG));
+  }
+}
+
 TEST_F(BitBoardTest, EnumerateMiseMovesTest)
 {
   //   A B C D E F G H I J K L M N O 

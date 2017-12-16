@@ -132,6 +132,13 @@ public:
   template<PlayerTurn P>
   const bool IsDoubleFourMove(const MovePosition move, MoveBitSet * const influence_area) const;
 
+  //! @brief 指し手が見かけの三々かチェックする
+  //! @param move 指し手位置
+  //! @retval true 指し手が四々
+  //! @pre moveは着手前であること
+  template<PlayerTurn P>
+  const bool IsDoubleSemiThreeMove(const MovePosition move) const;
+
   //! @brief 指し手が禁手かチェックする
   //! @param move 指し手位置
   //! @retval true 指し手が禁手

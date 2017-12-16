@@ -73,6 +73,12 @@ public:
   template<PlayerTurn P>
   const bool IsDoubleFour(MoveBitSet * const influence_area) const;
 
+  //! @brief moveが見かけの三々かチェックする
+  //! @param move 指し手位置
+  //! @retval true 指し手が見かけの三々
+  template<PlayerTurn P>
+  const bool IsDoubleSemiThreeMove() const;
+
   //! @brief moveが禁手かチェックする
   //! @param next_open_four_list 見かけの三に対する達四を作るBoardPositionのリスト
   //! @retval kForbiddenMove 禁手

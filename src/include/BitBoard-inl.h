@@ -265,10 +265,10 @@ const bool BitBoard::IsDoubleFourMove(const MovePosition move, MoveBitSet * cons
   assert(GetState(move) == kOpenPosition);
 
   // 四々のチェックは長さ5の直線近傍を見れば良い
-  constexpr size_t kDoubleFourCheck = 5;
+  static constexpr size_t kDoubleFourCheck = 5;
   LineNeighborhood line_neighbor(move, kDoubleFourCheck, *this);
 
-  constexpr PositionState S = GetPlayerStone(P);
+  static constexpr PositionState S = GetPlayerStone(P);
   line_neighbor.SetCenterState<S>();
 
   return line_neighbor.IsDoubleFour<P>(influence_area);
@@ -278,6 +278,26 @@ template<PlayerTurn P>
 inline const bool BitBoard::IsDoubleFourMove(const MovePosition move) const
 {
   return IsDoubleFourMove<P>(move, nullptr);
+}
+
+template<PlayerTurn P>
+const bool BitBoard::IsDoubleSemiThreeMove(const MovePosition move) const
+{
+  if(!IsInBoardMove(move)){
+    return false;
+  }
+
+  assert(GetState(move) == kOpenPosition);
+
+  // 見かけの三のチェックは長さ5の直線近傍を見れば良い
+  static constexpr size_t kSemiThreeCheck = 5;
+  LineNeighborhood line_neighbor(move, kSemiThreeCheck, *this);
+
+  static constexpr PositionState S = GetPlayerStone(P);
+  line_neighbor.SetCenterState<S>();
+
+  return line_neighbor.IsDoubleSemiThreeMove<P>();
+
 }
 
 template<OpenStatePattern Pattern>
