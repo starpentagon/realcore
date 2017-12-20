@@ -25,6 +25,9 @@ enum MovePosition : std::uint8_t
   #include "def/MoveDefinition.h"
 };
 
+//! @brief MovePair型
+typedef std::pair<MovePosition, MovePosition> MovePair;
+
 //! @brief Move位置の数
 constexpr size_t kMoveNum = 256;
 

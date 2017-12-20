@@ -20,9 +20,6 @@ constexpr size_t kBitBoardElementNum = 32;
 //! @brief Bitboard型
 typedef std::array<StateBit, kBitBoardElementNum> Bitboard;
 
-//! @brief MovePair型
-typedef std::pair<MovePosition, MovePosition> MovePair;
-
 // 前方宣言
 enum MovePosition : std::uint8_t;
 class BoardOpenState;
