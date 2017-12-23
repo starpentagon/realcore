@@ -56,6 +56,43 @@ public:
     }
   }
 
+  void GetSetStateBitTest(){
+    BitBoard bit_board;
+    MoveBitSet bit_set;
+
+    bit_set.set(kMoveAA);
+    bit_set.set(kMoveAB);
+    const auto &all_move_list = GetAllInBoardMove();
+
+    // 黒石
+    bit_board.SetState<kBlackStone>(bit_set);
+
+    for(auto move : all_move_list){
+      const auto state = bit_board.GetState(move);
+
+      if(bit_set[move]){
+        ASSERT_EQ(kBlackStone, state);
+      }else{
+        ASSERT_EQ(kOpenPosition, state);
+      }
+    }
+
+    bit_board.SetState<kOpenPosition>(bit_set);
+
+    // 白石
+    bit_board.SetState<kWhiteStone>(bit_set);
+
+    for(auto move : all_move_list){
+      const auto state = bit_board.GetState(move);
+
+      if(bit_set[move]){
+        ASSERT_EQ(kWhiteStone, state);
+      }else{
+        ASSERT_EQ(kOpenPosition, state);
+      }
+    }
+  }
+
   void GetOpenStateOverlineTest(){
     // kNextOverline
     //   A B C D E F G H I J K L M N O 
@@ -1586,6 +1623,11 @@ TEST_F(BitBoardTest, GetLineNeighborhoodStateBitTest)
 TEST_F(BitBoardTest, GetSetStateTest)
 {
   GetSetStateTest();
+}
+
+TEST_F(BitBoardTest, GetSetStateBitTest)
+{
+  GetSetStateBitTest();
 }
 
 TEST_F(BitBoardTest, CompareOperTest){

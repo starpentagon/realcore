@@ -72,13 +72,19 @@ public:
 
   //! @brief 盤面状態を設定する(template版)
   //! @param State 設定する盤面状態
-  //! @param bit_board BitBoard
   //! @param move 指し手位置
   template<PositionState State>
   void SetState(const MovePosition move);
 
   //! @brief 盤面状態を設定する(non-template版)
   void SetState(const MovePosition move, const PositionState state);
+
+  //! @brief 盤面状態を設定する(MoveBitSet版)
+  //! @param State 設定する盤面状態
+  //! @param bit_board BitBoard
+  //! @param move_bit_set 指し手位置のbit
+  template<PositionState State>
+  void SetState(const MoveBitSet &move_bit_set);
 
   //! @brief 指定位置を中心としたN路の直線近傍の盤面状態(各方向2N+1個の状態)を取得する
   //! @param N 直線近傍の長さ

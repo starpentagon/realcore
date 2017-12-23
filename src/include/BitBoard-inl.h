@@ -133,6 +133,17 @@ inline void BitBoard::SetState(const MovePosition move, const PositionState stat
   }
 }
 
+template<PositionState State>
+void BitBoard::SetState(const MoveBitSet &move_bit_set)
+{
+  MoveList move_list;
+  GetMoveList(move_bit_set, &move_list);
+
+  for(const auto move : move_list){
+    SetState<State>(move);
+  }
+}
+
 template<size_t N>
 void BitBoard::GetLineNeighborhoodStateBit(const MovePosition move, std::array<StateBit, kBoardDirectionNum> * const line_neighborhood_list) const
 {
