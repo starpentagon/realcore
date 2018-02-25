@@ -27,6 +27,10 @@ class HashTableTest;
 //! @brief Hash値を求める
 const HashValue CalcHashValue(const MoveList &board_move_sequence);
 
+//! @brief SymmetricHash値を求める
+//! @note 対称変換で同一になる局面は同一のHash値になる
+const HashValue CalcSymmetricHashValue(const MoveList &board_move_sequence);
+
 //! @brief Hash値を求める(差分計算用)
 const HashValue CalcHashValue(const bool is_black_turn, const MovePosition move, const HashValue current_value);
 

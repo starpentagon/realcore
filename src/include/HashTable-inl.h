@@ -230,6 +230,28 @@ inline const HashValue CalcHashValue(const MoveList &board_move_sequence)
   return hash_value;
 }
 
+inline const HashValue CalcSymmetricHashValue(const MoveList &board_move_sequence)
+{
+  std::array<HashValue, kBoardSymmetryNum> hash_value_list{{0ULL}};
+
+  for(const auto symmetry : GetBoardSymmetry()){
+    MoveList symmetric_list;
+    GetSymmetricMoveList(board_move_sequence, symmetry, &symmetric_list);
+
+    hash_value_list[symmetry] = CalcHashValue(symmetric_list);
+  }
+
+  // 対称形のhash値をsortすることで対称形は同一のhash_value_listを持つ
+  std::sort(hash_value_list.begin(), hash_value_list.end());
+
+  // 中央値(3番目に小さい値) % kBoardSymmetryNumを添字(index)として
+  // hash_value_list[index]をCalcSymmetricHashValueとする
+  // -> CalcSymmetricHashValueが一様に分布するようにする
+  static constexpr size_t kMedianIndex = 3;
+  const auto index = hash_value_list[kMedianIndex] % kBoardSymmetryNum;
+
+  return hash_value_list[index];
+}
 }
 
 #endif    // HASH_TABLE_INL_H
