@@ -151,12 +151,12 @@ TEST(ConversionTest, GetBitBoardShiftListTest){
     GetBitBoardShiftList(x, y, &shift_list);
 
     EXPECT_EQ(34, shift_list[kLateralDirection]);
-    EXPECT_EQ(34, shift_list[kVerticalDirection]);
+    EXPECT_EQ(32, shift_list[kVerticalDirection]);
     EXPECT_EQ(0, shift_list[kLeftDiagonalDirection]);
     EXPECT_EQ(0, shift_list[kRightDiagonalDirection]);
 
     EXPECT_EQ(34, GetBitBoardShift(x, y, kLateralDirection));
-    EXPECT_EQ(34, GetBitBoardShift(x, y, kVerticalDirection));
+    EXPECT_EQ(32, GetBitBoardShift(x, y, kVerticalDirection));
     EXPECT_EQ(0, GetBitBoardShift(x, y, kLeftDiagonalDirection));
     EXPECT_EQ(0, GetBitBoardShift(x, y, kRightDiagonalDirection));
   }
@@ -167,12 +167,12 @@ TEST(ConversionTest, GetBitBoardShiftListTest){
     GetBitBoardShiftList(x, y, &shift_list);
 
     EXPECT_EQ(48, shift_list[kLateralDirection]);
-    EXPECT_EQ(18, shift_list[kVerticalDirection]);
+    EXPECT_EQ(16, shift_list[kVerticalDirection]);
     EXPECT_EQ(48, shift_list[kLeftDiagonalDirection]);
     EXPECT_EQ(48, shift_list[kRightDiagonalDirection]);
 
     EXPECT_EQ(48, GetBitBoardShift(x, y, kLateralDirection));
-    EXPECT_EQ(18, GetBitBoardShift(x, y, kVerticalDirection));
+    EXPECT_EQ(16, GetBitBoardShift(x, y, kVerticalDirection));
     EXPECT_EQ(48, GetBitBoardShift(x, y, kLeftDiagonalDirection));
     EXPECT_EQ(48, GetBitBoardShift(x, y, kRightDiagonalDirection));
   }
@@ -183,12 +183,12 @@ TEST(ConversionTest, GetBitBoardShiftListTest){
     GetBitBoardShiftList(x, y, &shift_list);
 
     EXPECT_EQ(62, shift_list[kLateralDirection]);
-    EXPECT_EQ(62, shift_list[kVerticalDirection]);
+    EXPECT_EQ(60, shift_list[kVerticalDirection]);
     EXPECT_EQ(28, shift_list[kLeftDiagonalDirection]);
     EXPECT_EQ(28, shift_list[kRightDiagonalDirection]);
 
     EXPECT_EQ(62, GetBitBoardShift(x, y, kLateralDirection));
-    EXPECT_EQ(62, GetBitBoardShift(x, y, kVerticalDirection));
+    EXPECT_EQ(60, GetBitBoardShift(x, y, kVerticalDirection));
     EXPECT_EQ(28, GetBitBoardShift(x, y, kLeftDiagonalDirection));
     EXPECT_EQ(28, GetBitBoardShift(x, y, kRightDiagonalDirection));
   }    
@@ -271,7 +271,7 @@ TEST(ConversionTest, GetBoardCordinateTest)
     EXPECT_EQ(expect_x, x);
     EXPECT_EQ(expect_y, y);
 
-    GetBoardCordinate(273, &x, &y);
+    GetBoardCordinate(272, &x, &y);
     EXPECT_EQ(expect_x, x);
     EXPECT_EQ(expect_y, y);
 
@@ -291,7 +291,7 @@ TEST(ConversionTest, GetBoardCordinateTest)
     EXPECT_EQ(expect_x, x);
     EXPECT_EQ(expect_y, y);
 
-    GetBoardCordinate(497, &x, &y);
+    GetBoardCordinate(496, &x, &y);
     EXPECT_EQ(expect_x, x);
     EXPECT_EQ(expect_y, y);
 
@@ -311,7 +311,7 @@ TEST(ConversionTest, GetBoardCordinateTest)
     EXPECT_EQ(expect_x, x);
     EXPECT_EQ(expect_y, y);
 
-    GetBoardCordinate(287, &x, &y);
+    GetBoardCordinate(286, &x, &y);
     EXPECT_EQ(expect_x, x);
     EXPECT_EQ(expect_y, y);
 
@@ -331,7 +331,7 @@ TEST(ConversionTest, GetBoardCordinateTest)
     EXPECT_EQ(expect_x, x);
     EXPECT_EQ(expect_y, y);
 
-    GetBoardCordinate(511, &x, &y);
+    GetBoardCordinate(510, &x, &y);
     EXPECT_EQ(expect_x, x);
     EXPECT_EQ(expect_y, y);
 
@@ -350,8 +350,8 @@ TEST(ConversionTest, IsInBoardTest)
   ASSERT_FALSE(IsInBoard(0));
   ASSERT_TRUE(IsInBoard(255));
 
-  ASSERT_FALSE(IsInBoard(496));
-  ASSERT_TRUE(IsInBoard(273));
+  ASSERT_FALSE(IsInBoard(495));
+  ASSERT_TRUE(IsInBoard(272));
 
   ASSERT_FALSE(IsInBoard(513));
   ASSERT_TRUE(IsInBoard(718));
@@ -360,3 +360,59 @@ TEST(ConversionTest, IsInBoardTest)
   ASSERT_TRUE(IsInBoard(1022));
 }
   
+TEST(ConversionTest, BoardBoundaryTest)
+{
+  // BoardPositionの境界テスト
+  {
+    // 横方向
+    constexpr BoardDirection direction = kLateralDirection;
+    constexpr MovePosition move_lb = kMoveAA;
+    const auto check_lb = GetBoardPosition(move_lb, direction) - 1;
+
+    ASSERT_TRUE(!IsInBoard(check_lb));
+
+    constexpr MovePosition move_ub = kMoveOO;
+    const auto check_ub = GetBoardPosition(move_ub, direction) + 1;
+
+    ASSERT_TRUE(!IsInBoard(check_ub));
+  }
+  {
+    // 縦方向
+    constexpr BoardDirection direction = kVerticalDirection;
+    constexpr MovePosition move_lb = kMoveAA;
+    const auto check_lb = GetBoardPosition(move_lb, direction) - 1;
+
+    ASSERT_TRUE(!IsInBoard(check_lb));
+
+    constexpr MovePosition move_ub = kMoveOO;
+    const auto check_ub = GetBoardPosition(move_ub, direction) + 1;
+
+    ASSERT_TRUE(!IsInBoard(check_ub));
+  }
+  {
+    // 左斜め方向
+    constexpr BoardDirection direction = kLeftDiagonalDirection;
+    constexpr MovePosition move_lb = kMoveAA;
+    const auto check_lb = GetBoardPosition(move_lb, direction) - 1;
+
+    ASSERT_TRUE(!IsInBoard(check_lb));
+
+    constexpr MovePosition move_ub = kMoveBO;
+    const auto check_ub = GetBoardPosition(move_ub, direction) + 1;
+
+    ASSERT_TRUE(!IsInBoard(check_ub));
+  }
+  {
+    // 右斜め方向
+    constexpr BoardDirection direction = kRightDiagonalDirection;
+    constexpr MovePosition move_lb = kMoveAO;
+    const auto check_lb = GetBoardPosition(move_lb, direction) - 1;
+
+    ASSERT_TRUE(!IsInBoard(check_lb));
+
+    constexpr MovePosition move_ub = kMoveNO;
+    const auto check_ub = GetBoardPosition(move_ub, direction) + 1;
+
+    ASSERT_TRUE(!IsInBoard(check_ub));
+  }
+}

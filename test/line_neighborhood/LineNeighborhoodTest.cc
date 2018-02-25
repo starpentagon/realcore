@@ -166,7 +166,7 @@ public:
     ASSERT_EQ(4, board_position_list.size());
 
     ASSERT_EQ(129, board_position_list[0]);
-    ASSERT_EQ(386, board_position_list[1]);
+    ASSERT_EQ(385, board_position_list[1]);
     ASSERT_EQ(737, board_position_list[2]);
     ASSERT_EQ(994, board_position_list[3]);
   }
@@ -198,7 +198,7 @@ public:
     auto find_it = find(board_position_list.begin(), board_position_list.end(), 129);
     ASSERT_TRUE(find_it != board_position_list.end());
 
-    find_it = find(board_position_list.begin(), board_position_list.end(), 386);
+    find_it = find(board_position_list.begin(), board_position_list.end(), 385);
     ASSERT_TRUE(find_it != board_position_list.end());    
     
     find_it = find(board_position_list.begin(), board_position_list.end(), 737);
@@ -206,6 +206,20 @@ public:
     
     find_it = find(board_position_list.begin(), board_position_list.end(), 994);
     ASSERT_TRUE(find_it != board_position_list.end());    
+  }
+
+  void GetLocalBitBoardTest(){
+    MoveList board_list("hhigiigg");
+    BitBoard bit_board(board_list);
+    constexpr size_t distance = 3;
+
+    LineNeighborhood line_neighborhood(kMoveHH, distance, bit_board);
+    LocalBitBoard local_bit_board{{0}};
+
+    line_neighborhood.GetLocalBitBoard(&local_bit_board);
+
+    ASSERT_EQ(local_bit_board[0], line_neighborhood.local_bit_board_[0]);
+    ASSERT_EQ(local_bit_board[1], line_neighborhood.local_bit_board_[1]);
   }
 };
 
@@ -372,4 +386,43 @@ TEST_F(LineNeighborhoodTest, GetOpenPositionCombinedBitTest)
 {
   GetOpenPositionCombinedBitTest();
 }
+
+TEST_F(LineNeighborhoodTest, strTest)
+{
+  //   A B C D E F G H I J K L M N O 
+  // A + --------------------------+ A 
+  // B | . . . . . . . . . . . . . | B 
+  // C | . . . . . . . . . . . . . | C 
+  // D | . . * . . . . . . . * . . | D 
+  // E | . . . . . . . . . . . . . | E 
+  // F | . . . . x . . . . . . . . | F 
+  // G | . . . . . . . . . . . . . | G 
+  // H | . . . . . . x . . . . . . | H 
+  // I | . . . . . . o . . . . . . | I 
+  // J | . . . . . . o . . . . . . | J 
+  // K | . . . . . . . . . . . . . | K 
+  // L | . . * . . . . . . . * . . | L 
+  // M | . . . . . . . . . . . . . | M 
+  // N | . . . . . . . . . . . . . | N 
+  // O + --------------------------+ O 
+  //   A B C D E F G H I J K L M N O 
+  constexpr size_t kForbiddenCheckSize = 2;
+  BitBoard bit_board(MoveList("hhhiffhj"));
+  LineNeighborhood line_neighborhood(kMoveHH, kForbiddenCheckSize, bit_board);  
+
+  stringstream ss;
+
+  ss << "Horizn: " << "OOBOO" << endl;
+  ss << "Vertcl: " << "OOBWW" << endl;
+  ss << "L-Down: " << "OOBOO" << endl;
+  ss << "R-Down: " << "BOBOO" << endl;
+  
+  ASSERT_EQ(ss.str(), line_neighborhood.str());
+}
+
+TEST_F(LineNeighborhoodTest, GetLocalBitBoardTest)
+{
+  GetLocalBitBoardTest();
+}
+
 }   // namespace realcore

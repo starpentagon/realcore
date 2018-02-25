@@ -1,3 +1,4 @@
+#include <iostream>
 #include <set>
 #include <regex>
 
@@ -7,7 +8,7 @@
 using namespace std;
 using namespace realcore;
 
-void GetMoveListFromSGFData(const SGFCheckBit &check_bit, const std::string &sgf_data, MoveList * move_list)
+void realcore::GetMoveListFromSGFData(const SGFCheckBit &check_bit, const std::string &sgf_data, MoveList * move_list)
 {
   SGFParser sgf_parser(check_bit);
   sgf_parser.ParseSGF(sgf_data);
@@ -41,7 +42,7 @@ void SGFParser::ParseSGF(const string &sgf_data)
   }
 }
 
-string SGFParser::ParseGameDate(const std::string &sgf_data) const
+const string SGFParser::ParseGameDate(const std::string &sgf_data) const
 {
   static regex date_expr("DT\\[(.*?)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), date_expr);
@@ -57,7 +58,7 @@ string SGFParser::ParseGameDate(const std::string &sgf_data) const
   }
 }
 
-string SGFParser::ParseBlackPlayerName(const std::string &sgf_data) const
+const string SGFParser::ParseBlackPlayerName(const std::string &sgf_data) const
 {
   static regex black_player_name_expr("PB\\[(.*?)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), black_player_name_expr);
@@ -73,7 +74,7 @@ string SGFParser::ParseBlackPlayerName(const std::string &sgf_data) const
   }
 }
 
-string SGFParser::ParseBlackPlayerRank(const std::string &sgf_data) const
+const string SGFParser::ParseBlackPlayerRank(const std::string &sgf_data) const
 {
   static regex black_player_rank_expr("BR\\[(.*?)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), black_player_rank_expr);
@@ -86,7 +87,7 @@ string SGFParser::ParseBlackPlayerRank(const std::string &sgf_data) const
   }
 }
 
-string SGFParser::ParseWhitePlayerName(const std::string &sgf_data) const
+const string SGFParser::ParseWhitePlayerName(const std::string &sgf_data) const
 {
   static regex white_player_name_expr("PW\\[(.*?)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), white_player_name_expr);
@@ -102,7 +103,7 @@ string SGFParser::ParseWhitePlayerName(const std::string &sgf_data) const
   }
 }
 
-string SGFParser::ParseWhitePlayerRank(const std::string &sgf_data) const
+const string SGFParser::ParseWhitePlayerRank(const std::string &sgf_data) const
 {
   static regex white_player_rank_expr("WR\\[(.*?)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), white_player_rank_expr);
@@ -115,7 +116,7 @@ string SGFParser::ParseWhitePlayerRank(const std::string &sgf_data) const
   }
 }
 
-string SGFParser::ParseGameRule(const std::string &sgf_data) const
+const string SGFParser::ParseGameRule(const std::string &sgf_data) const
 {
   static regex game_rule_expr("(GN|RU)\\[.*?((RIF)|(Sakata)|(Yamaguchi)|(Tarannikov)|(Jonsson)|(Unknown)).*?\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), game_rule_expr);
@@ -128,7 +129,7 @@ string SGFParser::ParseGameRule(const std::string &sgf_data) const
   }
 }
 
-GameEndStatus SGFParser::ParseGameEndStatus(const std::string &sgf_data) const
+const GameEndStatus SGFParser::ParseGameEndStatus(const std::string &sgf_data) const
 {
   static regex draw_expr("RE\\[B?W?\\+?Draw\\]");
   sregex_iterator it_draw(sgf_data.begin(), sgf_data.end(), draw_expr);
@@ -157,7 +158,7 @@ GameEndStatus SGFParser::ParseGameEndStatus(const std::string &sgf_data) const
   }
 }
 
-GameResult SGFParser::ParseGameResult(const std::string &sgf_data) const
+const GameResult SGFParser::ParseGameResult(const std::string &sgf_data) const
 {
   if(ParseGameEndStatus(sgf_data) == kAgreedDraw){
     return kDraw;
@@ -183,7 +184,126 @@ GameResult SGFParser::ParseGameResult(const std::string &sgf_data) const
   }
 }
 
-string SGFParser::ParseGameRecord(const std::string &sgf_data) const
+const bool SGFParser::IsValidMove(const std::string &move) const
+{
+  if(move == "tt"){
+    return true;
+  }
+
+  bool is_valid_move = move.at(0) >= 'a' && move.at(0) <= 'o';
+  is_valid_move &= move.at(1) >= 'a' && move.at(1) <= 'o';
+
+  return is_valid_move;
+}
+
+const string SGFParser::ParseInitBoard(const std::string &sgf_data) const
+{
+  // 黒石位置、白石位置の取得
+  static regex stone_expr("[a-z][a-z]");
+  sregex_iterator it_end;
+
+  vector<string> black_stone_vec;
+  static regex black_stone_expr("AB(\\[[a-z][a-z]\\])+");
+  sregex_iterator black_stone_it(sgf_data.begin(), sgf_data.end(), black_stone_expr);
+
+  if(black_stone_it != it_end){
+    const auto init_board_str = black_stone_it->str();
+    sregex_iterator stone_it(init_board_str.begin(), init_board_str.end(), stone_expr);
+
+    for(; stone_it!=it_end; ++stone_it){
+      black_stone_vec.emplace_back(stone_it->str());
+    }
+  }
+
+  vector<string> white_stone_vec;
+  static regex white_stone_expr("AW(\\[[a-z][a-z]\\])+");
+  sregex_iterator white_stone_it(sgf_data.begin(), sgf_data.end(), white_stone_expr);
+
+  if(white_stone_it != it_end){
+    const auto init_board_str = white_stone_it->str();
+    sregex_iterator stone_it(init_board_str.begin(), init_board_str.end(), stone_expr);
+
+    for(; stone_it!=it_end; ++stone_it){
+      white_stone_vec.emplace_back(stone_it->str());
+    }
+  }
+
+  // 黒番、白番の取得
+  const size_t black_size = black_stone_vec.size();
+  const size_t white_size = white_stone_vec.size();
+
+  bool is_black_turn = true;
+  
+  if(black_size == white_size){
+    is_black_turn = true;
+  }
+
+  if(black_size == white_size + 1){
+    is_black_turn = false;
+  }
+
+  static regex black_turn_expr("PL\\[B\\]");
+  sregex_iterator black_turn_it(sgf_data.begin(), sgf_data.end(), black_turn_expr);
+
+  if(black_turn_it != it_end){
+    is_black_turn = true;
+  }
+
+  static regex white_turn_expr("PL\\[W\\]");
+  sregex_iterator white_turn_it(sgf_data.begin(), sgf_data.end(), white_turn_expr);
+
+  if(white_turn_it != it_end){
+    is_black_turn = false;
+  }
+
+  // 手番に応じた石数にする
+  if(is_black_turn){
+    if(black_size > white_size){
+      const auto diff_size = black_size - white_size;
+
+      for(size_t i=0; i<diff_size; i++){
+        white_stone_vec.emplace_back("pp");
+      }
+    }else if(black_size < white_size){
+      const auto diff_size = white_size - black_size;
+
+      for(size_t i=0; i<diff_size; i++){
+        black_stone_vec.emplace_back("pp");
+      }
+    }
+  }else{
+    if(black_size > white_size + 1){
+      const auto diff_size = black_size - white_size - 1;
+
+      for(size_t i=0; i<diff_size; i++){
+        white_stone_vec.emplace_back("pp");
+      }
+    }else if(black_size < white_size + 1){
+      const auto diff_size = white_size + 1 - black_size;
+
+      for(size_t i=0; i<diff_size; i++){
+        black_stone_vec.emplace_back("pp");
+      }
+    }
+  }
+
+  // 出力
+  string init_board_string;
+
+  for(size_t i=0, size=white_stone_vec.size(); i<size; i++){
+    init_board_string += black_stone_vec[i];
+    init_board_string += white_stone_vec[i];
+  }
+
+  if(!is_black_turn){
+    const auto last_index = black_stone_vec.size() - 1;
+    init_board_string += black_stone_vec[last_index];
+  }
+
+  return init_board_string;
+}
+
+const string SGFParser::ParseGameRecord(const std::string &sgf_data) const
 {
   static regex move_expr(";(B|W)\\[([a-z][a-z])\\]");
 
@@ -192,7 +312,7 @@ string SGFParser::ParseGameRecord(const std::string &sgf_data) const
   
   set<string> move_set;
   bool black_turn = true;
-  string record;
+  string record = ParseInitBoard(sgf_data);
 
   while(move_it != it_end)
   {
@@ -211,10 +331,7 @@ string SGFParser::ParseGameRecord(const std::string &sgf_data) const
       break;
     }
 
-    bool is_legal_move = stone.at(0) >= 'a' && stone.at(0) <= 'o';
-    is_legal_move &= stone.at(1) >= 'a' && stone.at(1) <= 'o';
-
-    if(!is_legal_move){
+    if(!IsValidMove(stone)){
       const string error_message = "Illegal move: " + stone;
       logic_error error(error_message);
       throw error;
@@ -238,7 +355,7 @@ string SGFParser::ParseGameRecord(const std::string &sgf_data) const
   return record;
 }
 
-string SGFParser::ParseAlternativeMoves(const std::string &sgf_data) const
+const string SGFParser::ParseAlternativeMoves(const std::string &sgf_data) const
 {
   static regex alternative_expr("(5A|FA)\\[([a-o0-9\\s\\[\\]]*)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), alternative_expr);
@@ -256,7 +373,7 @@ string SGFParser::ParseAlternativeMoves(const std::string &sgf_data) const
   }
 }
 
-string SGFParser::ParseEventName(const std::string &sgf_data) const
+const string SGFParser::ParseEventName(const std::string &sgf_data) const
 {
   static regex event_expr("EV\\[(.*?)\\]");
   sregex_iterator it(sgf_data.begin(), sgf_data.end(), event_expr);

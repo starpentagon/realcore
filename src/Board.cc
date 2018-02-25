@@ -402,20 +402,37 @@ const bool MakeNonTerminateNormalSequence(const MoveList &original_move_list, Mo
     return false;
   }
 
+  map<string, bool> result_map;
   unsigned int call_limit = 500;    // VLM問題集での正規化に要した呼び出し回数は最大138回
-  const bool is_modified = MakeNonTerminateNormalSequence(black_remain, white_remain, modified_move_list, &call_limit);
+  const bool is_modified = MakeNonTerminateNormalSequence(black_remain, white_remain, &result_map, modified_move_list, &call_limit);
+
   return is_modified;
 }
 
-const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const MoveBitSet &white_remain, MoveList * const modified_move_list, unsigned int * const call_limit)
+const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const MoveBitSet &white_remain, map<string, bool> * const result_map, MoveList * const modified_move_list, unsigned int * const call_limit)
 {
+  assert(result_map != nullptr);
   assert(modified_move_list != nullptr);
   assert(call_limit != nullptr);
 
-  if(black_remain.none() && white_remain.none()){
-    return true;
+  // state-keyを作成する
+  MoveList black_remain_list, white_remain_list;
+
+  GetMoveList(black_remain, &black_remain_list);
+  GetMoveList(white_remain, &white_remain_list);
+
+  string state_key = black_remain_list.str() + "_" + white_remain_list.str();
+  const auto find_it = result_map->find(state_key);
+
+  if(find_it != result_map->end()){
+    return find_it->second;
   }
 
+  if(black_remain.none() && white_remain.none()){
+    result_map->insert(pair<string, bool>(state_key, true));
+    return true;
+  }
+  
   if(*call_limit == 0){
     return false;
   }
@@ -434,6 +451,7 @@ const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const 
   if(is_opponent_four){
     if(!remain_position[four_guard_move]){
       // 四ノビ防手がもともとの指し手リストに含まれていないため修正できない
+      result_map->insert(pair<string, bool>(state_key, false));
       return false;
     }
 
@@ -466,15 +484,17 @@ const bool MakeNonTerminateNormalSequence(const MoveBitSet &black_remain, const 
 
     *modified_move_list += move;
 
-    const auto is_modified = MakeNonTerminateNormalSequence(child_black_remain, child_white_remain, modified_move_list, call_limit);
+    const auto is_modified = MakeNonTerminateNormalSequence(child_black_remain, child_white_remain, result_map, modified_move_list, call_limit);
 
     if(is_modified){
+      result_map->insert(pair<string, bool>(state_key, true));
       return true;
     }
 
     --(*modified_move_list);
   }
 
+  result_map->insert(pair<string, bool>(state_key, false));
   return false;
 }
 

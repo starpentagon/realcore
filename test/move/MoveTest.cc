@@ -304,3 +304,32 @@ TEST(MoveTest, DescendingSortTest)
   ASSERT_EQ(move_value_list[5].first, kMoveHM);
   ASSERT_EQ(move_value_list[6].first, kMoveHH);
 }
+
+TEST(MoveTest, GetLineNeighborhoodBitTest)
+{
+  {
+    const MoveBitSet &move_bit = GetLineNeighborhoodBit<1>(kMoveHH);
+
+    ASSERT_EQ(9, move_bit.count());
+
+    ASSERT_TRUE(move_bit[kMoveGG]);
+    ASSERT_TRUE(move_bit[kMoveGH]);
+    ASSERT_TRUE(move_bit[kMoveGI]);
+    ASSERT_TRUE(move_bit[kMoveHG]);
+    ASSERT_TRUE(move_bit[kMoveHH]);
+    ASSERT_TRUE(move_bit[kMoveHI]);
+    ASSERT_TRUE(move_bit[kMoveIG]);
+    ASSERT_TRUE(move_bit[kMoveIH]);
+    ASSERT_TRUE(move_bit[kMoveII]);
+  }
+  {
+    const MoveBitSet &move_bit = GetLineNeighborhoodBit<1>(kMoveAA);
+
+    ASSERT_EQ(4, move_bit.count());
+
+    ASSERT_TRUE(move_bit[kMoveAA]);
+    ASSERT_TRUE(move_bit[kMoveAB]);
+    ASSERT_TRUE(move_bit[kMoveBA]);
+    ASSERT_TRUE(move_bit[kMoveBB]);
+  }
+}

@@ -43,6 +43,14 @@ public:
   template<PositionState S>
   void SetCenterState();
 
+  //! @brief moveが長連を作る手かチェックする
+  template<PlayerTurn P>
+  const bool IsOverline() const;
+
+  //! @brief moveが五連以上を作る手かチェックする
+  template<PlayerTurn P>
+  const bool IsFive() const;
+
   //! @brief moveが達四を作る手かチェックする
   //! @retval true 達四ができている
   template<PlayerTurn P>
@@ -65,6 +73,12 @@ public:
   template<PlayerTurn P>
   const bool IsDoubleFour(MoveBitSet * const influence_area) const;
 
+  //! @brief moveが見かけの三々かチェックする
+  //! @param move 指し手位置
+  //! @retval true 指し手が見かけの三々
+  template<PlayerTurn P>
+  const bool IsDoubleSemiThreeMove() const;
+
   //! @brief moveが禁手かチェックする
   //! @param next_open_four_list 見かけの三に対する達四を作るBoardPositionのリスト
   //! @retval kForbiddenMove 禁手
@@ -86,8 +100,20 @@ public:
   template<PlayerTurn P>
   void AddOpenState(const UpdateOpenStateFlag &update_flag, BoardOpenState * const board_open_state) const;
 
+  //! @brief 空点状態を追加する(特定方向版)
+  //! @param board_open_state 空点状態の格納先
+  template<PlayerTurn P>
+  void AddOpenState(const UpdateOpenStateFlag &update_flag, const BoardDirection direction, BoardOpenState * const board_open_state) const;
+
   //! @brief すべてが空点かどうかをチェックする
   const bool IsAllOpenPosition() const;
+
+  //! @brief LocalBitBoardを取得する
+  void GetLocalBitBoard(LocalBitBoard * const local_bit_board) const;
+
+  //! @brief LineNeighborhoodの状態を文字列で返す
+  //! @note  形式：Horizn,Vertcl,L-Down,R-Down: [BWOX]+
+  std::string str() const;
 
 private:
   //! @brief local_bit_board配列のindexとbit indexから対応する方向を求める
@@ -100,6 +126,9 @@ private:
   //! @param bit_list 位置を求めるbit
   //! @param board_position_list BoardPositionの格納先
   void GetBoardPositionList(const LocalBitBoard &bit_list, std::vector<BoardPosition> * const board_position_list) const;
+
+  template<PlayerTurn P>
+  void AddOpenState(const UpdateOpenStateFlag &update_flag, const std::uint64_t combined_player_stone, const std::uint64_t combined_open_stone, BoardOpenState * const board_open_state) const;
 
   //! @brief 指し手パターンの空点状態を取得する
   template<OpenStatePattern Pattern>

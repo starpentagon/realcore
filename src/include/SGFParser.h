@@ -58,59 +58,65 @@ public:
   //! @note 読み込みに失敗した場合はlogic_error例外を送出する
   void ParseSGF(const std::string &sgf_data);
 
-  std::string GetGameDate() const;
+  const std::string GetGameDate() const;
 
-  std::string GetBlackPlayerName() const;
-  std::string GetBlackPlayerRank() const;
+  const std::string GetBlackPlayerName() const;
+  const std::string GetBlackPlayerRank() const;
   
-  std::string GetWhitePlayerName() const;
-  std::string GetWhitePlayerRank() const;
+  const std::string GetWhitePlayerName() const;
+  const std::string GetWhitePlayerRank() const;
 
-  std::string GetGameRule() const;
-  GameEndStatus GetEndStatus() const;
-  GameResult GetGameResult() const;
+  const std::string GetGameRule() const;
+  const GameEndStatus GetEndStatus() const;
+  const GameResult GetGameResult() const;
 
-  std::string GetGameRecord() const;
-  std::string GetAlternativeMoves() const;
+  const std::string GetGameRecord() const;
+  const std::string GetAlternativeMoves() const;
 
-  std::string GetEventName() const;
+  const std::string GetEventName() const;
 
 private:
   //! @brief 対局日を取得する
-  std::string ParseGameDate(const std::string &sgf_data) const;
+  const std::string ParseGameDate(const std::string &sgf_data) const;
 
   //! @brief 黒番の対局者名を取得する
-  std::string ParseBlackPlayerName(const std::string &sgf_data) const;
+  const std::string ParseBlackPlayerName(const std::string &sgf_data) const;
 
   //! @brief 黒番のランク(1dなど)を取得する
-  std::string ParseBlackPlayerRank(const std::string &sgf_data) const;
+  const std::string ParseBlackPlayerRank(const std::string &sgf_data) const;
 
   //! @brief 白番の対局者名を取得する
-  std::string ParseWhitePlayerName(const std::string &sgf_data) const;
+  const std::string ParseWhitePlayerName(const std::string &sgf_data) const;
 
   //! @brief 白番のランク(1dなど)を取得する
-  std::string ParseWhitePlayerRank(const std::string &sgf_data) const;
+  const std::string ParseWhitePlayerRank(const std::string &sgf_data) const;
 
   //! @brief 対局ルールを取得する
-  std::string ParseGameRule(const std::string &sgf_data) const;
+  const std::string ParseGameRule(const std::string &sgf_data) const;
 
   //! @brief 終局状態を取得する
-  GameEndStatus ParseGameEndStatus(const std::string &sgf_data) const;
+  const GameEndStatus ParseGameEndStatus(const std::string &sgf_data) const;
 
   //! @brief 対局結果を取得する
-  GameResult ParseGameResult(const std::string &sgf_data) const;
+  const GameResult ParseGameResult(const std::string &sgf_data) const;
+
+  //! @brief 初期局面の棋譜([a-o]形式)を取得する
+  const std::string ParseInitBoard(const std::string &sgf_data) const;
 
   //! @brief 棋譜([a-o]形式)を取得する
-  std::string ParseGameRecord(const std::string &sgf_data) const;
+  const std::string ParseGameRecord(const std::string &sgf_data) const;
 
   //! @brief 5手目の取り除かれた提示珠を取得する
-  std::string ParseAlternativeMoves(const std::string &sgf_data) const;
+  const std::string ParseAlternativeMoves(const std::string &sgf_data) const;
 
   //! @brief 大会名を取得する
-  std::string ParseEventName(const std::string &sgf_data) const;
+  const std::string ParseEventName(const std::string &sgf_data) const;
 
   //! @brief CSVフィールドにカンマが入らないようにカンマをスペースに置換する
-  std::string ReplaceComma(const std::string &str) const;
+  const std::string ReplaceComma(const std::string &str) const;
+
+  //! @brief 有効な指し手位置かをチェックする
+  const bool IsValidMove(const std::string &move) const;
 
   std::string game_date_;     //!< 対局日
 

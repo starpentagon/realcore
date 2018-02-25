@@ -103,6 +103,10 @@ public:
   //! @brief 剣先点における四ノビ位置([B203][W2O3]のopen_position以外のO)を返す
   void GetFourPosition(std::array<BoardPosition, 2> * const four_position_list) const;
 
+  //! @brief 石の位置を返す
+  //! @pre 四ノビ点([B302][W3O2]) or 剣先点([B203][W2O3])であること
+  void GetStonePosition(std::vector<BoardPosition> * const stone_position_list) const;
+
   //! @brief 二ノビ点における見かけ三になる位置([B1O3][W1O3]のopen_position以外のO)を返す
   void GetSemiThreePosition(std::array<BoardPosition, 2> * const semi_three_position_list) const;
 

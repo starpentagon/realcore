@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 
 #include "OpenState.h"
 #include "LineNeighborhood.h"
@@ -58,7 +59,7 @@ const ForbiddenCheckState LineNeighborhood::ForbiddenCheck(std::vector<BoardPosi
   const auto combined_open_bit = GetOpenPositionCombinedBit();
 
   // 長連
-  if(IsOverline(combined_black_bit)){
+  if(realcore::IsOverline(combined_black_bit)){
     if(downward_influence_area != nullptr){
       downward_influence_area->set(move_);
     }
@@ -388,34 +389,89 @@ void LineNeighborhood::GetBoardPositionList(const LocalBitBoard &bit_list, std::
 }
 
 template<>
+void LineNeighborhood::AddOpenState<kBlackTurn>(const UpdateOpenStateFlag &update_flag, const std::uint64_t combined_player_stone, const std::uint64_t combined_open_stone, BoardOpenState * const board_open_state) const
+{
+  if(update_flag[kNextOverline]){
+    GetOpenState<kNextOverline>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextOpenFourBlack]){
+    GetOpenState<kNextOpenFourBlack>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextFourBlack]){
+    GetOpenState<kNextFourBlack>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextSemiThreeBlack]){
+    GetOpenState<kNextSemiThreeBlack>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextPointOfSwordBlack]){
+    GetOpenState<kNextPointOfSwordBlack>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextTwoBlack]){
+    GetOpenState<kNextTwoBlack>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+}
+
+template<>
+void LineNeighborhood::AddOpenState<kWhiteTurn>(const UpdateOpenStateFlag &update_flag, const std::uint64_t combined_player_stone, const std::uint64_t combined_open_stone, BoardOpenState * const board_open_state) const
+{
+  if(update_flag[kNextOpenFourWhite]){
+    GetOpenState<kNextOpenFourWhite>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+  
+  if(update_flag[kNextFourWhite]){
+    GetOpenState<kNextFourWhite>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextSemiThreeWhite]){
+    GetOpenState<kNextSemiThreeWhite>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextPointOfSwordWhite]){
+    GetOpenState<kNextPointOfSwordWhite>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+
+  if(update_flag[kNextTwoWhite]){
+    GetOpenState<kNextTwoWhite>(combined_player_stone, combined_open_stone, board_open_state);
+  }
+}
+
+template<>
 void LineNeighborhood::AddOpenState<kBlackTurn>(const UpdateOpenStateFlag &update_flag, BoardOpenState * const board_open_state) const
 {
   const auto combined_black_stone = GetPlayerStoneCombinedBit<kBlackTurn>();
   const auto combined_open_stone = GetOpenPositionCombinedBit();
 
-  if(update_flag[kNextOverline]){
-    GetOpenState<kNextOverline>(combined_black_stone, combined_open_stone, board_open_state);
+  AddOpenState<kBlackTurn>(update_flag, combined_black_stone, combined_open_stone, board_open_state);
+}
+
+template<>
+void LineNeighborhood::AddOpenState<kBlackTurn>(const UpdateOpenStateFlag &update_flag, const BoardDirection direction, BoardOpenState * const board_open_state) const
+{
+  uint64_t direction_mask = 0ULL;
+
+  if(direction == kLateralDirection){
+    // 横: 下位32bitの奇数bit
+    direction_mask = kUpperBitMask >> 32ULL;
+  }else if(direction == kVerticalDirection){
+    // 横: 上位32bitの奇数bit
+    direction_mask = (kUpperBitMask >> 32ULL) << 32ULL;
+  }else if(direction == kLeftDiagonalDirection){
+    // 左下斜め: 下位32bitの偶数bit
+    direction_mask = (kUpperBitMask >> 32ULL) << 1;
+  }else{
+    // 右下斜め: 上位32bitの偶数bit
+    direction_mask = ((kUpperBitMask >> 32ULL) << 32ULL) << 1;
   }
 
-  if(update_flag[kNextOpenFourBlack]){
-    GetOpenState<kNextOpenFourBlack>(combined_black_stone, combined_open_stone, board_open_state);
-  }
-
-  if(update_flag[kNextFourBlack]){
-    GetOpenState<kNextFourBlack>(combined_black_stone, combined_open_stone, board_open_state);
-  }
-
-  if(update_flag[kNextSemiThreeBlack]){
-    GetOpenState<kNextSemiThreeBlack>(combined_black_stone, combined_open_stone, board_open_state);
-  }
-
-  if(update_flag[kNextPointOfSwordBlack]){
-    GetOpenState<kNextPointOfSwordBlack>(combined_black_stone, combined_open_stone, board_open_state);
-  }
-
-  if(update_flag[kNextTwoBlack]){
-    GetOpenState<kNextTwoBlack>(combined_black_stone, combined_open_stone, board_open_state);
-  }
+  const auto combined_black_stone = GetPlayerStoneCombinedBit<kBlackTurn>() & direction_mask;
+  const auto combined_open_stone = GetOpenPositionCombinedBit() & direction_mask;
+  
+  AddOpenState<kBlackTurn>(update_flag, combined_black_stone, combined_open_stone, board_open_state);
 }
 
 template<>
@@ -424,25 +480,32 @@ void LineNeighborhood::AddOpenState<kWhiteTurn>(const UpdateOpenStateFlag &updat
   const auto combined_white_stone = GetPlayerStoneCombinedBit<kWhiteTurn>();
   const auto combined_open_stone = GetOpenPositionCombinedBit();
 
-  if(update_flag[kNextOpenFourWhite]){
-    GetOpenState<kNextOpenFourWhite>(combined_white_stone, combined_open_stone, board_open_state);
-  }
-  
-  if(update_flag[kNextFourWhite]){
-    GetOpenState<kNextFourWhite>(combined_white_stone, combined_open_stone, board_open_state);
+  AddOpenState<kWhiteTurn>(update_flag, combined_white_stone, combined_open_stone, board_open_state);
+}
+
+template<>
+void LineNeighborhood::AddOpenState<kWhiteTurn>(const UpdateOpenStateFlag &update_flag, const BoardDirection direction, BoardOpenState * const board_open_state) const
+{
+  uint64_t direction_mask = 0ULL;
+
+  if(direction == kLateralDirection){
+    // 横: 下位32bitの奇数bit
+    direction_mask = kUpperBitMask >> 32ULL;
+  }else if(direction == kVerticalDirection){
+    // 横: 上位32bitの奇数bit
+    direction_mask = (kUpperBitMask >> 32ULL) << 32ULL;
+  }else if(direction == kLeftDiagonalDirection){
+    // 左下斜め: 下位32bitの偶数bit
+    direction_mask = (kUpperBitMask >> 32ULL) << 1;
+  }else{
+    // 右下斜め: 上位32bitの偶数bit
+    direction_mask = ((kUpperBitMask >> 32ULL) << 32ULL) << 1;
   }
 
-  if(update_flag[kNextSemiThreeWhite]){
-    GetOpenState<kNextSemiThreeWhite>(combined_white_stone, combined_open_stone, board_open_state);
-  }
+  const auto combined_white_stone = GetPlayerStoneCombinedBit<kWhiteTurn>() & direction_mask;
+  const auto combined_open_stone = GetOpenPositionCombinedBit();
 
-  if(update_flag[kNextPointOfSwordWhite]){
-    GetOpenState<kNextPointOfSwordWhite>(combined_white_stone, combined_open_stone, board_open_state);
-  }
-
-  if(update_flag[kNextTwoWhite]){
-    GetOpenState<kNextTwoWhite>(combined_white_stone, combined_open_stone, board_open_state);
-  }
+  AddOpenState<kWhiteTurn>(update_flag, combined_white_stone, combined_open_stone, board_open_state);
 }
 
 void LineNeighborhood::GetOpenMovePosition(MoveList * const move_list) const
@@ -452,6 +515,41 @@ void LineNeighborhood::GetOpenMovePosition(MoveList * const move_list) const
   SetMoveBitSet(combined_open_bit, &open_bit);
   
   GetMoveList(open_bit, move_list);
+}
+
+string LineNeighborhood::str() const
+{
+  stringstream ss;
+  const auto cross = GetStateBitString(local_bit_board_[0]);
+  const auto saltire = GetStateBitString(local_bit_board_[1]);
+
+  // 空白を除く
+  const auto cross_concat = cross.substr(0, 8) + cross.substr(8 + 1, 8) + cross.substr(16 + 2, 8) + cross.substr(24 + 3, 8);
+  const auto saltire_concat = saltire.substr(0, 8) + saltire.substr(8 + 1, 8) + saltire.substr(16 + 2, 8) + saltire.substr(24 + 3, 8);
+
+  // 左詰めで文字列が生成されるので反転して右詰めにする
+  string cross_flip, saltire_flip;
+
+  for(size_t i=0, size=cross_concat.length(); i<size; i++){
+    cross_flip = cross_concat.at(i) + cross_flip;
+    saltire_flip = saltire_concat.at(i) + saltire_flip;
+  }
+
+  // move_を中心とした文字列を抽出する
+  const size_t start_index = 7 - distance_;
+  const size_t string_number = 2 * distance_ + 1;
+
+  const auto horizontal = cross_flip.substr(0, 16).substr(start_index, string_number);
+  const auto vertical = cross_flip.substr(16).substr(start_index, string_number);
+  const auto left_down = saltire_flip.substr(0, 16).substr(start_index, string_number);
+  const auto right_down = saltire_flip.substr(16).substr(start_index, string_number);
+  
+  ss << "Horizn: " << horizontal << endl;
+  ss << "Vertcl: " << vertical << endl;
+  ss << "L-Down: " << left_down << endl;
+  ss << "R-Down: " << right_down << endl;
+
+  return ss.str();
 }
 
 }   // namesapce realcore

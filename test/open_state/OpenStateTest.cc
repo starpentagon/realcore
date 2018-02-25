@@ -326,7 +326,7 @@ TEST_F(OpenStateTest, IsInfluenceMove)
   }
   {
     // kNextOpenFourBlack
-    constexpr BoardPosition board_position = 274;    // x = 1, y = 2
+    constexpr BoardPosition board_position = 273;    // x = 1, y = 2
     OpenState open_state(kNextOpenFourBlack, open_position, board_position, pattern_search_index);
 
     for(const auto move : in_board_move_list){
@@ -342,7 +342,7 @@ TEST_F(OpenStateTest, IsInfluenceMove)
   }
   {
     // kNextOpenFourWhite
-    constexpr BoardPosition board_position = 274;    // x = 1, y = 2
+    constexpr BoardPosition board_position = 273;    // x = 1, y = 2
     OpenState open_state(kNextOpenFourWhite, open_position, board_position, pattern_search_index);
 
     for(const auto move : in_board_move_list){
@@ -683,4 +683,49 @@ TEST_F(OpenStateTest, GetSemiThreePositionTest)
   }
 }
 
+TEST_F(OpenStateTest, GetStonePositionTest)
+{
+  {
+    // 四ノビ点
+    const BoardPosition open_position = GetBoardPosition(kMoveHH, kLateralDirection);
+    const BoardPosition pattern_position = GetBoardPosition(kMoveHH, kLateralDirection);
+    const size_t pattern_search_index = 0;
+  
+    OpenState open_state(kNextFourBlack, open_position, pattern_position, pattern_search_index);
+    
+    vector<BoardPosition> stone_position_list;
+    open_state.GetStonePosition(&stone_position_list);
+  
+    vector<MovePosition> expect_move{{kMoveJH, kMoveKH, kMoveLH}};
+    
+    ASSERT_EQ(3, stone_position_list.size());
+
+    for(const auto move : expect_move){
+      const auto board_position = GetBoardPosition(move, kLateralDirection);
+      const auto find_it = find(stone_position_list.begin(), stone_position_list.end(), board_position);
+      ASSERT_TRUE(find_it != stone_position_list.end());
+    }
+  }
+  {
+    // 剣先点
+    const BoardPosition open_position = GetBoardPosition(kMoveHH, kVerticalDirection);
+    const BoardPosition pattern_position = GetBoardPosition(kMoveHH, kVerticalDirection);
+    const size_t pattern_search_index = 0;
+  
+    OpenState open_state(kNextPointOfSwordWhite, open_position, pattern_position, pattern_search_index);
+    
+    vector<BoardPosition> stone_position_list;
+    open_state.GetStonePosition(&stone_position_list);
+  
+    vector<MovePosition> expect_move{{kMoveHK, kMoveHL}};
+    
+    ASSERT_EQ(2, stone_position_list.size());
+
+    for(const auto move : expect_move){
+      const auto board_position = GetBoardPosition(move, kVerticalDirection);
+      const auto find_it = find(stone_position_list.begin(), stone_position_list.end(), board_position);
+      ASSERT_TRUE(find_it != stone_position_list.end());
+    }
+  }
+}
 }   // namespace realcore

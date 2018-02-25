@@ -13,16 +13,16 @@ inline void LineNeighborhood::SetCenterState()
 {
   static_assert(S == kBlackStone || S == kWhiteStone, "PositionState must be kBlackStone or kWhiteStone");
   
-  constexpr size_t kLowerCenter = 14;   // 下位32bitの中心位置
-  constexpr size_t kUpperCenter = 46;   // 上位32bitの中心位置
+  static constexpr size_t kLowerCenter = 14;   // 下位32bitの中心位置
+  static constexpr size_t kUpperCenter = 46;   // 上位32bitの中心位置
   
 #ifndef NDEBUG
-  constexpr std::uint64_t center_open_mask = (0b11ULL << kLowerCenter) | (0b11ULL << kUpperCenter);
+  static constexpr std::uint64_t center_open_mask = (0b11ULL << kLowerCenter) | (0b11ULL << kUpperCenter);
 #endif
   assert((local_bit_board_[0] & center_open_mask) == center_open_mask);
   assert((local_bit_board_[1] & center_open_mask) == center_open_mask);
 
-  constexpr std::uint64_t stone_xor_mask = S == kBlackStone ? 
+  static constexpr std::uint64_t stone_xor_mask = S == kBlackStone ? 
   ((0b10ULL << kLowerCenter) | (0b10ULL << kUpperCenter)) : 
   ((0b01ULL << kLowerCenter) | (0b01ULL << kUpperCenter));
   
@@ -34,10 +34,29 @@ inline const BoardDirection LineNeighborhood::GetBoardDirection(const size_t ind
 {
   const auto &board_direction_list = realcore::GetBoardDirection();
 
-  constexpr size_t kMinUpperBitIndex = 32;
+  static constexpr size_t kMinUpperBitIndex = 32;
   const size_t direction_index = 2 * index + (bit_index < kMinUpperBitIndex ? 0 : 1);
 
   return board_direction_list[direction_index];
+}
+
+template<PlayerTurn P>
+inline const bool LineNeighborhood::IsOverline() const
+{
+  const auto combined_black_bit = GetPlayerStoneCombinedBit<P>();
+  return realcore::IsOverline(combined_black_bit);
+}
+
+template<PlayerTurn P>
+inline const bool LineNeighborhood::IsFive() const
+{
+  const auto combined_stone_bit = GetPlayerStoneCombinedBit<P>();
+
+  static constexpr size_t kFiveStone = 5;
+  const std::uint64_t five_bit = GetConsectiveStoneBit<kFiveStone>(combined_stone_bit);
+  const bool is_five = five_bit != 0;
+  
+  return is_five;
 }
 
 template<PlayerTurn P>
@@ -128,6 +147,33 @@ template<PlayerTurn P>
 inline const bool LineNeighborhood::IsDoubleFour() const
 {
   return IsDoubleFour<P>(nullptr);
+}
+
+template<PlayerTurn P>
+const bool LineNeighborhood::IsDoubleSemiThreeMove() const
+{
+  const auto combined_stone_bit = GetPlayerStoneCombinedBit<P>();
+  const auto combined_open_bit = GetOpenPositionCombinedBit();
+  
+  // 見かけの三々
+  std::uint64_t next_open_four_bit = 0;
+  const auto semi_three_bit = SearchSemiThree<P>(combined_stone_bit, combined_open_bit, &next_open_four_bit);
+
+  // 2方向以上で見かけの三々が生じているかチェックする
+  std::bitset<kBoardDirectionNum> semi_three_direction_bit;
+  std::vector<size_t> semi_three_combined_shift_list;
+  GetBitIndexList(semi_three_bit, &semi_three_combined_shift_list);
+
+  for(const auto combined_shift : semi_three_combined_shift_list){
+    const BoardPosition board_position = GetBoardPosition(combined_shift);
+    const BoardDirection board_direction = realcore::GetBoardDirection(board_position);
+
+    semi_three_direction_bit.set(board_direction);
+  }
+
+  const auto semi_three_direction_count = semi_three_direction_bit.count();
+
+  return semi_three_direction_count >= 2;
 }
 
 template<PlayerTurn P>
@@ -263,6 +309,12 @@ inline const bool LineNeighborhood::IsAllOpenPosition() const
   const auto white_bit = GetPlayerStoneCombinedBit<kWhiteTurn>();
 
   return (black_bit == 0) && (white_bit == 0);
+}
+
+inline void LineNeighborhood::GetLocalBitBoard(LocalBitBoard * const local_bit_board) const
+{
+  assert(local_bit_board != nullptr);
+  *local_bit_board = local_bit_board_;
 }
 
 

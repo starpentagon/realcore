@@ -25,6 +25,9 @@ enum MovePosition : std::uint8_t
   #include "def/MoveDefinition.h"
 };
 
+//! @brief MovePair型
+typedef std::pair<MovePosition, MovePosition> MovePair;
+
 //! @brief Move位置の数
 constexpr size_t kMoveNum = 256;
 
@@ -112,6 +115,13 @@ void AscendingSort(std::vector<MoveValue> * const move_value_list);
 
 //! @brief MoveValue型のリストを降順ソートする
 void DescendingSort(std::vector<MoveValue> * const move_value_list);
+
+//! @brief 指し手位置の直線近傍マスクを生成する
+//! @param move 指し手位置
+//! @param L 直線近傍の長さ
+template<size_t L>
+const MoveBitSet& GetLineNeighborhoodBit(const MovePosition move);
+
 }   // namespace　realcore
 
 #include "Move-inl.h"

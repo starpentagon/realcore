@@ -20,9 +20,6 @@ constexpr size_t kBitBoardElementNum = 32;
 //! @brief Bitboard型
 typedef std::array<StateBit, kBitBoardElementNum> Bitboard;
 
-//! @brief MovePair型
-typedef std::pair<MovePosition, MovePosition> MovePair;
-
 // 前方宣言
 enum MovePosition : std::uint8_t;
 class BoardOpenState;
@@ -75,13 +72,19 @@ public:
 
   //! @brief 盤面状態を設定する(template版)
   //! @param State 設定する盤面状態
-  //! @param bit_board BitBoard
   //! @param move 指し手位置
   template<PositionState State>
   void SetState(const MovePosition move);
 
   //! @brief 盤面状態を設定する(non-template版)
   void SetState(const MovePosition move, const PositionState state);
+
+  //! @brief 盤面状態を設定する(MoveBitSet版)
+  //! @param State 設定する盤面状態
+  //! @param bit_board BitBoard
+  //! @param move_bit_set 指し手位置のbit
+  template<PositionState State>
+  void SetState(const MoveBitSet &move_bit_set);
 
   //! @brief 指定位置を中心としたN路の直線近傍の盤面状態(各方向2N+1個の状態)を取得する
   //! @param N 直線近傍の長さ
@@ -132,6 +135,13 @@ public:
   template<PlayerTurn P>
   const bool IsDoubleFourMove(const MovePosition move, MoveBitSet * const influence_area) const;
 
+  //! @brief 指し手が見かけの三々かチェックする
+  //! @param move 指し手位置
+  //! @retval true 指し手が四々
+  //! @pre moveは着手前であること
+  template<PlayerTurn P>
+  const bool IsDoubleSemiThreeMove(const MovePosition move) const;
+
   //! @brief 指し手が禁手かチェックする
   //! @param move 指し手位置
   //! @retval true 指し手が禁手
@@ -145,6 +155,22 @@ public:
   //! @param white_upward_influence_area 禁手不成立 -> 成立となるための白石の影響領域
   template<PlayerTurn P>
   const bool IsForbiddenMove(const MovePosition move, MoveBitSet * const downward_influence_area, MoveBitSet * const black_upward_influence_area, MoveBitSet * const white_upward_influence_area) const;
+
+  //! @brief 盤面に五連以上の石が存在するかチェックする
+  template<PlayerTurn P>
+  const bool IsFiveStones() const;
+
+  //! @brief 指し手moveにより五連以上が存在するかチェックする
+  template<PlayerTurn P>
+  const bool IsFiveStones(const MovePosition move) const;
+
+  //! @brief 盤面に六連以上の石が存在するかチェックする
+  template<PlayerTurn P>
+  const bool IsOverline() const;
+
+  //! @brief 指し手moveにより六連以上の石が存在するかチェックする
+  template<PlayerTurn P>
+  const bool IsOverline(const MovePosition move) const;
 
   //! @brief 禁点を列挙する
   //! @param 禁点の格納先
