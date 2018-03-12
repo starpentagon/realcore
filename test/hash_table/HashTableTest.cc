@@ -342,4 +342,39 @@ TEST_F(HashTableTest, spaceTest)
 
   ASSERT_DOUBLE_EQ(expect_space, space);
 }
+
+TEST_F(HashTableTest, CalcSymmetricHashValue)
+{
+  MoveList base_list("hhhg");
+  const auto base_hash = CalcHashValue(base_list);
+  const auto base_symmetric_hash = CalcSymmetricHashValue(base_list);
+
+  {
+    MoveList same_list("hhhg");
+    const auto hash = CalcHashValue(same_list);
+    const auto symmetric_hash = CalcSymmetricHashValue(same_list);
+
+    ASSERT_EQ(base_hash, hash);
+    ASSERT_EQ(base_symmetric_hash, symmetric_hash);
+  }
+  {
+    MoveList symmetric_list("hhhi");
+
+    const auto hash = CalcHashValue(symmetric_list);
+    const auto symmetric_hash = CalcSymmetricHashValue(symmetric_list);
+
+    ASSERT_NE(base_hash, hash);
+    ASSERT_EQ(base_symmetric_hash, symmetric_hash);
+  }
+  {
+    MoveList diff_list("hhhj");
+
+    const auto hash = CalcHashValue(diff_list);
+    const auto symmetric_hash = CalcSymmetricHashValue(diff_list);
+
+    ASSERT_NE(base_hash, hash);
+    ASSERT_NE(base_symmetric_hash, symmetric_hash);
+  }
+}
+
 }   // namespace realcore
